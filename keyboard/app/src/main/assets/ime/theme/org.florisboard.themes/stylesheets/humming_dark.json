@@ -25,7 +25,10 @@
     "--shape-variant": "rounded-corner(14dp, 14dp, 14dp, 14dp)",
     "--shape-chip": "rounded-corner(50%, 50%, 50%, 50%)",
     "--fn": "#22252C",
-    "--fn-pressed": "#2E323A"
+    "--fn-pressed": "#2E323A",
+    "--primary-strong": "#6553F5",
+    "--primary-strong-pressed": "#5443E0",
+    "--primary-light": "#A99BFF"
   },
   "window": {
     "background": "var(--background)",
@@ -52,12 +55,12 @@
     "foreground": "var(--on-surface)"
   },
   "key[code=10]": {
-    "background": "var(--primary)",
+    "background": "var(--primary-strong)",
     "foreground": "var(--on-primary)",
     "shape": "var(--shape)"
   },
   "key[code=10]:pressed": {
-    "background": "var(--primary-variant)",
+    "background": "var(--primary-strong-pressed)",
     "foreground": "var(--on-primary)"
   },
   "key[code=32]": {
@@ -76,7 +79,7 @@
     "text-max-lines": "2"
   },
   "key[code=-11][shiftstate=`caps_lock`]": {
-    "foreground": "var(--primary)"
+    "foreground": "var(--primary-light)"
   },
   "key-hint": {
     "background": "transparent",
@@ -94,7 +97,7 @@
     "shadow-elevation": "8dp"
   },
   "key-popup-element:focus": {
-    "background": "var(--primary)",
+    "background": "var(--primary-strong)",
     "foreground": "var(--on-primary)",
     "shape": "var(--shape)"
   },
@@ -133,7 +136,7 @@
     "margin": "4dp"
   },
   "smartbar-actions-overflow-customize-button": {
-    "background": "var(--primary)",
+    "background": "var(--primary-strong)",
     "foreground": "var(--on-primary)",
     "font-size": "14sp",
     "margin": "0dp 8dp 0dp 0dp",
@@ -272,7 +275,7 @@
     "shape": "var(--shape-chip)"
   },
   "clipboard-filter-chip[state=`active`]": {
-    "background": "var(--primary)",
+    "background": "var(--primary-strong)",
     "foreground": "var(--on-primary)"
   },
   "clipboard-filter-chip-text": {
@@ -351,7 +354,7 @@
     "padding": "0dp 4dp 0dp 8dp"
   },
   "clipboard-history-disabled-button": {
-    "background": "var(--primary)",
+    "background": "var(--primary-strong)",
     "foreground": "var(--on-primary)",
     "shape": "rounded-corner(24dp,24dp,24dp,24dp)"
   },
@@ -375,7 +378,7 @@
     "border-width": "2dp"
   },
   "extracted-landscape-input-action": {
-    "background": "var(--primary)",
+    "background": "var(--primary-strong)",
     "foreground": "var(--on-surface)",
     "shape": "rounded-corner(4dp, 4dp, 4dp, 4dp)"
   },
@@ -459,7 +462,7 @@
   },
   "key[code=-11][shiftstate=`shifted_manual`]": {
     "background": "var(--surface)",
-    "foreground": "var(--primary)"
+    "foreground": "var(--primary-light)"
   },
   "smartbar-candidate-word[auto-commit=1]": {
     "foreground": "var(--primary)",

@@ -11,4 +11,9 @@ Changes made by the Humming project (Apache-2.0 section 4(b) notice):
 - Typing additions: word suggestions and autocorrect from the AOSP word list, a clipboard grid with timestamps,
   long-press edit shortcuts, a vertical space-bar trackpad, a split layout, and incognito for voice and clipboard.
 - New default look (Humming light/dark themes), app name, icon and application id.
+- M6: a new word-prediction engine (`com.humming.keyboard.predict`) replacing the upstream stub: dictionaries with
+  frequencies for six languages, next-word statistics, keyboard-aware autocorrect and on-device learning; a three-slot
+  suggestion strip with the best guess in the middle; emoji and text shortcuts in the strip; an AMOLED theme, a
+  background photo, a floating keyboard, Settings search, a Privacy screen, glide typing settings re-enabled,
+  TalkBack labels on every key and contrast fixes.
 Every modified upstream file keeps its original licence header. Files added by Humming are marked as such.

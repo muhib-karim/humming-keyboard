@@ -144,6 +144,38 @@ object CoreLoader {
 
     fun loaded(): Boolean = engine != null
 
+    /** Dictations holding the engine right now; the model is only unloaded when this is zero. */
+    private val uses = UseCount()
+
+    /** [engine] for one dictation; pair every call with [done]. */
+    @Synchronized
+    fun acquire(ctx: Context): LocalEngine {
+        val e = engine(ctx)
+        uses.acquire()
+        return e
+    }
+
+    /** One dictation finished with the engine. */
+    @Synchronized
+    fun done() = uses.release()
+
+    /**
+     * Frees the loaded model (about 200 MB of native memory for Parakeet) when the system is short of memory and
+     * no dictation is using it. The next dictation reloads it (about a second). Returns true when it unloaded.
+     */
+    @Synchronized
+    fun releaseIfIdle(): Boolean {
+        if (engine == null || !uses.idle) return false
+        release()
+        android.util.Log.i("HUMMING", "HUMMING_ENGINE unloaded (memory trim)")
+        return true
+    }
+
+    /** Trim levels at which an idle model is unloaded: the system is running low, or our UI is in the background. */
+    fun shouldUnloadOnTrim(level: Int): Boolean = level >= TRIM_RUNNING_LOW
+
+    private const val TRIM_RUNNING_LOW = 10 // ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW
+
     fun lastRaw(): String = engine?.lastRaw ?: ""
 
     /** Held around every native engine call so two dictations never run the engine at once. */
@@ -156,4 +188,13 @@ object CoreLoader {
         engineKey = null
         variant = "none"
     }
+}
+
+/** A use counter that never goes below zero. */
+class UseCount {
+    private var n = 0
+    val idle: Boolean get() = n == 0
+    val count: Int get() = n
+    fun acquire() { n++ }
+    fun release() { if (n > 0) n-- }
 }

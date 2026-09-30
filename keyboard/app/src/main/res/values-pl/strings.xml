@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
-    <string name="app_name">FlorisBoard</string>
+    <string name="app_name">Humming</string>
     <string name="key__phone_pause" comment="Label for the Pause key in the telephone keyboard layout">Pauza</string>
     <string name="key__phone_wait" comment="Label for the Wait key in the telephone keyboard layout">Czekaj</string>
     <string name="key_popup__threedots_alt" comment="Content description for the three-dots icon in a key popup">Ikona trzech kropek. Jeśli jest widoczna, to oznacza, że po dłuższym naciśnięciu można użyć więcej liter.</string>
@@ -10,9 +10,9 @@
     <string name="one_handed__move_end_btn_content_description" comment="Content description for the one-handed move to right button">Przesuń klawiaturę w prawo.</string>
     <!-- Media strings -->
     <string name="settings__media__title">Emoji</string>
-    <string name="media__tab__emojis" comment="Tab description for emojis in the media UI">Emoji</string>
-    <string name="media__tab__emoticons" comment="Tab description for emoticons in the media UI">Emotikony</string>
-    <string name="media__tab__kaomoji" comment="Tab description for kaomoji in the media UI">Kaomoji</string>
+    <string name="media__tab__emojis" comment="Description of the emojis in the media UI">Emoji</string>
+    <string name="media__tab__emoticons" comment="Description of the emoticons in the media UI">Emotikony</string>
+    <string name="media__tab__kaomoji" comment="Description of the kaomoji in the media UI">Kaomoji</string>
     <string name="prefs__media__emoji_preferred_skin_tone">Preferowany odcień skóry emoji</string>
     <string name="prefs__media__emoji_preferred_hair_style">Preferowany styl włosów emoji</string>
     <string name="prefs__media__emoji_history__title" comment="Preference group title">Historia emoji</string>

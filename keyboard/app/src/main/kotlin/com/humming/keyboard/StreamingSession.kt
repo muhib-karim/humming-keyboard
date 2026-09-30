@@ -33,6 +33,13 @@ class StreamingSession(
     private val dictionary = Prefs.dictionary(app)
     private val cleanMode = Prefs.cleanMode(app)
     @Volatile private var engine: LocalEngine? = null
+    private val acquired = java.util.concurrent.atomic.AtomicBoolean(false)
+    @Volatile private var closed = false
+
+    /** Hands the engine back once, so the model can be unloaded under memory pressure when no one dictates. */
+    private fun releaseEngine() {
+        if (acquired.compareAndSet(true, false)) CoreLoader.done()
+    }
     @Volatile private var error: String? = null
     private val queued = ArrayDeque<FloatArray>()
     private val onSegment: (FloatArray) -> Unit = { seg ->
@@ -49,7 +56,9 @@ class StreamingSession(
             try {
                 CoreLoader.whyUnavailable(app)?.let { throw TranscriberUnavailable(it) }
                 if (!ModelStore.ready(app)) throw TranscriberUnavailable("the speech model is still downloading")
-                engine = CoreLoader.engine(app)
+                engine = CoreLoader.acquire(app)
+                acquired.set(true)
+                if (closed) releaseEngine()
             } catch (e: Throwable) {
                 error = e.message ?: e.javaClass.simpleName
             }
@@ -139,6 +148,8 @@ class StreamingSession(
         worker.awaitTermination(600, TimeUnit.SECONDS)
         val raw = synchronized(raws) { raws.joinToString(" ") }
         val text = if (raw.isBlank()) "" else clean(raw)
+        closed = true
+        releaseEngine()
         val ms = (System.nanoTime() - t0) / 1_000_000
         return Result(text, raw, segmenter.segmentsEmitted, ms, if (text.isBlank()) error else null,
             if (tail) lastAudioMs else 0, if (tail) lastSttMs else 0, if (tail) lastTiming else "{}")
@@ -153,6 +164,9 @@ class StreamingSession(
     fun cancel() {
         worker.shutdownNow()
         segmenter.release()
+        closed = true
+        // Hand the engine back only once the transcriber thread has stopped touching it.
+        Thread({ runCatching { worker.awaitTermination(60, TimeUnit.SECONDS) }; releaseEngine() }, "humming-stt-release").start()
     }
 }
 

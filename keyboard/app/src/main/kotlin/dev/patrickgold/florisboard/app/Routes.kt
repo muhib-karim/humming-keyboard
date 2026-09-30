@@ -133,6 +133,22 @@ object Routes {
         object Voice
 
         @Serializable
+        @Deeplink("settings/search")
+        object Search
+
+        @Serializable
+        @Deeplink("settings/privacy")
+        object Privacy
+
+        @Serializable
+        @Deeplink("settings/typing/shortcuts")
+        object TextShortcuts
+
+        @Serializable
+        @Deeplink("settings/theme/background")
+        object BackgroundImage
+
+        @Serializable
         @Deeplink("settings/theme")
         object Theme
 
@@ -294,6 +310,10 @@ object Routes {
             }
 
             composableWithDeepLink(Settings.Voice::class) { dev.patrickgold.florisboard.app.settings.voice.VoiceScreen() }
+            composableWithDeepLink(Settings.Search::class) { dev.patrickgold.florisboard.app.settings.humming.SettingsSearchScreen() }
+            composableWithDeepLink(Settings.Privacy::class) { dev.patrickgold.florisboard.app.settings.humming.PrivacyScreen() }
+            composableWithDeepLink(Settings.TextShortcuts::class) { dev.patrickgold.florisboard.app.settings.humming.TextShortcutsScreen() }
+            composableWithDeepLink(Settings.BackgroundImage::class) { dev.patrickgold.florisboard.app.settings.humming.BackgroundImageScreen() }
             composableWithDeepLink(Settings.Theme::class) { ThemeScreen() }
             composableWithDeepLink(Settings.ThemeManager::class) { navBackStack ->
                 val payload = navBackStack.toRoute<Settings.ThemeManager>()

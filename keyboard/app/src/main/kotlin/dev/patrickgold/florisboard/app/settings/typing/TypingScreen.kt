@@ -43,6 +43,7 @@ import dev.patrickgold.florisboard.lib.compose.FlorisHyperlinkText
 import dev.patrickgold.florisboard.lib.compose.FlorisScreen
 import dev.patrickgold.jetpref.datastore.model.observeAsState
 import dev.patrickgold.jetpref.datastore.ui.ExperimentalJetPrefDatastoreUi
+import dev.patrickgold.jetpref.datastore.ui.DialogSliderPreference
 import dev.patrickgold.jetpref.datastore.ui.ListPreference
 import dev.patrickgold.jetpref.datastore.ui.Preference
 import dev.patrickgold.jetpref.datastore.ui.PreferenceGroup
@@ -60,15 +61,6 @@ fun TypingScreen() = FlorisScreen {
     val navController = LocalNavController.current
 
     content {
-        // This card is temporary and is therefore not using a string resource (not so temporary as we thought...)
-        FlorisErrorCard(
-            modifier = Modifier.padding(8.dp),
-            text = """
-                Suggestions (except system autofill) and spell checking are not available in this release. All
-                preferences in the "Corrections" group are properly implemented though.
-            """.trimIndent().replace('\n', ' '),
-        )
-
         PreferenceGroup(title = stringRes(R.string.pref__suggestion__title)) {
             SwitchPreference(
                 prefs.suggestion.enabled,
@@ -92,6 +84,46 @@ fun TypingScreen() = FlorisScreen {
                 icon = ImageVector.vectorResource(id = R.drawable.ic_incognito),
                 title = stringRes(R.string.pref__suggestion__incognito_mode__label),
                 entries = enumDisplayEntriesOf(IncognitoMode::class),
+            )
+        }
+
+        // Humming: prediction controls.
+        PreferenceGroup(title = "Prediction") {
+            DialogSliderPreference(
+                prefs.suggestion.autocorrectStrength,
+                title = "Autocorrect strength",
+                valueLabel = { listOf("Off", "Mild", "Normal", "Aggressive").getOrElse(it) { "Normal" } },
+                min = 0,
+                max = 3,
+                stepIncrement = 1,
+                enabledIf = { prefs.suggestion.enabled isEqualTo true },
+            )
+            SwitchPreference(
+                prefs.suggestion.nextWordPrediction,
+                title = "Next-word prediction",
+                summary = "Suggest the next word after a space",
+                enabledIf = { prefs.suggestion.enabled isEqualTo true },
+            )
+            SwitchPreference(
+                prefs.suggestion.learnFromTyping,
+                title = "Learn from my typing",
+                summary = "Kept on this phone only; never in incognito",
+            )
+            SwitchPreference(
+                prefs.suggestion.emojiInStrip,
+                title = "Emoji in suggestions",
+                summary = "\"pizza\" offers \uD83C\uDF55 in the strip",
+            )
+            Preference(
+                title = "Text shortcuts",
+                summary = "omw \u2192 On my way! Add your own",
+                onClick = { navController.navigate(Routes.Settings.TextShortcuts) },
+            )
+            Preference(
+                title = "Dictionaries",
+                summary = "English, German, Spanish, French, Italian and Portuguese, all on this phone. Word lists: " +
+                    "Android Open Source Project (Apache-2.0). Next-word statistics counted from sentences of the " +
+                    "Tatoeba Project, tatoeba.org (CC BY 2.0 FR). Emoji names: Unicode CLDR.",
             )
         }
 

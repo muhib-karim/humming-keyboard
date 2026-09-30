@@ -17,6 +17,10 @@
 package dev.patrickgold.florisboard.ime.text.keyboard
 
 import android.animation.ValueAnimator
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.onClick
 import android.annotation.SuppressLint
 import android.content.Context
 import android.view.MotionEvent
@@ -333,13 +337,24 @@ private fun TextKeyButton(
     val size = remember(key, desiredKey) {
         key.visibleBounds.size.toDpSize()
     }
+    // Humming: TalkBack names every key and a double-tap types it (upstream keys had no semantics at all).
+    val a11yContext = androidx.compose.ui.platform.LocalContext.current
     SnyggBox(
         FlorisImeUi.Key.elementName,
         attributes = attributes,
         selector = selector,
         modifier = Modifier
             .requiredSize(size)
-            .absoluteOffset { key.visibleBounds.topLeft.toIntOffset() },
+            .absoluteOffset { key.visibleBounds.topLeft.toIntOffset() }
+            .semantics {
+                contentDescription = com.humming.keyboard.HummingA11y.describe(key.computedData.code, key.label)
+                role = androidx.compose.ui.semantics.Role.Button
+                onClick {
+                    val km by a11yContext.keyboardManager()
+                    km.inputEventDispatcher.sendDownUp(key.computedData)
+                    true
+                }
+            },
     ) {
         val isTelPadKey = key.computedData.type == KeyType.NUMERIC && evaluator.keyboard.mode == KeyboardMode.PHONE
         key.label?.let { label ->

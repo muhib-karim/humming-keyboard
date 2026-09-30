@@ -25,7 +25,8 @@
     "--shape-variant": "rounded-corner(14dp, 14dp, 14dp, 14dp)",
     "--shape-chip": "rounded-corner(50%, 50%, 50%, 50%)",
     "--fn": "#D3D8E2",
-    "--fn-pressed": "#C3C9D5"
+    "--fn-pressed": "#C3C9D5",
+    "--primary-text": "#5646E8"
   },
   "window": {
     "background": "var(--background)",
@@ -375,8 +376,8 @@
     "border-width": "2dp"
   },
   "extracted-landscape-input-action": {
-    "background": "var(--primary)",
-    "foreground": "var(--on-surface)",
+    "background": "var(--primary-text)",
+    "foreground": "var(--on-primary)",
     "shape": "rounded-corner(4dp, 4dp, 4dp, 4dp)"
   },
   "glide-trail": {
@@ -462,7 +463,7 @@
     "foreground": "var(--primary)"
   },
   "smartbar-candidate-word[auto-commit=1]": {
-    "foreground": "var(--primary)",
+    "foreground": "var(--primary-text)",
     "font-weight": "bold"
   }
 }

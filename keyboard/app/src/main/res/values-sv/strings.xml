@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
-    <string name="app_name">FlorisBoard</string>
+    <string name="app_name">Humming</string>
     <string name="key__phone_pause" comment="Label for the Pause key in the telephone keyboard layout">Pausa</string>
     <string name="key__phone_wait" comment="Label for the Wait key in the telephone keyboard layout">Vänta</string>
     <!-- One-handed strings -->
@@ -8,9 +8,9 @@
     <string name="one_handed__move_start_btn_content_description" comment="Content description for the one-handed move to left button">Flytta tangentbord till vänster.</string>
     <string name="one_handed__move_end_btn_content_description" comment="Content description for the one-handed move to right button">Flytta tangentbord till höger.</string>
     <!-- Media strings -->
-    <string name="media__tab__emojis" comment="Tab description for emojis in the media UI">Emojis</string>
-    <string name="media__tab__emoticons" comment="Tab description for emoticons in the media UI">Emotikoner</string>
-    <string name="media__tab__kaomoji" comment="Tab description for kaomoji in the media UI">Kaomoji</string>
+    <string name="media__tab__emojis" comment="Description of the emojis in the media UI">Emojis</string>
+    <string name="media__tab__emoticons" comment="Description of the emoticons in the media UI">Emotikoner</string>
+    <string name="media__tab__kaomoji" comment="Description of the kaomoji in the media UI">Kaomoji</string>
     <!-- Emoji strings -->
     <string name="emoji__category__smileys_emotion" comment="Emoji category name">Smileys &amp; Emotikoner</string>
     <string name="emoji__category__people_body" comment="Emoji category name">Personer &amp; Kroppar</string>

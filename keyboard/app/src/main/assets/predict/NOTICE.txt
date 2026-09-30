@@ -1,0 +1,26 @@
+Humming prediction data
+
+lexicon_en.tsv - 155,857 English words, each with a smoothed log probability (log P = q / 10 - 24) and flags
+(o = possibly offensive, never suggested unless allowed; a = abbreviation).
+  * Words and frequency classes: en_US_wordlist.combined from the Android Open Source Project LatinIME
+    dictionaries (packages/inputmethods/LatinIME/dictionaries). Copyright (C) The Android Open Source Project.
+    Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
+  * Frequencies blended 50/50 with word counts from the Tatoeba English sentences (see below).
+  * A few chat words added by Humming (lol, omg, idk, tbh, ...); most all-caps abbreviations removed.
+
+lexicon_de.tsv, lexicon_es.tsv, lexicon_fr.tsv, lexicon_it.tsv, lexicon_pt.tsv - the 60,000 most frequent words of
+the German, Spanish, French, Italian and Brazilian Portuguese wordlists (de, es, fr, it, pt_BR _wordlist.combined)
+from the same Android Open Source Project LatinIME dictionaries, with their frequency classes (log P = f / 10 - 24)
+and the "possibly offensive" marks. Copyright (C) The Android Open Source Project. Apache License, Version 2.0.
+
+ngrams_en.tsv - next-word statistics (one- and two-word contexts, top following words with counts), counted from
+the English sentences of the Tatoeba Project (https://tatoeba.org), downloaded 2026-09-30.
+  Tatoeba sentences are licensed under Creative Commons Attribution 2.0 France (CC BY 2.0 FR):
+  https://creativecommons.org/licenses/by/2.0/fr/ . Only aggregated counts are distributed, no sentences.
+  Common placeholder names used in the corpus are removed from the predictions.
+  Tatoeba is a translation corpus, so about twenty everyday messaging contexts ("see you", "on my", "let me",
+  "running", "no", ...) are boosted towards chat phrasing by a short hand-written list (Humming, Apache-2.0).
+
+emoji_en.tsv - English word -> emoji hints for the suggestion strip, derived from the Unicode CLDR v45 emoji
+annotations already bundled by FlorisBoard (assets/ime/media/emoji/en.txt; Unicode License v3,
+https://www.unicode.org/license.txt).

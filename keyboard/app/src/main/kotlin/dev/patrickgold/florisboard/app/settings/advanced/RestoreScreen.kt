@@ -157,6 +157,7 @@ fun RestoreScreen() = FlorisScreen {
             }
         }
         val workspaceFilesDir = workspace.outputDir.subDir("files")
+        com.humming.keyboard.HummingBackup.import(context, workspaceFilesDir) // Humming
         if (restoreFilesSelector.imeKeyboard) {
             val srcDir = workspaceFilesDir.subDir(ExtensionManager.IME_KEYBOARD_PATH)
             val dstDir = context.filesDir.subDir(ExtensionManager.IME_KEYBOARD_PATH)

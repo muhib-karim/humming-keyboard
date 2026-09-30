@@ -100,7 +100,9 @@ class SubtypeManager(context: Context) {
      */
     fun addSubtype(subtype: Subtype): Boolean {
         val subtypeToAdd = subtype.copy(id = System.currentTimeMillis())
-        val subtypeList = subtypes
+        // Humming: with no saved subtypes the keyboard runs on the built-in English default; keep it in the list
+        // when the first language is added, so adding German does not silently remove English.
+        val subtypeList = subtypes.ifEmpty { listOf(Subtype.DEFAULT.copy(id = System.currentTimeMillis() - 1)) }
         if (subtypeList.find { it.equalsExcludingId(subtype) } != null) {
             return false
         }

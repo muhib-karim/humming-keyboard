@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
-    <string name="app_name">FlorisBoard</string>
+    <string name="app_name">Humming</string>
     <string name="key__phone_pause" comment="Label for the Pause key in the telephone keyboard layout">Jeda</string>
     <string name="key__phone_wait" comment="Label for the Wait key in the telephone keyboard layout">Tunggu</string>
     <string name="key_popup__threedots_alt" comment="Content description for the three-dots icon in a key popup">Ikon titik tiga. Jika terlihat, menandakan bahwa lebih banyak huruf dapat digunakan jika ditekan lama.</string>
@@ -10,9 +10,9 @@
     <string name="one_handed__move_end_btn_content_description" comment="Content description for the one-handed move to right button">Pindahkan keyboard ke kanan.</string>
     <!-- Media strings -->
     <string name="settings__media__title">Emoji</string>
-    <string name="media__tab__emojis" comment="Tab description for emojis in the media UI">Emoji</string>
-    <string name="media__tab__emoticons" comment="Tab description for emoticons in the media UI">Emotikon</string>
-    <string name="media__tab__kaomoji" comment="Tab description for kaomoji in the media UI">Kaomoji</string>
+    <string name="media__tab__emojis" comment="Description of the emojis in the media UI">Emoji</string>
+    <string name="media__tab__emoticons" comment="Description of the emoticons in the media UI">Emotikon</string>
+    <string name="media__tab__kaomoji" comment="Description of the kaomoji in the media UI">Kaomoji</string>
     <string name="prefs__media__emoji_preferred_skin_tone">Warna kulit emoji yang disukai</string>
     <string name="prefs__media__emoji_preferred_hair_style">Gaya rambut emoji yang disukai</string>
     <string name="prefs__media__emoji_history__title" comment="Preference group title">Riwayat emoji</string>
@@ -256,7 +256,7 @@ Klik di sini untuk menyelesaikan masalah ini.</string>
     <string name="snygg__rule_element__media_emoji_key_popup_box">Kotak pop-up tombol media emoji</string>
     <string name="snygg__rule_element__media_emoji_key_popup_element">Elemen popup tombol media emoji</string>
     <string name="snygg__rule_element__media_emoji_key_popup_extended_indicator">Indikator pop-up tombol media emoji yang diperluas</string>
-    <string name="snygg__rule_element__media_emoji_tab">Tab media emoji</string>
+    <string name="snygg__rule_element__media_emoji_tab">Bilah media emoji</string>
     <string name="snygg__rule_element__media_bottom_row">Baris bawah media</string>
     <string name="snygg__rule_element__media_bottom_row_button">Tombol baris bawah media</string>
     <string name="snygg__rule_element__one_handed_panel">Panel satu-tangan</string>

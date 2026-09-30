@@ -74,6 +74,12 @@ fun ThemeScreen() = FlorisScreen {
             title = stringRes(R.string.pref__theme__mode__label),
             entries = enumDisplayEntriesOf(ThemeMode::class),
         )
+        // Humming: a photo behind the keys.
+        Preference(
+            title = "Background image",
+            summary = "Put your own photo behind the keys",
+            onClick = { navController.navigate(Routes.Settings.BackgroundImage) },
+        )
         Preference(
             icon = Icons.Default.LightMode,
             title = stringRes(R.string.pref__theme__day),

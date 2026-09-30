@@ -14,7 +14,9 @@ including a paid store listing, as long as the obligations below are kept.
 | NVIDIA Parakeet TDT-CTC 110M and TDT 0.6B v2 (speech model weights, downloaded by the app on first use) | CC-BY-4.0 | **Attribution**: "Speech recognition model: NVIDIA Parakeet, licensed under CC-BY-4.0" shown in Settings > Voice and in this file; we distribute the ONNX export by the sherpa-onnx project unmodified (int8 quantised by them). |
 | Silero VAD (voice activity model, bundled asset) | MIT | Keep the copyright notice (below). |
 | Apache Commons Compress 1.27.1 (model archive reader) | Apache-2.0 | Credit here. |
-| AOSP English word list (typing suggestions, from M4) | Apache-2.0 | Credit here. |
+| AOSP LatinIME word lists: English (156k words) plus German, Spanish, French, Italian and Brazilian Portuguese (60k each), for suggestions and autocorrect | Apache-2.0 | Credit here and in `assets/predict/NOTICE.txt`. |
+| Tatoeba English sentences (only aggregated next-word counts ship, no sentences) | CC BY 2.0 FR | **Attribution**: "Next-word statistics counted from sentences of the Tatoeba Project (tatoeba.org), CC BY 2.0 FR", here and in `assets/predict/NOTICE.txt`. |
+| Unicode CLDR emoji annotations (emoji in the suggestion strip, already bundled by FlorisBoard) | Unicode License v3 | Keep the notice (below). |
 
 Nothing GPL is included. Gboard, Google voice typing ("Rambler") and FUTO Keyboard are separate apps: Humming only
 switches to Gboard through Android's input-method API when the user asks, and FUTO's models were used only in our
@@ -29,3 +31,7 @@ benchmark, never shipped.
   International (https://creativecommons.org/licenses/by/4.0/). Converted to ONNX and quantised to int8 by the sherpa-onnx project.
 - Silero VAD: Copyright (c) 2020-present Silero Team. MIT License.
 - Apache Commons Compress: Copyright The Apache Software Foundation. Apache License 2.0.
+- AOSP LatinIME dictionaries (word lists): Copyright (C) The Android Open Source Project. Apache License 2.0.
+- Tatoeba Project sentences (tatoeba.org): Creative Commons Attribution 2.0 France. Only word-pair counts derived from
+  them are distributed.
+- Unicode CLDR emoji annotations: Copyright (c) Unicode, Inc. Unicode License v3 (https://www.unicode.org/license.txt).

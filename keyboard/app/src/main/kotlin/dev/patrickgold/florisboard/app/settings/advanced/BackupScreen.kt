@@ -182,6 +182,8 @@ fun BackupScreen() = FlorisScreen {
             FlorisPreferenceStore.export(fileBasedStorage).getOrThrow()
         }
         val workspaceFilesDir = workspace.inputDir.subDir("files")
+        // Humming: voice settings, learned words and the keyboard background travel in the same file.
+        if (backupFilesSelector.jetprefDatastore) com.humming.keyboard.HummingBackup.export(context, workspaceFilesDir)
         if (backupFilesSelector.imeKeyboard) {
             context.filesDir.subDir(ExtensionManager.IME_KEYBOARD_PATH).let { dir ->
                 dir.copyRecursively(workspaceFilesDir.subDir(ExtensionManager.IME_KEYBOARD_PATH))

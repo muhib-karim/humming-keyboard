@@ -204,7 +204,12 @@ private fun CandidateItem(
                 elementName = "$elementName-text",
                 attributes = attributes,
                 selector = selector,
-                text = candidate.text.toString(),
+                // Humming: the literal typed word is shown in quotes, like Gboard.
+                text = if (candidate is dev.patrickgold.florisboard.ime.nlp.LiteralWordCandidate) {
+                    "\u201C${candidate.text}\u201D"
+                } else {
+                    candidate.text.toString()
+                },
             )
             if (candidate.secondaryText != null) {
                 SnyggText(

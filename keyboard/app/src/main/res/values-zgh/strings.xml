@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
-    <string name="app_name">FlorisBoard</string>
+    <string name="app_name">Humming</string>
     <!-- One-handed strings -->
     <!-- Media strings -->
-    <string name="media__tab__emojis" comment="Tab description for emojis in the media UI">ⵉⵎⵓⵊⵉⵜⵏ</string>
-    <string name="media__tab__emoticons" comment="Tab description for emoticons in the media UI">ⵜⵉⵙⵢⴰⴼⴽⵓⵏⵉⵏ</string>
-    <string name="media__tab__kaomoji" comment="Tab description for kaomoji in the media UI">ⴽⴰⵡⵎⵓⵊⵉ</string>
+    <string name="media__tab__emojis" comment="Description of the emojis in the media UI">ⵉⵎⵓⵊⵉⵜⵏ</string>
+    <string name="media__tab__emoticons" comment="Description of the emoticons in the media UI">ⵜⵉⵙⵢⴰⴼⴽⵓⵏⵉⵏ</string>
+    <string name="media__tab__kaomoji" comment="Description of the kaomoji in the media UI">ⴽⴰⵡⵎⵓⵊⵉ</string>
     <!-- Emoji strings -->
     <string name="emoji__category__food_drink" comment="Emoji category name">ⵓⵜⵛⵉ &amp; ⵜⵉⵙⵙⵉ</string>
     <string name="emoji__category__travel_places" comment="Emoji category name">ⴰⵎⵓⴷⴷⵓ &amp; ⵉⴷⵖⴰⵔⵏ</string>

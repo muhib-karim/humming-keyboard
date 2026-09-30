@@ -192,7 +192,9 @@ private fun SmartbarMainRow(modifier: Modifier = Modifier) {
             }
             val incognitoIcon = ImageVector.vectorResource(id = R.drawable.ic_incognito)
             val incognitoDisplayMode = prefs.keyboard.incognitoDisplayMode.observeAsState()
-            val isIncognitoMode = keyboardManager.activeState.isIncognitoMode
+            // Humming: observe the state so the icon switches the moment incognito turns on (a plain read never recomposed).
+            val activeState by keyboardManager.activeState.collectAsState()
+            val isIncognitoMode = activeState.isIncognitoMode
             val icon = if (isIncognitoMode) {
                 when (incognitoDisplayMode.value) {
                     IncognitoDisplayMode.REPLACE_SHARED_ACTIONS_TOGGLE -> incognitoIcon!!

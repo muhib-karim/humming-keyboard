@@ -29,6 +29,14 @@
       "isNight": true
     },
     {
+      "id": "humming_amoled",
+      "label": "Humming AMOLED Black",
+      "authors": [
+        "Humming"
+      ],
+      "isNight": true
+    },
+    {
       "id": "floris_day",
       "label": "Floris Day",
       "authors": [

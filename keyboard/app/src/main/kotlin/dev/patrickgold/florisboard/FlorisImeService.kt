@@ -16,6 +16,18 @@
 
 package dev.patrickgold.florisboard
 
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.boundsInWindow
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.foundation.layout.offset
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.foundation.background
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
@@ -74,6 +86,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
+import com.humming.keyboard.HummingFloat
 import dev.patrickgold.florisboard.app.FlorisAppActivity
 import dev.patrickgold.florisboard.app.FlorisPreferenceStore
 import dev.patrickgold.florisboard.app.devtools.DevtoolsOverlay
@@ -373,6 +387,12 @@ class FlorisImeService : LifecycleInputMethodService() {
         themeManager.configurationChangeCounter.update { it + 1 }
     }
 
+    // Humming: unload the idle voice model when the system is short of memory (reloads on the next dictation).
+    override fun onTrimMemory(level: Int) {
+        super.onTrimMemory(level)
+        if (com.humming.keyboard.CoreLoader.shouldUnloadOnTrim(level)) com.humming.keyboard.CoreLoader.releaseIfIdle()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver(wallpaperChangeReceiver)
@@ -432,6 +452,7 @@ class FlorisImeService : LifecycleInputMethodService() {
     }
 
     override fun onFinishInputView(finishingInput: Boolean) {
+        com.humming.keyboard.predict.PredictionEngine.saveSoon(force = true) // Humming: keep what was learned
         flogInfo { "finishing=$finishingInput" }
         super.onFinishInputView(finishingInput)
         dev.patrickgold.florisboard.ime.voice.HummingVoice.onFinishInputView() // Humming
@@ -557,6 +578,15 @@ class FlorisImeService : LifecycleInputMethodService() {
             return
         }
 
+        // Humming: a floating keyboard leaves the app its full height; only the card itself takes touches.
+        if (prefs.keyboard.hummingFloating.get()) {
+            val r = hummingFloatRect
+            outInsets.contentTopInsets = inputWindowView.height
+            outInsets.visibleTopInsets = inputWindowView.height
+            outInsets.touchableInsets = Insets.TOUCHABLE_INSETS_REGION
+            outInsets.touchableRegion.set(r.left.toInt(), r.top.toInt(), r.right.toInt(), r.bottom.toInt())
+            return
+        }
         val visibleTopY = inputWindowView.height - inputViewSize.height
         val needAdditionalOverlay =
             prefs.smartbar.enabled.get() &&
@@ -643,6 +673,54 @@ class FlorisImeService : LifecycleInputMethodService() {
         }
     }
 
+    @Volatile private var hummingFloatRect = androidx.compose.ui.geometry.Rect.Zero
+
+    /** Humming: the live drag of the floating card in dp, written to prefs once when the drag ends. */
+    private val hummingDrag = mutableStateOf(androidx.compose.ui.geometry.Offset.Zero)
+
+    private fun hummingPersistDrag() {
+        val d = hummingDrag.value
+        if (d == androidx.compose.ui.geometry.Offset.Zero) return
+        lifecycleScope.launch {
+            prefs.keyboard.hummingFloatOffsetX.set(HummingFloat.clampX(prefs.keyboard.hummingFloatOffsetX.get() + d.x))
+            prefs.keyboard.hummingFloatOffsetY.set(HummingFloat.clampY(prefs.keyboard.hummingFloatOffsetY.get() + d.y))
+            hummingDrag.value = androidx.compose.ui.geometry.Offset.Zero
+        }
+    }
+
+    /** Humming: the grab bar at the top of the floating keyboard; drag it to move the card. */
+    @Composable
+    private fun HummingFloatHandle() {
+        val density = androidx.compose.ui.platform.LocalDensity.current
+        androidx.compose.foundation.layout.Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(18.dp)
+                .semantics { contentDescription = "Move keyboard" }
+                .pointerInput(Unit) {
+                    detectDragGestures(
+                        onDragEnd = { hummingPersistDrag() },
+                        onDragCancel = { hummingPersistDrag() },
+                    ) { change, drag ->
+                        change.consume()
+                        val dx = with(density) { drag.x.toDp().value }
+                        val dy = with(density) { drag.y.toDp().value }
+                        // Moving the finger up raises the card (a larger bottom offset).
+                        hummingDrag.value = hummingDrag.value + androidx.compose.ui.geometry.Offset(dx, -dy)
+                    }
+                },
+            contentAlignment = androidx.compose.ui.Alignment.Center,
+        ) {
+            androidx.compose.foundation.layout.Box(
+                modifier = Modifier
+                    .width(44.dp)
+                    .height(5.dp)
+                    .clip(androidx.compose.foundation.shape.RoundedCornerShape(3.dp))
+                    .background(androidx.compose.ui.graphics.Color.Gray.copy(alpha = 0.6f)),
+            )
+        }
+    }
+
     @OptIn(ExperimentalComposeUiApi::class)
     @Composable
     private fun ImeUi() {
@@ -656,28 +734,65 @@ class FlorisImeService : LifecycleInputMethodService() {
             keyboardManager.activeState.layoutDirection = layoutDirection
         }
         CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+            // Humming: floating mode draws the keyboard as a movable card (86 % wide) over the app.
+            val hummingFloating by prefs.keyboard.hummingFloating.observeAsState()
+            val hummingFloatX by prefs.keyboard.hummingFloatOffsetX.observeAsState()
+            val hummingFloatY by prefs.keyboard.hummingFloatOffsetY.observeAsState()
             SnyggBox(
                 elementName = FlorisImeUi.Window.elementName,
                 attributes = attributes,
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .then(
+                        if (hummingFloating) {
+                            Modifier
+                                .padding(bottom = HummingFloat.clampY(hummingFloatY + hummingDrag.value.y).dp)
+                                .offset(x = HummingFloat.clampX(hummingFloatX + hummingDrag.value.x).dp)
+                                .fillMaxWidth(0.86f)
+                                .shadow(10.dp, androidx.compose.foundation.shape.RoundedCornerShape(18.dp))
+                                .clip(androidx.compose.foundation.shape.RoundedCornerShape(18.dp))
+                                .onGloballyPositioned { coords -> hummingFloatRect = coords.boundsInWindow() }
+                        } else {
+                            Modifier.fillMaxWidth()
+                        }
+                    )
                     .wrapContentHeight()
                     .onGloballyPositioned { coords -> inputViewSize = coords.size },
                 clickAndSemanticsModifier = Modifier
                     // Do not remove below line or touch input may get stuck
                     .pointerInteropFilter { false },
-                supportsBackgroundImage = !AndroidVersion.ATLEAST_API30_R,
+                // Humming: a floating card paints its background in Compose so the rounded clip applies (a
+                // SurfaceView ignores Compose clipping and left square corners).
+                supportsBackgroundImage = !AndroidVersion.ATLEAST_API30_R || hummingFloating,
                 allowClip = false,
             ) {
                 // The SurfaceView is used to render the background image under inline-autofill chips. These are only
                 // available on Android >=11, and SurfaceView causes trouble on Android 8/9, thus we render the image
                 // in the SurfaceView for Android >=11, and in the Compose View Tree for Android <=10.
-                if (AndroidVersion.ATLEAST_API30_R) {
+                if (AndroidVersion.ATLEAST_API30_R && !hummingFloating) {
                     SnyggSurfaceView(
                         elementName = FlorisImeUi.Window.elementName,
                         attributes = attributes,
                         modifier = Modifier.matchParentSize(),
                     )
+                }
+                // Humming: the user's own background photo behind the keys, dimmed so labels stay readable.
+                val hummingBgPath by prefs.theme.hummingBackgroundImage.observeAsState()
+                val hummingBgDim by prefs.theme.hummingBackgroundDim.observeAsState()
+                if (hummingBgPath.isNotEmpty()) {
+                    val bg = androidx.compose.runtime.remember(hummingBgPath) {
+                        runCatching { android.graphics.BitmapFactory.decodeFile(hummingBgPath)?.asImageBitmap() }.getOrNull()
+                    }
+                    if (bg != null) {
+                        androidx.compose.foundation.Image(
+                            bitmap = bg,
+                            contentDescription = null,
+                            contentScale = androidx.compose.ui.layout.ContentScale.Crop,
+                            modifier = Modifier.matchParentSize(),
+                        )
+                        androidx.compose.foundation.layout.Box(
+                            Modifier.matchParentSize().background(androidx.compose.ui.graphics.Color.Black.copy(alpha = hummingBgDim.coerceIn(0, 80) / 100f)),
+                        )
+                    }
                 }
                 val configuration = LocalConfiguration.current
                 val bottomOffset by if (configuration.isOrientationPortrait()) {
@@ -685,12 +800,17 @@ class FlorisImeService : LifecycleInputMethodService() {
                 } else {
                     prefs.keyboard.bottomOffsetLandscape
                 }.observeAsTransformingState { it.dp }
+                if (hummingFloating) {
+                    HummingFloatHandle()
+                }
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentHeight()
-                        // Apply system bars padding here (we already drew our keyboard background)
-                        .safeDrawingPadding()
+                        .then(if (hummingFloating) Modifier.padding(top = 18.dp) else Modifier)
+                        // Apply system bars padding here (we already drew our keyboard background); a floating card
+                        // sits above the navigation bar already, so it skips the inset.
+                        .then(if (hummingFloating) Modifier else Modifier.safeDrawingPadding())
                         .padding(bottom = bottomOffset),
                 ) {
                     val oneHandedMode by prefs.keyboard.oneHandedMode.observeAsState()

@@ -1,5 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
-    <string name="app_name">FlorisBoard</string>
+    <string name="app_name">Humming</string>
 
     <string name="key__phone_pause" comment="Label for the Pause key in the telephone keyboard layout">Pause</string>
     <string name="key__phone_wait" comment="Label for the Wait key in the telephone keyboard layout">Wait</string>
@@ -12,9 +12,9 @@
 
     <!-- Media strings -->
     <string name="settings__media__title">Emojis</string>
-    <string name="media__tab__emojis" comment="Section description for emojis in the media UI">Emojis</string>
-    <string name="media__tab__emoticons" comment="Section description for emoticons in the media UI">Emoticons</string>
-    <string name="media__tab__kaomoji" comment="Section description for kaomoji in the media UI">Kaomoji</string>
+    <string name="media__tab__emojis" comment="Description of the emojis in the media UI">Emojis</string>
+    <string name="media__tab__emoticons" comment="Description of the emoticons in the media UI">Emoticons</string>
+    <string name="media__tab__kaomoji" comment="Description of the kaomoji in the media UI">Kaomoji</string>
     <string name="prefs__media__emoji_preferred_skin_tone">Preferred emoji skin tone</string>
     <string name="prefs__media__emoji_preferred_hair_style">Preferred emoji hair style</string>
     <string name="prefs__media__emoji_history__title" comment="Preference group title">Emoji history</string>

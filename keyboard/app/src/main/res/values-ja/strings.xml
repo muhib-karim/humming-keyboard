@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
-    <string name="app_name">FlorisBoard</string>
+    <string name="app_name">Humming</string>
     <string name="key__phone_pause" comment="Label for the Pause key in the telephone keyboard layout">一時停止</string>
     <string name="key__phone_wait" comment="Label for the Wait key in the telephone keyboard layout">待機</string>
     <string name="key_popup__threedots_alt" comment="Content description for the three-dots icon in a key popup">3点リーダーアイコン。表示されている場合、長押しで他の文字が利用できることを示します。</string>
@@ -10,9 +10,9 @@
     <string name="one_handed__move_end_btn_content_description" comment="Content description for the one-handed move to right button">キーボードを右に移動</string>
     <!-- Media strings -->
     <string name="settings__media__title">メディア</string>
-    <string name="media__tab__emojis" comment="Tab description for emojis in the media UI">絵文字</string>
-    <string name="media__tab__emoticons" comment="Tab description for emoticons in the media UI">顔文字</string>
-    <string name="media__tab__kaomoji" comment="Tab description for kaomoji in the media UI">カオモジ</string>
+    <string name="media__tab__emojis" comment="Description of the emojis in the media UI">絵文字</string>
+    <string name="media__tab__emoticons" comment="Description of the emoticons in the media UI">顔文字</string>
+    <string name="media__tab__kaomoji" comment="Description of the kaomoji in the media UI">カオモジ</string>
     <string name="prefs__media__emoji_preferred_skin_tone">優先する絵文字の肌の色</string>
     <string name="prefs__media__emoji_preferred_hair_style">優先する絵文字の髪型</string>
     <string name="prefs__media__emoji_history__title" comment="Preference group title">絵文字履歴</string>

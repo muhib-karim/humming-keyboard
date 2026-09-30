@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
-    <string name="app_name">FlorisBoard</string>
+    <string name="app_name">Humming</string>
     <string name="key__phone_pause" comment="Label for the Pause key in the telephone keyboard layout">Παύση</string>
     <string name="key__phone_wait" comment="Label for the Wait key in the telephone keyboard layout">Αναμονή</string>
     <string name="key_popup__threedots_alt" comment="Content description for the three-dots icon in a key popup">Εικονίδιο με τρεις τελείες. Εάν εμφανιστεί, υποδεικνύει πως περισσότερα γράμματα μπορούν να χρησιμοποιηθούν εάν πατηθεί παρατεταμένα.</string>
@@ -10,9 +10,9 @@
     <string name="one_handed__move_end_btn_content_description" comment="Content description for the one-handed move to right button">Μεταφορά πληκτρολογίου στα δεξιά.</string>
     <!-- Media strings -->
     <string name="settings__media__title">Εικονίδια Emoji</string>
-    <string name="media__tab__emojis" comment="Tab description for emojis in the media UI">Εικονίδια Emoji</string>
-    <string name="media__tab__emoticons" comment="Tab description for emoticons in the media UI">Εικονίδια emoticon</string>
-    <string name="media__tab__kaomoji" comment="Tab description for kaomoji in the media UI">Kaomoji</string>
+    <string name="media__tab__emojis" comment="Description of the emojis in the media UI">Εικονίδια Emoji</string>
+    <string name="media__tab__emoticons" comment="Description of the emoticons in the media UI">Εικονίδια emoticon</string>
+    <string name="media__tab__kaomoji" comment="Description of the kaomoji in the media UI">Kaomoji</string>
     <string name="prefs__media__emoji_preferred_skin_tone">Προτιμώμενος τόνος επιδερμίδας εικονιδίων emoji</string>
     <!-- Emoji strings -->
     <string name="emoji__category__smileys_emotion" comment="Emoji category name">Φατσούλες &amp; Συναισθήματα</string>

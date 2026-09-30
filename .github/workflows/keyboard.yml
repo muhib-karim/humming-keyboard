@@ -1,6 +1,6 @@
 name: keyboard
 
-# Humming keyboard (FlorisBoard base, keyboard/): unit tests, debug APK, emulator screenshots.
+# Humming keyboard (FlorisBoard base, keyboard/): unit tests, debug APK and the release APK.
 on:
   push:
     branches: ["main"]
@@ -54,7 +54,7 @@ jobs:
         run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "platforms;android-36" "build-tools;35.0.0" > /dev/null
       - name: Release APK (R8, development-key signed)
         working-directory: keyboard
-        run: ./gradlew --no-daemon :app:assembleRelease
+        run: ./gradlew --no-daemon :app:assembleRelease -Phumming.abis=arm64-v8a
       - name: sha256
         run: cd keyboard/app/build/outputs/apk/release && sha256sum *.apk | tee apk-sha256.txt && ls -l
       - uses: actions/upload-artifact@v4
@@ -64,72 +64,3 @@ jobs:
           path: keyboard/app/build/outputs/apk/release/
           retention-days: 30
 
-  screens:
-    needs: build
-    runs-on: ubuntu-latest
-    timeout-minutes: 60
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
-        with:
-          name: keyboard-apk
-          path: apk
-      - name: Enable KVM
-        run: |
-          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-          sudo udevadm control --reload-rules
-          sudo udevadm trigger --name-match=kvm
-          pip install pillow
-          echo "EMU_CORES=$(nproc)" >> "$GITHUB_ENV"
-      - name: Screenshots (API 35, x86_64, Pixel 6)
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 35
-          target: google_apis
-          arch: x86_64
-          profile: pixel_6
-          ram-size: 4096M
-          cores: ${{ env.EMU_CORES }}
-          disable-animations: false
-          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -no-boot-anim
-          script: python3 keyboard/ci/screens.py "$(find apk -name '*.apk' | head -1)" screens android/ci/clips/plain.wav
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: keyboard-screens
-          path: screens/
-          retention-days: 30
-
-  handoff:
-    needs: build
-    runs-on: ubuntu-latest
-    timeout-minutes: 45
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
-        with:
-          name: keyboard-apk
-          path: apk
-      - name: Enable KVM
-        run: |
-          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-          sudo udevadm control --reload-rules
-          sudo udevadm trigger --name-match=kvm
-          echo "EMU_CORES=$(nproc)" >> "$GITHUB_ENV"
-      - name: Gboard voice hand-off (API 35 Google Play image, Gboard preinstalled)
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 35
-          target: google_apis_playstore
-          arch: x86_64
-          profile: pixel_6
-          ram-size: 4096M
-          cores: ${{ env.EMU_CORES }}
-          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -no-boot-anim
-          script: python3 keyboard/ci/handoff.py "$(find apk -name '*.apk' | head -1)" handoff
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: keyboard-handoff
-          path: handoff/
-          retention-days: 30

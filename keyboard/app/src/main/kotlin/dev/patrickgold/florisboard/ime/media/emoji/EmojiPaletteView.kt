@@ -287,7 +287,14 @@ fun EmojiPaletteView(
 
         // Reset the pager to the first page when emojiHistory is enabled
         LaunchedEffect(emojiHistoryEnabled) {
-            pagerState.animateScrollToPage(0)
+            // Humming: with nothing used yet, open on the smileys instead of an empty "recently used" page.
+            val history = prefs.emoji.historyData.get()
+            if (emojiHistoryEnabled && history.pinned.isEmpty() && history.recent.isEmpty()) {
+                activeCategory = EmojiCategory.SMILEYS_EMOTION
+                pagerState.scrollToPage(categoryToPageNumber(EmojiCategory.SMILEYS_EMOTION))
+            } else {
+                pagerState.animateScrollToPage(0)
+            }
         }
 
         EmojiCategoriesTabRow(

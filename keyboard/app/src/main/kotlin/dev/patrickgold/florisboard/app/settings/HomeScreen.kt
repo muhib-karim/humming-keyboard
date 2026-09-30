@@ -22,6 +22,8 @@ import androidx.compose.material.icons.automirrored.outlined.Assignment
 import androidx.compose.material.icons.filled.Extension
 import androidx.compose.material.icons.filled.Gesture
 import androidx.compose.material.icons.filled.Language
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.SentimentSatisfiedAlt
 import androidx.compose.material.icons.filled.SmartButton
@@ -107,6 +109,12 @@ fun HomeScreen() = FlorisScreen {
             }
         }*/
         Preference(
+            icon = Icons.Default.Search,
+            title = "Search settings",
+            summary = "Find any setting by name",
+            onClick = { navController.navigate(Routes.Settings.Search) },
+        )
+        Preference(
             icon = Icons.Default.Mic,
             title = "Voice",
             summary = "Offline dictation, voice model, microphone",
@@ -151,6 +159,12 @@ fun HomeScreen() = FlorisScreen {
             icon = Icons.Default.SentimentSatisfiedAlt,
             title = stringRes(R.string.settings__media__title),
             onClick = { navController.navigate(Routes.Settings.Media) },
+        )
+        Preference(
+            icon = Icons.Default.Lock,
+            title = "Privacy",
+            summary = "Incognito, learning, clipboard, network",
+            onClick = { navController.navigate(Routes.Settings.Privacy) },
         )
         Preference(
             icon = Icons.Default.Extension,

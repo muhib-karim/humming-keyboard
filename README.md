@@ -27,21 +27,55 @@ The middle part is sped up 8x because emulator CPUs are slow. The text is commit
 - Long-press the mic to hand off to **Gboard voice typing** (see below).
 
 **Typing** (built on FlorisBoard)
-- Suggestions, autocorrect and next-word predictions. Swipe typing is on by default.
+- **Word prediction that reads like Gboard**: a three-slot strip with the best guess in the middle and what you typed
+  in quotes. A 156k-word English dictionary with frequencies, next-word prediction, keyboard-aware autocorrect
+  (Off / Mild / Normal / Aggressive), apostrophe fixes (dont → don't) and learning from what you type, on the phone
+  only. German, Spanish, French, Italian and Portuguese dictionaries too.
+- Emoji in the strip ("pizza" offers 🍕), emoji search with `:heart`, and text shortcuts ("omw" → your phrase).
+- Glide (swipe) typing, fed by the same dictionary.
+- Number row, long-press symbols, key sound and vibration, one-handed mode, a **floating keyboard** you drag by its
+  handle, and a split keyboard in landscape and on tablets.
+- Themes: Humming light, dark and AMOLED black, a custom accent colour, and your own **background photo**.
 - Clipboard history, on by default: a 2-column grid with timestamps, up to 100 items kept for up to a week.
-- Edit shortcuts: long-press a (select all), c (copy), x (cut), v (paste), z (undo) and y (redo). There is also an
-  edit toolbar in the suggestion bar.
+- Edit shortcuts: long-press a (select all), c (copy), x (cut), v (paste), z (undo) and y (redo).
 - Space-bar trackpad: slide to move the cursor left, right, up and down.
-- Split keyboard in landscape and on tablets.
 - Incognito mode: no learning, no clipboard history and no voice history.
-- Humming light and dark themes.
+- TalkBack reads every key, and every theme meets WCAG AA contrast.
+
+All of it works at the same time: this is AMOLED + a background photo + floating + incognito + the number row + an
+emoji suggestion, in one screenshot.
 
 | | | |
 |---|---|---|
+| ![All features together](docs/images/m6_all_together.png) | ![Prediction](docs/images/m6_completion.png) | ![Emoji search](docs/images/m6_emoji_search.png) |
+| Everything on together | "Sounds gre" → "gre" · **great** · grew | Emoji search `:heart` |
+| ![Floating keyboard](docs/images/m6_floating.png) | ![German](docs/images/m6_lang_3.png) | ![Settings search](docs/images/m6_settings_search.png) |
+| Floating keyboard | German layout and dictionary | Settings search |
 | ![Model manager](docs/images/model_manager.png) | ![Clipboard grid](docs/images/clipboard.png) | ![Dark voice panel](docs/images/dark_voice.png) |
 | Settings > Voice: model manager | Clipboard history | Voice panel (dark) |
 
-![Split keyboard in landscape](docs/images/split_landscape.png)
+## Settings
+
+One tree, every option searchable (Settings > Search) and exportable to a file (Settings > Other > Backup, and
+Restore to import):
+
+- **Voice**: model (Fast / Best), download on Wi-Fi only, delete, Clean mode, Bluetooth mic, voice incognito,
+  history retention, personal dictionary.
+- **Languages & layouts**: add languages and layouts (QWERTY, QWERTZ, AZERTY and more).
+- **Theme**: light / dark / AMOLED, day and night themes, accent colour, background photo and dim, theme editor
+  (colours, fonts, key shapes).
+- **Keyboard**: height, key spacing, font size, number row, long-press symbols and delay, one-handed, split,
+  floating, bottom offset; **Input feedback**: sound and vibration.
+- **Smartbar**: toolbar buttons (add, remove, reorder).
+- **Typing**: suggestions, **Prediction** (autocorrect strength, next word, learn from my typing, emoji), text
+  shortcuts, auto-capitalisation, double-space period, personal dictionary.
+- **Gestures**: glide typing and its trail, swipe gestures, space-bar trackpad.
+- **Clipboard**: history and retention. **Emoji**: skin tone, history, emoji suggestions.
+- **Privacy**: incognito, learning, clear learned words, block offensive words, what uses the network.
+- **Other**: backup / restore to a file, app theme. **About**: licences.
+
+The full audit (privacy, permissions, security, performance, accessibility, crash risk, licences, tests and a gap
+list against Gboard, SwiftKey and FUTO) is in [AUDIT.md](AUDIT.md).
 
 ## Offline by design
 
@@ -145,3 +179,6 @@ Humming Keyboard is licensed under the **Apache License 2.0**. See `keyboard/LIC
 
 No GPL code is included. The full list with each obligation is in `keyboard/LICENSES.md`. See `CHANGELOG.md` for
 changes.
+
+The earlier standalone voice app (M1-M3) lives in `android/` and `core/`, and its notes are in `BUILD.md` and
+`evidence/`.

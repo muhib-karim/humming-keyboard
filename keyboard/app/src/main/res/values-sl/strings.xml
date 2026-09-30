@@ -7,8 +7,8 @@
     <string name="one_handed__move_end_btn_content_description" comment="Content description for the one-handed move to right button">Premakni tipkovnico na desno.</string>
     <!-- Media strings -->
     <string name="settings__media__title">Čustvenčki</string>
-    <string name="media__tab__emojis" comment="Tab description for emojis in the media UI">Čustvenčki</string>
-    <string name="media__tab__emoticons" comment="Tab description for emoticons in the media UI">Čustvenčki</string>
+    <string name="media__tab__emojis" comment="Description of the emojis in the media UI">Čustvenčki</string>
+    <string name="media__tab__emoticons" comment="Description of the emoticons in the media UI">Čustvenčki</string>
     <!-- Emoji strings -->
     <!-- Quick action strings -->
     <string name="quick_action__arrow_up" comment="Please mind the limited available space for the quick action strings">Puščica gor</string>

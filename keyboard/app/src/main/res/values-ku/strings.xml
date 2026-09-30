@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
-    <string name="app_name">FlorisBoard</string>
+    <string name="app_name">Humming</string>
     <string name="key__phone_pause" comment="Label for the Pause key in the telephone keyboard layout">Rawestandin</string>
     <string name="key__phone_wait" comment="Label for the Wait key in the telephone keyboard layout">Li bendê bimîne</string>
     <string name="key_popup__threedots_alt" comment="Content description for the three-dots icon in a key popup">Îkona sê-dot. Eger xuya be, nîşan dide ku eger zêdetir pêl bê kirin, zêdetir tîp dikarin bên bikaranîn.</string>
@@ -10,9 +10,9 @@
     <string name="one_handed__move_end_btn_content_description" comment="Content description for the one-handed move to right button">Klavyeyê ber bi rastê ve bibe.</string>
     <!-- Media strings -->
     <string name="settings__media__title">Emûcî</string>
-    <string name="media__tab__emojis" comment="Tab description for emojis in the media UI">Emojîyan</string>
-    <string name="media__tab__emoticons" comment="Tab description for emoticons in the media UI">Hestnîşan</string>
-    <string name="media__tab__kaomoji" comment="Tab description for kaomoji in the media UI">Kaomoji</string>
+    <string name="media__tab__emojis" comment="Description of the emojis in the media UI">Emojîyan</string>
+    <string name="media__tab__emoticons" comment="Description of the emoticons in the media UI">Hestnîşan</string>
+    <string name="media__tab__kaomoji" comment="Description of the kaomoji in the media UI">Kaomoji</string>
     <string name="prefs__media__emoji_preferred_skin_tone">Tona çermê emojî ya tercîhkirî</string>
     <string name="prefs__media__emoji_preferred_hair_style">Tercîha porê emojî</string>
     <!-- Emoji strings -->

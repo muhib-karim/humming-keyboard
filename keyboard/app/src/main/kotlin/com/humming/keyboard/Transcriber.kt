@@ -23,8 +23,12 @@ class OnDeviceTranscriber(private val ctx: Context) : Transcriber {
     override fun transcribe(clip: AudioClip): String {
         CoreLoader.whyUnavailable(ctx)?.let { throw TranscriberUnavailable(it) }
         if (!ModelStore.ready(ctx)) throw TranscriberUnavailable("the speech model is still downloading")
-        val engine = CoreLoader.engine(ctx)
-        return synchronized(CoreLoader.lock) { engine.dictate(clip.toFloat32(), clip.sampleRate) }.trim()
+        val engine = CoreLoader.acquire(ctx)
+        try {
+            return synchronized(CoreLoader.lock) { engine.dictate(clip.toFloat32(), clip.sampleRate) }.trim()
+        } finally {
+            CoreLoader.done()
+        }
     }
 }
 

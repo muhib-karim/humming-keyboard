@@ -117,6 +117,11 @@ fun KeyboardScreen() = FlorisScreen {
                 entries = enumDisplayEntriesOf(OneHandedMode::class),
                 summarySwitchDisabled = stringRes(R.string.state__disabled),
             )
+            SwitchPreference(
+                prefs.keyboard.hummingFloating,
+                title = "Floating keyboard",
+                summary = "A smaller keyboard you can drag anywhere over the app",
+            )
             DialogSliderPreference(
                 prefs.keyboard.oneHandedModeScaleFactor,
                 title = stringRes(R.string.pref__keyboard__one_handed_mode_scale_factor__label),

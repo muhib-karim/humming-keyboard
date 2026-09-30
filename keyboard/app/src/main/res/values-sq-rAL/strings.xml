@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
-    <string name="app_name">TastieraFloris</string>
+    <string name="app_name">Humming</string>
     <string name="key__phone_pause" comment="Label for the Pause key in the telephone keyboard layout">Ndalo</string>
     <string name="key__phone_wait" comment="Label for the Wait key in the telephone keyboard layout">Prit</string>
     <string name="key_popup__threedots_alt" comment="Content description for the three-dots icon in a key popup">Ikonë me tre pika. Nëse është e dukshme, do të thotë që më shumë shkronja mund te përdoren nëse shtypen më gjatë.</string>
@@ -10,9 +10,9 @@
     <string name="one_handed__move_end_btn_content_description" comment="Content description for the one-handed move to right button">Lëviz tastierën në të djathtë.</string>
     <!-- Media strings -->
     <string name="settings__media__title">Emojis</string>
-    <string name="media__tab__emojis" comment="Tab description for emojis in the media UI">Emojis</string>
-    <string name="media__tab__emoticons" comment="Tab description for emoticons in the media UI">Emoticons</string>
-    <string name="media__tab__kaomoji" comment="Tab description for kaomoji in the media UI">Kaomoji</string>
+    <string name="media__tab__emojis" comment="Description of the emojis in the media UI">Emojis</string>
+    <string name="media__tab__emoticons" comment="Description of the emoticons in the media UI">Emoticons</string>
+    <string name="media__tab__kaomoji" comment="Description of the kaomoji in the media UI">Kaomoji</string>
     <string name="prefs__media__emoji_preferred_skin_tone">Ngjyra e preferuar e lëkurës</string>
     <string name="prefs__media__emoji_preferred_hair_style">Modeli i preferuar i flokëve</string>
     <!-- Emoji strings -->

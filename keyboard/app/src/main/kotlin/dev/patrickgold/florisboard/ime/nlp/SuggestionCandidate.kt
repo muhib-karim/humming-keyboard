@@ -116,6 +116,21 @@ data class WordSuggestionCandidate(
 }
 
 /**
+ * Humming: the word exactly as typed, shown in quotes on the left of the strip when autocorrect (or a better guess)
+ * would replace it; tapping it commits the typed text unchanged.
+ */
+data class LiteralWordCandidate(
+    override val text: CharSequence,
+    override val sourceProvider: SuggestionProvider? = null,
+) : SuggestionCandidate {
+    override val secondaryText: CharSequence? = null
+    override val confidence: Double = 0.3
+    override val isEligibleForAutoCommit: Boolean = false
+    override val isEligibleForUserRemoval: Boolean = false
+    override val icon: ImageVector? = null
+}
+
+/**
  * Default implementation for a clipboard candidate. Should generally not be used by a suggestion provider, except by
  * the clipboard suggestion provider.
  *

@@ -478,9 +478,22 @@ abstract class FlorisPreferenceModel : PreferenceModel() {
             key = "keyboard__humming_split",
             default = true,
         )
+        // Humming: floating keyboard (a movable card over the app), its position in dp.
+        val hummingFloating = boolean(
+            key = "humming__floating",
+            default = false,
+        )
+        val hummingFloatOffsetX = int(
+            key = "humming__float_x",
+            default = 24,
+        )
+        val hummingFloatOffsetY = int(
+            key = "humming__float_y",
+            default = 120,
+        )
         val numberRow = boolean(
             key = "keyboard__number_row",
-            default = false,
+            default = true /* Humming: number row on */,
         )
         val hintedNumberRowEnabled = boolean(
             key = "keyboard__hinted_number_row_enabled",
@@ -580,7 +593,8 @@ abstract class FlorisPreferenceModel : PreferenceModel() {
         )
         val incognitoDisplayMode = enum(
             key = "keyboard__incognito_indicator",
-            default = IncognitoDisplayMode.DISPLAY_BEHIND_KEYBOARD,
+            // Humming: a clear incognito icon in the toolbar (the faint watermark behind the keys was easy to miss).
+            default = IncognitoDisplayMode.REPLACE_SHARED_ACTIONS_TOGGLE,
         )
 
         fun keyHintConfiguration(): KeyHintConfiguration {
@@ -738,7 +752,33 @@ abstract class FlorisPreferenceModel : PreferenceModel() {
         )
         val displayMode = enum(
             key = "suggestion__display_mode",
-            default = CandidatesDisplayMode.DYNAMIC_SCROLLABLE,
+            // Humming: a fixed three-slot strip with the best guess in the middle (was DYNAMIC_SCROLLABLE).
+            default = CandidatesDisplayMode.CLASSIC,
+        )
+        // Humming: prediction controls (Settings > Typing > Prediction).
+        val autocorrectStrength = int(
+            key = "humming__autocorrect_strength",
+            default = 2,
+        )
+        val nextWordPrediction = boolean(
+            key = "humming__next_word_prediction",
+            default = true,
+        )
+        val learnFromTyping = boolean(
+            key = "humming__learn_from_typing",
+            default = true,
+        )
+        val suggestionCount = int(
+            key = "humming__suggestion_count",
+            default = 3,
+        )
+        val textShortcuts = string(
+            key = "humming__text_shortcuts",
+            default = com.humming.keyboard.predict.TextShortcuts.DEFAULTS,
+        )
+        val emojiInStrip = boolean(
+            key = "humming__emoji_in_strip",
+            default = true,
         )
         val blockPossiblyOffensive = boolean(
             key = "suggestion__block_possibly_offensive",
@@ -757,6 +797,15 @@ abstract class FlorisPreferenceModel : PreferenceModel() {
 
     val theme = Theme()
     inner class Theme {
+        // Humming: a photo behind the keys (copied into app storage) and how much it is dimmed (0-80 %).
+        val hummingBackgroundImage = string(
+            key = "humming__background_image",
+            default = "",
+        )
+        val hummingBackgroundDim = int(
+            key = "humming__background_dim",
+            default = 35,
+        )
         val mode = enum(
             key = "theme__mode",
             default = ThemeMode.FOLLOW_SYSTEM,

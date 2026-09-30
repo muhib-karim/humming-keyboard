@@ -77,7 +77,7 @@ class TextCleanupTest {
 
     @Test fun p0_14_dictionary() {
         assertEquals("Open Humming and ping Okonkwo.", clean("open humming and ping okonkwo"))
-        assertEquals("Ask Nova Prime.", TextCleanup.apply("ask nova   prime", listOf("Nova Prime")))
+        assertEquals("Ask Nova Beta.", TextCleanup.apply("ask nova   beta", listOf("Nova Beta")))
     }
 
     @Test fun emptyStaysEmpty() {

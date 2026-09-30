@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
-    <string name="app_name">FlorisBoard</string>
+    <string name="app_name">Humming</string>
     <string name="key__phone_pause" comment="Label for the Pause key in the telephone keyboard layout">إيقاف مؤقت</string>
     <string name="key__phone_wait" comment="Label for the Wait key in the telephone keyboard layout">انتظر</string>
     <string name="key_popup__threedots_alt" comment="Content description for the three-dots icon in a key popup">أيقونة ثلاث نقاط. إذا كانت ظاهرة ، تشير إلى أنه يمكن استخدام المزيد من الأحرف إذا تم الضغط عليها لفترة أطول.</string>
@@ -10,9 +10,9 @@
     <string name="one_handed__move_end_btn_content_description" comment="Content description for the one-handed move to right button">نقل لوحة المفاتيح إلى اليمين.</string>
     <!-- Media strings -->
     <string name="settings__media__title">الرموز التعبيرية</string>
-    <string name="media__tab__emojis" comment="Tab description for emojis in the media UI">الرموز التعبيرية</string>
-    <string name="media__tab__emoticons" comment="Tab description for emoticons in the media UI">وجوه تعبيرية</string>
-    <string name="media__tab__kaomoji" comment="Tab description for kaomoji in the media UI">كاوموجي</string>
+    <string name="media__tab__emojis" comment="Description of the emojis in the media UI">الرموز التعبيرية</string>
+    <string name="media__tab__emoticons" comment="Description of the emoticons in the media UI">وجوه تعبيرية</string>
+    <string name="media__tab__kaomoji" comment="Description of the kaomoji in the media UI">كاوموجي</string>
     <string name="prefs__media__emoji_preferred_skin_tone">لون الرموز التعبيرية المفضل</string>
     <string name="prefs__media__emoji_preferred_hair_style">نوع الشعر المفضل للرموز التعبيرية</string>
     <string name="prefs__media__emoji_history__title" comment="Preference group title">سجل الرموز التعبيرية</string>

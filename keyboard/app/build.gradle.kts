@@ -102,8 +102,10 @@ android {
         buildConfigField("String", "BUILD_COMMIT_HASH", "\"${getGitCommitHash().get()}\"")
         buildConfigField("String", "FLADDONS_API_VERSION", "\"v~draft2\"")
         buildConfigField("String", "FLADDONS_STORE_URL", "\"beta.addons.florisboard.org\"")
-        // Humming: the on-device engine ships for 64-bit ARM phones and x86_64 emulators only.
-        ndk { abiFilters += listOf("arm64-v8a", "x86_64") }
+        // Humming: the on-device engine ships for 64-bit ARM phones and x86_64 emulators only. The release job builds
+        // the phone APK with -Phumming.abis=arm64-v8a (13 MB smaller); debug builds keep both for the CI emulator.
+        val hummingAbis = (project.findProperty("humming.abis") as String?)?.split(',')?.map { it.trim() }?.filter { it.isNotEmpty() }
+        ndk { abiFilters += hummingAbis ?: listOf("arm64-v8a", "x86_64") }
 
         sourceSets {
             maybeCreate("main").apply {
