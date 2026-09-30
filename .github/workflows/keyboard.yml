@@ -26,6 +26,9 @@ jobs:
           java-version: "17"
       - name: Android SDK platform 36
         run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "platforms;android-36" "build-tools;35.0.0" > /dev/null
+      - name: Restore gradlew exec bit (web upload drops file mode)
+        working-directory: keyboard
+        run: chmod +x gradlew
       - name: Unit tests + debug APK
         working-directory: keyboard
         # app module tests: upstream v0.5.2 lib:snygg tests reference a missing package and do not compile
@@ -52,6 +55,9 @@ jobs:
           java-version: "17"
       - name: Android SDK platform 36
         run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "platforms;android-36" "build-tools;35.0.0" > /dev/null
+      - name: Restore gradlew exec bit (web upload drops file mode)
+        working-directory: keyboard
+        run: chmod +x gradlew
       - name: Release APK (R8, development-key signed)
         working-directory: keyboard
         run: ./gradlew --no-daemon :app:assembleRelease -Phumming.abis=arm64-v8a
