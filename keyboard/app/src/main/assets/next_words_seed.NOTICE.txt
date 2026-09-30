@@ -1,0 +1,3 @@
+next_words_seed.tsv: a small hand-written list of common English word pairs (previous word, next word, rank weight),
+written for this project and released under the project's licence. It only seeds the next-word strip on a fresh
+install; pairs the user types or dictates are learned on the device and rank above it.

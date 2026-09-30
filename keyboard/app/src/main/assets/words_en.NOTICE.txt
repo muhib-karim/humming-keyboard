@@ -1,0 +1,5 @@
+words_en.txt: 57,208 words with a frequency class (0-255), taken from en_US_wordlist.combined in the Android Open
+Source Project LatinIME dictionaries (packages/inputmethods/LatinIME/dictionaries): the 60,000 most frequent entries,
+minus entries flagged offensive, all-caps abbreviations and one personal name.
+Copyright (C) The Android Open Source Project, licensed under the Apache License, Version 2.0:
+http://www.apache.org/licenses/LICENSE-2.0
