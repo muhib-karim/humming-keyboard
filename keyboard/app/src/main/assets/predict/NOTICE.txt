@@ -21,6 +21,21 @@ the English sentences of the Tatoeba Project (https://tatoeba.org), downloaded 2
   Tatoeba is a translation corpus, so about twenty everyday messaging contexts ("see you", "on my", "let me",
   "running", "no", ...) are boosted towards chat phrasing by a short hand-written list (Humming, Apache-2.0).
 
+ngrams_de.tsv, ngrams_es.tsv, ngrams_fr.tsv, ngrams_it.tsv, ngrams_pt.tsv - next-word statistics (one- and two-word
+contexts, top following words with counts) counted by Humming's keyboard/lm/ngrams.py from:
+  * the German, Spanish, French, Italian and Portuguese sentences of the Tatoeba Project (https://tatoeba.org),
+    downloaded 2026-09-30, Creative Commons Attribution 2.0 France (CC BY 2.0 FR),
+    https://creativecommons.org/licenses/by/2.0/fr/ ;
+  * the sentence lists of Mozilla Common Voice (github.com/common-voice/common-voice, server/data/<language>:
+    sentence-collector.txt, and frasi.txt for Italian), dedicated to the public domain under CC0 1.0,
+    https://creativecommons.org/publicdomain/zero/1.0/ .
+  Only aggregated counts are distributed, no sentences. 1 % of sentences (by hash) are held out for testing.
+
+hlm_en.bin - Humming's English neural next-word model: a word-level LSTM (16,000 words, 128-dimensional tied
+embeddings, 256 hidden units, int8 weights) trained by keyboard/lm/train.py on the English sentences of Tatoeba
+(CC BY 2.0 FR, see above) and Common Voice (sentence-collector.txt, CC0 1.0), minus the held-out 1 %. The model
+weights are Humming's own work, Apache License 2.0; the vocabulary is drawn from lexicon_en.tsv.
+
 emoji_en.tsv - English word -> emoji hints for the suggestion strip, derived from the Unicode CLDR v45 emoji
 annotations already bundled by FlorisBoard (assets/ime/media/emoji/en.txt; Unicode License v3,
 https://www.unicode.org/license.txt).

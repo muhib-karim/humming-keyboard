@@ -1,0 +1,600 @@
+tatoeba	Ein Grünfink singt für Piroschka auf dem Zaun.
+tatoeba	Ich habe Tom geliebt.
+tatoeba	Das ist in den 80ern passiert.
+tatoeba	Streng genommen bezeichnet Soda das Decahydrat des Natriumcarbonats, während Natron der Trivialname für Natriumhydrogencarbonat ist.
+tatoeba	Du solltest wissen, dass das nicht möglich ist.
+tatoeba	Ich arbeite als Sekretärin in Sarajewo.
+tatoeba	Ich muss scheißen.
+tatoeba	Er wird schnell müde.
+tatoeba	Ich werde einen Füller von ihr kaufen.
+tatoeba	Könnten wir bis morgen warten?
+tatoeba	Narren stürzen sich auf etwas, wovor Engel zurückschrecken.
+tatoeba	Ich fühle mich oft in meinen Grenzen verletzt.
+tatoeba	Ich will nicht, daß er denkt, ich hasse ihn.
+tatoeba	Wegen meiner direkten Art kommt es immer wieder vor, dass ich in irgendein Fettnäpfchen stapfe.
+tatoeba	Tom war in Harvard.
+tatoeba	Ihre großzügige Unterstützung hat dies möglich gemacht.
+tatoeba	Hast du schon einmal die Freiheitsstatue besucht?
+tatoeba	In der Ferne war ein Berg sichtbar.
+tatoeba	Er ist mit den falschen Fuß aufgestanden.
+tatoeba	Sie sehen nicht sehr glücklich aus.
+tatoeba	Es sind nicht die Dinge, die uns beunruhigen, sondern unsere Meinung über die Dinge.
+tatoeba	Ist das ein Zufall?
+tatoeba	Es ist ganz leicht, sich das Rauchen abzugewöhnen; ich habe es schon hundert Mal geschafft.
+tatoeba	Maria glaubte, alle Männer wären so wie Tom.
+tatoeba	Hat sie keine Angst?
+tatoeba	Er hat die Wohnung, die neben der Marias ist, gekauft.
+tatoeba	Die meisten Schlösser sind von einem Burggraben umgeben.
+tatoeba	Bei der Urlaubsübergabe fiel auf, dass Schmidt keine Aufgaben hatte.
+tatoeba	Ich brauche ein Mauspad.
+tatoeba	Ich bin überzeugt, dass ich das machen sollte.
+tatoeba	Wäre euch eine Tasse Kaffee gefällig?
+tatoeba	Wir sollten wahrscheinlich Tom fragen.
+tatoeba	Das war's, ich habe den Überblick verloren.
+tatoeba	Du brauchst nächsten Monat nicht nach Boston.
+tatoeba	Was veranlasst Sie, das zu glauben?
+tatoeba	Tom ist sehr vorsichtig, nicht wahr?
+tatoeba	Warum sagst du mir nicht, was gestern Abend passiert ist?
+tatoeba	Mich nervt, daß sie, obwohl ich dagegen bin, darauf besteht, es zu kaufen.
+tatoeba	Es gibt auch französische Touristen.
+tatoeba	Beim Skat gilt die Reihenfolge: Kreuz, Pik, Herz, Karo.
+tatoeba	Hoffentlich wird unsere Welt nie einsprachig, monokulturell und einfarbig werden.
+tatoeba	Bist du bereit, am Wochenende zu arbeiten?
+tatoeba	Tom macht seine Arbeit schlecht.
+tatoeba	Sie hat sich entschieden, Ärztin zu werden.
+tatoeba	Tom beteiligt sich an den versprochenen Verhandlungen.
+tatoeba	Man kann in den Bergen wandern.
+tatoeba	Ich habe euch lachen sehen.
+tatoeba	Sie finden Mary wahrscheinlich süß.
+tatoeba	An Pfingsten fahren wir zu meinen Eltern.
+tatoeba	Geht ihr auch?
+tatoeba	Tom schien nicht sonderlich erfreut, mich zu sehen.
+tatoeba	Sie tat so, als höre sie mich nicht.
+tatoeba	Tom unterhält sich in der Küche mit seiner Mutter.
+tatoeba	Um sich wach zu halten, trank Tom ein paar Tassen Kaffee.
+tatoeba	Wer starb und machte dich zum König?
+tatoeba	Ich habe schon seit gestern Durchfall.
+tatoeba	Ich habe uns beim Italiener einen Tisch für sechs Personen reserviert.
+tatoeba	Wahrhaftigkeit ist weniger ein Zweig als eine Blüte der sittlichen Mann-Stärke.
+tatoeba	Haben Tom und Maria Französisch gesprochen?
+tatoeba	In diesem Wald gibt es keine Dachse.
+tatoeba	Tom soll operiert werden.
+tatoeba	Er lebte bescheiden.
+tatoeba	Die EU fordert auch eine Untersuchung des Vorfalls und plant, für die Umleitung des Flugzeugs verantwortliche belarussische Beamte zu sanktionieren.
+tatoeba	Wir bieten Ihnen einen guten Job.
+tatoeba	Ratten sind größer als Mäuse.
+tatoeba	Mir ist mein Ohrring runtergefallen.
+tatoeba	Ist es ein gutes Stück?
+tatoeba	Ich meine: "Ehrlich währt am längsten."
+tatoeba	Die Kartoffel ist ein wohlgeschmeckendes Gemüse.
+tatoeba	Herr Jones unterrichtet uns in englischer Konversation.
+tatoeba	Das habe ich ja noch nie gehört.
+tatoeba	Du wirst beim Reden ständig unterbrochen.
+tatoeba	Ich war mit den Ergebnissen zufrieden.
+tatoeba	Ich komme aus Texas.
+tatoeba	Tom ist viel kleiner und wiegt bedeutend weniger als Maria.
+tatoeba	Ich habe Maria versprochen, daß ich auf sie warten würde.
+tatoeba	Nun kamen sie in einen Bereich, in dem blaue Bohnen durch die Luft flogen.
+tatoeba	Tom weiß offensichtlich Bescheid.
+tatoeba	Ich muss es verlegt haben.
+tatoeba	Sie werden sich mit ihm beschäftigen.
+tatoeba	Ich bin noch Anfänger im Esperanto.
+tatoeba	Geben Sie mir mein Geld zurück!
+tatoeba	Vielen Dank für dein Geschenk.
+tatoeba	Ich habe Deutsch drei Jahre in der Schule und zwei Jahre auf der Universität gelernt.
+tatoeba	Tom hat im Moment keine Freundin.
+tatoeba	Der Zug hat 30 Minuten Verspätung.
+tatoeba	Ich lassse mir nicht den schwarzen Peter zuschieben.
+tatoeba	Der Gefangene wurde freigelassen.
+tatoeba	Esst weniger Rindfleisch.
+tatoeba	Niemand will noch über Bücher sprechen.
+tatoeba	Der Schlüssel zu deinem Erfolg liegt in deiner Persönlickeit.
+tatoeba	Er konnte nicht weitergehen.
+tatoeba	Tom und Maria denken nur ans Geldverdienen.
+tatoeba	Ich traue dir nicht.
+tatoeba	Lass uns doch an der nächsten Raststätte rausfahren.
+tatoeba	Ich dachte, ihr wollt nicht darüber reden, was passiert ist.
+tatoeba	Mein Vater ist Elektriker.
+tatoeba	Du wirst schon bald überzeugt sein, dass ich recht habe.
+tatoeba	Was hast du noch in deinem Ärmel?
+tatoeba	Es kommt mir nicht sehr sinnvoll vor, aber Tom hat sich gegen ein Studium entschieden.
+tatoeba	Wir sehen Temperaturen, die man eher aus dem Nahen Osten oder Nordafrika kennt.
+tatoeba	Sagen Sie Tom, er soll mit dem Singen aufhören.
+tatoeba	Sie haben mich zum Lachen gebracht.
+tatoeba	Ich will euch alle beide in meinem Büro sehen.
+tatoeba	Schreibe mir, sobald du dort angekommen bist.
+tatoeba	Machen Sie sich keine Umstände!
+tatoeba	Es ging Tom nicht besonders gut, aber er fuhr trotzdem zur Arbeit.
+tatoeba	Oben auf dem Berg gab es zwei Burgen und ein Turm.
+tatoeba	Es ist sehr gefährlich, diese Straße zu überqueren.
+tatoeba	Ich wusste nicht, was ich tat.
+tatoeba	Physiker, Biologen und Ingenieure arbeiten gemeinsam an der Verwirklichung diese Vorhabens.
+tatoeba	Maria trug auf der Feier lange, knallrote künstliche Fingernägel.
+tatoeba	Besonders hat mich der Farbenreichtum der Korallen beeindruckt.
+tatoeba	Ruf meinen Mann an.
+tatoeba	Keiner kann das so gut wie er.
+tatoeba	Ich habe dich beim Lernen beobachtet.
+tatoeba	Naoko ist eine gute Schwimmerin.
+tatoeba	Tom und Maria sagten Johannes, sie glaubten, Elke sei nach Hause gefahren.
+tatoeba	Ich muss hart arbeiten, um den Test zu bestehen.
+tatoeba	Nichts Vergleichbares ist mir durch den Kopf gekommen.
+tatoeba	Dass geht über meine Kräfte hinaus.
+tatoeba	Wie kommst du nur mit diesem Geruch aus?
+tatoeba	Wenn man im Sommer einen Tag faulenzt, hungert man im Winter zehn Tage lang.
+tatoeba	Ihr schuldet mir dreißig Dollar.
+tatoeba	Wir haben das Auto neu gekauft.
+tatoeba	Selbst hat er nichts gesagt, und ich habe nicht gefragt.
+tatoeba	Sie hingen die Wäsche auf.
+tatoeba	Ich möchte, dass du sie in Ruhe lässt.
+tatoeba	Wie geht es Ihnen, Tom?
+tatoeba	Warum diese Frage?
+tatoeba	Wenn wir in Paris ankommen, müssen wir unsere Freunde anrufen.
+tatoeba	Wem gehört dieses Geld?
+tatoeba	Sie behauptet, sie spreche Französisch.
+tatoeba	Voller Abscheu schreckte ich zurück.
+tatoeba	Niemand würde viel in Gesellschaften sprechen, wenn er sich bewusst wäre, wie oft er die andern missversteht.
+tatoeba	Das Dienstmädchen hütet das Bett.
+tatoeba	Kranke Leute neigen zu Pessimismus.
+tatoeba	Haben Sie schon über eine Therapie nachgedacht?
+tatoeba	Wo wirst du nächsten Sommer die Ferien verbringen?
+tatoeba	Tom schimpfte mit Maria, weil sie nicht angerufen hatte, um mitzuteilen, dass sie sich verspäten würde.
+tatoeba	Hochgeschossene Pappeln und hübsche Büsche laufen den schattigen Weg entlang zum Schloss.
+tatoeba	Ich hatte gesungen.
+tatoeba	Er hat überhaupt keine Phantasie.
+tatoeba	Was hochwertige Weine anbetrifft, so kann sich kein Land mit Frankreich messen.
+tatoeba	Hast du je auf einer Feier getanzt?
+tatoeba	Maria nahm sich noch eine Portion Kartoffelbrei.
+tatoeba	Sie isst einen Apfel.
+tatoeba	Er ist mein Nachbar, aber ich kenne ihn nicht gut.
+tatoeba	Weißt du, wohin wir gehen?
+tatoeba	Eines Tages werde ich dich finden.
+tatoeba	Willst du nicht reich sein?
+tatoeba	Erscheint dir das vernünftig?
+tatoeba	Der Eingang zur Höhle wird von einem Drachen blockiert.
+tatoeba	Wer hat geklingelt?
+tatoeba	Tom behauptete, er habe Maria in Notwehr erschossen.
+tatoeba	Außenpolitik ist Tourismus auf Staatskosten.
+tatoeba	Würdest du bitte das Fenster schließen, bevor du gehst?
+tatoeba	Denkst du, wir hätten so viel Geld, dass wir für seinen Transport einen Wagen brauchen?
+tatoeba	Vermisst du das nicht?
+tatoeba	Maria sah Tom dabei, wie er mit einer Mitarbeiterin herumschäkelte.
+tatoeba	Die Anzahl von Touristen ist in den letzten Jahren beträchtlich gestiegen.
+tatoeba	Meine Schwester will eine Autoreise durch Europa unternehmen.
+tatoeba	Wir haben ihn absichtlich übergangen.
+tatoeba	Wir lebten in Algier seit über einem Jahr.
+tatoeba	Was für Würmer gibt es dort?
+tatoeba	Man benutzt die Computer für die Arbeit und zum Lernen.
+tatoeba	Sowohl Tom als auch Maria haben großen Hunger.
+tatoeba	Die beiden Freunde tranken zusammen sieben Bier.
+tatoeba	Ich will nichts mehr mit euch zu tun haben.
+tatoeba	Homer soll blind gewesen sein.
+tatoeba	Ich bin schon seit Monaten nicht mehr in der Kabylei gewesen.
+tatoeba	Du erinnerst dich nicht, doch ich werde es niemals vergessen.
+tatoeba	Es besteht ein großer Unterschied zwischen einem Menschen, der wütet, und einem Menschen, der lacht.
+tatoeba	Die Vereinte Nationen wird eine Weltregierung?
+tatoeba	Also habt ihr schließlich doch beschlossen zu kommen.
+tatoeba	Wir werden zu Fuß hinaufgehen.
+tatoeba	Heimat ist da, wo ich verstehe und wo ich verstanden werde.
+tatoeba	Mein jüngerer Bruder geht noch nicht zur Schule.
+tatoeba	Ich spreche Englisch nicht so gut.
+tatoeba	Ich werde einige andere Bücher lesen.
+tatoeba	Ich sagte, hier ist niemand.
+tatoeba	Das soll dich nicht aufhalten.
+tatoeba	Es gibt genauso viele Museen wie Kirchen.
+tatoeba	Ich will nicht, dass du mit dem aufhörst, was du tust.
+tatoeba	Sie ist eine Katzenliebhaberin.
+tatoeba	Sie boten Hilfe an.
+tatoeba	Pass ja auf, sonst...!
+tatoeba	Ich esse jeden Tag zum Frühstück ein gekochtes Ei.
+tatoeba	Du siehst perfekt aus.
+tatoeba	Maria passt auf wie ein Schießhund.
+tatoeba	Der Junge zog sich aus und schlüpfte in seinen Schlafanzug.
+tatoeba	Tom erschien wie immer nicht pünktlich.
+tatoeba	Was möchtest du heute nachmittag machen?
+tatoeba	Ich hatte nicht erwartet, so früh hier zu sein.
+tatoeba	Ich muss meine Beine ausstrecken.
+tatoeba	Tom geht nach Südamerika, um Spanisch zu lernen.
+tatoeba	Tom wurde wegen Diebstahls entlassen.
+tatoeba	Ihr werdet euer Geld zurückbekommen.
+tatoeba	Was hat Tom damit zu tun?
+tatoeba	Er hätte sich einen Gebrauchtwagen kaufen sollen.
+tatoeba	Gebt mir Bescheid, wenn ich helfen muss!
+tatoeba	Bitte seh dir meinen ersten Beitrag an und lass mich wissen, was du darüber denkst.
+tatoeba	Tom war wirklich verärgert.
+tatoeba	Sind das hier deine Handschuhe?
+tatoeba	Vergiss nicht, deinen Wecker zu stellen.
+tatoeba	Tom weiß nicht, dass er in der Scheiße sitzt.
+tatoeba	Wie alt sind sie?
+tatoeba	Ich werde dir ein wenig Karate beibringen.
+tatoeba	Machen wir doch eine Schneeballschlacht!
+tatoeba	Was hat Sie dazu inspiriert, das zu tun?
+tatoeba	Tom hat sich noch nicht an die Wirklichkeit gewöhnt.
+tatoeba	Könnt ihr irgendwelche Zauberkunststückchen?
+tatoeba	Das ist nicht mein Fall.
+tatoeba	Wir haben darüber geredet, was wir machen könnten.
+tatoeba	Ich bin mir sicher, dass du dein Wort halten wirst.
+tatoeba	In der Politik gibt es keine wirklichen Freundschaften, nur Zweckbündnisse auf Zeit.
+tatoeba	Ich traf ihn um die Mittagszeit.
+tatoeba	War das ein Witz?
+tatoeba	Die neue Biografie des Prinzen zeigt ihn in einem wenig schmeichelhaften Licht.
+tatoeba	Er ist repariert worden.
+tatoeba	Sie gaben nie auf.
+tatoeba	Wohin habe ich denn meine Brille verlegt?
+tatoeba	Die Oper ist nicht vorbei, bevor die fette Dame singt.
+tatoeba	Tom möchte Pilot werden.
+tatoeba	Ich fragte Tom, warum er wütend sei.
+tatoeba	Dieses Jahr hat mein Garten keine einzige Feige hervorgebracht.
+tatoeba	Dies wird das Letzte sein.
+tatoeba	Die Gall-Peters-Projektion war umstritten.
+tatoeba	Du willst es, oder?
+tatoeba	Du hast also doch eine Freundin!
+tatoeba	Wir haben einander nicht nur zugehört, sondern auch wirklich verstanden.
+tatoeba	Traue niemandem hier!
+tatoeba	Tom nahm die Fernbedienung und fing an, die Kanäle durchzugehen.
+tatoeba	Seid ihr in Form?
+tatoeba	Alles, was ich weiß, ist, dass ich nicht alles weiß.
+tatoeba	Tom ist ein eiskalter Kopfmensch.
+tatoeba	Wollen Sie damit sagen, daß ich häßlich bin?
+tatoeba	Mit dieser Creme schütze ich mich vor Sonnenbrand.
+tatoeba	Sie antwortete, dass sie jenen Mann noch nie gesehen habe.
+tatoeba	Erfolgreich werben heißt, den Mut haben anders zu sein.
+tatoeba	Wenn er Englisch sprechen könnte, würde ich ihn sofort einstellen.
+tatoeba	Anwendbar ist nur das Recht der Bundesrepublik Deutschland.
+tatoeba	Ich habe mich entschlossen, ein Auto zu kaufen.
+tatoeba	Wie ihr seht, habe ich damit mal angefangen.
+tatoeba	Ich hab kein Handy.
+tatoeba	„Unternehmen Seelöwe“ war der deutsche Deckname für die geplante Invasion Großbritanniens.
+tatoeba	Der aussichtsreichste Weg, sich mit einem Menschen anzufreunden, ist, mit ihm über ihn selbst zu sprechen.
+tatoeba	Alten Schmutz muss man nicht aufrühren.
+tatoeba	Passiert Ihnen das manchmal?
+tatoeba	Ohne eine Aufgabe fühle ich mich leer.
+tatoeba	Diesmal hatte sich Martin etwas ganz Besonderes ausgedacht.
+tatoeba	Was ist Ihre E-Mail-Adresse?
+tatoeba	Sie hat vor einer halben Stunde mit mir gesprochen.
+tatoeba	Sprechen Sie Georgisch?
+tatoeba	Wievielmal in der Stunde fahren die Busse hier ab?
+tatoeba	Nichts lief nach Plan.
+tatoeba	Wir wohnen in Kasan.
+tatoeba	Gehe dorthin zurück, wo du hingehörst!
+tatoeba	Lassen Sie mich Ihnen mit dem Gepäck helfen.
+tatoeba	Gestern war sie noch kerngesund.
+tatoeba	Man kann nicht von allem Flachs feine Seide spinnen.
+tatoeba	Dieses Medikament hilft nicht.
+tatoeba	Willst du noch Tee?
+tatoeba	Bitte schau mich nicht so an.
+tatoeba	Er ging in die Stadt, um sich zu amüsieren.
+tatoeba	Sie wusste nicht, was sie sagen sollte.
+tatoeba	Ich hoffe, du verstehst das.
+tatoeba	Thomas tötete die Ratte mit einem Stock.
+tatoeba	Billy ist sehr groß für sein Alter.
+tatoeba	Tom geht ins mineralogische Institut.
+tatoeba	Ich hätte Tom nicht für den Mörder gehalten.
+tatoeba	Die Regierung hat einen beispiellosen Propagandafeldzug organisiert.
+tatoeba	Es tut nicht not, daß Sie das noch einmal tun.
+tatoeba	Gewölle von Eulen können Aufschluss über die im Jagdgebiet der Tiere vorkommende Fauna geben.
+tatoeba	Tom hätte bis Montag warten sollen, um zurück nach Boston zu fahren.
+tatoeba	Der Waldkauz war in Deutschland Vogel des Jahres zweitausendsiebzehn.
+tatoeba	Viele mächtige Nationen konkurrieren um die Quantenüberlegenheit.
+tatoeba	Tom wird Sie nicht mehr belästigen.
+tatoeba	Tom ist nicht im Wasser.
+tatoeba	Der Träger der Schule ist die Stadt Köln.
+tatoeba	Deine Prüfungsergebnisse sind ausgezeichnet.
+tatoeba	Ich will Zeit statt Geld.
+tatoeba	Wußtest du nicht, daß du diesen Kurs nicht schaffen würdest?
+tatoeba	Maria faltete fein säuberlich ihre Sachen zusammen und legte sie in die Schubladen ihrer Kommode.
+tatoeba	Bist du glücklich mit Maria?
+tatoeba	Tom ist mit einem Dolch erstochen worden.
+tatoeba	In Japan sind das Frühlings- und das Herbstäquinoktium nationale Feiertage, das Sommer- und das Wintersolstitium jedoch nicht.
+tatoeba	Ein Kilogramm Kartoffeln kostet heute fünfunddreißig Eurocent.
+tatoeba	In meiner Kindheit gab es noch Fleißkärtchen in der Schule, und die sogenannte Prügelstrafe war noch nicht abgeschafft.
+tatoeba	Das störte Tom überhaupt nicht.
+tatoeba	Meine Großmutter hat ein schwaches Herz.
+tatoeba	Der Lehrer behauptete, dass wir bei ihm in drei Monaten alle fließend Französisch würden sprechen können.
+tatoeba	Meine Katzen werden begeistert davon sein.
+tatoeba	Ich kann dir es nicht sagen, das ist nicht öffentlich.
+tatoeba	Er blieb ein armer Mann.
+tatoeba	Okay, lass uns jetzt gehen.
+tatoeba	Trinkst du lieber Rotwein oder Weißwein?
+tatoeba	Gebt mir mein Portemonnaie zurück!
+tatoeba	Tom erzählte Mary, dass das Erdwärmekraftwerk im bayerischen Landau aufgrund großer wirtschaftlicher Verluste kaltgestellt worden sei.
+tatoeba	Wir haben einen Zeugen.
+tatoeba	Ich habe bisher nichts verstanden.
+tatoeba	Das Deutschland von heute ist nicht mehr das, was es vor zehn Jahren war.
+tatoeba	Mögt ihr scharfes Essen?
+tatoeba	Sie werden drei Uhr an Ort und Stelle sein.
+tatoeba	Tom und Maria sind Ärzte.
+tatoeba	Warum warst du gestern nicht in der Diskothek?
+tatoeba	Ist das Museum heute geöffnet?
+tatoeba	Er ist ein langsamer Esser, nicht?
+tatoeba	Ich war zu müde zum Weiterarbeiten.
+tatoeba	Das ist die Kirche, in der wir geheiratet haben.
+tatoeba	Tom entwickelte Gefühle für seine beste Freundin.
+tatoeba	Dir entgeht all der schöne Schnee.
+tatoeba	Sie haben schon angefangen.
+tatoeba	Diese Konferenz wird in einer der lebendigsten und modernsten Städte der Welt stattfinden: in Schanghai.
+tatoeba	Er ist äußerst kompetent.
+tatoeba	Tom verschaffte sich mit Hilfe des Schlüssels, den Maria ihn gegeben hatte, Zugang zum Haus.
+tatoeba	Wer zuerst zuckt, hat verloren.
+tatoeba	Der Bär war schon fast so nah, dass wir ihn streicheln konnten.
+tatoeba	Ich sehe, daß ihr mit dem Rauchen aufgehört habt.
+tatoeba	Das wollte ich schon so lange einmal machen.
+tatoeba	Wie viel länger werden sie brauchen?
+tatoeba	In Tatarstan sprechen die Leute Tatarisch.
+tatoeba	Pädophilie ist ein sehr ernst zu nehmender Strafbestand.
+tatoeba	Tom zeigte mir, wie man Pizza macht.
+tatoeba	Tom hat um ihre Hand angehalten.
+tatoeba	Ihr Erfolg ist das Ergebnis Ihrer harten Arbeit.
+tatoeba	Weißt du, wieviel Uhr es in Australien ist?
+tatoeba	Das Amt macht wohl satt, aber nicht klug.
+tatoeba	Sami wird ins Gefängnis zurückkehren.
+tatoeba	Der Tod ereilte ihn in einer Straßenkurve.
+tatoeba	Der Individualismus wird ferner uneigennützig und ungeziert sein.
+tatoeba	Unterstütze im Unternehmen meine Ansicht!
+tatoeba	Ein Freund besucht mich heute.
+tatoeba	Ich habe gelernt, mit meinen Rückenschmerzen zu leben.
+tatoeba	Ich würde nie eine Ratte essen.
+tatoeba	Esst ihr im Klassenzimmer?
+tatoeba	Wie grüßt du Tom für gewöhnlich?
+tatoeba	Wenn ein Bauer gefangen genommen wird, verlässt er das Spielbrett.
+tatoeba	Wann wird das Verbot abgeschafft werden?
+tatoeba	Maria schlägt sich gut in ihren Kursen an der Schule.
+tatoeba	Ich bin noch nie bei euch zu Hause gewesen.
+tatoeba	Es muss sich unbedingt etwas ändern.
+tatoeba	Könnt ihr meinen Vater zum Flughafen bringen?
+tatoeba	Ich habe Ihnen alles gegeben.
+tatoeba	Teile dies in zwei Hälften!
+tatoeba	Wo ist Toms Auto?
+tatoeba	Vielleicht sollten wir dich hierlassen.
+tatoeba	Ich möchte, dass du dich bei Tom entschuldigst.
+tatoeba	Mir ist nicht nach Wodkatrinken zumute.
+tatoeba	Ich habe noch nicht das letzte Wort gesprochen!
+tatoeba	Am Fuß des Hügels sehen Sie ein weißes Gebäude.
+tatoeba	Ich fange mir jedes Jahr eine Grippe ein.
+tatoeba	Wieviel Zucker machen Sie sich in den Kaffee?
+tatoeba	Tom hat mehr als genug Geld, um sich einen Wagen zu kaufen.
+tatoeba	Erzählen Sie Tom von dem Roman, den Sie geschrieben haben!
+tatoeba	Die Männer trugen den Jungen zum Krankenhaus.
+tatoeba	Sie entschlossen sich zu größerem Eifer bei der Arbeit.
+tatoeba	Die niedrigen Preise verleiteten mich, Dinge zu kaufen, die ich nicht brauchte.
+tatoeba	Warum glaubt mir keiner, wenn ich die Wahrheit sage?
+tatoeba	Die Frau blättert in einer Zeitschrift, während ihr Mann sein Geld zählt.
+tatoeba	Gestern lernte ich Maria kennen.
+tatoeba	Junger Mann, Sie haben etwas fallenlassen!
+tatoeba	Sie hat ihre Probleme jahrelang beiseitegeschoben.
+tatoeba	Tom trug die Kiste ins Haus.
+tatoeba	Er ist nicht so jung wie er aussieht.
+tatoeba	Bist du jünger als Tom?
+tatoeba	Unterschätzen Sie ihre Entschlossenheit nicht.
+tatoeba	Er isst nur Obst.
+tatoeba	Warum seid ihr immer so langsam?
+tatoeba	Ich bin nicht kanadischer Staatsbürger.
+tatoeba	Wir hörten auf, uns zu unterhalten, damit wir die Musik hören konnten.
+tatoeba	Mir wurde im Zug meine Kamera gestohlen.
+tatoeba	Sami arbeitet für ein ägyptisches Restaurant.
+tatoeba	Solange es den Menschen auf diesem Planeten gibt, wird es keinen Frieden geben.
+tatoeba	Du bist so erbärmlich!
+tatoeba	Es regnet seit letzter Nacht.
+tatoeba	Tom geht zum Markt, nur wenn Mary zum Markt geht.
+tatoeba	Was könnt ihr auf englisch sagen?
+tatoeba	Tom geht heute Abend zu einem Konzert.
+tatoeba	Es ist sehr spät, ich sollte schon im Bett sein.
+tatoeba	Vorgestern war es stürmisch.
+tatoeba	Fühlst du dich nicht wohl?
+tatoeba	Sie müssen über zehn Kilometer laufen.
+tatoeba	Wir stellen Palmwein her.
+tatoeba	Das Haus von Thomas ist große.
+tatoeba	Ich fühlte ein unangenehmes Ziehen im Magen.
+tatoeba	Wollen Sie das wirklich tun?
+tatoeba	Tom hat mir eine Stelle angeboten.
+tatoeba	Mein Bruder ist tonangebend in dieser Angelegenheit.
+tatoeba	Die Hauptfigur dieser Sendung ist ein sprechendes Eichhörnchen.
+tatoeba	Als sich das Erdbeben ereignete, habe ich gerade ferngesehen.
+tatoeba	Es ist draußen schon hell.
+tatoeba	Morgens brauche ich Kaffee.
+tatoeba	Die Haut der Schauspieler ist geschminkt.
+tatoeba	Welche Sprache sprichst du?
+tatoeba	Ich hoffe sehr, daß ich das nicht muß.
+tatoeba	Er schwor, dass er sich furchtbar rächen wird.
+tatoeba	Sowohl seine Eltern wie auch er sind sehr freundlich zu mir.
+tatoeba	Maria hat ihren Kindern Russisch beigebracht.
+tatoeba	Wo ist mein Bakschisch?
+cv	Ich verspüre nicht das geringste Anzeichen von Reue.
+cv	Aber die Lampe leuchtet doch noch!
+cv	Für mich wäre das glatt ein Grund, zu wechseln.
+cv	Ich möchte mich mit dir auf Augenhöhe unterhalten, würdest du dich bitte setzen?
+cv	Sie bringt ihnen bei, wie man Segelschiffchen aus Papier faltet.
+cv	Aber der Rauch vertreibt die Mücken.
+cv	Das ist mir immer noch lieber, als wenn Petersen sich daran versucht.
+cv	Glaubst du, die beiden sind dazu erwachsen genug?
+cv	Es macht mir selbst Freude, anderen eine Freude zu bereiten.
+cv	Gib ihm eine Aufgabe, die seinen Fähigkeiten entspricht.
+cv	Kennst du Leute aus der Community?
+cv	Ein Rowdy lässt sich manchmal nicht mit Worten stoppen.
+cv	Weil die Firma einfach nicht über das nötige Know-how verfügt.
+cv	An welchen Symptomen erkennt man einen Hitzschlag?
+cv	Sibirien ist ein Stadtteil von Elmshorn.
+cv	Mit Leerzeichen im Pfad kommt das Programm nicht klar.
+cv	Deine Frage hast du ja zum Glück total wertfrei gestellt.
+cv	Tina musste bei Ihrer Ausbildung zur Malerin viel lernen.
+cv	Jörn hat am Wochenende sturmfreie Bude.
+cv	Und ich habe das Geld.
+cv	Eine Amsel flog vorbei und löste dabei den Bewegungsmelder aus.
+cv	Die zweite Sitzungsperiode begann am fünfzehnten Juni zweitausendsiebzehn.
+cv	Astronomie ist eine Wissenschaft, Astrologie hingegen ein Glaube.
+cv	Der Stau hat sich mittlerweile aufgelöst.
+cv	Nicht schon wieder so ein sinnloser Töpferkurs!
+cv	Wer zu lange damit wartet, bekommt kostenpflichtige Mahnungen.
+cv	Der Computer schlägt als Lösung den Abschuss der Sonne vor.
+cv	Ich dachte, das wären Geldscheine.
+cv	Ich bin nur noch schnell Döner holen.
+cv	Insgesamt sahen wir eine grundsolide Vorstellung.
+cv	Nur weil ich gläubig bin, heißt das nicht, dass ich konservativ wähle.
+cv	Bug oder Feature?
+cv	Aber daraus lässt sich keine Schuld ableiten.
+cv	Wer benutzt welche Zahnbürste?
+cv	Die Daten waren anschaulich in einem Diagramm visualisiert.
+cv	Ich Fick dich, Allah, du Hund.
+cv	Mein Kollege hat Ihnen keinen Rückruf angeboten?
+cv	Nehmt euch Autan oder ein anderes Mittel gegen Mücken mit.
+cv	Ich habe nämlich vergessen, meinen Schlüssel aus der Hosentasche zu nehmen.
+cv	Es ist fünf vor zwölf.
+cv	Du hättest mitkommen sollen.
+cv	Herr, wirf Hirn vom Himmel!
+cv	Sie hat sich bloß verklickt.
+cv	Auf die Wetterprognose ist wie immer kein Verlass.
+cv	Willst Du Dir den Tag versauen, musst Du in den Spiegel schauen.
+cv	Oh, die sind aber gut, die Weißen!
+cv	Die gesamte Fastenzeit nicht zu Lügen, als Verzicht sozusagen.
+cv	Das ist der sogenannte "Stromsparmodus", der Ihre Stromrechnung schont.
+cv	Ich werde dieses Buch »Nummer dreizehn« nehmen.
+cv	Handwerker sind kurzfristig nicht zu bekommen.
+cv	Wann sind Sie endlich fertig?
+cv	Das Leben ohne Mensa ist hart, aber wir müssen irgendwie überleben.
+cv	Du sammelst historische Schraubendreher?
+cv	Ich habe doch auch Gefühle!
+cv	Verschwenden Sie nicht länger meine Lebenszeit!
+cv	Ja wo laufen Sie denn hin?
+cv	Wahrscheinlich waren sie bekifft.
+cv	Die Lautstärke war nicht zu ertragen.
+cv	Da bekam der Monarch den ganzen Zorn des Volkes zu spüren.
+cv	Provozieren macht am meisten Spaß, wenn Leute sich provozieren lassen.
+cv	Tom ist so einer.
+cv	Ich kann ihn nicht mehr sehen.
+cv	Nach einigen Stunden setzt die Totenstarre ein.
+cv	Ein Piezoelement steuert im Tintenstrahldrucker, wie viel Tinte den Druckkopf verlässt.
+cv	Muttersprachler sind herzlich Willkommen.
+cv	Morgen wird der Verdächtige dem Haftrichter vorgeführt.
+cv	Der Gegenverkehr kam in der Kurve gefährlich nah.
+cv	Kalle will alles hinschmeißen und noch mal von vorn beginnen.
+cv	Das Sachgebiet E ist für die Verfolgung der Schwarzarbeit zuständig.
+cv	Auf andere zu warten, hat keinen Zweck.
+cv	Wie viele Minuten am Stück kannst du still sitzen?
+cv	Niemand hat die Absicht, den kompletten Straßenverkehr zu überwachen!
+cv	Der folgende Beitrag wurde gesponsert vom Bundesnachrichtendienst.
+cv	Am Telefon kaufe ich nichts.
+cv	Damit sollte der Konzern für Personal werben.
+cv	Von wem ist dieser Remix?
+cv	Weiß der Geier, wozu dieser Kahlschlag gut sein soll.
+cv	Jugendliche von Stadtbesichtigungen zu begeistern ist nicht einfach.
+cv	Versuchst du gerade ihr zu helfen?
+cv	Heute ist Weltpremiere im neuen Theater.
+cv	Ach, ihr seid's!
+cv	Da ist nur noch Schnittlauch und Blattspinat.
+cv	Da habt ihr etwas zu tun.
+cv	Der Akku ist sowieso schon hinüber.
+cv	Mit der Maske hat man auch einen Pollenfilter vor Mund und Nase.
+cv	Wie war dein erstes Mal anal?
+cv	Für ein paar Minuten kann ich dir Licht machen.
+cv	Dann aber mit Fanfare.
+cv	Darf ich an dem Preisausschreiben teilnehmen?
+cv	Manche Menschen nennen eine Tischlampe auch eine Studierlampe.
+cv	Nichts, aber das ist ja das Gute.
+cv	Er habe doch nur im Prozess berichtet wie gehört.
+cv	Kinderarbeit ist verboten.
+cv	Tun Sie eigentlich auch noch etwas anderes?
+cv	Haben Sie etwas dagegen, dann klicken Sie hier.
+cv	Alles, was schweißfrei ist, lasse ich nicht als Training gelten.
+cv	Das neue Elektromodell halte ich für eine Luftnummer.
+cv	Nur noch Staub und Müll.
+cv	Karsten ist ein attraktiver Name.
+cv	All das muss in der logistischen Planung berücksichtigt werden.
+cv	Wie viele waren es beim Bau des Nord-Ostsee-Kanals?
+cv	Die Bleiweste soll gegen die Röntgenstrahlung schützen.
+cv	Ein schmaler Pfad führt querfeldein durchs Gestrüpp.
+cv	Eines Tages waren sie alle verschwunden.
+cv	Ganz schmales Brett auf dem sich einige hier "bewegen".
+cv	Deswegen hab ich wohl auch vergessen zu antworten, sorry!
+cv	Da saß also dieser Junge mutterseelenallein auf einem Stein.
+cv	Es gibt nichts Gutes, was nicht auch was Schlechtes hat, und umgekehrt.
+cv	Wer als Klatsch-Redakteurin beim Focus arbeitet, hat wirklich nichts mehr zu verlieren.
+cv	Verwirrt erhob sie sich langsam und bewegte sich ins Wohnzimmer.
+cv	Und wieder das Märchen vom unbegrenzten Wachstum.
+cv	Es ist eine Lösung.
+cv	Kann man den Namen seiner Straße offiziell ändern lassen?
+cv	Ich finde, dass Geigen einen sehr schönen Klang haben.
+cv	Du ziehst schon wieder um?
+cv	Du wirst bereuen, dass du gefragt hast.
+cv	Ein Schild weist auf losen Rollsplitt hin.
+cv	Jeder Erstklässler hätte den Betrug erkannt.
+cv	Ab heute weht hier ein anderer Wind!
+cv	Der neue Sessel erwies sich als total bequemer Glücksgriff.
+cv	Bauteile, die viel Strom verbrauchen, werden schnell warm.
+cv	Du kannst doch nicht ungetestet einfach hier rein kommen!
+cv	Im Internet kann man Fragen stellen, die man sich sonst nie trauen würde.
+cv	Und wie sieht es mit Filmen und Videos aus?
+cv	Vor der Erstaufnahmestelle stehen sich die Syrer die Füße platt.
+cv	Und welchen Service bieten Sie an?
+cv	Ich habe vieles versucht, damit meine Tochter nicht zur Tussi wird.
+cv	Hinter dieser Wand befindet sich ein Hohlraum.
+cv	Das wünsche ich Ihnen gleichfalls!
+cv	Außerdem muss er natürlich glutenfrei, eifrei und gentechnikfrei sein.
+cv	Mustafa kannte sich besonders gut mit Singvögeln aus.
+cv	Kann man sich hier nicht mal in Ruhe rasieren?
+cv	Unweit des Atomkraftwerks Brokdorf gab es an der Stör einen Störfall.
+cv	Nur Helen mag keine Marshmallows.
+cv	In diesem Fach könnten Sie zum Beispiel gut Ihr Klopapier bunkern.
+cv	Durch krankheitsbedingte Ausfälle dauert es derzeit etwas länger.
+cv	Kann Spuren von Sellerie enthalten.
+cv	Maschinen nehmen uns bereits heute so viel ab, dass Teilzeitjobs die Regel sein sollten.
+cv	Herr Schubert leidet an Parkinson.
+cv	So wie es aussieht, geht seine Rechnung auf.
+cv	Ein Porsche hat einen schlechteren Luftwiderstandsbeiwert als ein Pinguin.
+cv	Ich wollte hier nur joggen und dann das!
+cv	Dazu muss ich definitiv mehr wissen.
+cv	Der Markt wird es wie immer richten.
+cv	Frag einfach mal im Sekretariat nach.
+cv	Zuerst hat es unten gebrannt.
+cv	Jeder weiß, dass ein Bild mehr sagt als tausend Worte.
+cv	Die Erzählperspektive ist neutral und wertet die Handlungen der beteiligten Akteure nicht.
+cv	Keiner interessiert sich für die eigentlich spannendsten Dinge.
+cv	Jemand hat auf den Bestätigungslink geklickt.
+cv	Mir gefallen die Beispiele nicht, weil sie praxisfern sind.
+cv	Manchmal träumt man merkwürdige Dinge.
+cv	Im Kollegium gehört Abel zu den Leuten, die den Ton angeben.
+cv	Die bevorstehende Invasion bereitet ihm Kopfzerbrechen.
+cv	Sowas kommt von sowas.
+cv	Jetzt klettert er aufs Dach.
+cv	Würdest du mir treu bleiben, wenn ich ein gesuchter Kriegsverbrecher wäre?
+cv	Aber aber, Erinnerung.
+cv	Die Chorleiterin hat nicht nachgegeben.
+cv	So will der Prüfer das sehen.
+cv	Zwei starke Männer trugen die schwere Tischplatte aus Marmor.
+cv	Kennt ihr die Namen der Impfstoffe?
+cv	Das Wacken Festival ist auf Jahre ausverkauft.
+cv	Unterm Strich muss die professionelle Textilreinigung Einbußen hinnehmen.
+cv	Schon die ganze Zeit zermartert er sich darüber den Kopf.
+cv	Selbst von den jungen Hüpfern macht ihr das so schnell keiner nach.
+cv	Viele Menschen können nicht diszipliniert Schlange stehen.
+cv	Auf dem höchsten Punkt der Strecke legten sie eine Pause ein.
+cv	Halte einmal die Regenbogenfahne.
+cv	Na, wer ist jetzt der Troll?
+cv	Er wünschte noch eine baldige Genesung.
+cv	Der Telefonroboter sagt doch tatsächlich, dass er mich gleich an einen Kollegen weitervermittelt.
+cv	Sie überlegt, das Zimmer zur Untermiete anzubieten.
+cv	Stattdessen werden die eigenen Moralvorstellungen als Maßstab angelegt.
+cv	Sie hört alles außer synthetischen Pop.
+cv	Jens Spahn hat beim Bekämpfen der Pandemie in Deutschland versagt.
+cv	Gestatten Sie, dass ich meine Uhr nach der Ihrigen stelle.
+cv	Um zweiundzwanzig Uhr beginnt die Christmette.
+cv	Übermorgen kommt meine Tante zu Besuch.
+cv	In der Schule musste ich russisch lernen, kann aber kein einziges Wort mehr.
+cv	Das kann man auch, wenn man danach rechtzeitig reanimiert wird.
+cv	Was Versöhnung ist, weiß ich, aber was ist Vertöchterung?
+cv	Das Motto der achtziger Jahre war: Alles gut, alles geht und alles geil.
+cv	Außer die Nächte, die sind kalt.
+cv	Der Gaukler ist wieder am Schütteln.
+cv	Zu oft kippten stramm stehende Offiziere in der Vergangenheit einfach um.
+cv	Seit gestern ist ein Kopfgeld auf mich ausgesetzt.
+cv	Genau das Richtige für meine kalten Hände!
+cv	Mist, jetzt ist mir alles angebrannt.
+cv	Und dann auch noch falsch!
+cv	Kannst du noch ein paar von den kleinen Würstchen auf den Grill legen?
+cv	Wir sind eine ganz normale Familie.
+cv	Das Betreten der Bergbauanlagen und der eingefriedeten Tagbrüche ist Unbefugten verboten.
+cv	Zum Schluss sah man nur noch den Atompilz und dann kam der Abspann.
+cv	Welch ein Ärger.
+cv	Und dann soll es wieder ein verwirrter Einzeltäter gewesen sein.
+cv	Ich mag es, wenn Männer Hüte tragen.
+cv	Bitte weiter gehen.
+cv	Der Worte sind genug gewechselt, lasst mich auch endlich Taten sehen!
+cv	Der Stoff ist gerade angekommen.

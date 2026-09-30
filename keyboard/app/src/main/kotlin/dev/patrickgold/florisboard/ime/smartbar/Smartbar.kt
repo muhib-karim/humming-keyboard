@@ -287,7 +287,8 @@ private fun SmartbarMainRow(modifier: Modifier = Modifier) {
         // Humming: the sticky slot is the voice hero, always one tap away.
         val themeManager by context.themeManager()
         val themeInfo by themeManager.activeThemeInfo.collectAsState()
-        dev.patrickgold.florisboard.ime.voice.HummingMicButton(isNight = themeInfo.config.isNightTheme)
+        val micSize by prefs.smartbar.hummingMicSize.observeAsState()
+        dev.patrickgold.florisboard.ime.voice.HummingMicButton(isNight = themeInfo.config.isNightTheme, size = micSize.coerceIn(28, 48).dp)
     }
 
     SideEffect {

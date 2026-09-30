@@ -17,6 +17,7 @@
 package dev.patrickgold.florisboard.ime.media
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.waitForUpOrCancellation
@@ -28,6 +29,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.unit.dp
+import dev.patrickgold.jetpref.datastore.model.observeAsState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Backspace
 import androidx.compose.material3.Icon
@@ -70,6 +74,10 @@ fun MediaInputLayout(
     val keyboardManager by context.keyboardManager()
 
     var emojiLayoutDataMap by remember { mutableStateOf(EmojiData.Fallback) }
+    // Humming 1.2: the sticker & GIF panel, when turned on in Settings > Stickers & GIFs (off by default).
+    val prefs by dev.patrickgold.florisboard.app.FlorisPreferenceStore
+    val stickersEnabled by prefs.emoji.stickersEnabled.observeAsState()
+    var showStickers by StickerPanelState.open
     LaunchedEffect(Unit) {
         emojiLayoutDataMap = EmojiData.get(context, "ime/media/emoji/root.txt")
     }
@@ -81,10 +89,14 @@ fun MediaInputLayout(
                 .fillMaxWidth()
                 .height(FlorisImeSizing.imeUiHeight()),
         ) {
-            EmojiPaletteView(
-                modifier = Modifier.weight(1f),
-                fullEmojiMappings = emojiLayoutDataMap,
-            )
+            if (stickersEnabled && showStickers) {
+                StickerPanel(modifier = Modifier.weight(1f))
+            } else {
+                EmojiPaletteView(
+                    modifier = Modifier.weight(1f),
+                    fullEmojiMappings = emojiLayoutDataMap,
+                )
+            }
             SnyggRow(
                 elementName = FlorisImeUi.MediaBottomRow.elementName,
                 modifier = Modifier
@@ -101,6 +113,20 @@ fun MediaInputLayout(
                         text = "ABC",
                         fontWeight = FontWeight.Bold,
                     )
+                }
+                if (stickersEnabled) {
+                    SnyggBox(
+                        elementName = FlorisImeUi.MediaBottomRowButton.elementName,
+                        modifier = Modifier.fillMaxHeight(),
+                        clickAndSemanticsModifier = Modifier.clickable { showStickers = !showStickers },
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Text(
+                            text = if (showStickers) "\uD83D\uDE00 Emoji" else "Stickers & GIFs",
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(horizontal = 12.dp),
+                        )
+                    }
                 }
                 Spacer(modifier = Modifier.weight(1f))
                 KeyboardLikeButton(

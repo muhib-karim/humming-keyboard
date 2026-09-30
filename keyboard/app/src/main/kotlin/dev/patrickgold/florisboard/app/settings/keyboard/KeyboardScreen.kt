@@ -194,6 +194,25 @@ fun KeyboardScreen() = FlorisScreen {
                 max = 700,
                 stepIncrement = 10,
             )
+            // Humming 1.2: key timings that were fixed system constants.
+            DialogSliderPreference(
+                prefs.keyboard.hummingKeyRepeatDelay,
+                title = "Key repeat speed",
+                summary = { "Time between repeats while Delete is held: $it ms (lower is faster)" },
+                valueLabel = { stringRes(R.string.unit__milliseconds__symbol, "v" to it) },
+                min = com.humming.keyboard.KeyTiming.MIN_REPEAT_MS,
+                max = com.humming.keyboard.KeyTiming.MAX_REPEAT_MS,
+                stepIncrement = 5,
+            )
+            DialogSliderPreference(
+                prefs.keyboard.hummingDoubleTapTimeout,
+                title = "Double-tap speed",
+                summary = { "Double-space period and Shift caps lock need two taps within $it ms" },
+                valueLabel = { stringRes(R.string.unit__milliseconds__symbol, "v" to it) },
+                min = com.humming.keyboard.KeyTiming.MIN_DOUBLE_TAP_MS,
+                max = com.humming.keyboard.KeyTiming.MAX_DOUBLE_TAP_MS,
+                stepIncrement = 10,
+            )
             SwitchPreference(
                 prefs.keyboard.spaceBarSwitchesToCharacters,
                 title = stringRes(R.string.pref__keyboard__space_bar_switches_to_characters__label),

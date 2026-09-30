@@ -1,0 +1,517 @@
+tatoeba	Tomasa las está pasando canutas para llegar a fin de mes.
+tatoeba	El cerdo hormiguero es un animal de porte medio.
+tatoeba	Sabes mucho acerca del sumo.
+tatoeba	Por conducir bebido, te caerá una multa importante.
+tatoeba	Espero que encontremos mucho de eso.
+tatoeba	Los pollos estaban buscando comida.
+tatoeba	Deberías ir a que te examinen la cabeza.
+tatoeba	El día está lindo y cálido hoy.
+tatoeba	Por favor, déjame echar una mirada al menú.
+tatoeba	No sé cómo él puede hablar sin sacarse el cigarrillo de la boca.
+tatoeba	Leonor y Adela están más sordas que una tapia.
+tatoeba	Sabes quién soy.
+tatoeba	Por favor, no me escribas otra vez.
+tatoeba	Tom sólo habla francés.
+tatoeba	Tom señaló algunos problemas.
+tatoeba	El convento estuvo activo durante más de tres siglos.
+tatoeba	Yo tengo mucho amor para ti.
+tatoeba	Aun no puedo hablar de ello sin tener que llorar.
+tatoeba	Desistamos de la idea de comer en ese restaurante.
+tatoeba	No me enojé tanto.
+tatoeba	El linimento parece haber surtido algo de efecto.
+tatoeba	Ella habla de vos todo el tiempo.
+tatoeba	Tom parece estar siempre comiendo.
+tatoeba	Acabo de ver a María en el parque.
+tatoeba	Tomé una cerveza.
+tatoeba	Sus dotes de persuasión son admirables.
+tatoeba	Esta ventana está partida hace un mes.
+tatoeba	Le dio un golpe en la cara.
+tatoeba	Ella cumplió dieciséis años.
+tatoeba	¿Me acompañas tú?
+tatoeba	La Marginal Tietê tiene dos kilómetros de atasco.
+tatoeba	¿Dónde quieres comer?
+tatoeba	Tom no quería estar aquí hoy.
+tatoeba	¿Entiendes lo que ha dicho?
+tatoeba	¡Yo vi un ratón!
+tatoeba	Perdona la espera.
+tatoeba	Ya no pasa nada.
+tatoeba	Palidecía y se sonrojaba intermitentemente.
+tatoeba	No sabía que el acordeón daba tanta impresión de alegría.
+tatoeba	No sabe nadar.
+tatoeba	Deberían bastar tres sillas más.
+tatoeba	¿Me podría avisar a las 7 y media, por favor?
+tatoeba	Incluso si hago el amor con alguna chica antes de medianoche, nunca olvido su amabilidad.
+tatoeba	No hace falta ser amable con este tipo de persona.
+tatoeba	Desde que él murió, ella está inconsolable.
+tatoeba	Eso mismo creía yo.
+tatoeba	¿A Tom le gusta ver películas de horror?
+tatoeba	¿Por qué cometiste un error así?
+tatoeba	Aquel día resultó ser un punto crucial en su carrera.
+tatoeba	Su médico le aconsejó que dejara de fumar.
+tatoeba	Compré la bicicleta negra en lugar de la roja.
+tatoeba	La mayoría de los colegios electorales cerrará a las ocho de la tarde.
+tatoeba	Tengo un bolígrafo.
+tatoeba	¿Conoces a Tom lo bastante bien como para pedirle que haga esto?
+tatoeba	¿Ya le has contado las noticias a tu amigo?
+tatoeba	Tras el accidente, el calafate y un aprendiz fueron despedidos.
+tatoeba	¡Si no querías una respuesta negativa, entonces no me pidas mi opinión!
+tatoeba	No pueden irse todavía.
+tatoeba	No sabemos qué es.
+tatoeba	¿Qué haríamos si tuviéramos un hijo?
+tatoeba	¿Te puedo dar un aventón?
+tatoeba	Él construyó 48 fortificaciones.
+tatoeba	En Tatoeba hay muchas frases útiles y bonitas que conviene adoptar.
+tatoeba	Tom rehusó ceder.
+tatoeba	Los adultos siempre dicen de los jóvenes de su tiempo que son inconscientes y caprichosos.
+tatoeba	Él temblaba de cólera.
+tatoeba	El tango es la expresión vertical del deseo horizontal.
+tatoeba	¿Quién era ese?
+tatoeba	No puedo hacerlo sin vos.
+tatoeba	Sigo teniendo hambre.
+tatoeba	¿Por qué no la ves?
+tatoeba	¿Tú eres tonto o qué te pasa?
+tatoeba	Jane no es menos guapa que su madre.
+tatoeba	Las rosquillas de anís son las mejores.
+tatoeba	Tienes todo hacia atrás.
+tatoeba	Espera, no empieces a cronometrarme hasta que te lo diga.
+tatoeba	Se le veía en la cara que estaba aburrido.
+tatoeba	Gracias por cuidarme siempre.
+tatoeba	Roncar así podría afectarte negativamente a la salud.
+tatoeba	Se lo compro.
+tatoeba	Eso es lo que nos diferencia.
+tatoeba	Todo está en el pasado.
+tatoeba	Él está sudado.
+tatoeba	Necesitamos aire fresco.
+tatoeba	A veces rezo en la sala de reuniones.
+tatoeba	El sonido del arpa de boca es muy peculiar.
+tatoeba	Ella no se casó con el hombre.
+tatoeba	Es importante mantener la calma en todo momento.
+tatoeba	¿Qué nos podéis contar del terremoto de ayer?
+tatoeba	Tom cree que Mary tiene más de cuarenta.
+tatoeba	Un hombre solo puede recibir lo que le es otorgado desde el cielo.
+tatoeba	¿Cuánto cuesta la cebolla?
+tatoeba	Las cebras tienen rayas.
+tatoeba	Tengo que estar concentrada.
+tatoeba	Tom dijo que quería enseñarme francés.
+tatoeba	Los sitios de pornografía son de los más visitados de internet.
+tatoeba	Me lavo los dientes al menos tres veces al día.
+tatoeba	Has migrado a Mexico entonces.
+tatoeba	Donald Trump es un mentiroso patológico.
+tatoeba	Argelia ha destinado fondos para la construcción de la carretera Transahariana.
+tatoeba	Una estatua viviente descansa en un banco y dos estatuas de la libertad charlan con los turistas.
+tatoeba	Tiene dos hijos y tres hijas y la mayor está casada.
+tatoeba	No sé nada sobre ella.
+tatoeba	Disculpa mi mal esperanto.
+tatoeba	El perro chilla.
+tatoeba	Por favor, no se lo digas.
+tatoeba	Linda se paró para cantar.
+tatoeba	No eres el centro del universo.
+tatoeba	Esta fue la primera prueba de ese tipo.
+tatoeba	Cuando adopto una frase, a veces la modifico ligeramente sin cambiar su significado.
+tatoeba	¿Dónde están tus niños?
+tatoeba	Nunca me he visto con Tomás.
+tatoeba	Quiero ir a patinar.
+tatoeba	La democracia es una forma de gobierno.
+tatoeba	Me muero por una bebida helada.
+tatoeba	¡Tenemos muy poco tiempo, así que escúchame bien!
+tatoeba	Tom admitió que no era imparcial.
+tatoeba	La persona es un producto de sus circunstancias.
+tatoeba	Lo que cuenta es la intención.
+tatoeba	Quisiera hacer una reserva para jugar al golf mañana.
+tatoeba	¿Jugarás con nosotros?
+tatoeba	Tom es el chico más guapo de la clase.
+tatoeba	Todos lo consideran especial desde el primer momento de su nacimiento.
+tatoeba	Me disgusta tener que decírtelo.
+tatoeba	Sé por qué.
+tatoeba	No puedo ver muy bien sin gafas.
+tatoeba	Traten de no ponerse tan tensas.
+tatoeba	No tome prisioneros.
+tatoeba	Yo supongo que ellos hablan francés.
+tatoeba	¿No sabes leer entre líneas?
+tatoeba	Una sonrisa envía una señal de amistad.
+tatoeba	Mi dolor de espalda está empeorando.
+tatoeba	No tenéis nada que hacer excepto confiar el uno en el otro.
+tatoeba	Tom abrió la boca para decir algo pero Mary lo interrumpió.
+tatoeba	No me disgusta el trabajo, pero no tengo tiempo.
+tatoeba	Kobe es famoso por su puerto.
+tatoeba	No me importa esperar.
+tatoeba	El único que tenemos es éste aquí.
+tatoeba	Él está dotado de muchos talentos.
+tatoeba	¿Vas al teatro esta noche?
+tatoeba	Tengo un pico, dos palas y una carretilla.
+tatoeba	Suecia se pronuncia "ˈsværjə" en sueco.
+tatoeba	Tengo que caminar despacio.
+tatoeba	Tomás no es tan inteligente como usted.
+tatoeba	No creo haber escuchado esta canción antes.
+tatoeba	Había una enorme anguila en el tanque y un cartel bien llamativo advirtiendo del posible peligro de sus descargas eléctricas.
+tatoeba	Solo intento ser amable.
+tatoeba	Ella sugirió que yo fuera a la tienda con él.
+tatoeba	Esa canción ya está algo desteñida.
+tatoeba	Debemos recabar la opinión de otros expertos.
+tatoeba	La puerta de la casa estaba abierta.
+tatoeba	Mi hija ha llegado a una edad en la que se puede casar.
+tatoeba	Dicen que el amor es ciego.
+tatoeba	Éste es el lugar inolvidable en el que nos encontramos por primera vez.
+tatoeba	Carlos pidió un aperitivo.
+tatoeba	Ella estaba demasiado cansada para poder continuar trabajando.
+tatoeba	La palabra "eucariota" deriva del griego, mientras que la palabra "procariota" deriva del latín.
+tatoeba	Yo quiero algo más para comer.
+tatoeba	Ahora me doy cuenta de que ese libro, que me pareció tan bueno, probablemente tenga errores.
+tatoeba	Recoge tus juguetes.
+tatoeba	Busqué la llave bajo la alfombra de bienvenida y en la maceta de al lado.
+tatoeba	Este es su lugar.
+tatoeba	¿Qué clase de inglés es ese?
+tatoeba	El cociente de la división de 21 entre 7 es 3.
+tatoeba	La ciudad está llena de turistas.
+tatoeba	Voy a hipotecarme.
+tatoeba	Quisiera que él estuviera aquí.
+tatoeba	Está obligado de partir hoy mismo.
+tatoeba	Tom intentó abrir la puerta, pero no pudo.
+tatoeba	Detesto las alcaparras.
+tatoeba	La conocí durante mi estadía en México.
+tatoeba	En juegos de rol él siempre solo quería jugar como duende.
+tatoeba	El sistema solar es una simple mota de polvo en la inmensidad inconmensurable del universo.
+tatoeba	A los tres nos salían cifras diferentes.
+tatoeba	Voy a llegar a At Ifrek.
+tatoeba	Me pregunto dónde está Tomás.
+tatoeba	Él está leyendo una novela.
+tatoeba	Ellas se estaban divirtiendo.
+tatoeba	Mario es un plomero.
+tatoeba	Como desearía poder volver a vivir mí vida.
+tatoeba	Él puso la caja sobre la mesa.
+tatoeba	No sé si ha quedado claro, pero era una excusa.
+tatoeba	Su celular está cortado.
+tatoeba	Esta es la primera vez que he sentido náuseas.
+tatoeba	El avión sobrevoló la montaña.
+tatoeba	En el cajón de la fruta solo había unas manzanas podridas y mohosas.
+tatoeba	No pude captar lo que él dijo.
+tatoeba	Todo irá mejor si puedes venir ahora.
+tatoeba	¡Qué hermoso dibujo!
+tatoeba	El vinagre tiene un sabor fuerte.
+tatoeba	¡No me hagan esperar!
+tatoeba	El límite es el cielo.
+tatoeba	Estamos dispuestos a ayudarte.
+tatoeba	Leí en el periódico que mis vecinos habían ganado un premio.
+tatoeba	Ella es tan tacaña que usa la misma bolsita de té tres veces antes de tirarla.
+tatoeba	Barra fija y barras paralelas son dos de las especialidades del gimnasta Jossimar Calvo.
+tatoeba	Él se las apañó para curarse de su hábito de mordisquear las uñas.
+tatoeba	Es una historia increíble.
+tatoeba	Cuando ella sea adulta será una estupenda pianista.
+tatoeba	¿Limpiaste tu cuarto?
+tatoeba	Eso es lo que quiero averiguar.
+tatoeba	Los postres son mi especialidad.
+tatoeba	El vídeo lo muestra tragándose una botella entera de whiskey (Dios salve su alma).
+tatoeba	Los sábados, papá le pertenece a los niños.
+tatoeba	Por esa razón perdió su trabajo.
+tatoeba	Esto es todo lo que sé.
+tatoeba	Adela se lió a golpes con el de seguridad.
+tatoeba	Nosotros ganamos gracias a ti.
+tatoeba	Es muy difícil hacer que él crea.
+tatoeba	Por favor no me toques.
+tatoeba	Cancelaré la reunión.
+tatoeba	¿Por qué me arruinas la vida?
+tatoeba	Nadie puede detener mi enloquecimiento.
+tatoeba	Te deseo éxito.
+tatoeba	No pueden sentarse conmigo.
+tatoeba	El aviso se mostraba en varias lenguas.
+tatoeba	Nos cansamos todos.
+tatoeba	Ellos quieren más.
+tatoeba	Aquel coche es carísimo.
+tatoeba	Ojo por ojo, y el mundo acabará ciego.
+tatoeba	El camión pasó.
+tatoeba	¿Dónde está nuestro hijo?
+tatoeba	Aquí encontrarás esos flamencos.
+tatoeba	¿Por qué me contáis eso?
+tatoeba	Necesitamos que hoy nos ayudes con la mudanza.
+tatoeba	El diario aún no ha publicado vuestro artículo.
+tatoeba	La multitud llenaba la plaza.
+tatoeba	Nadar es un buen ejercicio para todo el cuerpo.
+tatoeba	Tom nunca estará de acuerdo sin importar lo que hagas.
+tatoeba	Creo que será mejor que te pongas a dieta.
+tatoeba	Por mucho que soples no vas a quitar las telarañas, tienes que usar un cepillo o un trapo.
+tatoeba	No me importa nada de esto.
+tatoeba	Me gustaría tomar té o café.
+tatoeba	He desayunado muy mal esta mañana.
+tatoeba	Él se encontró con un lobo.
+tatoeba	Exijo que se le castigue.
+tatoeba	La vida no es fácil.
+tatoeba	¿Qué pronombres usas?
+tatoeba	Por mi raza hablará el espíritu.
+tatoeba	Él fue circuncidado.
+tatoeba	Hay que esperar solamente diez días.
+tatoeba	Tom es bueno en lo que hace.
+tatoeba	Felipe tiene dos coches y una moto.
+tatoeba	Cuando murió lo rodeaba toda su familia.
+tatoeba	¿Lloverá o no?
+tatoeba	No quiero verlo.
+tatoeba	No se anduvieron por las ramas y fueron directamente al grano.
+tatoeba	Tomaron la aguja.
+tatoeba	¿Qué otra palabra hay para "tesauro"?
+tatoeba	El niño ama a los pájaros.
+tatoeba	¿Qué haces con esa bomba?
+tatoeba	Este sistema no es análogo a ninguno de los que conozco.
+tatoeba	¿Hay algún albergue juvenil cerca de aquí?
+tatoeba	Es un honor trabajar con Tom.
+tatoeba	Yo le pedí que me mantuviera informado.
+tatoeba	Tom espera que Mary consiga un trabajo.
+tatoeba	Nadie quiere estar sin dinero.
+tatoeba	Dicen que nunca te olvidas de tu primer amor.
+tatoeba	Tom llevaba puesto una máscara para ocultar su identidad.
+tatoeba	¿Qué llevas puesto?
+tatoeba	Tienen que integrarse en la sociedad.
+tatoeba	No todas las verdades deben ser dichas.
+tatoeba	Sólo es una expresión.
+tatoeba	Se estropeó la bomba y no pudieron extraer agua del pozo durante dos semanas.
+tatoeba	El atardecer ayer adquirió matices solferinos y cinzolines preciosos.
+tatoeba	¿Todavía tienen mi llave?
+tatoeba	Está en su biblioteca.
+tatoeba	Es un buen actor, ¡y además es un encanto!
+tatoeba	Pudo informarse leyendo la carta.
+tatoeba	¿Sabes cómo usar esta máquina?
+tatoeba	Ahora no entiendo.
+tatoeba	No me gusta manejar en tráfico pesado.
+tatoeba	¿No me vas a invitar a alguna bebida?
+tatoeba	El niño le tenía miedo a la oscuridad.
+tatoeba	Solo me estaba dando una ducha.
+tatoeba	Sus días de político están contados.
+tatoeba	Eso no te importa.
+tatoeba	Tengo algunos amigos.
+tatoeba	Tenía novia, pero rompimos hace tres meses.
+tatoeba	Yo te abrazo.
+tatoeba	Si hubiera sabido la dirección de él, le hubiera escrito.
+tatoeba	Éste es el paraguas que compré ayer.
+tatoeba	¡Qué aroma sabroso viene de la cocina!
+tatoeba	¿Quién quiere un poco de queso?
+tatoeba	Tom, ¿por qué hiciste eso?
+tatoeba	Me gustaría comprenderlo mejor.
+tatoeba	Se usaron grandes sumas de dinero en el nuevo puente.
+tatoeba	¿Cuando se la han agregado?
+tatoeba	Miles de personas murieron de hambre.
+tatoeba	El pan es muy reciente.
+tatoeba	Tomás sabía que María tenía razón.
+tatoeba	¿Por qué saliste?
+tatoeba	¿Hay algo siquiera que le guste a Tom?
+tatoeba	Eso no es importante para Tom.
+tatoeba	No entiendo tu pregunta.
+tatoeba	La segunda oración fue igual de larga.
+tatoeba	La vacunación ayuda a prevenir las enfermedades infantiles.
+tatoeba	Hoy es el primer día del resto de tu vida.
+tatoeba	No vas a terminar hoy si te quedas ahí sentado.
+tatoeba	¿Está cerca de la casa de él?
+tatoeba	Por favor, dime el secreto para hacer buena mermelada.
+tatoeba	Sabes que yo quiero saberlo.
+tatoeba	Esta propiedad nos pertenece.
+tatoeba	Tom se levanta a las seis de la mañana todos los días.
+tatoeba	Vi al hombre formar un grupo a su alrededor.
+tatoeba	Pronto dejará de llover.
+tatoeba	Empecé a fumar.
+tatoeba	¿Cómo llamas a tu madre?
+tatoeba	Se debe distinguir entre votante y candidato.
+tatoeba	Tom se ha enamorado de Mary.
+tatoeba	Cuanto más intento olvidar mi ex, más pienso en él.
+tatoeba	Quedé cautivado por la belleza de ella.
+tatoeba	Las dos están ocupadas.
+tatoeba	Es una pena que pienses de esa manera.
+tatoeba	¿Quién te dijo que éramos gemelos?
+tatoeba	Tenemos que llegar hasta esa hendidura que hay en lo alto del farallón.
+tatoeba	No quiero hablar de mi niño.
+tatoeba	Me lo llevaré de repuesto.
+tatoeba	¿Tú que haces despierta?
+tatoeba	Ayuda a Tom.
+tatoeba	Le dije a ella que somos amigos.
+tatoeba	Ken siguió cantando esa canción.
+tatoeba	Tom no está murmurando.
+tatoeba	María está muerta pero sigue viviendo en nuestros corazones.
+tatoeba	Tienes que dejar de decir eso.
+tatoeba	Estaba equivocado acerca de mí mismo.
+tatoeba	Tom menospreció a Mary.
+tatoeba	¿Quieres comer fideos o arroz?
+tatoeba	Aún queda mucho por aprender.
+tatoeba	Mary sabe nadar.
+tatoeba	Soy como pequeños arroyos; son transparentes porque son poco profundos.
+tatoeba	Pronto me verás nuevamente.
+tatoeba	Nosotros no podemos beber el agua del grifo.
+tatoeba	Tiene una agendita con más de veinte números de teléfono de follamigos.
+tatoeba	Quiero un buen diccionario.
+tatoeba	Tom es el hijo mayor de Mary, ¿verdad?
+tatoeba	Se terminó lo que se daba.
+tatoeba	Tom está arrodillado.
+tatoeba	El sabor del primer beso está muy vivo en mi memoria.
+tatoeba	Vivo en esta ciudad.
+tatoeba	Me gusta la escritura.
+tatoeba	La va a hacer caer.
+tatoeba	Ellos se quedaron conmigo en la habitación toda la noche.
+tatoeba	Es muy importante que estén unidos en este momento.
+tatoeba	Esto es eneldo.
+tatoeba	Estudiar realmente no es algo fácil.
+tatoeba	¡No me mires así, yo no he hecho nada malo!
+tatoeba	¿Qué tal hoy?
+tatoeba	Me rompió el corazón pero ahora me alegro de ello.
+tatoeba	Él se está pavoneando.
+tatoeba	Me sorprende el número de mentiras que me han dicho en los últimos días.
+tatoeba	Estoy más perdido que un hijo de puta en el día del padre.
+tatoeba	El sábado es el día en el que él está libre.
+tatoeba	Por favor, hágalo tan rápidamente como puede.
+tatoeba	El universo me odia.
+tatoeba	El centeno es un cereal.
+tatoeba	Al toser o estornudar, cúbrete la boca con la manga o con un pañuelo.
+tatoeba	¿Os gusta la vestimenta cabileña?
+tatoeba	Creo que sabrá mejor si le añades un poco de sal y pimienta.
+tatoeba	Tom tiene un podcast.
+tatoeba	Traté de no reírme.
+tatoeba	Esas tropas van a entrar en acción.
+tatoeba	Esto no me reporta ninguna clase de beneficio.
+tatoeba	El cuerpo pudo ser identificado gracias a una peca en el brazo izquierdo.
+tatoeba	El año pasado engordé un poco.
+tatoeba	Moriría por ti.
+tatoeba	Decídete por ti mismo.
+tatoeba	Si no trabaja suficiente, irá a la calle.
+tatoeba	Él es abogado de profesión.
+tatoeba	¿Se han preguntado por qué Tom llega siempre tarde?
+tatoeba	Le quería, todavía le quiero.
+tatoeba	No lo olvides: nadie lo sabe todo.
+tatoeba	Hemos aprendido por qué la Revolución Francesa estalló.
+tatoeba	Tienes que pensar en ti mismo.
+tatoeba	Me gusta la nieve de chocolate.
+tatoeba	La planta crece.
+tatoeba	El camión de la basura pasa tres veces por semana.
+tatoeba	Él es un físico que está trabajando en el teletransporte.
+tatoeba	Cree el ladrón que todos son de su condición.
+tatoeba	Tres semanas antes del día del vuelo aún no tenía visado.
+tatoeba	Dicen que él sabe mucho de España.
+tatoeba	Me sentía mal y fui al hospital, pero al final no era nada grave.
+tatoeba	Mi padre me compró una bicicleta nueva.
+tatoeba	Esta toalla es tan suave.
+tatoeba	El reloj que me diste se comporta de manera extraña.
+tatoeba	Como sigas molestando te sacudo.
+tatoeba	¿Qué bebida soléis tomar?
+tatoeba	Dijo que había tenido un accidente de coche a los dieciséis años.
+tatoeba	Ella le aconsejó que dejara el trago.
+tatoeba	Nunca he leído a Dasai
+tatoeba	Estoy buscando un cuarto con camas gemelas.
+tatoeba	Este es mi diccionario.
+tatoeba	Quería pegarle pero se escapó de mí.
+tatoeba	Esto ha ocurrido delante de vosotros.
+tatoeba	En mi casa es mi madre la que manda.
+tatoeba	Su vida cambió en ese instante.
+cv	ella habría vivido
+cv	ella había comido
+cv	Cuanto más seamos, menos teca nos tocará por barba.
+cv	Se llega a la conclusión
+cv	he pensado una cosa
+cv	recelé algún encuentro como el pasado y tomé a buen paso camino del mar.
+cv	segundo, sube a cubierta inmediatamente.
+cv	Esta película es apta para todos los públicos.
+cv	Era un niño muy travieso que le sacaba de sus casillas
+cv	buscándose en la oscuridad de la noche bajo el aguacero.
+cv	nota las olas.
+cv	sí se hubiera contentado con dejar las cosas tal como estaban
+cv	garantizarnos de una vez por todas, la ansiada privacidad
+cv	hubo no comido
+cv	¡ Estás interfiriendo en la búsqueda y rescate!
+cv	el resto de los días no prueban bocado
+cv	Demanda que los fabricantes de hardware no permitan instalar cualquier software
+cv	Todo tiene arreglo menos la muerte
+cv	hay que joderse.
+cv	ella no vive
+cv	Hay que ser valientes y tomar el toro por los cuernos
+cv	¿Habré yo visitado?
+cv	burbuja, mira mis gafas nuevas, de princesa.
+cv	por no ver aquella taifa luterana, apenas asomaba sobre cubierta.
+cv	herejes y mercaderes en el puente, herejes y mercaderes en la cámara.
+cv	En comparación con a las muestras analíticas del año anterior
+cv	Estoy contento por esta oportunidad de desprestigiar
+cv	Entonces preguntamos á los ancianos, diciéndoles así:
+cv	Culo veo, culo quiero
+cv	Han dicho que no tendrán que entrar en prisión.
+cv	¡ acaso el único destino que merece ser envidiado!
+cv	Existen varios mitos sobre el mundo de la música
+cv	organizaciones de agricultores que cultivan territorios y bienes naturales
+cv	Tails recomienda descargar el fichero desde Firefox
+cv	Muchos pocos hacen un mucho
+cv	he estado muerto dieciséis minutos.
+cv	como una naranja
+cv	El asunto se negocia por medio de la banca
+cv	se acabaron las sutilezas.
+cv	tan presto iban rastreando como se remontaban en la claridad azul.
+cv	Estaba en la otra punta, en el culo del mundo
+cv	¿no he partido?
+cv	es la mala noticia.
+cv	derechos empresariales de unos y los de los ciudadanos a acceder a la cultura
+cv	¿no beberá ella?
+cv	no me lo puedo creer.
+cv	Ha habido seis heridos.
+cv	Sea Dios con él, y suba á Jerusalem que está en Judá.
+cv	solo un poquito.
+cv	nos hicieron sentar, y ellos quedaron en pie.
+cv	Marta no ha picado el billete.
+cv	vamos a por ellos.
+cv	sin embargo, todo es sangre de Nuestro Señor Jesucristo.
+cv	el éxito de los conciertos es casi un misterio
+cv	Misión secreta en el espacio.
+cv	Palabras vanas, ruido de campanas.
+cv	eres un sol, de verdad, y me encanta tu regalo, te lo juro
+cv	El ayuno perpetuo de los cantantes es por las descargas
+cv	Entonces se levantaron los cabezas de las familias de Judá.
+cv	Ya voy, ya voy.
+cv	¡Quieto todo el mundo y qué no cunda el pánico!
+cv	¿ellas hubiesen partido?
+cv	Al rey Darío toda paz.
+cv	No todos podemos ser iguales de altos
+cv	El ojo del amo engorda al caballo
+cv	Llegaremos dentro de poco.
+cv	fray Lope tornó a llenarlos:
+cv	Ese profundo argumento se tambalea
+cv	Le gustaba tomar el sol en pelota picada
+cv	como esas reminiscencias que los sueños nos dan a veces de la vida.
+cv	Este artículo explora los métodos que se pueden utilizar en ambos casos
+cv	yo quise beber de la fuente, y ellas me lo impidieron con grandes gritos:
+cv	¿ Que tal tres de cinco?
+cv	Me duele la cabeza
+cv	Le pillaron "in fraganti", con las manos en la masa
+cv	Una manzana cada día, el médico te ahorraría.
+cv	yo entonces tomando sus manos entre las mías, le dije amorosamente:
+cv	Hay que sumar también el despropósito existente
+cv	Saltar de la sartén para caer en las brasas
+cv	vosotras dudáis en decirlo
+cv	La envidia acorta la vida.
+cv	Volveos, hijas mías: ¿para qué habéis de ir conmigo?
+cv	Le encasquetó el crío a los abuelos y se fue de picos pardos
+cv	Con nieve en enero, no hay año austero.
+cv	La salud no está en el plato, sino en el zapato.
+cv	vea su merced no más...
+cv	Julia, ¿ me recibe?
+cv	los medios de comunicación te recuerdan que los debes escuchar
+cv	¿ darme una paliza y romperme tres dedos es mostrar amistad?
+cv	que soy tu marido, ¿ no?
+cv	Tiene más suerte que si fuera bueno
+cv	Si quieres vivir sano, madruga en el verano.
+cv	es la primera vez que veo a todos los chicos juntos haciendo algo.
+cv	La crítica es fácil, el arte difícil
+cv	Déjate de hostias y baja ya de ahí o te bajo yo
+cv	¡Que sabremos cumplir!
+cv	nosotros no habríamos vivido
+cv	Te repites más que un disco rayado
+cv	ni en los mandamientos ni en los votos.
+cv	El anterior era Marta.
+cv	Aterrizaje forzoso en un extraño planeta.
+cv	retorciéndose las manos, pálida, casi trágica, se adelantaba exclamando:
+cv	no volvamos a cruzar la raya de lo personal.
+cv	En el mes de enero, los ojos de las muchachas campesinas, el amor.
+cv	Cuando menos se piensa, salta la liebre
+cv	tendióse a la sombra, y tomando los naipes comenzó a barajar.
+cv	Ni peros, ni peras
+cv	¿ De qué estás hablando?
+cv	aquella mujer desnuda, velada por las llamas, era la Niña Chole.
+cv	Sin un navegador así, cada vez que te conectas envías mensajes
+cv	tú no hubieras vivido
+cv	¿yo no hube comido?
+cv	los planes que tienen
+cv	Hizo un arranque de caballo y una parada de burro.
+cv	da el visto bueno a nuevas versiones
+cv	¡Come, que estás muy flacucho!
+cv	Y José estaba en Egipto.
+cv	La reunión de concienciación sobre la corrosión del plástico...
+cv	pues piense, Julia, piense, por Dios.
+cv	también el plagio parece haber sido una de sus fuentes de inspiración
+cv	Rodarán cabezas, ¡te lo juro!

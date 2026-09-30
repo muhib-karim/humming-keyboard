@@ -81,6 +81,8 @@ class LatinLanguageProvider(context: Context) : SpellingProvider, SuggestionProv
         nextWord = prefs.suggestion.nextWordPrediction.get(),
         count = prefs.suggestion.suggestionCount.get().coerceIn(3, 5),
         shortcuts = com.humming.keyboard.predict.TextShortcuts.parse(prefs.suggestion.textShortcuts.get()),
+        neuralWeight = prefs.suggestion.neuralWeight.get().coerceIn(0, 100),
+        personalWeight = prefs.suggestion.personalWeight.get().coerceIn(0, 100),
     )
 
     override suspend fun spell(
@@ -118,7 +120,7 @@ class LatinLanguageProvider(context: Context) : SpellingProvider, SuggestionProv
         val t0 = System.nanoTime()
         val result = p.suggest(before, word, settings)
         val ms = (System.nanoTime() - t0) / 1_000_000.0
-        val slots = StripOrder.arrange(result, settings.count)
+        val slots = StripOrder.arrange(result, settings.count, prefs.suggestion.bestInMiddle.get())
         if (dev.patrickgold.florisboard.BuildConfig.DEBUG) {
             android.util.Log.i("HUMMING", "HUMMING_SUGGEST word=$word -> ${slots.joinToString("|") { it.text + if (it.kind == StripOrder.Kind.AUTOCORRECT) "*" else "" }} ms=${"%.1f".format(Locale.ROOT, ms)}")
         }

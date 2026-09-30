@@ -24,17 +24,34 @@ import dev.patrickgold.florisboard.ime.smartbar.CandidatesDisplayMode
 import dev.patrickgold.florisboard.ime.smartbar.ExtendedActionsPlacement
 import dev.patrickgold.florisboard.ime.smartbar.SmartbarLayout
 import dev.patrickgold.florisboard.lib.compose.FlorisScreen
+import dev.patrickgold.jetpref.datastore.ui.DialogSliderPreference
+import dev.patrickgold.jetpref.datastore.ui.ExperimentalJetPrefDatastoreUi
 import dev.patrickgold.jetpref.datastore.ui.ListPreference
 import dev.patrickgold.jetpref.datastore.ui.PreferenceGroup
 import dev.patrickgold.jetpref.datastore.ui.SwitchPreference
 import org.florisboard.lib.compose.stringRes
 
+@OptIn(ExperimentalJetPrefDatastoreUi::class)
 @Composable
 fun SmartbarScreen() = FlorisScreen {
     title = stringRes(R.string.settings__smartbar__title)
     previewFieldVisible = true
 
     content {
+        // Humming 1.2: the voice button's size in the toolbar.
+        DialogSliderPreference(
+            prefs.smartbar.hummingMicSize,
+            title = "Voice button size",
+            valueLabel = { "$it dp" },
+            min = 28,
+            max = 48,
+            stepIncrement = 2,
+        )
+        SwitchPreference(
+            prefs.smartbar.sharedActionsExpandWithAnimation,
+            title = "Animate the toolbar",
+            summary = "Slide the toolbar buttons in and out",
+        )
         SwitchPreference(
             prefs.smartbar.enabled,
             title = stringRes(R.string.pref__smartbar__enabled__label),

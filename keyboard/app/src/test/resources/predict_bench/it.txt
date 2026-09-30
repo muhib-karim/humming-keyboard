@@ -1,0 +1,506 @@
+tatoeba	Io avrei potuto ucciderti, però non l'ho fatto.
+tatoeba	Dove possiamo comprare dei biscotti?
+tatoeba	Io penso che siate troppo ubriachi per guidare.
+tatoeba	Perché dobbiamo studiare la storia?
+tatoeba	Non perdiamoci del tempo.
+tatoeba	Sono seriamente infastidito da lui.
+tatoeba	Le scrisse un messaggio.
+tatoeba	Sei sempre stato un combattente.
+tatoeba	Le genti stanno male.
+tatoeba	Sii te stessa!
+tatoeba	Mary si uccise nel 2013.
+tatoeba	L'uomo confessò di volere abiurare le sue convinzioni religiose.
+tatoeba	Tu rimarrai qui, Tom.
+tatoeba	Mi piacerebbe tornare all'ufficio.
+tatoeba	Non vi daremo nulla.
+tatoeba	Facciamo una sfida?
+tatoeba	Cos'hai, niente da fare di meglio?
+tatoeba	Durante il viaggio di andata abbiamo giocato a carte.
+tatoeba	Vai a costruire allevamenti in Canada.
+tatoeba	Mary si mise i guanti.
+tatoeba	Fa abbastanza schifo?
+tatoeba	Sami aveva un alibi ben documentato.
+tatoeba	Tom è sempre amichevole, vero?
+tatoeba	I miei gatti ameranno questo.
+tatoeba	La mamma non mi permette di giocare al computer.
+tatoeba	Tom ha trascorso qualche mese a Boston.
+tatoeba	Noi siamo usciti.
+tatoeba	Mi chieda qualunque cosa!
+tatoeba	Tom ha guidato fino a Boston per conoscere Mary.
+tatoeba	Sono simili ai topi che abbandonano la nave che affonda.
+tatoeba	C'è un problema con il vostro ordine.
+tatoeba	Non vanno a costruire birrerie in Siria.
+tatoeba	Noi torneremo in Europa a giugno!
+tatoeba	Non riesco a vedere nulla senza i miei occhiali.
+tatoeba	Perché chiedi scusa per qualcosa che non hai fatto?
+tatoeba	Non ho il passaporto inglese?
+tatoeba	Io posso vedere il miglioramento.
+tatoeba	Non potresti prestarmi la pinzatrice?
+tatoeba	Pensavo solo che il condizionatore funzionasse male, quando ho scoperto che la finestra era aperta.
+tatoeba	Non posso permettermi di ricevere un'altra contravvenzione, quindi devo fare attenzione a rispettare tutte le regole della strada.
+tatoeba	Non è ammalato.
+tatoeba	Suo marito è musulmano.
+tatoeba	Gli dissi che avevo dei piani.
+tatoeba	Non lasciare che finisca così.
+tatoeba	Preferite la carne o il pesce?
+tatoeba	Penso che sarò licenziata.
+tatoeba	Tu sai suonare la chitarra?
+tatoeba	Non ha paura.
+tatoeba	Mary è disorganizzata, vero?
+tatoeba	Sono una fotografa freelance.
+tatoeba	Ho aggiunto una stanza nella mia casa.
+tatoeba	Il ragazzo disegnò un'immagine sul muro.
+tatoeba	Mary è veramente appassionata di jazz, vero?
+tatoeba	Mary dice che lo deve fare.
+tatoeba	Ho il passaporto bielorusso.
+tatoeba	Tom probabilmente ha pensato che io fossi a scuola.
+tatoeba	Legga il più possibile.
+tatoeba	Penso che non andrò per lavoro in Russia.
+tatoeba	Della crisi economica se ne sente parlare eccessivamente anche dalla gente comune.
+tatoeba	In quale scuola andate?
+tatoeba	Era ovvio che si arrivasse a questo.
+tatoeba	È una gioia immensa per me saperlo!
+tatoeba	Mary ha detto che non doveva lavorare oggi.
+tatoeba	Faresti meglio a trovarlo.
+tatoeba	C'è sicuramente un fine sessuale dietro.
+tatoeba	Mary lo sa che la amate?
+tatoeba	Mio fratello parla molto velocemente.
+tatoeba	Questo sarà tutto.
+tatoeba	Non vado a fare amicizie in Scozia?
+tatoeba	Non sapevo che vivessi ancora con i genitori.
+tatoeba	Robert utilizzò il tuo portatile.
+tatoeba	Perché è rauco oggi?
+tatoeba	A quel tempo ero molto povero.
+tatoeba	Invecchiare è una brutta cosa, ma l'alternativa non è meglio.
+tatoeba	Lei non sarebbe felice con lui.
+tatoeba	Per favore non faccia molto rumore.
+tatoeba	Lei era così ricca.
+tatoeba	Vedo un cane.
+tatoeba	Lei ha fatto visita a sua nonna.
+tatoeba	Quelle due ragazze stanno litigando per un uomo.
+tatoeba	Sami non chiuse il suo portatile.
+tatoeba	Lei pensa che questa cosa sia carina?
+tatoeba	Ho dimenticato il tuo nome.
+tatoeba	Non andiamo a costruire cimiteri in Danimarca.
+tatoeba	Roma vale la pena di essere visitata.
+tatoeba	La fermata dell'autobus è dall'altro lato della strada.
+tatoeba	Lui fu costretto a tornare indietro a causa del maltempo.
+tatoeba	Sono stufa del pesce.
+tatoeba	Sì, mi fa male la gola.
+tatoeba	La fiducia deriva dal sapere chi sei.
+tatoeba	Andate a fare amicizie in Islanda.
+tatoeba	Vorrei fosse vero.
+tatoeba	Ho cercato di chiamarlo.
+tatoeba	Io ho analizzato i risultati.
+tatoeba	Erano entrambi ubriachi.
+tatoeba	Tom è molto brillante, vero?
+tatoeba	Beh, questa non vogliamo metterla?
+tatoeba	Mi chiedo perché le donne non diventano pelate.
+tatoeba	Io vivo vicino al mare, quindi ho spesso l'occasione di andare in spiaggia.
+tatoeba	Il re magio è molto triste?
+tatoeba	Che bel tempo!
+tatoeba	Parla il giapponese con difficoltà.
+tatoeba	Il suo computer è sul suo letto.
+tatoeba	Tom si spaventa facilmente.
+tatoeba	Egli mi diede il poco denaro che aveva.
+tatoeba	Grazie ancora per la bellissima foto di sabato!
+tatoeba	Io ho una forma lieve di COVID.
+tatoeba	Le sue parole la rassicurarono.
+tatoeba	Tom beve dalle 2:30 ed è già un po' ubriaco.
+tatoeba	Joanna lavò le patate.
+tatoeba	Per piacere, chiamatemi stasera.
+tatoeba	Non vanno a costruire mausolei in Norvegia.
+tatoeba	Lui può averlo detto.
+tatoeba	Lei era alla festa di Tom?
+tatoeba	Sono veramente orgogliosa di lui.
+tatoeba	Sia una brava matrigna.
+tatoeba	Ho visto abbastanza per ora.
+tatoeba	Dov'è andata alle superiori?
+tatoeba	Ziri trova l'arte astratta bella.
+tatoeba	Per favore, rispondi al telefono.
+tatoeba	Riescono a disegnare.
+tatoeba	Tom è tornato a casa lunedì.
+tatoeba	Mi piacque la festa.
+tatoeba	Non è che non ho la patente!
+tatoeba	Se l'invidia fosse febbre, tutto il mondo n'avrebbe.
+tatoeba	Sami ha sentito la radio.
+tatoeba	Lei era d'accordo.
+tatoeba	Accetti questa spiegazione?
+tatoeba	Era la stella.
+tatoeba	Quanti amici cinesi avete?
+tatoeba	Ha aiutato una paziente.
+tatoeba	Avete mangiato del cibo?
+tatoeba	A voi piace studiare il francese?
+tatoeba	Mi ha battuta.
+tatoeba	Non sapevo che Tom l'avesse fatto.
+tatoeba	Il lavoro è completato.
+tatoeba	Spero di non finire come loro.
+tatoeba	Il signor Tanaka sa suonare bene il pianoforte.
+tatoeba	Cos'ha detto Tom di me?
+tatoeba	Stai lontano da mio marito.
+tatoeba	Tom è cerebroleso.
+tatoeba	Non sembra molto forte.
+tatoeba	Sami viveva in un appartamento.
+tatoeba	So che Tom non l'ha mai fatto.
+tatoeba	Venerdì non si fa geografia.
+tatoeba	La bellezza richiede sacrificio.
+tatoeba	Porterete la vostra chitarra?
+tatoeba	Sono troppo stanca per pensare a questo adesso.
+tatoeba	Sono fiero di Tom.
+tatoeba	Lanciò una pietra al cane.
+tatoeba	Il pane è piccolo.
+tatoeba	Penso che non andranno per lavoro in Uruguay.
+tatoeba	Ha già detto troppo.
+tatoeba	Le persone oneste fanno paura.
+tatoeba	Lo amo così tanto.
+tatoeba	Le patate sono delle verdure.
+tatoeba	Ha ricevuto dei regali natalizi?
+tatoeba	Non lavora alla mensa?
+tatoeba	Non si fa mancare niente questo?
+tatoeba	Noi dobbiamo essere assolutamente sicure.
+tatoeba	Nevica molto d'inverno?
+tatoeba	Si sono incontrati all'aeroporto.
+tatoeba	Associamo Darwin con la teoria dell'evoluzione.
+tatoeba	Io non penso che pioverà questo pomeriggio.
+tatoeba	Abbiamo da subito fatto amicizia.
+tatoeba	Noi non abbiamo mai parlato di soldi.
+tatoeba	Mennad ha preparato del tè.
+tatoeba	Voi quanti strumenti sapete suonare?
+tatoeba	Sembrava tanto una brava persona.
+tatoeba	Penso che andrò per salute in Finlandia.
+tatoeba	Ha detto che le piacevo.
+tatoeba	Si arrabbia facilmente con le cose futili.
+tatoeba	Sbattè la porta.
+tatoeba	Va a costruire fattorie in Messico?
+tatoeba	Sulla Luna non c'è atmosfera.
+tatoeba	Il sogno continua.
+tatoeba	Tom dice di avere baciato Mary.
+tatoeba	Non la dimenticherò.
+tatoeba	Ho visto Tom e Mary a una festa assieme.
+tatoeba	Lei la riparerà.
+tatoeba	Bill è bravo in matematica.
+tatoeba	Sono stanco di subire sempre.
+tatoeba	Non viaggio molto spesso.
+tatoeba	Penso che non andranno per soldi in Ucraina.
+tatoeba	Loro dicono che Tom l'abbia fatto.
+tatoeba	Io voglio che tu soffra.
+tatoeba	Generalmente, gli uomini sono più alti delle donne.
+tatoeba	Ve la sto dando.
+tatoeba	Bisogna provare, ma poi si rischia.
+tatoeba	Parlando di lingue straniere, sa parlare il francese?
+tatoeba	Il maiale di solito è più economico del manzo.
+tatoeba	Mary non se ne deve andare ora, vero?
+tatoeba	E come si fa a giudicare quali siano gli appunti migliori e quali no?
+tatoeba	Questa sono io e questo è il mio gatto.
+tatoeba	Tom ha raccomandato Voi per questo lavoro.
+tatoeba	Quanto gelato vuole?
+tatoeba	Quanto è lungo questo?
+tatoeba	Non ho ancora conosciuto Tom.
+tatoeba	Ha un'abilità speciale.
+tatoeba	Il mio francese è veramente così pessimo?
+tatoeba	Come possa comportarsi in una maniera così stupida, non capisco!
+tatoeba	Si è rotto la gamba sinistra.
+tatoeba	È la settimana nazionale del libro.
+tatoeba	Allora, perché sei qui?
+tatoeba	La città venne distrutta da un incendio.
+tatoeba	Passa il sale a Tom, per piacere.
+tatoeba	Tom non chiese niente a Mary.
+tatoeba	Questo è un animale.
+tatoeba	Pensa se succedesse veramente.
+tatoeba	Lei lavora sempre duramente.
+tatoeba	Suo cugino, di cui mi sono scordato il nome, era un infermiere.
+tatoeba	Un hamburger ben condito è una vera esplosione di sapori in ogni boccone.
+tatoeba	Fortunatamente, Tom e Mary c'erano.
+tatoeba	Voglio sentirti suonare il piano.
+tatoeba	È un trucco.
+tatoeba	Non te la prendere.
+tatoeba	La mia mente è combattuta e indecisa.
+tatoeba	Il ristorante chiuderà domani.
+tatoeba	Mike fu scelto come presidente.
+tatoeba	Sei affamato, Yanni?
+tatoeba	Abbiamo pensato bene di non alzare i prezzi.
+tatoeba	Lo lasciai dormire fino a mezzogiorno.
+tatoeba	Tom può riparare questo.
+tatoeba	Le persone sono uguali ovunque.
+tatoeba	A me piace il cibo toscano.
+tatoeba	La causa dell'incidente è sconosciuta.
+tatoeba	Quale sembra essere il problema?
+tatoeba	Vai a costruire mattatoi in Cile.
+tatoeba	La discussione dovrebbe focalizzarsi su questo punto.
+tatoeba	Lui non deve andare a scuola oggi.
+tatoeba	Non volete che corregga i vostri errori?
+tatoeba	È tutto fuorché un bugiardo.
+tatoeba	Ha visto la sedia a rotelle del nonno?
+tatoeba	Sono sicuro che si sposeranno.
+tatoeba	Dividilo in due!
+tatoeba	Disse che era divertita.
+tatoeba	Dopo le sette sono a casa.
+tatoeba	Non va a costruire case a Malta?
+tatoeba	Per favore, metti una zolletta di zucchero nel mio caffè.
+tatoeba	Per caso è stato risolto con quella famosa mail?
+tatoeba	Vive al di sopra dei propri mezzi.
+tatoeba	Voglio continuare a suonare.
+tatoeba	Io sono un po' in anticipo.
+tatoeba	Sono convinta che Mary si sia uccisa.
+tatoeba	Forse vorreste andare con noi.
+tatoeba	Spero di vederla quest'anno!
+tatoeba	Io riesco a toccare il cielo con lei.
+tatoeba	Versami un bicchiere di vino.
+tatoeba	Non l'ho neppure sentito.
+tatoeba	Sorridete ora, piangete più tardi!
+tatoeba	Il nostro frigo si ruppe.
+tatoeba	Oggi non andremo a votare.
+tatoeba	Lei gli ha dato qualche mela.
+tatoeba	Dovreste annotarlo, prima di dimenticarvene.
+tatoeba	A me piace davvero il sito web di Tatoeba.
+tatoeba	Baldassarre ha una cesta di pere.
+tatoeba	Prendeteci qualcosa da bere.
+tatoeba	Non vado a cercare qualcuno negli Stati Uniti?
+tatoeba	Stanno mangiando le sue ciliegie saporite.
+tatoeba	Doveva andare a fare pipì.
+tatoeba	Puoi fare in modo che funzioni?
+tatoeba	Voleva dimenticarsi di lei.
+tatoeba	Non so come hai fatto a resistere così a lungo!
+tatoeba	Impiego molto tempo a scrivere una cartolina in lingua straniera.
+tatoeba	A voi piace il pane all'aglio?
+tatoeba	Ha giocato a baseball ieri?
+tatoeba	La pizza arrive.
+tatoeba	Prima che la materia (l'universo) iniziasse ad esistere, doveva esserci una mente per concepirla e organizzarla.
+tatoeba	Ho sentito dire che in Inghilterra l'erba è verde anche d'inverno.
+tatoeba	La gatta è saltata sulle spalle di Tom.
+tatoeba	Gli diedi un abbraccio.
+tatoeba	Quando abbiamo incominciato a confrontare questi fatti abbiamo notato una cosa interessante.
+tatoeba	Pensa di avere sempre ragione.
+tatoeba	Sentirti e vederti felice rende felice anche me.
+tatoeba	Tom ha visitato Boston prima.
+tatoeba	Avete dissotterrato le patate?
+tatoeba	Me li dovevo gestire da sola?
+tatoeba	Siete morte di fatica.
+tatoeba	Mary non ha mantenuto la sua promessa di aiutare Tom.
+tatoeba	Qual è la vostra scusa?
+tatoeba	Andate a costruire strade in Bangladesh?
+tatoeba	Non lo sto facendo da sola.
+tatoeba	Mangio spesso del formaggio quando bevo del vino.
+tatoeba	Ho prenotato una visita dermatologica per valutare la migliore opzione di rimozione della verruca.
+tatoeba	Lo zucchero non le fa male?
+tatoeba	Tatoeba manca di sviluppatori.
+tatoeba	È rosso come il sangue.
+tatoeba	Tom è molto impegnato ora, vero?
+tatoeba	Mi sto avvezzando a mangiare porzioni più piccole per regolare la mia dieta.
+tatoeba	Oggi avremo italiano.
+tatoeba	Il cane condivide la mia solitudine.
+tatoeba	Va a costruire banche in Regno Unito.
+tatoeba	Le merci deperibili devono essere trasportate in modo tempestivo e refrigerate adeguatamente.
+tatoeba	È strano che lei sia venuta a casa così tardi la sera.
+tatoeba	Mi disse che era povero.
+tatoeba	Un re debole indebolisce i forti.
+tatoeba	Il sindaco ha sganciato una bomba durante la conferenza stampa.
+tatoeba	È anche un mezzo ecologico.
+tatoeba	Non bevete dal mio bicchiere.
+tatoeba	Hai fatto rapidamente una doccia.
+tatoeba	Sembra sicuramente di cattivo auspicio.
+tatoeba	Mi ha insegnato come scrivere una poesia.
+tatoeba	In base a cosa lo affermi?
+tatoeba	Nessuno le troverà.
+tatoeba	Parlate con Dio.
+tatoeba	Qual è il vostro tipo di funghi preferito?
+tatoeba	Mangi dei carciofi.
+tatoeba	Mary ha promesso che non lo avrebbe detto a Tom.
+tatoeba	Come possiamo trovare Tom?
+tatoeba	Vado a fare nuove conoscenze in Ucraina.
+tatoeba	Ho dimenticato di comprare il latte.
+tatoeba	Lei è la sognatrice.
+tatoeba	Imparai l'inglese su Internet.
+tatoeba	Mia sorella ha paura di tutti i dottori.
+tatoeba	Ho chiesto al mio insegnante cosa dovrei fare dopo.
+tatoeba	Mi sono alzata alle sette.
+tatoeba	Siamo solo il nostro cervello e le nostre differenze non sono altro che piccole differenze cerebrali.
+tatoeba	Tom non sa molto.
+tatoeba	È molto probabile che lui venga.
+tatoeba	Leggi dei libri del genere?
+tatoeba	Noi siamo andati ieri a Sydney.
+tatoeba	Per piacere, me ne mostri un altro.
+tatoeba	Devi essere molto fiero di lui.
+tatoeba	A volte mi mancano tutti loro.
+tatoeba	Va a fare amicizie in Ucraina?
+tatoeba	Non va a costruire edifici in Turchia.
+tatoeba	Dobbiamo sapere di più su di lui.
+tatoeba	Cala nei sondaggi per questa cosa?
+tatoeba	Vieni spesso qui?
+tatoeba	Tom non voleva che cantassi.
+tatoeba	Abbiamo raggiunto il nostro obiettivo.
+tatoeba	Il punto è che è una stronzata!
+tatoeba	Non mi dispiace di essere in ritardo.
+tatoeba	Prima di fare i biglietti, controllate i tabelloni cartacei.
+tatoeba	Mi sono divertita alla festa ieri.
+tatoeba	Che tipo intelligente!
+tatoeba	Tom e Mary ti hanno dato qualcosa?
+tatoeba	A Ziri piace accarezzare i cani.
+tatoeba	Lui non è più stupido di te.
+tatoeba	Lei non è una studentessa.
+tatoeba	Voi siete ancora occupate?
+tatoeba	Non devi giustificare la tua decisione.
+tatoeba	Faccia attenzione a loro.
+tatoeba	Possiamo incontrarci al refettorio tra dieci minuti?
+tatoeba	Vi sbagliate su di noi.
+tatoeba	Mary telefonerà a sua suocera.
+tatoeba	Le dica del suo viaggio.
+tatoeba	Penso che Tom stia girandoci intorno.
+tatoeba	Spero che un giorno tu capisca l'impatto delle tue parole.
+tatoeba	È andato là da solo.
+tatoeba	Tom non ha neppure guardato.
+tatoeba	Lei non è più da sola.
+tatoeba	Tom mi ha tormentata.
+tatoeba	Il trattore semovente è stato progettato per muoversi autonomamente nei campi, facilitando il lavoro agricolo.
+tatoeba	Imparò il berbero.
+tatoeba	Mi sono fatto male al ginocchio.
+tatoeba	Tom mi ha passato la lettera.
+tatoeba	Ti imbarazzerebbe sapere certe cose?
+tatoeba	Digli di occuparsi degli affari suoi.
+tatoeba	In realtà ho finito.
+tatoeba	Ti sono grato per l'influenza positiva che hai avuto sul mio stato emotivo e mentale.
+tatoeba	Dov'è la cassetta delle lettere?
+tatoeba	Voi eravate bendati?
+tatoeba	Stai qui con loro.
+tatoeba	Lei disse che lui era bello.
+tatoeba	Vado a fare due passi.
+tatoeba	Non prova neppure ad aiutarlo.
+tatoeba	Tom è piuttosto collaborativo.
+tatoeba	Ho combinato un casino.
+tatoeba	Questo è capitato soltanto una volta.
+tatoeba	Dov'è il negozio più vicino?
+tatoeba	Dan e Linda sono originari dell'Albania, ma parlano solo in italiano ai loro figli.
+tatoeba	Non vai a costruire banche in Irlanda del Nord.
+tatoeba	Io penso che Tom sia preparato.
+tatoeba	Voglio tornare nel mio camerino.
+tatoeba	Lei non ha paura di morire.
+tatoeba	Molière è nato nel 1622.
+tatoeba	Non vado in vacanza in Scandinavia.
+tatoeba	I cani fiutano il pericolo.
+tatoeba	Mary sa che può fidarsi di me.
+tatoeba	Scusami, posso avere un cucchiaio?
+tatoeba	Lei non aveva alcun rancore contro di voi.
+tatoeba	Tom dà una festa stasera.
+tatoeba	Perché volevano andare in Germania?
+tatoeba	Se è libero, mi dia una mano.
+tatoeba	C'è qualcuno di onesto?
+tatoeba	No, non capisco la signora Kunze.
+tatoeba	Noi non aiuteremo i poveri.
+tatoeba	Si è lavata le mani rapidamente.
+tatoeba	Leggerò più attentamente.
+tatoeba	Alla donna e alla gazza dici ciò che diresti in piazza.
+tatoeba	Mi sono fatto molte nuove amiche.
+tatoeba	Non andiamo a costruire moschee in Turchia.
+tatoeba	Purtroppo come sai non potevo imparare il francese.
+tatoeba	Ti vorrò sempre accanto!
+tatoeba	Penso che rimpianga di aver divorziato da sua moglie.
+tatoeba	Non sono italiana.
+cv	Detto altrimenti, la sua voce dovrà essere solo e soltanto sua, non quella di un altro personaggio né quella dell'autore.
+cv	Uscire dal bozzolo.
+cv	E così se lo portò via il padrone dei buoi, al quale invece non apparteneva.
+cv	Raggiungeva appena i venti piedi.
+cv	Non gli piaceva essere al centro dell'attenzione, e preferiva.
+cv	Il risparmio annuo stimato ammonta a 8,8 milioni di euro.
+cv	Ora, la convivenza monastica chiamata dallo stesso santo.
+cv	Poi recò la mano alla tasca posteriore dei pantaloni e avanzò diritto verso la porta della casetta.
+cv	Ricerca di un equilibro del contenuto.
+cv	Si può pensare a tante spiegazioni!
+cv	Mettere al muro.
+cv	A un altro là il bastoncino.
+cv	I ricercatori dell'NCSA recepivano lentamente i suoi suggerimenti.
+cv	Quando gli ebrei sparsi per il mondo poterono recarsi ad occupare quella terra.
+cv	Avere tutti ai propri piedi.
+cv	Cavar le castagne dal fuoco.
+cv	E chi è il cavaliere?
+cv	L'idea alla base di tutto è che Mozilla non mette alcun limite.
+cv	Purtroppo, l'intera famiglia cristiana non ha ancora raggiunto appieno questa visibile unità nella verità.
+cv	La pistola la trova in città dalla sorella.
+cv	Ma si consolò rapidamente.
+cv	Tornato in patria, visse allo stesso modo a Londra.
+cv	La complicità in un crimine remoto?
+cv	Il rilascio di Windows Vista, supportato da una massiccia campagna pubblicitaria, ha portato molto movimento nel mercato.
+cv	Facendo penetrare bene in fondo al tappo di sughero l'aguzza spirale del cavaturaccioli.
+cv	Ipoteca sul nuovo palazzo ancora in costruzione…
+cv	In particolare, è stata migliorata la qualità delle conversioni dei file in formati proprietari.
+cv	Di sedimenti calcarei.
+cv	Il team di trasformazione digitale voluto dal Governo italiano per avvicinare la pubblica amministrazione al mondo digitale.
+cv	Kid Tiger e Jack Waters, il segretario, stavano ritti, immobili.
+cv	Messaggeri di ogni luogo dei monti entravano ed uscivano dalla città.
+cv	Fornire un progetto sperimentale o che non ha regole precise di stile.
+cv	È talmente bella che me la sposerei.
+cv	Esse non sono da intendersi di tipo verticale o gerarchiche ma funzionali.
+cv	A me non importa nulla di Kid Tiger!
+cv	Per questo, la coerenza dei vari elementi che la compongono, anche su diversi dispositivi, è un elemento fondante.
+cv	Assentì col capo gravemente.
+cv	Vedere paragrafo: Norme comportamentali.
+cv	Poiché esse riluceva anche quando la luna non la colpiva direttamente.
+cv	Gli fu possibile di trovarsi sullo spiazzo prima che Gardiel vi fosse, ma poté contornare i baraccamenti della miniera.
+cv	Per esempio, lo sviluppo non è presente in tutte le comunità.
+cv	Farci una croce sopra.
+cv	Il cui orrore fu soltanto superato dal primo cataclisma del diluvio universale.
+cv	In questi ultimi mesi ho voluto sottolineare con molteplici appelli il dovere che noi tutti abbiamo.
+cv	La caratterizza un'accentuazione cristologica.
+cv	Non esser farina di far ostie.
+cv	E sembra che tu l'abbia addirittura stupito, suonandogli Beethoven e Chopin.
+cv	Uldor era seduto fermo ad ammirare la luna.
+cv	Questo Istituto ha pertanto la facoltà di conferire con diritto proprio ai suoi studenti accademici.
+cv	Bruciare le tappe.
+cv	Dividendo in sei castelli l'unica grande fortezza.
+cv	Come stanno andando gli allenamenti?
+cv	Ma questi oppresso da tante cose che andava rivolgendo in mente.
+cv	Utilizzare un lessico non molto aulico.
+cv	Per quanto potessero, i soldati dell'armata cercarono di pulire le strade più trafficate.
+cv	Si pongono come obiettivo finale la professionalizzazione di una figura che collabora con un team di lavoro alla creazione.
+cv	Selezionando quello più adeguato fra le alternative.
+cv	In quanto a me, voi mi troverete in questa stanza.
+cv	Ora è possibile avere una leva che viene posizionata sotto la superficie dell'acqua e spessa pochi centimetri.
+cv	Una volta raccolte tutte le genti della regione nella sua terra, fece rapire le donne.
+cv	Il panorama europeo del settore software è composto da un'innumerevole quantità di piccole aziende.
+cv	Sorrideva, tra sorpreso e incredulo.
+cv	Cerca di dimostrare come l'uomo è facilmente soggiogabile.
+cv	E d'altri arnesi da pesca.
+cv	I fattori sociali influenzano sia il mercato che come viene recepita e applicata dalla cittadinanza una normativa.
+cv	Inoltre, hanno l'opportunità di portare avanti progetti Open Source.
+cv	Quindi avrà bisogno di un allenatore.
+cv	Prendere nella rete.
+cv	La stragrande maggioranza delle navi dirette alla capitale del nord si fermavano prima nel porto dei Monti.
+cv	Per qual modo l'immensa terra dei figli di Atlante.
+cv	Avere il tatto di un elefante.
+cv	Poi si volse di nuovo a De Vincenzi.
+cv	È colui che ha la soluzione a ogni problema.
+cv	Bensì dalla particolare milizia comune.
+cv	Con l'aiuto degli altri e di altre campagne realizzate precedentemente.
+cv	Ore 10,30 del 24-5-1931 – A vostro fonogramma della notte.
+cv	Ignorare la presenza divina o le sue manifestazioni significa mettersi i paraocchi come ai cavalli.
+cv	E, cosa più importante, disse che era gratuita.
+cv	Il loro pensiero è estremamente retrogrado.
+cv	Che doveva fare, adesso?
+cv	Anche la pista indicatagli dal suo istinto gli appariva nebbiosa e punto sicura, adesso.
+cv	De Vincenzi era così assorto nel ricordo delle ore vissute sul piroscafo.
+cv	E dei flussi di motivazioni e valori che scambiano.
+cv	Ma io lo dico in italiano.
+cv	Dopo un paio d'ore, circa, squillò il telefono.
+cv	Prima che iniziasse a parlare, Dalmor si voltò verso Araya, e vide le sue labbra piegarsi in un leggero.
+cv	Ma richiede una ripassatina alle parti più importanti dell'opera per capire al meglio ciò che accade.
+cv	Un uomo può vivere bene anche in un palazzo.
+cv	Chiese con voce tagliente.
+cv	Nel contempo, garantisce la qualità e la sicurezza del codice stesso.
+cv	Il suo primato è insidiato sempre più da vicino.
+cv	Perdere la tramontana.
+cv	La carenza organizzativa delle autorità.
+cv	Con grande vantaggio per il commercio.
+cv	Ed i suoi abitanti sono per la maggior parte dinosauri, mosasauri, sauriani, pterodattili e serpenti.
+cv	Certo il colpo era ardito e lui, se lo aveva tentato, doveva averlo fatto come unico rimedio al male peggiore.
+cv	Fare la manfrina.
+cv	Firefox offre diverse versioni oltre alla stabile.
+cv	Io sono ormai una cosa che non conta.
+cv	Lunedì sera mi ha detto che l'unico erede di tutto il suo patrimonio ero io!
+cv	Con l'obiettivo di intaccare il monopolio di Microsoft.
+cv	In questo modello il software viene rilasciato in file binario.
+cv	Ma il suo pubblico rimase deluso del rinnovamento delle tecniche narrative che adottò.
+cv	Terminata la visita tornarono nella sala e sedettero uno di fronte all'altro in due poltrone.
+cv	Desidero soltanto che la signora la veda, per riconoscerla.
+cv	Dobbiamo fare una foto.
+cv	Le cupe storie di contadini e pescatori risultano sgradevoli.
+cv	Sull'immenso spiazzale lastricato da cui si dipartivano le strade che uscivano dai Monti.
+cv	Le demo live hanno permesso a tutte le persone Online e Offline di poter conoscere meglio i progetti coinvolti.

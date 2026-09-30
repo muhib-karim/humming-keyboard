@@ -104,6 +104,39 @@ fun TypingScreen() = FlorisScreen {
                 summary = "Suggest the next word after a space",
                 enabledIf = { prefs.suggestion.enabled isEqualTo true },
             )
+            DialogSliderPreference(
+                prefs.suggestion.neuralWeight,
+                title = "Smart prediction strength",
+                valueLabel = { if (it <= 0) "Off (word tables only)" else "$it %" },
+                min = 0,
+                max = 100,
+                stepIncrement = 10,
+                enabledIf = { prefs.suggestion.enabled isEqualTo true },
+            )
+            DialogSliderPreference(
+                prefs.suggestion.personalWeight,
+                title = "Weight of my own typing",
+                valueLabel = { if (it <= 0) "Ignore" else "$it %" },
+                min = 0,
+                max = 100,
+                stepIncrement = 10,
+                enabledIf = { prefs.suggestion.enabled isEqualTo true },
+            )
+            SwitchPreference(
+                prefs.suggestion.bestInMiddle,
+                title = "Best suggestion in the middle",
+                summary = "Off: best first, left to right",
+                enabledIf = { prefs.suggestion.enabled isEqualTo true },
+            )
+            DialogSliderPreference(
+                prefs.suggestion.suggestionCount,
+                title = "Suggestions shown in the strip",
+                valueLabel = { "$it" },
+                min = 3,
+                max = 5,
+                stepIncrement = 1,
+                enabledIf = { prefs.suggestion.enabled isEqualTo true },
+            )
             SwitchPreference(
                 prefs.suggestion.learnFromTyping,
                 title = "Learn from my typing",
@@ -122,8 +155,9 @@ fun TypingScreen() = FlorisScreen {
             Preference(
                 title = "Dictionaries",
                 summary = "English, German, Spanish, French, Italian and Portuguese, all on this phone. Word lists: " +
-                    "Android Open Source Project (Apache-2.0). Next-word statistics counted from sentences of the " +
-                    "Tatoeba Project, tatoeba.org (CC BY 2.0 FR). Emoji names: Unicode CLDR.",
+                    "Android Open Source Project (Apache-2.0). Next-word statistics and the English neural model " +
+                    "learned from sentences of the Tatoeba Project, tatoeba.org (CC BY 2.0 FR) and Mozilla Common " +
+                    "Voice (CC0). Emoji names: Unicode CLDR.",
             )
         }
 

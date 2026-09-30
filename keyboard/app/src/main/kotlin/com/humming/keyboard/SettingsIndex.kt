@@ -8,7 +8,7 @@ import java.util.Locale
  * Covered by SettingsIndexTest (every entry resolves to a screen; common searches find the right setting).
  */
 object SettingsIndex {
-    enum class Screen { VOICE, LANGUAGES, THEME, KEYBOARD, FEEDBACK, TOOLBAR, TYPING, SHORTCUTS, DICTIONARY, GESTURES, CLIPBOARD, EMOJI, PRIVACY, BACKUP, RESTORE, OTHER, ABOUT }
+    enum class Screen { STICKERS, VOICE, LANGUAGES, THEME, KEYBOARD, FEEDBACK, TOOLBAR, TYPING, SHORTCUTS, DICTIONARY, GESTURES, CLIPBOARD, EMOJI, PRIVACY, BACKUP, RESTORE, OTHER, ABOUT }
 
     data class Entry(val title: String, val path: String, val screen: Screen, val keywords: String = "")
 
@@ -31,12 +31,16 @@ object SettingsIndex {
         Entry("Number row", "Keyboard", Screen.KEYBOARD, "numbers digits row"),
         Entry("Long-press symbols (hints)", "Keyboard", Screen.KEYBOARD, "long press symbols hint popup"),
         Entry("Long-press delay", "Keyboard", Screen.KEYBOARD, "long press delay"),
+        Entry("Key repeat speed", "Keyboard", Screen.KEYBOARD, "repeat delete backspace hold speed fast slow"),
+        Entry("Double-tap speed", "Keyboard", Screen.KEYBOARD, "double tap space period shift caps lock speed"),
         Entry("One-handed mode", "Keyboard", Screen.KEYBOARD, "one hand left right thumb"),
         Entry("Split keyboard (landscape, tablets)", "Keyboard", Screen.KEYBOARD, "split tablet landscape"),
         Entry("Floating keyboard", "Keyboard", Screen.KEYBOARD, "float floating move drag"),
         Entry("Bottom offset", "Keyboard", Screen.KEYBOARD, "offset bottom gesture bar"),
         Entry("Key press sound", "Keyboard > Input feedback", Screen.FEEDBACK, "sound audio click volume"),
         Entry("Vibration on key press", "Keyboard > Input feedback", Screen.FEEDBACK, "vibration haptic vibrate"),
+        Entry("Voice button size", "Smartbar", Screen.TOOLBAR, "mic microphone voice button size bigger smaller"),
+        Entry("Animate the toolbar", "Smartbar", Screen.TOOLBAR, "animation slide smartbar"),
         Entry("Toolbar buttons (add, remove, reorder)", "Smartbar", Screen.TOOLBAR, "toolbar smartbar quick actions buttons reorder"),
         Entry("Autocorrect strength", "Typing > Prediction", Screen.TYPING, "autocorrect correction strength aggressive mild off"),
         Entry("Next-word prediction", "Typing > Prediction", Screen.TYPING, "prediction next word"),
@@ -53,6 +57,13 @@ object SettingsIndex {
         Entry("Clipboard history", "Clipboard", Screen.CLIPBOARD, "clipboard copy paste history"),
         Entry("Clipboard retention", "Clipboard", Screen.CLIPBOARD, "clipboard keep delete clean old retention"),
         Entry("Emoji skin tone and history", "Emoji", Screen.EMOJI, "emoji skin tone recent history"),
+        Entry("Sticker panel", "Emoji > Stickers & GIFs", Screen.STICKERS, "sticker stickers panel pack"),
+        Entry("Add my own stickers", "Emoji > Stickers & GIFs", Screen.STICKERS, "sticker import image photo own custom"),
+        Entry("Online GIF search", "Emoji > Stickers & GIFs", Screen.STICKERS, "gif gifs animated search online openverse network"),
+        Entry("Smart prediction strength (neural model)", "Typing > Prediction", Screen.TYPING, "neural smart ai model prediction strength next word"),
+        Entry("Weight of my own typing", "Typing > Prediction", Screen.TYPING, "personal learning weight history"),
+        Entry("Suggestions shown in the strip", "Typing > Prediction", Screen.TYPING, "suggestion count number candidates strip slots"),
+        Entry("Best suggestion in the middle", "Typing > Prediction", Screen.TYPING, "strip order middle left layout suggestion position"),
         Entry("Emoji search (type :word)", "Emoji", Screen.EMOJI, "emoji search colon find"),
         Entry("Incognito mode", "Privacy", Screen.PRIVACY, "incognito private privacy"),
         Entry("Privacy and network", "Privacy", Screen.PRIVACY, "privacy network offline internet data"),
@@ -80,6 +91,7 @@ object SettingsIndex {
     }
 
     fun route(e: Entry): Any = when (e.screen) {
+        Screen.STICKERS -> Routes.Settings.Stickers
         Screen.VOICE -> Routes.Settings.Voice
         Screen.LANGUAGES -> Routes.Settings.Localization
         Screen.THEME -> Routes.Settings.Theme

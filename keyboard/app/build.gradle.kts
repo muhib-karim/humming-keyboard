@@ -102,10 +102,12 @@ android {
         buildConfigField("String", "BUILD_COMMIT_HASH", "\"${getGitCommitHash().get()}\"")
         buildConfigField("String", "FLADDONS_API_VERSION", "\"v~draft2\"")
         buildConfigField("String", "FLADDONS_STORE_URL", "\"beta.addons.florisboard.org\"")
-        // Humming: the on-device engine ships for 64-bit ARM phones and x86_64 emulators only. The release job builds
-        // the phone APK with -Phumming.abis=arm64-v8a (13 MB smaller); debug builds keep both for the CI emulator.
+        // Humming: the on-device engine ships for 64-bit ARM phones and x86_64 emulators only. A build that asks for a
+        // release task makes the phone APK (arm64-v8a only; the x86_64 libraries add 13 MB and no phone uses them);
+        // debug builds keep both for the CI emulator. -Phumming.abis=... overrides either (e.g. arm64-v8a,x86_64).
         val hummingAbis = (project.findProperty("humming.abis") as String?)?.split(',')?.map { it.trim() }?.filter { it.isNotEmpty() }
-        ndk { abiFilters += hummingAbis ?: listOf("arm64-v8a", "x86_64") }
+        val releaseRequested = project.gradle.startParameter.taskNames.any { it.contains("Release", ignoreCase = true) }
+        ndk { abiFilters += hummingAbis ?: if (releaseRequested) listOf("arm64-v8a") else listOf("arm64-v8a", "x86_64") }
 
         sourceSets {
             maybeCreate("main").apply {

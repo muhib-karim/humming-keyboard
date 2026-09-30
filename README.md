@@ -31,6 +31,15 @@ The middle part is sped up 8x because emulator CPUs are slow. The text is commit
   in quotes. A 156k-word English dictionary with frequencies, next-word prediction, keyboard-aware autocorrect
   (Off / Mild / Normal / Aggressive), apostrophe fixes (dont → don't) and learning from what you type, on the phone
   only. German, Spanish, French, Italian and Portuguese dictionaries too.
+- **On-device neural next-word model** (1.2): a small word-level LSTM (16k words, int8, 2.7 MB) that reads the whole
+  sentence so far, run by Humming's own Kotlin code with no native library and no network. Blended with the word
+  tables, it lifts held-out next-word top-3 accuracy from 30.2 % to 36.5 % (sentences it never saw;
+  measured by a unit test on every build). "Smart prediction strength" in Settings sets the blend or turns it off.
+- **Next-word prediction in six languages** (1.2): German, Spanish, French, Italian and Portuguese now suggest the
+  next word too (held-out top-3 22-26 %, up from 1-5 %).
+- **Stickers & GIFs** (1.2, off until you turn it on): 32 built-in stickers, your own imported images, a search box,
+  and optional online GIF search through Openverse (openly licensed GIFs, no account or key) that says exactly what
+  it sends and stays off in incognito.
 - Emoji in the strip ("pizza" offers 🍕), emoji search with `:heart`, and text shortcuts ("omw" → your phrase).
 - Glide (swipe) typing, fed by the same dictionary.
 - Number row, long-press symbols, key sound and vibration, one-handed mode, a **floating keyboard** you drag by its
@@ -66,11 +75,13 @@ Restore to import):
   (colours, fonts, key shapes).
 - **Keyboard**: height, key spacing, font size, number row, long-press symbols and delay, one-handed, split,
   floating, bottom offset; **Input feedback**: sound and vibration.
-- **Smartbar**: toolbar buttons (add, remove, reorder).
-- **Typing**: suggestions, **Prediction** (autocorrect strength, next word, learn from my typing, emoji), text
-  shortcuts, auto-capitalisation, double-space period, personal dictionary.
+- **Smartbar**: toolbar buttons (add, remove, reorder), voice button size.
+- **Typing**: suggestions, **Prediction** (autocorrect strength, next word, smart prediction strength, weight of
+  your own typing, suggestions shown (3-5), best suggestion in the middle or first, learn from my typing, emoji),
+  text shortcuts, auto-capitalisation, double-space period, personal dictionary.
 - **Gestures**: glide typing and its trail, swipe gestures, space-bar trackpad.
-- **Clipboard**: history and retention. **Emoji**: skin tone, history, emoji suggestions.
+- **Clipboard**: history and retention. **Emoji**: skin tone, history, emoji suggestions; **Stickers & GIFs**:
+  the panel, stickers per row, your own stickers, online GIF search and whether it may run in incognito.
 - **Privacy**: incognito, learning, clear learned words, block offensive words, what uses the network.
 - **Other**: backup / restore to a file, app theme. **About**: licences.
 
@@ -81,9 +92,12 @@ list against Gboard, SwiftKey and FUTO) is in [AUDIT.md](AUDIT.md).
 
 - **The voice path has no network code.** Recording, voice detection, recognition, cleanup and history run on the
   phone. A unit test (`NetworkAuditTest`) scans every Kotlin and Java source in the app and its libraries. It fails
-  the build if any file other than `ModelDownload.kt` uses a network API (sockets, HTTP, URL connections, WebView,
+  the build if any file other than `ModelDownload.kt` (and, since 1.2, the opt-in `GifSearch.kt`) uses a network API (sockets, HTTP, URL connections, WebView,
   DownloadManager). It also checks that no voice-path file even imports `java.net`.
-- **The only network use is the one-time model download.** It goes to the sherpa-onnx GitHub release. Each file is
+- **Network use: the one-time model download, and GIF search only if you turn it on.** GIF search (off by default,
+  off in incognito unless allowed) sends only the words typed into the sticker panel's search box to Openverse;
+  `NetworkAuditTest` allows network APIs in exactly these two files (`ModelDownload.kt`, `GifSearch.kt`).
+- **The model download** goes to the sherpa-onnx GitHub release. Each file is
   checked against a pinned SHA-256 and rejected on a mismatch. With **Wi-Fi only** on, the download waits for Wi-Fi.
   After that, dictation needs no connection at all.
 - **Proven in CI.** On every push, an Android 15 emulator:
@@ -174,8 +188,11 @@ Humming Keyboard is licensed under the **Apache License 2.0**. See `keyboard/LIC
   **CC-BY-4.0** (https://creativecommons.org/licenses/by/4.0/). The ONNX int8 export is by the sherpa-onnx project
   and is used unmodified. The credit is also shown in Settings > Voice.
 - **sherpa-onnx** (**Apache-2.0**), by the k2-fsa project: the speech runtime.
-- **ONNX Runtime** (MIT), **Silero VAD** (MIT), Apache Commons Compress (Apache-2.0) and the AOSP English word list
+- **ONNX Runtime** (MIT), **Silero VAD** (MIT), Apache Commons Compress (Apache-2.0) and the AOSP word lists
   (Apache-2.0).
+- Prediction data: **Tatoeba** sentences (CC BY 2.0 FR; only counts and trained weights ship) and **Mozilla Common
+  Voice** sentence lists (CC0). The English neural model is Humming's own (Apache-2.0).
+- Stickers: rendered from **Noto Emoji** images (Apache-2.0) with captions in the **Bangers** font (OFL-1.1).
 
 No GPL code is included. The full list with each obligation is in `keyboard/LICENSES.md`. See `CHANGELOG.md` for
 changes.

@@ -24,6 +24,8 @@ class Predictor(
     val lexicon: Lexicon,
     private val ngrams: Ngrams,
     val user: UserModel,
+    /** The on-device neural next-word model ([HummingLm]); null for languages without one. */
+    val neural: HummingLm? = null,
 ) {
     data class Settings(
         /** 0 = off, 1 = mild, 2 = normal (default), 3 = aggressive. */
@@ -34,6 +36,10 @@ class Predictor(
         val count: Int = 3,
         /** The user's text shortcuts, lowercase shortcut -> phrase ([TextShortcuts]). */
         val shortcuts: Map<String, String> = emptyMap(),
+        /** How much the neural model counts against the n-gram tables, 0 (off) to 100 (neural only). */
+        val neuralWeight: Int = DEFAULT_NEURAL_WEIGHT,
+        /** How much this user's own typing history counts, 0 (ignore) to 100; 50 is the tuned default. */
+        val personalWeight: Int = 50,
     )
 
     data class Candidate(val word: String, val score: Float, val cost: Float, val completion: Boolean)
@@ -66,11 +72,25 @@ class Predictor(
         return if (ctx.size >= 2) ctx.subList(ctx.size - 2, ctx.size).toList() else ctx.toList()
     }
 
+    /** The words of the current sentence before the cursor, lowercase, oldest first (the neural model's input). */
+    fun sentence(before: String): List<String> {
+        val tail = if (before.length > 400) before.substring(before.length - 400) else before
+        val out = ArrayList<String>()
+        for (m in TOKEN.findAll(tail.replace('\u2019', '\''))) {
+            val t = m.value
+            if (t.length == 1 && t[0] in ".!?\n") out.clear() else out.add(t.lowercase(Locale.ROOT))
+        }
+        return out
+    }
+
+    private fun neuralState(before: String, settings: Settings): HummingLm.State? =
+        if (neural != null && settings.neuralWeight > 0) neural.distribution(sentence(before)) else null
+
     fun isSentenceStart(ctx: List<String>): Boolean = ctx.size == 1 && ctx[0] == UserModel.SENTENCE_START
 
     // ---- language model ----
 
-    fun lm(key: String, ctx: List<String>): Float {
+    fun lm(key: String, ctx: List<String>, nn: HummingLm.State? = null, settings: Settings = Settings()): Float {
         val i = lexicon.indexOf(key)
         val uses = user.unigram(key)
         var pu = if (i >= 0) exp(lexicon.logP(i).toDouble()) else 0.0
@@ -83,16 +103,22 @@ class Predictor(
             bi != null -> 0.75 * bi.p(key) + 0.25 * pu
             else -> pu
         }
+        if (nn != null && neural != null) {
+            val w = settings.neuralWeight.coerceIn(0, 100) / 100.0
+            p = w * neural.prob(nn, key, pu) + (1 - w) * p
+        }
+        val personal = settings.personalWeight.coerceIn(0, 100) / 50.0
         val ub = user.bigram(ctx.last(), key)
-        if (ub > 0) p += 0.5 * ub / (ub + 2.0)
-        return (ln(p) + 0.3 * ln(1.0 + uses)).toFloat()
+        if (ub > 0) p += personal * 0.5 * ub / (ub + 2.0)
+        return (ln(p) + personal * 0.3 * ln(1.0 + uses)).toFloat()
     }
 
     // ---- suggestions ----
 
     fun suggest(before: String, typed: String, settings: Settings = Settings()): Result {
         val ctx = context(before)
-        if (typed.isEmpty()) return Result("", if (settings.nextWord) nextWords(ctx, settings) else emptyList(), null, false)
+        val nn = neuralState(before, settings)
+        if (typed.isEmpty()) return Result("", if (settings.nextWord) nextWords(ctx, nn, settings) else emptyList(), null, false)
         val t = typed.lowercase(Locale.ROOT).replace('\u2019', '\'')
         val n = t.length
         val cands = HashMap<String, Candidate>()
@@ -101,7 +127,7 @@ class Predictor(
             val li = lexicon.indexOf(key)
             if (li >= 0 && lexicon.isOffensive(li) && !settings.allowOffensive && key != t) return
             val penalty = if (completion) 0.6f + 0.1f * (key.length - n) else 0f
-            val s = lm(key, ctx) - ALPHA * cost - penalty
+            val s = lm(key, ctx, nn, settings) - ALPHA * cost - penalty
             val old = cands[key]
             if (old == null || s > old.score) cands[key] = Candidate(key, s, cost, completion)
         }
@@ -186,13 +212,26 @@ class Predictor(
         return displayFor(best.word, typed, false)
     }
 
-    private fun nextWords(ctx: List<String>, settings: Settings): List<Candidate> {
+    /**
+     * Words offered after an unseen context. English keeps its list; any other language uses its own most frequent
+     * words (1.2 audit: the English list used to fill the German to Portuguese strips, e.g. "a | for | to").
+     */
+    private val fallbackNext: List<String> by lazy {
+        if (lexicon.indexOf("the") in 0 until 8) {
+            FALLBACK_NEXT
+        } else {
+            (0 until minOf(lexicon.size, 40)).map { lexicon.key(it) }.filter { w -> w.isNotEmpty() && w.all { it.isLetter() } }.take(10)
+        }
+    }
+
+    private fun nextWords(ctx: List<String>, nn: HummingLm.State?, settings: Settings): List<Candidate> {
         val pool = LinkedHashSet<String>()
+        if (nn != null && neural != null) pool.addAll(neural.top(nn, NEURAL_POOL))
         if (ctx.size >= 2) ngrams.get(ctx[0] + " " + ctx[1])?.next?.keys?.take(12)?.let { pool.addAll(it) }
         ngrams.get(ctx.last())?.next?.keys?.take(12)?.let { pool.addAll(it) }
         pool.addAll(user.followers(ctx.last()))
         // An unseen context still gets the words that most often come next anywhere.
-        if (pool.size < settings.count) pool.addAll(FALLBACK_NEXT)
+        if (pool.size < settings.count) pool.addAll(fallbackNext)
         val start = isSentenceStart(ctx)
         return pool.asSequence()
             .filter { w ->
@@ -200,7 +239,7 @@ class Predictor(
                 !user.isBlocked(w) && (i >= 0 || user.unigram(w) >= UserModel.NEW_WORD_MIN_USES) &&
                     (i < 0 || settings.allowOffensive || !lexicon.isOffensive(i))
             }
-            .map { Candidate(it, lm(it, ctx), 0f, false) }
+            .map { Candidate(it, lm(it, ctx, nn, settings), 0f, false) }
             .sortedByDescending { it.score }
             .take(settings.count)
             .map { it.copy(word = displayFor(it.word, "", start)) }
@@ -216,6 +255,9 @@ class Predictor(
 
     companion object {
         const val ALPHA = 6.0f
+        /** The tuned blend (keyboard/lm/eval.py on held-out sentences); the user can change it in Settings. */
+        const val DEFAULT_NEURAL_WEIGHT = 70
+        private const val NEURAL_POOL = 20
         const val FUZZY_MIN_LOGP = -19.5f
         const val PREFIX_MIN_LOGP = -14.5f
         private val SHORT_LIMIT = floatArrayOf(0.8f, 1.0f, 1.4f)

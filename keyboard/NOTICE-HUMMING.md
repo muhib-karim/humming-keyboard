@@ -16,4 +16,9 @@ Changes made by the Humming project (Apache-2.0 section 4(b) notice):
   suggestion strip with the best guess in the middle; emoji and text shortcuts in the strip; an AMOLED theme, a
   background photo, a floating keyboard, Settings search, a Privacy screen, glide typing settings re-enabled,
   TalkBack labels on every key and contrast fixes.
+- 1.2 (M7): an on-device neural next-word model (a word-level int8 LSTM run by our own Kotlin code) blended with the
+  n-gram tables, next-word tables for German, Spanish, French, Italian and Portuguese, a sticker & GIF panel (off by
+  default; built-in stickers from Noto Emoji images, your own imported stickers, optional keyless GIF search through
+  Openverse), and new settings (smart prediction strength, weight of your own typing, suggestions shown, best
+  suggestion position, voice button size, stickers per row). Held-out prediction benchmarks run as unit tests.
 Every modified upstream file keeps its original licence header. Files added by Humming are marked as such.

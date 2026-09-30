@@ -43,7 +43,7 @@ class UserModel(private val file: File?) {
         val key = w.lowercase(Locale.ROOT)
         if (key in blocked) blocked.remove(key)
         uni[key] = (uni[key] ?: 0) + 1
-        // "Hello" at the start of a sentence says nothing about how the word is spelt; "Karim" mid-sentence does.
+        // "Hello" at the start of a sentence says nothing about how the word is spelt; "Omar" mid-sentence does.
         val sentenceCap = prev == SENTENCE_START && w.first().isUpperCase() && w.drop(1).none { it.isUpperCase() }
         if (!sentenceCap) display[key] = w else display.putIfAbsent(key, key)
         if (prev != null) {

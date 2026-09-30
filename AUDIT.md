@@ -1,202 +1,193 @@
-# Humming Keyboard: full audit (M6)
+# Humming Keyboard: full audit (M7, version 1.2.0)
 
-Scope: the Android keyboard in `keyboard/` (a FlorisBoard fork, Apache-2.0) at the M6 release commit, its CI
-(`.github/workflows/keyboard.yml`) and the emulator evidence from CI run 36665067290. Severity: High = must fix before a
-public release, Medium = fix now, Low = known and acceptable, listed honestly. Every High and Medium finding below
-is fixed in M6 unless marked otherwise.
+Scope: the Android keyboard in `keyboard/` (a FlorisBoard fork, Apache-2.0) at the M7 release commit `bb644b3` (code; the only later change is this audit), its CI
+(`.github/workflows/keyboard.yml`, `.github/workflows/lm-build.yml`), the JVM unit tests and benchmark of the release
+build of `bb644b3` (a Linux build machine running `./gradlew testDebugUnitTest :app:assembleRelease`), and the emulator evidence from CI run 36676272085 (1.2 on d137a7b, before the neural model was added;
+GitHub Actions was unavailable for the later commits, see Remaining).
+M6 numbers come from the M6 audit (CI run 36665067290). Severity: High = must fix before a public release,
+Medium = fix now, Low = known and acceptable, listed honestly. Every High and Medium finding is fixed in M7 unless
+marked otherwise.
+
+## 0. What M7 changed, measured
+
+| Goal | M6 (1.1.0) | M7 (1.2.0) |
+|---|---|---|
+| English next-word, held-out top-3 (sentences no model saw, 11,341 words) | 30.2 % (word tables) | **36.5 %** (neural model + tables) |
+| English, Common Voice half only (new to both versions) | 23.2 % | **27.3 %** |
+| German / Spanish / French / Italian / Portuguese next-word top-3 | 1.3–4.6 % (no next-word data) | **22.1–26.4 %** |
+| Suggestion time per key press, human pace, CI emulator (median) | 147 ms | **55.6 ms** (limit 150 ms; 106 ms on a slower emulator host; measured before the model was added, which costs 8.4 ms per new word on the JVM) |
+| Memory (PSS) after dictation, voice model loaded | 442 MB | 484 MB (before the model; it adds 2.7 MB) |
+| Memory (PSS) after Android's low-memory signal | 282 MB | 338 MB |
+| Phone release APK (arm64) | 25.4 MB | **32.8 MB** (limit 40 MB) |
+| GIF / stickers | none | sticker panel, your own stickers, opt-in keyless GIF search |
+| Settings with no control (hard-coded) | not checked | **0** user preferences without a control (CustomisationAuditTest) |
+| JVM unit tests | 95 | 216 |
 
 ## 1. Privacy and network
 
-What touches the network: **only the one-time voice model download** (`ModelDownload.kt`), from a pinned URL on
-the sherpa-onnx GitHub release, checked against a pinned SHA-256 and size, on Wi-Fi only by default. Typing,
-prediction, learning, emoji, clipboard, dictation and settings never use the network.
+What touches the network, and nothing else (enforced by `NetworkAuditTest`, which fails the build if any other
+source file uses a network API):
 
-Evidence:
-- `NetworkAuditTest` scans every Kotlin/Java source of the app and its libraries for network APIs
-  (`HttpURLConnection`, `URLConnection`, sockets, OkHttp, Ktor, WebView, `DownloadManager`, `java.net.URL`, ...).
-  Only `ModelDownload.kt` may use one, and the voice path has none. It runs on every CI build and passes.
-- The M5 offline proof still holds: an emulator in airplane mode with Wi-Fi and data off dictated and committed
-  "Please send the quarterly report to the whole team by Friday afternoon." (`offline_committed.png`).
-- The prediction data (dictionaries, next-word tables, emoji names) ships inside the APK. Learned words live in
-  the app's private files (`predict_user*.tsv`), are skipped in incognito and when "Learn from my typing" is off,
-  and are cleared by Privacy > Clear learned words. Nothing is uploaded; there is no analytics or crash reporting
-  SDK (FlorisBoard's crash screen writes a local log only).
-- `INTERNET` and `ACCESS_NETWORK_STATE` are declared only for the model download and the Wi-Fi-only check.
+- **The one-time voice model download** (`ModelDownload.kt`): unchanged from M6. Pinned URLs on the sherpa-onnx
+  GitHub release, SHA-256 checked, Wi-Fi only by default.
+- **New in 1.2, off by default: GIF search** (`GifSearch.kt`). It runs only after the user turns on "Online GIF
+  search" in Settings > Stickers & GIFs, where the notice says what is sent and to whom. It sends only the words
+  typed into the sticker panel's own search box, to Openverse (`api.openverse.org`, no account, no key, no cookies),
+  over HTTPS only, with a fixed User-Agent and no device identifiers. In incognito it is off unless "Allow GIF search
+  in incognito" is also on (off by default). Downloads are HTTPS-only and capped at 6 MB per GIF. The Privacy screen
+  lists both switches.
+- The neural next-word model is bundled in the APK and runs in Humming's own Kotlin code: no download, no native
+  library, no network. Prediction, learning, clipboard and dictation never leave the phone.
+- Finding (Medium, fixed in M7): the GIF search asked Openverse for 24 results per page; Openverse refuses more than
+  20 without an account (HTTP 401), so every search showed "No openly licensed GIFs". The CI screenshot of the GIF
+  panel caught it. It now asks for 20 (`StickersTest` checks), and a failed request says "Couldn't reach Openverse"
+  instead of "no GIFs".
+- Low: Openverse results are openly licensed (CC0, public domain, CC BY), but the content itself is whatever
+  creators uploaded; `mature=false` is sent and each result shows its licence, creator and source.
 
 ## 2. Permissions
 
-| Permission | Why | Asked when |
-|---|---|---|
-| `RECORD_AUDIO` | dictation | first tap on the mic (runtime prompt) |
-| `INTERNET`, `ACCESS_NETWORK_STATE` | one-time model download, Wi-Fi-only check | install time (normal) |
-| `MODIFY_AUDIO_SETTINGS` | route the Bluetooth headset microphone | install time (normal) |
-| `VIBRATE` | key-press vibration | install time (normal) |
-| `POST_NOTIFICATIONS` | model download progress | Android 13+ runtime prompt, only when downloading |
-
-No contacts, location, storage or accessibility-service permission. The background photo is picked with the
-system photo picker (`GetContent`) and copied into private storage, so no storage permission is needed.
+Unchanged from M6, and no new permission in 1.2: `RECORD_AUDIO` (asked on first dictation), `INTERNET` (the model
+download; since 1.2 also the opt-in GIF search), `ACCESS_NETWORK_STATE` (Wi-Fi-only download), `MODIFY_AUDIO_SETTINGS`
+(Bluetooth headset microphone), `VIBRATE`, `POST_NOTIFICATIONS` (upstream). Your own stickers are chosen with the
+system document picker (`OpenMultipleDocuments`, no storage permission) and copied into the app's private storage.
 
 ## 3. Security
 
-- gitleaks over the whole working tree and the M6 commits: **no leaks** (log in the pro copy's `SCAN.md`).
-- No API keys, tokens or signing secrets in the repo. The release APK is signed with a **development key** kept
-  for CI; a real upload key is still needed for the store (see Remaining).
-- Settings import (Settings > Other > Restore) unzips with FlorisBoard's canonical-path check (zip-slip safe), and
-  Humming's part copies only a fixed list of file names, so a crafted backup cannot write outside the app's files.
-- The background photo is decoded with the platform decoder into a bitmap; a bad image is rejected with a toast.
-- Model archives are verified by SHA-256 **before** unpacking, and only the model's own listed files are extracted
-  (`ModelPolicy.extractTarget`, which rejects `..` paths).
+- The model file is parsed by `HummingLm` with a magic header and size checks (`require` on the vocabulary size);
+  it is a bundled asset, not a downloaded file.
+- GIF search: HTTPS only (`require(url.startsWith("https://"))` for the search and every download), size cap,
+  and Android's `HttpURLConnection` does not follow a redirect from HTTPS to plain HTTP.
+- Stickers are shared with the target app through the app's `FileProvider` (content URIs, no file paths), only
+  through the editor's own image-commit API; apps that do not accept images get a toast, not a crash.
+- gitleaks is clean on every push; the release APK is still signed with a development key (see Remaining).
 
 ## 4. Performance (CI emulator, x86_64 with software rendering; a real phone is faster)
 
-Measured by `screens.py` on the CI emulator (Android 15, x86_64, software GPU) in run 36665067290 (WIP 9, the same
-prediction and voice code as the release):
+Measured by `screens.py` on the CI emulator (Android 15, x86_64, software GPU) in run 36676272085 (commit d137a7b: all of 1.2
+except the neural model; the model adds one LSTM step per new word, 8.4 ms on the JVM). Emulator hosts vary: run
+36678145109 of the next commit measured a paced median of 106 ms and a 29 s voice-model load against 11 s here.
 
-| Measure | Result |
-|---|---|
-| Suggestion time per key press, typed at a human pace (33 key presses) | median **147 ms**, p90 264 ms, max 623 ms |
-| Suggestion time per key press, adb bursts (93, overlapping) | median 183 ms, p90 794 ms |
-| Same engine on the JVM (`PredictorTest.fastEnough`, CI runner, typo-heavy words) | **14.5 ms** mean per key press (test limit 40 ms) |
-| First suggestion after install (dictionary load while the emulator is busy) | 11.3 s, once |
-| Keyboard cold start (process killed, field tapped, keys drawn) | 16.5 s on the emulator (9.9 s in the WIP 6 run; the emulator is heavily loaded at this point of the run) |
-| Settings app cold start (`am start -W`) | 4.8 s |
-| Memory (PSS) after dictation, voice model loaded | 442 MB |
-| Memory (PSS) after Android's low-memory signal (model unloaded, `HUMMING_ENGINE unloaded` in the log) | **282 MB** |
-| Frame times while typing (software rendering) | 88% of frames over 16 ms, median 150 ms |
+| Measure | M6 | M7 |
+|---|---|---|
+| Suggestion time per key press, typed at a human pace | median 147 ms, p90 264 ms | median **55.6 ms**, p90 171 ms, max 214 ms |
+| Suggestion time per key press, adb bursts (overlapping) | median 183 ms | median 84 ms |
+| Neural model per new word on the JVM (build machine, benchmark) | — | 8.4 ms per next-word guess (19.5 ms on a busier run) |
+| Whole predictor per key press on the JVM (`PredictorTest.fastEnough`, best of 5 passes) | — | 23.1 ms (limit 40 ms) |
+| First suggestion after install | 11.3 s | 4.3 s |
+| Keyboard cold start | 16.5 s | 9.0 s |
+| Settings cold start | 4.8 s | 4.6 s |
+| PSS after dictation (voice model loaded) | 442 MB | 484 MB |
+| PSS after the low-memory signal | 282 MB | 338 MB |
 
-These are emulator numbers with no GPU; a real arm64 phone is several times faster, but **no real-phone numbers
-exist yet** (see Remaining). The frame-time line reflects the emulator's software renderer, not the keyboard.
+The neural model costs 2.7 MB of heap (int8 weights kept as bytes) and one LSTM step per new word; each
+sentence prefix's state is cached, so typing letters inside a word costs nothing extra.
 
-APK size: phone release APK (arm64) **25.4 MB**. The biggest parts are ONNX Runtime (22 MB uncompressed, needed
-for on-device dictation), the Chinese shape-based language pack from FlorisBoard (7.4 MB), and the English
-next-word table (4.9 MB, 1.9 MB compressed). M6 finding (Medium, fixed): the release APK carried x86_64 libraries
-too (13 MB compressed); the phone APK is now arm64-only.
-
-Other fixes in M6:
-- Medium, fixed: once dictation had been used, the voice model stayed loaded for the life of the keyboard process
-  (about 200 MB of native memory, which makes Android more likely to kill the keyboard in the background). It is
-  now unloaded when Android reports low memory and no dictation is using it, and reloads on the next dictation
-  (about a second). Proof: in CI run 36665067290 the keyboard's PSS fell from 442 MB to 282 MB after `am send-trim-memory ... RUNNING_LOW`.
-- Medium, fixed: typo correction compared the typed word with every dictionary word of a similar length (up to
-  about 15k distance checks per key press); it now scans only the first-letter buckets a typo can reach (same
-  results, about 6x less work).
-- Medium, fixed: settings clicks used a blocking call on the UI thread for preference writes (ANR risk); they now
-  write on a background scope.
-- Medium, fixed: the floating keyboard wrote its position to storage on every drag event; it now saves once when
-  the drag ends.
-- Low: the dictionary loads once per language per process in the background (about 1 s for English on the
-  emulator); the first suggestion after a cold start can wait for it.
+APK size: phone release APK (arm64) **32.8 MB** (M6 25.4 MB). New in 1.2: the five next-word tables
+(about 12 MB uncompressed), the neural model (2.7 MB) and 32 stickers.
 
 ## 5. Accessibility
 
-- High, fixed: keys had **no accessibility semantics** (upstream FlorisBoard issue), so TalkBack could not read or
-  type them. Every key now has a spoken label ("Shift", "Delete", "Space", "Emoji", letters) and a double-tap
-  types it (`HummingA11y`, `HummingA11yTest`).
-- Medium, fixed: contrast. White on the dark themes' purple enter key was 3.5:1 and the light theme's auto-commit
-  suggestion was 3.9:1. Every text/background pair in the Humming light, dark and AMOLED themes now meets WCAG AA
-  4.5:1 (key labels 10.9:1 to 18.1:1), enforced by `ThemeContrastTest`.
-- Settings screens are standard Material 3 components with labels; icon buttons added by Humming have content
-  descriptions (delete shortcut, move keyboard, voice controls).
-- Low, remaining: the suggestion strip reads each suggestion as plain text, without "best guess" or "autocorrect"
-  hints; glide typing has no TalkBack equivalent (same as other keyboards).
+Unchanged from M6 (keys labelled for TalkBack, every Humming theme pair ≥ 4.5:1). New in 1.2: the sticker panel's
+stickers carry content descriptions (their caption), the GIF results carry their titles, and the search box has its
+own letter keys (the main keyboard is replaced while the panel is open). Low, remaining: as in M6, the strip does not
+announce "best guess" or "autocorrect".
 
 ## 6. Crash and ANR risk
 
-- CI emulator run 36665067290: the keyboard went through every feature (typing in five scripts of use, emoji, clipboard,
-  one-handed, floating, themes, photo, languages, settings, voice) with **no crash** in the crash buffer and
-  **no ANR** from the keyboard (the only ANR event on the emulator image was Google Play services).
-- Fixed in M6: a blocking preference write in click handlers (above); settings writes from the IME process are
-  coroutine-based.
-- Fixed in M6: a compile break in the release build (a type error in the new typo search) was caught by CI before
-  anything shipped.
-- Low, remaining: FlorisBoard's editor layer still uses `runBlocking` for its own content queue (upstream design,
-  short critical sections).
+- CI emulator run 36676272085: every feature including the sticker panel, sticker search, GIF search and the five new
+  languages' next-word, with **0 entries** in the crash buffer and **0 ANRs** from the keyboard.
+- The model loads with the predictor, once per process, off the main thread; if it is missing or corrupt the
+  predictor falls back to the tables (`runCatching`).
+- GIF search runs on `Dispatchers.IO` with 8 s timeouts; a failure shows a message, never an exception.
 
 ## 7. Licences
 
-All code is Apache-2.0 (FlorisBoard base, Humming changes) and no GPL code is included. Every third-party component
-and data set, with its licence and what we must do, is in `keyboard/LICENSES.md`; data attributions are also in
-`keyboard/app/src/main/assets/predict/NOTICE.txt` and in the app (Typing > Dictionaries, Settings > Voice).
+All code is Apache-2.0 and no GPL code is included; no FUTO code or model is used. New in 1.2 (all recorded in
+`keyboard/LICENSES.md`, `NOTICE-HUMMING.md`, `assets/predict/NOTICE.txt` and `assets/stickers/NOTICE.txt`):
 
-| Component | Licence |
-|---|---|
-| FlorisBoard (base) | Apache-2.0 (+ `NOTICE-HUMMING.md` change notice) |
-| sherpa-onnx 1.13.8 | Apache-2.0 |
-| ONNX Runtime (in the sherpa-onnx AAR) | MIT |
-| NVIDIA Parakeet models (downloaded, not bundled) | CC-BY-4.0, attributed |
-| Silero VAD | MIT |
-| Apache Commons Compress | Apache-2.0 |
-| AOSP LatinIME word lists (en, de, es, fr, it, pt_BR) | Apache-2.0 |
-| Tatoeba sentences (only aggregated counts ship) | CC BY 2.0 FR, attributed |
-| Unicode CLDR emoji annotations | Unicode License v3 |
-| AndroidX, Kotlin, kotlinx, Room, cache4k, AboutLibraries, JetPref, compose-tooltip | Apache-2.0 |
+| Component | Licence | Obligation |
+|---|---|---|
+| Humming neural next-word model `hlm_en.bin` (trained by `keyboard/lm/train.py`) | Apache-2.0 (Humming's own weights) | keep the notice |
+| Tatoeba German, Spanish, French, Italian, Portuguese (and English) sentences, only counts and weights ship | CC BY 2.0 FR | attribution (done) |
+| Mozilla Common Voice sentence lists | CC0 1.0 | none |
+| Noto Emoji images (the 32 built-in stickers) | Apache-2.0 | credit (done) |
+| Bangers font (sticker captions drawn with it; the font is not shipped) | SIL OFL 1.1 | credit (done) |
+| Openverse (optional online search; nothing from it ships) | service; results CC0 / PD / CC BY | each result shows licence, creator, source |
 
-Low, remaining: FlorisBoard's comment in `FlorisImeSizing.kt` says the key-size fractions were "inspired by"
-OpenBoard (GPL-3.0); it credits numbers, not code, and no OpenBoard code is present. The bundled Chinese
-shape-based tables come from FlorisBoard, which ships them as Apache-2.0; their upstream provenance is FlorisBoard's
-statement.
+Everything from M6 is unchanged (FlorisBoard Apache-2.0, sherpa-onnx Apache-2.0, ONNX Runtime MIT, Parakeet
+CC-BY-4.0 downloaded not bundled, Silero VAD MIT, AOSP word lists Apache-2.0, Unicode CLDR).
 
 ## 8. Test coverage
 
-95 JVM unit tests, all green in CI run 36665067290, plus the emulator suites (`screens.py`: every feature,
-the offline proof, and `handoff.py`: the Gboard hand-off on a Play image). New in M6: `PredictorTest`
-(dictionary, ranking, the hero-shot case, autocorrect, apostrophes, learning, latency), `MultilingualTest`,
-`SettingsTest` (strip order, backup round-trip, settings search), `HummingFloatTest`, `HummingA11yTest`,
-`ThemeContrastTest`, `VoiceMemoryTest`. Not covered by unit tests: Compose UI layout (checked by emulator screenshots instead).
+216 JVM unit tests, all passing, in the release build of `bb644b3` (a Linux build machine running
+`./gradlew testDebugUnitTest :app:assembleRelease`), plus the emulator suites (`screens.py`, `handoff.py`).
+New in M7: `PredictionBenchmarkTest` (held-out top-3 for English before/after and for the five new languages, the
+neural model's Kotlin inference against the trainer's reference probabilities, sorted tables),
+`CustomisationAuditTest` (every user preference has a Settings control; key timings), `StickersTest` (sticker index,
+GIF permission rules, the Openverse request and parser).
 
-## 9. Gap list vs Gboard, SwiftKey and FUTO
+## 9. Customisation audit (goal 4)
 
-| Area | Humming M6 | Gboard | SwiftKey | FUTO Keyboard |
+Method: every preference declared in `AppPrefs.kt` was checked for a control in a Settings screen, and the keyboard
+code was read for fixed values a user would want to change. The check now runs on every build
+(`CustomisationAuditTest`): 164 preferences, all with a control except 21 internal ones (developer
+overlays, version stamps, the floating keyboard's saved position, the toolbar's expanded state).
+
+The owner's list, and where each lives:
+
+| Asked for | Setting |
+|---|---|
+| Prediction strength | Typing > Prediction: autocorrect strength (Off/Mild/Normal/Aggressive), smart prediction strength (0-100, 0 = neural model off), weight of your own typing |
+| Suggestion count | Typing > Prediction: suggestions shown (3-5); best suggestion in the middle or first |
+| Key height | Keyboard: height (portrait and landscape), key spacing, font size, bottom offset, one-handed scale |
+| Themes and colours | Theme: light/dark/AMOLED, day/night schedule, accent colour, background photo and dim, theme editor (every colour, font, key shape) |
+| Sounds | Keyboard > Input feedback: sound on/off, volume, per event (press, long press, repeat, swipe) |
+| Haptics | Keyboard > Input feedback: vibration on/off, mode, duration, strength, per event |
+| Long-press delay | Keyboard: long-press delay (100-700 ms) |
+| Layouts | Languages & layouts: any number of languages, each with its layout (QWERTY, QWERTZ, AZERTY, …) |
+
+New in 1.2 (were fixed in code): **key repeat speed** (20-200 ms between repeats while Delete is held; was the
+system's 50 ms) and **double-tap speed** (150-800 ms for double-space period and Shift caps lock; was the system's
+300 ms), plus voice button size, toolbar animation, stickers per row, and the four prediction settings above. All
+are found by Settings search and carried by Backup & restore.
+
+Remaining fixed values, judged not worth a setting: the space-bar swipe-up distance for its action (tied to the swipe
+distance threshold, which is a setting), the GIF request timeout, and the voice pipeline's silence threshold.
+
+## 10. Gap list vs Gboard, SwiftKey and FUTO
+
+| Area | Humming M7 | Gboard | SwiftKey | FUTO Keyboard |
 |---|---|---|---|---|
 | Dictation | Parakeet on-device, 3.7% WER (Fast), fully offline | cloud + on-device, best-in-class | cloud (Microsoft) | Whisper on-device, 5.4% WER (our bench) |
-| Prediction quality | dictionary + bigram/trigram + learning | large neural LM, best | strong personal LM | transformer LM on-device, very good |
-| Next-word languages | English next-word; 6 languages of completion/correction | 900+ languages | 700+ | many, downloadable |
+| Prediction quality | small on-device LSTM + word tables + learning (36.5 % top-3 held-out) | large neural LM, best | strong personal LM | transformer LM on-device, very good |
+| Next-word languages | 6 (en neural; de/es/fr/it/pt tables) | 900+ | 700+ | many, downloadable |
 | Glide typing | yes (statistical, dictionary-fed) | best | very good | good |
 | Emoji search | ":word" in the strip, emoji suggestions | search box in panel | search box | search box |
-| GIF / stickers | **no** (needs online services; skipped to stay offline) | yes (online) | yes (online) | no |
+| GIF / stickers | built-in + your own stickers; opt-in keyless GIF search (Openverse, openly licensed only) | yes (Tenor, online) | yes (online) | no |
 | Clipboard | grid, timestamps, retention | yes | yes (cloud sync) | yes |
-| Themes | light/dark/AMOLED/custom colour/photo | yes | yes | yes |
-| Privacy | offline by design, no telemetry | cloud features, telemetry | cloud account | offline, no telemetry |
+| Themes | light/dark/AMOLED/custom colour/photo/editor | yes | yes | yes |
+| Privacy | offline by design, no telemetry; GIF search opt-in | cloud features, telemetry | cloud account | offline, no telemetry |
 | Licence | Apache-2.0 | proprietary | proprietary | source-first, non-commercial |
 
-What would close the biggest gaps: a small on-device neural language model for next-word (the one area where
-Gboard, SwiftKey and FUTO are clearly ahead), next-word tables for the other languages, and a search box inside the
-emoji panel.
+What would close the next gaps: a bigger neural model (or a small transformer) trained on more conversational text,
+neural models for the other five languages, the GIF catalogue (Openverse has far fewer reaction GIFs than Tenor or
+Giphy, which need API keys), and an emoji search box inside the emoji panel.
 
 ## Findings summary
 
-Fixed in M6: 
-- High: word prediction. Autocorrect picked "grew" for "Sounds gre", next-word came from a 270-pair seed list,
-  glide typing used FlorisBoard's tiny test dictionary (swipes committed junk or nothing), and the strip put the
-  typed word first with no clear best guess. Replaced by a real engine: AOSP dictionaries (English 156k words, five
-  more languages 60k each), Tatoeba next-word statistics, keyboard-aware typo correction with a strength setting,
-  learning on the phone only, and a Gboard-style strip with the best guess in the middle.
-- High: TalkBack could not read or type keys (now labelled, double-tap types).
-- Medium: text contrast below WCAG AA on the dark enter key and one light-theme suggestion (now all pairs ≥ 4.5:1).
-- Medium: blocking preference writes on the UI thread (ANR risk); floating keyboard writing storage on every drag
-  event.
-- Medium: voice model held in memory forever after the first dictation (now unloaded on low memory when idle).
-- Medium: typo search scanned every word of a length per key press (now bucketed, about 6x less work).
-- Medium: phone release APK carried x86_64 libraries (13 MB); now arm64-only.
-- Medium: adding a first language silently removed English; the app still called itself FlorisBoard in the
-  settings home and toasts; the incognito indicator was a faint watermark, and the toolbar icon that replaced it never appeared because the toolbar read the incognito state without observing it (upstream bug); Gestures showed a stale "glide typing
-  not available" card; settings search did not open ready to type.
+Fixed in M7:
+- Portuguese (and the other new languages) offered English words ("a | for | to") after an unseen word: the fallback list was English for every language; it is now the language's own most frequent words (ForeignStripTest).
+- English words leaking into the German to Portuguese word lists (Tatoeba sentences quote English): demoted in the lexicons with `keyboard/lm/demote_english.py`.
+- The table builder now filters banned words itself and refills each context's list after filtering, so no context is left short.
+- Online GIF search returned nothing ("No openly licensed GIFs for cat"): Openverse refuses anonymous requests for more than 20 results; page size is now 20, and a failed request says it couldn't reach the service instead of claiming there are no GIFs.
+- Key repeat speed and double-tap speed were fixed system values; both are settings now.
+- CI language screenshots were one word behind (adb typed in a burst); they now type word by word at a typing pace.
 
-
-Remaining (Low, or needs a person): 
-- Needs a person: the release APK is signed with a development key; a real upload key (kept outside the repo) is
-  needed before any store release.
-- Low: next-word prediction is English only; German, Spanish, French, Italian and Portuguese have completion and
-  correction but no next-word tables yet.
-- Low: no GIF or sticker panel, because every GIF source needs the network (skipped to keep the keyboard offline).
-- Low: emoji search is ":word" in the suggestion strip, not a search box inside the emoji panel.
-- Low: prediction quality is a dictionary plus word-pair statistics, clearly below the neural models in Gboard,
-  SwiftKey and FUTO for next-word guesses.
-- Low: the suggestion strip does not announce "best guess" or "autocorrect" to TalkBack; glide typing has no
-  TalkBack equivalent.
-- Low: FlorisBoard's own `runBlocking` content queue (upstream design) and the key-size comment crediting OpenBoard
-  numbers (no OpenBoard code is present).
-- Low: the first suggestion after a cold start waits for the dictionary load (about 1 s on the emulator).
-- Not measured: latency and memory on a real phone; all numbers here are from the CI emulator (software rendering),
-  which is slower than a phone.
-
+Remaining (Low, or needs a person):
+- Low: the neural model covers English only; German to Portuguese use word tables (held-out top-3 above), not a neural model.
+- Low: Openverse has few reaction GIFs compared with Tenor or Giphy (both need API keys), so GIF search is thin.
+- Low: the emoji panel has no search box of its own (":word" search in the suggestion strip works).
+- Needs a person: install and type on a real phone (all numbers here are from the CI emulator).
+- Medium, blocked: GitHub Actions on the repo's account stopped starting jobs at 06:59Z (billing), so commits from 9edbf51 on were built and unit-tested on a separate Linux build machine, not in CI, and the emulator suites (`screens.py`, `handoff.py`) have not run with the neural model. Re-run the keyboard workflow on the release commit once Actions is back.
+- Low: the release APK is signed with a development key; a real release needs the owner's signing key.

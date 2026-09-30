@@ -284,6 +284,23 @@ abstract class FlorisPreferenceModel : PreferenceModel() {
             key = "emoji__suggestion_candidate_max_count",
             default = 5,
         )
+        // Humming 1.2: the sticker & GIF panel (Settings > Stickers & GIFs). Everything here starts OFF.
+        val stickersEnabled = boolean(
+            key = "humming__stickers_enabled",
+            default = false,
+        )
+        val gifSearchEnabled = boolean(
+            key = "humming__gif_search_enabled",
+            default = false,
+        )
+        val gifSearchInIncognito = boolean(
+            key = "humming__gif_search_in_incognito",
+            default = false,
+        )
+        val stickerColumns = int(
+            key = "humming__sticker_columns",
+            default = 4,
+        )
     }
 
     val gestures = Gestures()
@@ -587,6 +604,16 @@ abstract class FlorisPreferenceModel : PreferenceModel() {
             key = "keyboard__long_press_delay",
             default = 300,
         )
+        // Humming 1.2: time between repeats while Delete (or another repeating key) is held, in ms.
+        val hummingKeyRepeatDelay = int(
+            key = "humming__key_repeat_delay",
+            default = com.humming.keyboard.KeyTiming.DEFAULT_REPEAT_MS,
+        )
+        // Humming 1.2: how close two taps must be for double-space period and double-tap Shift caps lock, in ms.
+        val hummingDoubleTapTimeout = int(
+            key = "humming__double_tap_timeout",
+            default = com.humming.keyboard.KeyTiming.DEFAULT_DOUBLE_TAP_MS,
+        )
         val spaceBarSwitchesToCharacters = boolean(
             key = "keyboard__space_bar_switches_to_characters",
             default = true,
@@ -688,6 +715,11 @@ abstract class FlorisPreferenceModel : PreferenceModel() {
             key = "smartbar__enabled",
             default = true,
         )
+        // Humming 1.2: size of the voice button in the toolbar (dp).
+        val hummingMicSize = int(
+            key = "humming__mic_size",
+            default = 38,
+        )
         val layout = enum(
             key = "smartbar__layout",
             default = SmartbarLayout.SUGGESTIONS_ACTIONS_SHARED,
@@ -771,6 +803,20 @@ abstract class FlorisPreferenceModel : PreferenceModel() {
         val suggestionCount = int(
             key = "humming__suggestion_count",
             default = 3,
+        )
+        // Humming 1.2: how much the on-device neural model counts (0 = n-gram tables only) and how much the
+        // user's own typing history counts (50 = tuned default).
+        val neuralWeight = int(
+            key = "humming__neural_weight",
+            default = com.humming.keyboard.predict.Predictor.DEFAULT_NEURAL_WEIGHT,
+        )
+        val personalWeight = int(
+            key = "humming__personal_weight",
+            default = 50,
+        )
+        val bestInMiddle = boolean(
+            key = "humming__best_in_middle",
+            default = true,
         )
         val textShortcuts = string(
             key = "humming__text_shortcuts",

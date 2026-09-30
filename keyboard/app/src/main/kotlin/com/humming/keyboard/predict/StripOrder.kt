@@ -13,9 +13,16 @@ object StripOrder {
     enum class Kind { WORD, LITERAL, AUTOCORRECT }
     data class Slot(val text: String, val kind: Kind)
 
-    fun arrange(r: Predictor.Result, slots: Int = 3): List<Slot> {
+    /**
+     * [bestInMiddle] false (Settings > Typing > Prediction) puts the main slot first instead, left to right: next
+     * word best | second | third; autocorrect correction | "typed" | next.
+     */
+    fun arrange(r: Predictor.Result, slots: Int = 3, bestInMiddle: Boolean = true): List<Slot> {
         val words = r.ranked.map { it.word }.distinctBy { it.lowercase(Locale.ROOT) }
-        if (r.typed.isEmpty()) return middleFirst(words.take(slots).map { Slot(it, Kind.WORD) })
+        if (r.typed.isEmpty()) {
+            val next = words.take(slots).map { Slot(it, Kind.WORD) }
+            return if (bestInMiddle) middleFirst(next) else next
+        }
         val typed = r.typed
         val others = words.filter { !it.equals(typed, ignoreCase = true) }
         val out = ArrayList<Slot>(slots)
@@ -36,10 +43,11 @@ object StripOrder {
                 others.take(slots - 1).forEach { out.add(Slot(it, Kind.WORD)) }
             }
         }
-        return out.take(slots)
+        val res = out.take(slots)
+        return if (bestInMiddle) res else middleFirst(res)
     }
 
-    /** [a, b, c] best-first becomes [b, a, c]: the best in the middle. */
+    /** Swaps the first two slots: [a, b, c] best-first becomes [b, a, c] (the best in the middle), and back. */
     private fun middleFirst(list: List<Slot>): List<Slot> =
         if (list.size < 2) list else listOf(list[1], list[0]) + list.drop(2)
 }

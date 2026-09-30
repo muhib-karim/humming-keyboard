@@ -1,5 +1,39 @@
 # Changelog
 
+## 1.2.0: Humming Keyboard M7
+Prediction
+- An on-device neural next-word model for English: a small word-level LSTM (16,000 words, 128-dim embeddings, 256 hidden units, int8 weights, a 2.7 MB file) that reads the whole
+  sentence so far. Humming's own Kotlin code runs it (no native library, no network). It is blended with the word
+  tables and with what you type. Held-out next-word top-3 accuracy (sentences no model saw): 30.2 % in 1.1,
+  36.5 % now. "Smart prediction strength" sets the blend (0 turns the model off).
+- Next-word prediction in German, Spanish, French, Italian and Portuguese, from Tatoeba (CC BY 2.0 FR) and
+  Common Voice (CC0) sentences: held-out top-3 German 22.1 %, Spanish 26.4 %, French 25.9 %, Italian 24.8 %, Portuguese 25.3 % (1.1 had no next-word data for them: 1-5 %).
+- The benchmark runs as a unit test on every build (PredictionBenchmarkTest), and a second test checks the Kotlin
+  model gives the trainer's probabilities.
+- Settings: smart prediction strength, weight of your own typing, suggestions shown (3 to 5), best suggestion in the
+  middle or first.
+
+Stickers & GIFs (off until you turn it on)
+- A sticker panel with 32 built-in stickers (from Noto Emoji images, Apache-2.0), your own imported images, and a
+  search box with its own letter keys.
+- Optional online GIF search through Openverse: openly licensed GIFs, no account or key. It says exactly what it
+  sends (only the words in its search box), shows each GIF's licence and creator, and stays off in incognito unless
+  you allow it. Settings > Stickers & GIFs; also listed on the Privacy screen.
+
+Everything customisable
+- New settings: key repeat speed and double-tap speed (both were fixed system values), voice button size, toolbar
+  animation, stickers per row. All are found by Settings search and saved by Backup.
+- CustomisationAuditTest fails the build if any user preference has no control in Settings.
+
+Build and data
+- `keyboard/lm/` builds the tables, the benchmark sentences and the neural model from the corpora (the lm-build
+  workflow); only counts and trained weights ship, never sentences.
+- Speed: a next-word prediction with the neural model takes 19.5 ms in the JVM benchmark; the model adds 2.7 MB to the APK.
+- The upstream theme-engine tests (lib:snygg) compile and pass again: they imported two colour schemes the upstream
+  tree lacks, now test fixtures, so a plain `./gradlew testDebugUnitTest` runs every module's tests (216).
+
+Tests: PredictionBenchmarkTest, CustomisationAuditTest, StickersTest.
+
 ## 1.1.0: Humming Keyboard M6
 Prediction (rewritten)
 - A real word-prediction engine replaces the upstream stub and the M4/M5 test list (`com.humming.keyboard.predict`):
@@ -121,7 +155,6 @@ Patch release: release hygiene only, no functional changes to the keyboard.
   v1.0.0 run 36350013869.
 
 ## 1.0.0
-Built on the Humming Android base (APK 3). Changes since APK 3:
 
 - Works out of the box: the keyboard downloads its speech model by itself the first time it opens, with a progress
   bar inside the keyboard (resumable, sha256-verified, retries on a dropped connection). No setup app needed; the

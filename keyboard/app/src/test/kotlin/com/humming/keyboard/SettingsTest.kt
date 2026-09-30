@@ -69,7 +69,7 @@ class SettingsTest {
     }
 
     @Test fun backupPrefsRoundTrip() {
-        val m = mapOf("mode" to "device", "clean_mode" to true, "n" to 3, "dict" to "Karim\nParakeet\tx")
+        val m = mapOf("mode" to "device", "clean_mode" to true, "n" to 3, "dict" to "Omar\nParakeet\tx")
         assertEquals(m, HummingBackup.parse(HummingBackup.serialize(m)))
     }
 }

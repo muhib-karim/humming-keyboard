@@ -149,6 +149,10 @@ object Routes {
         object BackgroundImage
 
         @Serializable
+        @Deeplink("settings/stickers")
+        object Stickers
+
+        @Serializable
         @Deeplink("settings/theme")
         object Theme
 
@@ -314,6 +318,7 @@ object Routes {
             composableWithDeepLink(Settings.Privacy::class) { dev.patrickgold.florisboard.app.settings.humming.PrivacyScreen() }
             composableWithDeepLink(Settings.TextShortcuts::class) { dev.patrickgold.florisboard.app.settings.humming.TextShortcutsScreen() }
             composableWithDeepLink(Settings.BackgroundImage::class) { dev.patrickgold.florisboard.app.settings.humming.BackgroundImageScreen() }
+            composableWithDeepLink(Settings.Stickers::class) { dev.patrickgold.florisboard.app.settings.humming.StickersScreen() }
             composableWithDeepLink(Settings.Theme::class) { ThemeScreen() }
             composableWithDeepLink(Settings.ThemeManager::class) { navBackStack ->
                 val payload = navBackStack.toRoute<Settings.ThemeManager>()

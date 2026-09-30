@@ -3,4 +3,8 @@
     <cache-path
         name="backup"
         path="backup-and-restore/"/>
+    <!-- Humming: stickers and GIFs handed to apps through commitContent -->
+    <cache-path
+        name="stickers"
+        path="stickers/"/>
 </paths>

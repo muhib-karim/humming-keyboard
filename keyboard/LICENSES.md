@@ -16,6 +16,12 @@ including a paid store listing, as long as the obligations below are kept.
 | Apache Commons Compress 1.27.1 (model archive reader) | Apache-2.0 | Credit here. |
 | AOSP LatinIME word lists: English (156k words) plus German, Spanish, French, Italian and Brazilian Portuguese (60k each), for suggestions and autocorrect | Apache-2.0 | Credit here and in `assets/predict/NOTICE.txt`. |
 | Tatoeba English sentences (only aggregated next-word counts ship, no sentences) | CC BY 2.0 FR | **Attribution**: "Next-word statistics counted from sentences of the Tatoeba Project (tatoeba.org), CC BY 2.0 FR", here and in `assets/predict/NOTICE.txt`. |
+| Tatoeba German, Spanish, French, Italian and Portuguese sentences (1.2: next-word tables; the English neural model's training data) | CC BY 2.0 FR | **Attribution** as above; only aggregated counts and trained weights ship, no sentences (the unit-test benchmark keeps 1 % held-out sentences in `app/src/test/resources/predict_bench`, attributed there by source). |
+| Mozilla Common Voice sentence lists (1.2: next-word tables and the English neural model's training data) | CC0 1.0 | None required; credited here and in `assets/predict/NOTICE.txt`. |
+| Humming English neural next-word model `hlm_en.bin` (1.2; trained by `keyboard/lm/train.py`, run by our own Kotlin code, no runtime library) | Apache-2.0 (Humming's own weights) | Keep this entry; its training data's attribution (Tatoeba, above). |
+| Noto Emoji images (1.2: the 32 built-in stickers are rendered from them) | Apache-2.0 | Credit here, in `assets/stickers` notes and in Settings > Stickers & GIFs. |
+| Bangers font by The Bangers Project Authors (1.2: sticker captions are drawn with it; the font itself is not shipped) | SIL OFL 1.1 | Credit here. Rendered images are not subject to the OFL. |
+| Openverse (1.2: optional online GIF search, off by default; no key, no account) | Service; results limited to CC0, public domain and CC BY | Each GIF result shows its licence, creator and source in the panel so it can be credited. Nothing from Openverse ships in the app. |
 | Unicode CLDR emoji annotations (emoji in the suggestion strip, already bundled by FlorisBoard) | Unicode License v3 | Keep the notice (below). |
 
 Nothing GPL is included. Gboard, Google voice typing ("Rambler") and FUTO Keyboard are separate apps: Humming only
@@ -34,4 +40,8 @@ benchmark, never shipped.
 - AOSP LatinIME dictionaries (word lists): Copyright (C) The Android Open Source Project. Apache License 2.0.
 - Tatoeba Project sentences (tatoeba.org): Creative Commons Attribution 2.0 France. Only word-pair counts derived from
   them are distributed.
+- Mozilla Common Voice sentence lists (github.com/common-voice/common-voice, server/data): CC0 1.0 Universal.
+- Noto Emoji images: Copyright 2013 Google LLC. Apache License 2.0 (github.com/googlefonts/noto-emoji).
+- Bangers font: Copyright 2010 The Bangers Project Authors (github.com/googlefonts/bangers). SIL Open Font License 1.1.
+- Humming neural next-word model (hlm_en.bin): Humming project. Apache License 2.0.
 - Unicode CLDR emoji annotations: Copyright (c) Unicode, Inc. Unicode License v3 (https://www.unicode.org/license.txt).

@@ -1,0 +1,600 @@
+tatoeba	Le rire ajoute de la joie de vivre.
+tatoeba	Je viens juste de finir mon petit déjeuner.
+tatoeba	Je ne sais pas pourquoi Tom est parti.
+tatoeba	Vous n'avez pas construit une maison pour ses parents.
+tatoeba	Dites-moi que ce n'est pas en train de se produire !
+tatoeba	Cette personne est-elle votre plus jeune sœur ?
+tatoeba	Pour améliorer la situation, il faut travailler plus dur.
+tatoeba	Je sens que je vais bien dormir, cette nuit.
+tatoeba	L'ail est très bon pour la santé.
+tatoeba	Vous pouvez voler leurs œufs pendant qu'ils dorment.
+tatoeba	J'ai d’autres questions.
+tatoeba	Nous avions tous les deux faim.
+tatoeba	Un peu de café ?
+tatoeba	Tom et Pierre apprennent l'allemand, ils ont de la chance.
+tatoeba	Je préfèrerais une mort honorable.
+tatoeba	La proactivité éthique initie des changements positifs alignés sur nos valeurs.
+tatoeba	Dès que le printemps arrive, je me mets à un nouveau sport.
+tatoeba	Je ne vais nulle part avec toi.
+tatoeba	Il a été contraint de le faire.
+tatoeba	Prenez ce livre d'histoire de la Kabylie.
+tatoeba	Elles sont dans leur maison.
+tatoeba	Cette personne m'a demandé qui j'étais, mais je n'ai pas jugé nécessaire de lui répondre.
+tatoeba	Vous irez au cercle, n'est-ce pas ?
+tatoeba	Je ne veux pas mourir, un point c'est tout.
+tatoeba	Cette nouvelle est très importante pour nous.
+tatoeba	Nous fîmes un tour complet du lac en marchant.
+tatoeba	Que fait l’Académie française ?
+tatoeba	Il m'a fallu longtemps pour m'accoutumer au bruit.
+tatoeba	Je veux te présenter à des gens.
+tatoeba	Elles le lui ont dit.
+tatoeba	On est allé au même lycée Tom et moi.
+tatoeba	Tom veut plus de café.
+tatoeba	C'est un véritable raz-de-marée.
+tatoeba	Ce n'est pas à toi que je m'adresse.
+tatoeba	Comment mesurer le succès ?
+tatoeba	C'est une négociation extrêmement importante.
+tatoeba	Ça sera certainement un plaisir !
+tatoeba	Pouvez-vous les voir ?
+tatoeba	Par qui a été inventée cette machine ?
+tatoeba	La route est grande.
+tatoeba	De gauche comme de droite de l'hémicycle, de nombreux députés se sont montrés hostiles à ce projet de loi.
+tatoeba	Elles sont allées à Bejaia.
+tatoeba	Je veux changer le cours des choses.
+tatoeba	Je ne sais plus si Don Quichotte portait un chapeau ou pas.
+tatoeba	Tout le monde sait que cela marchait.
+tatoeba	Il voulait une voiture économique.
+tatoeba	Elle ne va pas y toucher.
+tatoeba	Beaucoup de gens font cette erreur.
+tatoeba	Ces oranges sont délicieuses.
+tatoeba	Choisis une langue.
+tatoeba	S'il avait pris compte de mon avis, il ne se serait pas perdu aujourd'hui.
+tatoeba	Mary a dit qu'elle était riche.
+tatoeba	La musique nourrit l'esprit.
+tatoeba	Ne faites pas le moindre bruit !
+tatoeba	Mon ami sourit gentiment.
+tatoeba	Qu'en pensez-vous, est-ce qu'elle aimera ?
+tatoeba	Le coffre-fort est ouvert.
+tatoeba	Je veux la vie éternelle !
+tatoeba	Tu me rends heureux.
+tatoeba	Je ne sais pas s'il avait vu le sage.
+tatoeba	La Russie importait du blé des États-Unis.
+tatoeba	Ce repas est un véritable festin.
+tatoeba	Qu'est-ce que tu as pour moi ?
+tatoeba	Je confectionne des biscuits.
+tatoeba	Je n'ai jamais été aussi gêné de toute ma vie.
+tatoeba	Mohand Georges Iguerbouchène est le premier compositeur kabyle de musique classique.
+tatoeba	Je te conseille d'être ponctuel.
+tatoeba	J'ai besoin de ces clés.
+tatoeba	Tu es un stup ?
+tatoeba	Je lui ai tenu la main pendant qu'elle mourait.
+tatoeba	Le produit est garanti exempt de défauts.
+tatoeba	Est-ce que vous viendrez avec nous ?
+tatoeba	Cela ne devrait plus se produire.
+tatoeba	Tu sembles être assez malin.
+tatoeba	Fais en sorte que la prochaine réunion tombe un jour où Tom n’est pas là.
+tatoeba	Il fait assez froid la nuit.
+tatoeba	Je jure que je n'ai pas fait quoi que ce soit.
+tatoeba	Ton père veut que tu joues au foot.
+tatoeba	T’es de quel bled ?
+tatoeba	Ziri se demandait.
+tatoeba	Il se réveillait.
+tatoeba	L'Allemagne est-elle dangereuse ?
+tatoeba	Tu devrais aller au lit.
+tatoeba	Tous se mettaient à rire.
+tatoeba	Retire tes commentaires !
+tatoeba	La cérémonie aura lieu demain.
+tatoeba	Elle baissait les prix.
+tatoeba	Les hippopotames sont agressifs et imprévisibles.
+tatoeba	Tu ferais mieux d'arrêter de fumer.
+tatoeba	J'avais une voiture magnifique.
+tatoeba	Vous êtes fastidieuses.
+tatoeba	Le problème avec les gens qui n'ont aucun vice, c'est qu'ils sont souvent vertueux par ailleurs.
+tatoeba	Tu les connais.
+tatoeba	Qu’est-ce que vous aimez le plus dans votre travail ?
+tatoeba	Elle a décidé d'entrer dans la chambre.
+tatoeba	Tom reprendra contact avec vous ultérieurement.
+tatoeba	J'accompagnais ma fille à l'école.
+tatoeba	Ce chemin n'aboutit pas.
+tatoeba	Ce fut un mauvais concert.
+tatoeba	Tout a besoin de son temps.
+tatoeba	Je suis partant pour aller où que tu ailles.
+tatoeba	Pleut-il toujours ?
+tatoeba	Je pense que vous devriez laisser Tom seul.
+tatoeba	L'homme est malheureux parce qu'il ne sait pas qu'il est heureux.
+tatoeba	Je ne veux pas être ton ami.
+tatoeba	C'est une âme sensible.
+tatoeba	Ce n'est pas supposé arriver.
+tatoeba	L'amor fati représente l'acceptation joyeuse de son destin.
+tatoeba	Dan a réprimandé Matt pour avoir impliqué Linda dans le vol.
+tatoeba	Un plus deux égale trois.
+tatoeba	Il m'a aidé à porter les bagages.
+tatoeba	Je ne suis pas sûre que vous soyez prêt.
+tatoeba	Cela vous tracasse à ce point.
+tatoeba	Marie aime la nourriture chinoise.
+tatoeba	Je l'ai pris à tricher à l'examen.
+tatoeba	Vous avez raison, en fait.
+tatoeba	Je n'ai jamais rencontré les parents de Tom.
+tatoeba	Puis-je avoir une copie de cela ?
+tatoeba	Il reste en contact avec lui.
+tatoeba	Je me demande où va ce navire.
+tatoeba	Il veut vivre en ville.
+tatoeba	Pourquoi veut-il partir aujourd'hui ?
+tatoeba	Elle a les tifs rétifs.
+tatoeba	Le chleuh est une langue, pas un dialecte.
+tatoeba	J'utilise une souris et un clavier avec mon ordinateur.
+tatoeba	Tom a demandé Marie en mariage.
+tatoeba	C'est ma perception, en tant qu'être humain, et elle est respectable à ce titre.
+tatoeba	De toute ma vie, je ne vous ai jamais vue auparavant.
+tatoeba	Il n'y a pas de déshonneur à être pauvre.
+tatoeba	Vous avez appelé votre fils "Tom".
+tatoeba	La réponse de Tom a surpris Mary.
+tatoeba	Skura l'a frappé.
+tatoeba	Tom porte presque toujours des lunettes de soleil.
+tatoeba	Tom a ouvert la porte de la salle de conférence.
+tatoeba	Laissez Tom essayer.
+tatoeba	Nos chambres sont contiguës.
+tatoeba	La règle d'or mondiale : C'est celui qui a l'or qui décide de la règle.
+tatoeba	Le cœur est plein et la bouche est cousue.
+tatoeba	Cette nuit, je n'ai pas bien dormi.
+tatoeba	Tom est tout ouïe.
+tatoeba	J'ai une vie confortable.
+tatoeba	Que préfèreriez-vous que je fasse ?
+tatoeba	Je vous laisse tirer vos propres conclusions.
+tatoeba	Nous aimons parler espagnol.
+tatoeba	Mon père conduit très bien.
+tatoeba	Ma sœur est la moins intelligente de sa classe.
+tatoeba	Ils essaient juste de le fréquenter, mais il refuse.
+tatoeba	Le sentier serpente à travers des champs non clôturés.
+tatoeba	Je vous ai dit que mon père était mort quand j'avais treize ans.
+tatoeba	Tout ce que je lui raconte est incorrect ?
+tatoeba	Ne montre pas que tu as peur.
+tatoeba	J'ai trouvé cela difficile à expliquer.
+tatoeba	La viande pourrie avait une odeur désagréable.
+tatoeba	Je regardai votre belle image.
+tatoeba	Je serai là dans une heure.
+tatoeba	Ils ont beaucoup de frais.
+tatoeba	C'est de mauvais augure.
+tatoeba	Tu peux t'asseoir devant Paul ou à côté de lui.
+tatoeba	Je bouffe souvent des fruits.
+tatoeba	Sami était à la décharge.
+tatoeba	Dites-moi ce que j'ai à faire.
+tatoeba	Nous ne sommes pas comme elles.
+tatoeba	La terre était encore humide après la pluie d'hier.
+tatoeba	Quand j'étais petite, je jouais généralement au baseball après l'école.
+tatoeba	Une grande frite, s'il vous plaît.
+tatoeba	Tante Kelly nous a invités aujourd'hui pour déguster de la glace.
+tatoeba	J'ai sorti un album la semaine dernière.
+tatoeba	Mon ordinateur déconne.
+tatoeba	Les médecins sont alarmés par la hausse des cas de grippe.
+tatoeba	Il s'est coupé un doigt avec la scie circulaire.
+tatoeba	Il n'a pas fait ses devoirs.
+tatoeba	Arrête de tout gérer!
+tatoeba	C'est une mauvaise information.
+tatoeba	Je ne lui ai pas laissé le choix.
+tatoeba	Quelques bateaux sont sur le lac.
+tatoeba	Il y a, dans un bon livre, davantage de vérités que son auteur n'avait l'intention d'y écrire.
+tatoeba	C'est la maison où je vivais étant petit.
+tatoeba	Dans son ensemble, le pays a un climat sévère.
+tatoeba	J'ai une crise d'asthme.
+tatoeba	Je n'ai pas d'imprimante.
+tatoeba	Vous allumez la bougie.
+tatoeba	Allô, qui est à l’appareil, s’il vous plaît ?
+tatoeba	Mon père a une barbe rousse.
+tatoeba	Ma maman est de gauche.
+tatoeba	En général, les enfants aiment les confiseries.
+tatoeba	Elle a pris un taxi vers l'hôpital.
+tatoeba	Marie a deux frères et une sœur.
+tatoeba	Tom a pensé que ce serait une bonne idée de voir un docteur.
+tatoeba	J'ai supprimé l'appli.
+tatoeba	Leon séchait les cours.
+tatoeba	La pauvre vieille dame s'est encore fait voler son sac.
+tatoeba	Qui veut ma mort ?
+tatoeba	Tu t'entends bien avec ta belle-mère ?
+tatoeba	Je ne l'ai pas vu depuis longtemps.
+tatoeba	As-tu souvent de ses nouvelles ?
+tatoeba	Son frère fait preuve de plus de patience que lui.
+tatoeba	Il faut revenir le plus tôt possible.
+tatoeba	J’ai cessé d’y croire.
+tatoeba	Les livres se laissent écrire.
+tatoeba	Tom a peut-être été à Boston avec Marie la semaine dernière.
+tatoeba	Je veux que tu sois meilleure.
+tatoeba	Elle le laissa payer l'addition comme si ça allait de soi.
+tatoeba	L'action est une suite d'actes désespérés qui permet de gagner du temps.
+tatoeba	Qu’est-ce que tu faisais, jusqu’à une heure pareille ?
+tatoeba	Retournons à l'hôtel !
+tatoeba	Le mur fera un mètre de haut.
+tatoeba	Comment cette maladie se diffuse-t-elle ?
+tatoeba	Je vois ta fleur.
+tatoeba	Tom parle couramment japonais.
+tatoeba	Elle t'a déclassée.
+tatoeba	Il s'en met plein les poches.
+tatoeba	Le Canada et la Russie sont des grands pays.
+tatoeba	Nous lisons le même livre.
+tatoeba	Les conducteurs de bus sont en grève aujourd'hui.
+tatoeba	Je ne porte pas toujours de cravate au travail.
+tatoeba	Mes mains les destinaient aux autels de mes dieux, / lorsqu'un soudain prodige est offert à mes yeux.
+tatoeba	On peut se sacrifier pour ses propres idées, mais pas pour la folie des autres.
+tatoeba	Ils ont acheté une maison avec piscine.
+tatoeba	Tu râles en permanence.
+tatoeba	Je trouve cela très dangereux et pense que c'est une mauvaise idée.
+tatoeba	Suivez-moi, sans esclandres !
+tatoeba	Le docteur a demandé à Tom d'arrêter de manger de la nourriture pour chien.
+tatoeba	Tu es invitée.
+tatoeba	Les figues aident à équilibrer la glycémie.
+tatoeba	La fortune n'enlève rien d'autre que ce qu'elle a donné.
+tatoeba	J'espère que vous voyez le problème.
+tatoeba	Nous faisons cours aux groupes de plus de cinq personnes.
+tatoeba	Je lui ai parlé de toi.
+tatoeba	Sais-tu parler le kurde ?
+tatoeba	Je ne suis pas bon pour classer les choses.
+tatoeba	Combien y a-t-il d'États en Inde ?
+tatoeba	Les licornes ont de longues défenses.
+tatoeba	S'il ne vient pas, nous ne partirons pas.
+tatoeba	L'Algérie a besoin d'acheter de l'or.
+tatoeba	Sami va devoir déménager.
+tatoeba	Tom a-t-il dit quelque chose ?
+tatoeba	Il n'y a pas de perfection dans la vie.
+tatoeba	L'un des jumeaux est en vie, mais l'autre est mort.
+tatoeba	J'ai déménagé à Souk-Letnayen.
+tatoeba	Cette histoire est véridique, elle a eu lieu dans notre village.
+tatoeba	Qu’avez-vous donc, ma fille ?
+tatoeba	On va au cinéma ?
+tatoeba	La Sibérie est-elle un pays ?
+tatoeba	Ils ont goutté un piment.
+tatoeba	Il a continué à marcher toute la journée.
+tatoeba	Il m'a fait un bras d'honneur.
+tatoeba	Le substrat linguistique influence la formation d'une nouvelle langue.
+tatoeba	Il ne se privait de rien.
+tatoeba	Père s'est soudainement senti malade et nous avons appelé un docteur.
+tatoeba	Attention, le thé est brûlant !
+tatoeba	Pierre a battu Paul au lieu de Jean.
+tatoeba	J'apprécie vraiment votre venue.
+tatoeba	Il me faut la convaincre.
+tatoeba	J'avais une peur bleue.
+tatoeba	Tom doit beaucoup d'argent à Mary.
+tatoeba	Laisse-moi faire un tour dans ta nouvelle Toyota.
+tatoeba	Personne ne sait que c'est toi.
+tatoeba	Voulez-vous plus de glace ?
+tatoeba	Tu n'as pas conduis à Béjaïa.
+tatoeba	Cette soupe a un goût d'oignon.
+tatoeba	Ça a été une démonstration spectaculaire.
+tatoeba	Tom dit qu'il n'ira jamais plus.
+tatoeba	As-tu du temps, maintenant ?
+tatoeba	Tu t'inquiètes trop à leur propos.
+tatoeba	C'est une épée à double-tranchant.
+tatoeba	Il lui a conseillé de ne pas y aller tout seul.
+tatoeba	L'autobus va partir.
+tatoeba	Leur en avez-vous parlé ?
+tatoeba	Tourne-toi et ouvre les yeux.
+tatoeba	Ils ramassèrent des coquillages sur la plage.
+tatoeba	Ça fait trois ans que Bob a démarré son affaire.
+tatoeba	Qui est le salaud qui t'a fait ça ?
+tatoeba	Tu t'es emparé de mon dû.
+tatoeba	Loupons les cours.
+tatoeba	J'ai accéléré la cassette.
+tatoeba	Un plein d'essence avoisine les cent euros.
+tatoeba	Les règles sont valables pour tout le monde.
+tatoeba	Eh, c'est quoi tout ce bruit ?
+tatoeba	Son invention est brillante !
+tatoeba	En as-tu un un peu plus petit ?
+tatoeba	Sami a demandé à son meilleur ami, Farid, d'être le parrain de sa fille.
+tatoeba	L'avez-vous embrassé ?
+tatoeba	Je prévois de passer par chez elle la semaine prochaine.
+tatoeba	Que diriez-vous si je vous invitais à dîner?
+tatoeba	Tu y vas ou tu restes ?
+tatoeba	La quasi-totalité des pays européens autorise les magistrats à se syndiquer.
+tatoeba	Tom a perdu tous ses cheveux.
+tatoeba	Nous étions dans un cercle vicieux.
+tatoeba	Marie savait conjurer le mauvais sort.
+tatoeba	Il n'est pas Japonais.
+tatoeba	Désolé, chéri, il n'y a aucun moyen que je puisse prendre toute une soirée pour un bavardage autour de cocktails.
+tatoeba	Elle s'est mise à l'embrasser aussitôt qu'il est arrivé chez eux.
+tatoeba	J'aime beaucoup m'occuper des animaux.
+tatoeba	J'ai un canapé.
+tatoeba	Ce n'est pas grave si nous faisons des erreurs quand nous écrivons le kabyle.
+tatoeba	J'aurais bien aimé savoir ça quand j'étais gamin.
+tatoeba	Ta nouvelle robe te va très bien.
+tatoeba	Tom est fantastique.
+tatoeba	Prenez ses clés de voiture.
+tatoeba	Elle souffrait d'un trouble bipolaire.
+tatoeba	Il m'emprunte toujours de l'argent.
+tatoeba	Elle n'aimait pas quand son mari était saoul.
+tatoeba	Elle dit que sa vie est monotone.
+tatoeba	Mais ses amis l'appellent Ken.
+tatoeba	Combien de temps pensez-vous que la réunion va durer ?
+tatoeba	Tom a tué le roi.
+tatoeba	Une foule de badauds s'est rassemblée sur la place.
+tatoeba	Laisse Tom vivre.
+tatoeba	C'est très marrant.
+tatoeba	Têtu comme une mule.
+tatoeba	Le lait ne se mélange pas à l'eau.
+tatoeba	Il pluma trois vieilles dames de leurs maigres retraites.
+tatoeba	Tu mélanges tout !
+tatoeba	Elle récolte le résultat de ce qu'elle avait fait.
+tatoeba	Je paye pour le café.
+tatoeba	À quelle vitesse peux-tu le faire ?
+tatoeba	Je mourrais s'il le faut.
+tatoeba	Est-ce que Marie a dit pourquoi qu'elle ne viendrait pas ?
+tatoeba	Tu attends la venue de Tom ?
+tatoeba	J'ai eu une enfance si heureuse !
+tatoeba	Le pneu est perméable.
+tatoeba	Ils n'allumeront pas de bougies dans leur chambre.
+tatoeba	Le parc immense a beaucoup de petits arbres.
+tatoeba	Comment l'herméneutique influence-t-elle notre interprétation des textes anciens ?
+tatoeba	Il est très compétent.
+tatoeba	Je crois que c'est le bon moment.
+tatoeba	Il l'a trompée.
+tatoeba	Mon opinion diffère de la vôtre.
+tatoeba	Je n'arrive pas à me débarrasser de mes boutons.
+tatoeba	Elle a peur des insectes.
+tatoeba	Je n’étais pas saoul.
+tatoeba	C'est un homme fustigé par le sort.
+tatoeba	En combien de temps peut-on apprendre l’espéranto ?
+tatoeba	Ils ne savent pas que je suis japonaise.
+tatoeba	Enlevez les livres de la table, s'il vous plaît.
+tatoeba	Qui a toqué à la porte ?
+tatoeba	Aujourd'hui nous mangerons du riz avec du poulet frit.
+tatoeba	Comment enfiler une aiguille facilement ?
+tatoeba	Il me trompait.
+tatoeba	Tom avait mal à la tête.
+tatoeba	L'équilibre dynamique ajuste continuellement nos priorités.
+tatoeba	Où je lave ma voiture ?
+tatoeba	Dites-leur qu'ils ont tort.
+tatoeba	Nous sommes pressés d'aller à Ait Rzin.
+tatoeba	Est-ce que tu te rappelles de son nom ?
+tatoeba	Est-ce vraiment vrai ?
+tatoeba	Tu ne m'as jamais appréciée.
+tatoeba	Suivez cette personne.
+tatoeba	Les ongles des doigts croissent environ quatre fois plus vite que ceux des pieds.
+tatoeba	Garde ta chambre aussi nette que tu peux.
+tatoeba	Je ne peux pas porter tous les bagages.
+tatoeba	Je ne sais pas précisément quand je rentrerai à la maison.
+tatoeba	Mon chien ronge tout.
+tatoeba	Le meilleur gouvernement est celui dont personne ne remarque quelque chose.
+tatoeba	Karl a présenté un nouveau robot.
+tatoeba	C'est mieux, n'est-ce pas ?
+tatoeba	Je doute qu'on vous ait élu au village pour autre chose que pour être pendu à la place publique.
+tatoeba	Commençons par les bonnes nouvelles.
+tatoeba	Tom est-il encore aux toilettes ?
+tatoeba	Pouvons-nous essayer ?
+tatoeba	Coupez le gaz !
+tatoeba	Gdansk est une ville polonaise.
+tatoeba	Je ne veux tout simplement pas de ton chien dans ma maison.
+tatoeba	C'est un homme méprisable.
+tatoeba	Mais j'avais oublié que des phrases corrigées se mêleraient au récit.
+tatoeba	Il semblait savoir ce qu'il faisait.
+tatoeba	Peux-tu donner quelques exemples ?
+tatoeba	Elle ne se mouchait point !
+tatoeba	Le bambou se courba mais il ne rompit pas.
+tatoeba	Tom a dit que ce n'était pas nécessaire.
+tatoeba	La raclée est une branlée que subit quelqu'un et qu'il n'oubliera jamais.
+tatoeba	Vous n'allez pas abandonner, si ?
+tatoeba	Tous les chiens étaient en vie.
+tatoeba	Je n'arrive pas à croire que nous soyons là.
+tatoeba	Ses cheveux sont coiffés en chignon.
+tatoeba	Si la liberté d'expression se limite aux idées qui nous conviennent, ce n'est pas la liberté d'expression.
+tatoeba	Il se leva pour l'embrasser.
+tatoeba	La population de Tokyo est environ cinq fois plus importante que celle de notre ville.
+tatoeba	Le marin réarrime la cargaison.
+tatoeba	Tom pense que je suis son ennemi.
+tatoeba	Soyez maître de vos paroles !
+tatoeba	Frappe à la porte avant d'entrer dans la pièce.
+tatoeba	Une nébuleuse est un nuage interstellaire de poussière, d'hydrogène, d'hélium et d'autres gaz ionisés.
+tatoeba	Tom est un type qui ment.
+tatoeba	On avait si peur.
+tatoeba	Tiens bien l'échelle.
+tatoeba	Je ne pouvais pas dire de quelle couleur était sa chemise parce qu'il faisait trop sombre dehors.
+tatoeba	Je prévois de rester en Australie pendant trois jours.
+tatoeba	Cette femme-ci a plusieurs chevaux.
+tatoeba	Je crois que tu ne te rends pas bien compte à quel point ta date de naissance est précieuse.
+tatoeba	L'olivier se brise, le roseau plie.
+tatoeba	Vous devez aller à sa rencontre.
+tatoeba	Je suis prêt à aider.
+tatoeba	Tom est très fier de chacun de vous.
+tatoeba	Nous avons été averties.
+tatoeba	Il se peut que mon père soit chez lui, à l'heure actuelle.
+tatoeba	Ils sont contents de lui.
+tatoeba	J'ai un mauvais torticolis.
+tatoeba	Ne voyez-vous pas ce que vous êtes devenues ?
+tatoeba	Vous vivez au-dessus de vos moyens.
+cv	Vos efforts, vos projets, vos vœux, à nos essaims.
+cv	Je n'en ai pas
+cv	Avec quelques morceaux de surtarbrandur il avait consolidé l’embarcation.
+cv	Campons ici, dit John Mangles.
+cv	La surveillante lui signifia
+cv	Les animaux et insectes aquatiques
+cv	Je jouis de le voir !
+cv	Ses lèvres sont pincées.
+cv	Mais c’est pas ça l’idée.
+cv	Cela rend contestable la revendication d’un droit absolu de propriété.
+cv	Enivre, et comme on sent le prix d'une faveur
+cv	Ma mère me fit une mine affreuse.
+cv	Il devait joindre son coéquipier, aussi, et il ne l’a pas fait.
+cv	On eût pu croire, par instants, que le mont projetait des flammes
+cv	On pouvait se passer d’eux
+cv	Victor Hugo disait, avec son sens de la formule
+cv	t'es en train de me dire que t'as prostitué ton père.
+cv	On ne vit rien.
+cv	Les rayons du soleil levant commençaient à se glisser
+cv	Le scandale fut vif.
+cv	Je ne mangerai pas chez eux un boisseau de sel.
+cv	Et que le mois de mai vous verse méchamment
+cv	Et on respondoyt : « « Par chemins.
+cv	Les matelots injuriaient le monstre, qui, d’ailleurs, dédaignait de leur répondre.
+cv	Des lettres récentes attestaient le réel de l'aventure.
+cv	Êtres bornés, il marque, au fond du ciel sans bord
+cv	On est con, quand même.
+cv	Il prescrivait des pénitences aux partenaires qui avaient perdu.
+cv	Dans sa tête grandissent des chimères.
+cv	Et fait pencher, au fond du livide infini
+cv	Dolorès l'aidait à faire les honneurs.
+cv	Il crut entendre s’entre-heurter
+cv	Les trains de projectiles pour la Lune.
+cv	Chante, ô mon coeur, l’éternel psaume !
+cv	En quoi suis-je actif ?
+cv	Si le gibier manquait, il poursuivait son chemin sans se troubler.
+cv	Qui ne tremble à quelque vent ?
+cv	Jusqu’ici cela va assez bien, dit-il.
+cv	Sauf qu’en fait si.
+cv	Une seconde fois, il dut y renoncer.
+cv	Nous sommes d'autres coeurs ; les temps fatals sont clos ;
+cv	Le traîneau versa, comme on pouvait s’y attendre.
+cv	Et de bustes vivants dans les flammes tordus
+cv	Je vous dis que je m'en vais !
+cv	Au moment où je me disposais à regagner ma chambre, le capitaine m’arrêta.
+cv	J'avais à vous parler.
+cv	Il ne dit pas : Adieu, Cosette.
+cv	Moi aussi, ajouta vivement le reporter.
+cv	Ceci ressemble furieusement à Napoléon répudiant Joséphine.
+cv	Leurs bâtiments résistaient à la tempête.
+cv	Orion lançant la bombe d'inaction.
+cv	Riquet l'interrogea du regard.
+cv	De violents cauchemars m’obsédaient.
+cv	Je sens que je sombre !
+cv	Mais papa ne sait pas grimper aux arbres.
+cv	Qu’est-ce qu’il t’a fait ?
+cv	Le délire des choses dépasse largement l'être
+cv	Il n’y en a pas.
+cv	Oui, car il est très blond, et je n’aime point un homme blond.
+cv	Faire passer avec un peu de mâche en jus d'iode vanille.
+cv	Ce rire a une mission.
+cv	Le sort n’a point l’art des transitions.
+cv	Le tonnerre, c’est mon ami.
+cv	Que me fait votre maison, sans les miens ?
+cv	Comme on voit une mouche au plafond se mouvoir
+cv	Et rien n'était plus simple en vérité.
+cv	Voyons, ne te fâche pas !
+cv	Epictète qui saigne en même temps qu'il pense ?
+cv	Les manigances des Descendants.
+cv	Le vieillard, par moments s’arrêtant immobile
+cv	Au lobe de leur oreille, coupé et distendu, pendaient des chapelets en os.
+cv	Non, pardon, pas Fulbert… que Victor et moi avons rencontré Madame Marquet.
+cv	Reine, oui, reine !
+cv	Il avait eu sa phase de jeunesse et de passion.
+cv	Tout ce que tu peux faire en ton humanité
+cv	La vieille se redressa furieuse.
+cv	le spectacle peut commencer
+cv	Nous ne sommes encore que devant Queenstown.
+cv	Soit ; mais pour soulever le voile, le linceul
+cv	On l’attendait donc, et avec quelle impatience !
+cv	Et, conclut Corty, nous pourrons faire ce qui nous reste à faire…
+cv	Pendant deux heures il ne prend rien.
+cv	Y a que des attrapes-pigeons dans le coin.
+cv	C'est de leur flanc que l'arbre immense du mépris
+cv	Quoi qu’il advienne, je ne me lèverai pas.
+cv	Savez-vous à quoi je pense, lieutenant
+cv	On battait du pied.
+cv	Cette Fantine est surprenante.
+cv	Et il a été payé pour ça.
+cv	Fais de moi ce que tu voudras.
+cv	Il n’y en a plus.
+cv	Sois Charlemagne Et Figaro !
+cv	Te voilà arrivé au quatrième rivage.
+cv	Jean, dit-il enfin au domestique, allumez du feu, j’ai froid.
+cv	J’ai vu ses traits fatigués, ses rêves envolés, ses responsabilités assumées.
+cv	On attendait donc le résultat de cette double médiation.
+cv	Où est le malade ?
+cv	Non, non, n'en parlons pas.
+cv	On est les chefs de l'ombre et l'on a dans la main
+cv	Et toi, Martin, ça te dérange pas trop de gober mes antipsychotiques ?
+cv	Sur la gauche, une forêt d’acajous coupait le paysage
+cv	Admirerai-je la France ?
+cv	Couverte de l'abominable pull de protection.
+cv	Oui, vous dites : Voyez, nous remplaçons ces brutes ;
+cv	Je réservai ma dialectique pour le moment opportun, et je m’occupai du repas.
+cv	Vous le saurez plus tard !
+cv	Le bonhomme a-t-il laissé une ou plusieurs inscriptions
+cv	L’insuffisance de personnel se fait partout sentir.
+cv	À la longue, ça devient monotone, onéreux
+cv	Tout est farouche dans cet idiome.
+cv	Parce que j’aime jouer avec mes ami-e-s imaginaires.
+cv	Mais Lise ne put se contenir davantage.
+cv	Homme, quel est le sens de l’affreuse aventure
+cv	C'est dans une heure, dans un instant, qu'elle le donnera.
+cv	Après le dernier coup de canon tiré
+cv	Le maquereau est un poisson très bon marché.
+cv	Tous ne sont pas restés.
+cv	Je ne veux pas que mon mari se trouve compromis.
+cv	Cependant, il arrive des accidents ! …
+cv	Est-ce que cet audacieux personnage prétend nous conduire jusque-là !
+cv	Et nous, s'il faut demain braver les flots béants
+cv	Mais Christ, sur le poteau du fatal carrefour
+cv	De rien et de tout.
+cv	À trois heures, Michel Ardan fit son apparition
+cv	Ne recognoissez-vous point ma voix ?
+cv	Crois-tu pas déranger l’énorme zodiaque ?
+cv	Il s’est mis à bouder.
+cv	Oui, et je crois en effet que c'est là la vérité.
+cv	Jusqu’alors, la chasse n’avait pas été fructueuse
+cv	Pourtant il ne partit pas.
+cv	Moi, je ne farfouille pas, j’enquête.
+cv	Fondant en larmes et en sanglots.
+cv	Le voilà sur la branche, là !
+cv	Il fixe sur-nous tous son oeil calme et clément
+cv	Tu vas juger si j’ai raison.
+cv	Quel cri terrible m’échappa !
+cv	Voire, pour me retrouver jusque dans mon chalet au cœur de l’Ariège.
+cv	Dans la Neige.
+cv	Maman m’a dit qu’il valait mieux pas.
+cv	Pourquoi n’as-tu pas saisi l’occasion de voir Paris ?
+cv	Une angoisse au noyau dur et blanc, comme une perle de tristesse.
+cv	J’aurais voulu un petit chou-fleur, mais tout est si cher…
+cv	Où en était cette guerre de sécession
+cv	lors de la cérémonie Moi À Orion.
+cv	Toute la vie était concentrée au cœur et à la tête
+cv	J’ai de bien jolis poulets gras…
+cv	Je restais là stupide au bas des piédestaux
+cv	Il faut absolument prendre un parti.
+cv	j'ai fait ce que tu m'as dit.
+cv	Ce que nous nommons aujourd’hui police n’existait pas alors.
+cv	A quoi bon revenir sur ce passé ?
+cv	Mais imaginer un gueuleton campagnard sur ces tatamis me semble sacrilège.
+cv	Roue, échelle, garrot, gibet, et glaive, et faulx
+cv	pour mieux nous latter les trombines façon lifting.
+cv	Il faut l’espérer, Suzel, » répondit Frantz.
+cv	Tu peux tenir mon doudou ?
+cv	Moi, je vous le promets, vous vivrez et vous serez heureuse.
+cv	Pour mon compte, il faut que je parle.
+cv	Est sage ; un jour viendra d'éclore et d'éclater ;
+cv	Auguste apaisement des clameurs dans l’idylle
+cv	Tout à coup, il s'endort.
+cv	Les astres dans une ombre et les chiffres dans l’autre !
+cv	Et toujours il en suinte, un long ruisseau de sang.
+cv	Vous usez peu votre bile et vos nerfs !
+cv	De l’amant de Georges, je veux dire.
+cv	Il sort pour faire faire aux ténèbres le mal ;
+cv	cette grotte, dont l’entrée s’est exhaussée.
+cv	En d’autres termes
+cv	Une condition, dit l’homme.
+cv	On en causait avec des yeux gourmands.
+cv	de Rognes à Bazoches-le-Doyen.
+cv	Vous reprochez leur taille et leur ombre aux colosses ;
+cv	Le modèle n’exploite que les premières phrases enregistrées.
+cv	Autant ce spectacle qu’un autre.
+cv	Mais cette cloche vient de la terre.
+cv	Du moins, c’est ainsi que nous l’imaginons.
+cv	Mais c’est trop !
+cv	Sa patte gauche ignore la bonne action qu’a faite sa patte droite.
+cv	Tandis que d'autres vont pieds nus sur le pavé
+cv	Il l’avait appris à la mère, on pigeait plus rien.
+cv	Vous avez dit : A bas la guerre, citoyens !
+cv	Jusqu'ici, nous avons à peu près suivi la brochure de Mirecourt.
+cv	Quelque chose d’important que cette éruption, et voilà qui ne m’inquiète guère
+cv	Cependant l’archidiacre haletait.
+cv	Du reste, il avait merveilleusement tenu la mer
+cv	Qu’as-tu vu ?
+cv	Non, je ne pense pas que les rois soient tranquilles.
+cv	Le réel, c’est la roue, et non le tour de roue.
+cv	C’est tout simple
+cv	Il lui dit : — Voulez-vous que je vous l’aille chercher ?
+cv	Les échelles des couvreurs s'accotaient aux murailles nues.
+cv	Il y a encore d’autres nouveaux.
+cv	Pas un fermier, pas un pêcheur qui ne sache lire et ne lise.
+cv	Je crois avoir dormi longtemps.
+cv	Lucien comprit ce mot.
+cv	Attendre le clairon du dernier jugement
+cv	Bruine ne discute pas.
+cv	Puis le drame proprement dit reprend violemment au tome trois jusqu’à la fin.
+cv	On bronze à l’arrière du manoir de briques rouges.
+cv	Est-ce qu’on se lasse jamais des émotions d’une pareille chasse ?

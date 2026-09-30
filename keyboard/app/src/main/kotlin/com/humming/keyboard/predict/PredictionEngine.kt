@@ -9,7 +9,7 @@ import java.io.File
  * downloaded and nothing leaves the device.
  */
 object PredictionEngine {
-    /** Languages with a bundled dictionary. English also has next-word statistics and emoji hints. */
+    /** Languages with a bundled dictionary and next-word statistics. English also has the neural model and emoji hints. */
     val LANGUAGES = listOf("en", "de", "es", "fr", "it", "pt")
 
     private val instances = java.util.concurrent.ConcurrentHashMap<String, Predictor>()
@@ -29,9 +29,13 @@ object PredictionEngine {
             instances[lang]?.let { return it }
             val app = ctx.applicationContext
             val lexicon = app.assets.open("predict/lexicon_$lang.tsv").bufferedReader().useLines { Lexicon.parse(it) }
-            val ngrams = if (lang == "en") Ngrams(app.assets.open("predict/ngrams_en.tsv").use { it.readBytes() }) else Ngrams(ByteArray(0))
+            val ngrams = runCatching { Ngrams(app.assets.open("predict/ngrams_$lang.tsv").use { it.readBytes() }) }
+                .getOrElse { Ngrams(ByteArray(0)) }
+            // The neural model (English): hand-written int8 inference, no native code. A missing or damaged
+            // file only means n-gram prediction.
+            val neural = runCatching { HummingLm(app.assets.open("predict/hlm_$lang.bin").use { it.readBytes() }) }.getOrNull()
             val user = UserModel(userFile(app, lang))
-            return Predictor(lexicon, ngrams, user).also { instances[lang] = it }
+            return Predictor(lexicon, ngrams, user, neural).also { instances[lang] = it }
         }
     }
 

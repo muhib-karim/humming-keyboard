@@ -6,7 +6,8 @@ import org.junit.Test
 import java.io.File
 
 /**
- * "Offline by design", enforced: only ModelDownload.kt (the one-time voice model fetch) may use a network API.
+ * "Offline by design", enforced: only ModelDownload.kt (the one-time voice model fetch) and GifSearch.kt (the opt-in
+ * GIF search, off by default) may use a network API.
  * Scans every Kotlin/Java source of the app and its libraries. Parsing a URI (java.net.URI) is not network I/O.
  */
 class NetworkAuditTest {
@@ -15,7 +16,7 @@ class NetworkAuditTest {
         "java.net.Socket", "java.net.ServerSocket", "DatagramSocket", "SocketChannel", "okhttp", "io.ktor",
         "android.webkit", "DownloadManager", "java.net.URL", "java.net.http",
     )
-    private val allowed = setOf("ModelDownload.kt")
+    private val allowed = setOf("ModelDownload.kt", "GifSearch.kt")
 
     private fun sources(): List<File> {
         val roots = listOf(File("src/main"), File("../lib"))
@@ -30,7 +31,7 @@ class NetworkAuditTest {
         assertTrue("found the sources (${files.size})", files.size > 200)
         val offenders = files.filter { f -> f.name !in allowed && networkApis.any { f.readText().contains(it) } }
             .map { f -> f.path + ": " + networkApis.filter { f.readText().contains(it) } }
-        assertEquals("network APIs outside ModelDownload.kt", emptyList<String>(), offenders)
+        assertEquals("network APIs outside ModelDownload.kt and GifSearch.kt", emptyList<String>(), offenders)
     }
 
     @Test
@@ -43,6 +44,19 @@ class NetworkAuditTest {
             val t = f.readText()
             assertTrue("${f.name} must not open network connections", networkApis.none { t.contains(it) } && !t.contains("java.net"))
         }
+    }
+
+    @Test
+    fun gifSearchIsOptInHttpsOnlyAndKeyless() {
+        val t = sources().first { it.name == "GifSearch.kt" }.readText()
+        assertTrue(t.contains("require(url.startsWith(\"https://\"))"))
+        assertTrue("no API key or account", !t.contains("key=") && !t.contains("Authorization"))
+        assertTrue(!GifSearch.allowed(enabled = false, incognito = false, allowInIncognito = true))
+        assertTrue(!GifSearch.allowed(enabled = true, incognito = true, allowInIncognito = false))
+        assertTrue(GifSearch.allowed(enabled = true, incognito = false, allowInIncognito = false))
+        // Nothing but the sticker panel calls it.
+        val callers = sources().filter { it.name != "GifSearch.kt" && it.readText().contains("GifSearch.search") }.map { it.name }
+        assertEquals(listOf("StickerPanel.kt"), callers)
     }
 
     @Test

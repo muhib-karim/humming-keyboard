@@ -334,6 +334,19 @@ class EditorInstance(context: Context) : AbstractEditorInstance(context) {
     }
 
     /**
+     * Humming: sends an image (a sticker or GIF) to the app through Android's commitContent, when the app says it
+     * takes that MIME type. Returns false when it does not (the panel then says so) or on failure.
+     */
+    fun commitImage(uri: android.net.Uri, mimeType: String, description: String): Boolean {
+        if (!com.humming.keyboard.Stickers.accepts(activeInfo.contentMimeTypes, mimeType)) return false
+        val inputContentInfo = InputContentInfoCompat(uri, ClipDescription(description, arrayOf(mimeType)), null)
+        val ic = currentInputConnection() ?: return false
+        ic.finishComposingText()
+        val flags = InputConnectionCompat.INPUT_CONTENT_GRANT_READ_URI_PERMISSION
+        return InputConnectionCompat.commitContent(ic, activeInfo.base, inputContentInfo, flags, null)
+    }
+
+    /**
      * Executes a backward delete on this editor's text. If a text selection is active, all
      * characters inside this selection will be removed, else only the left-most character from
      * the cursor's position.

@@ -58,6 +58,12 @@ fun MediaScreen() = FlorisScreen {
     val scope = rememberCoroutineScope()
 
     content {
+        val navController = dev.patrickgold.florisboard.app.LocalNavController.current
+        Preference(
+            title = "Stickers & GIFs",
+            summary = "Built-in and your own stickers; optional online GIF search (off by default)",
+            onClick = { navController.navigate(dev.patrickgold.florisboard.app.Routes.Settings.Stickers) },
+        )
         ListPreference(
             prefs.emoji.preferredSkinTone,
             title = stringRes(R.string.prefs__media__emoji_preferred_skin_tone),

@@ -17,7 +17,6 @@
 package dev.patrickgold.florisboard.ime.input
 
 import android.os.SystemClock
-import android.view.ViewConfiguration
 import androidx.collection.SparseArrayCompat
 import androidx.collection.isNotEmpty
 import androidx.collection.set
@@ -42,8 +41,6 @@ import org.florisboard.lib.kotlin.guardedByLock
 
 class InputEventDispatcher private constructor(private val repeatableKeyCodes: IntArray) {
     companion object {
-        private val DoubleTapTimeout = ViewConfiguration.getDoubleTapTimeout().toLong()
-        private val KeyRepeatDelay = ViewConfiguration.getKeyRepeatDelay().toLong()
 
         fun new(repeatableKeyCodes: IntArray = intArrayOf()) = InputEventDispatcher(repeatableKeyCodes.clone())
     }
@@ -76,7 +73,8 @@ class InputEventDispatcher private constructor(private val repeatableKeyCodes: I
             KeyCode.DELETE_WORD, KeyCode.FORWARD_DELETE_WORD, KeyCode.UNDO, KeyCode.REDO -> 5.0f
             else -> 1.0f
         }
-        return (KeyRepeatDelay * factor).toLong()
+        // Humming 1.2: the repeat speed is a setting (Keyboard > Key repeat speed), not the system constant.
+        return com.humming.keyboard.KeyTiming.repeatDelay(prefs.keyboard.hummingKeyRepeatDelay.get(), factor)
     }
 
     private fun determineRepeatData(data: KeyData): KeyData {
@@ -195,12 +193,14 @@ class InputEventDispatcher private constructor(private val repeatableKeyCodes: I
 
     fun isConsecutiveDown(data: KeyData): Boolean {
         val event = lastKeyEventDown
-        return event.data.code == data.code && (SystemClock.uptimeMillis() - event.time) < DoubleTapTimeout
+        return event.data.code == data.code &&
+            com.humming.keyboard.KeyTiming.isDoubleTap(SystemClock.uptimeMillis() - event.time, prefs.keyboard.hummingDoubleTapTimeout.get())
     }
 
     fun isConsecutiveUp(data: KeyData): Boolean {
         val event = lastKeyEventUp
-        return event.data.code == data.code && (SystemClock.uptimeMillis() - event.time) < DoubleTapTimeout
+        return event.data.code == data.code &&
+            com.humming.keyboard.KeyTiming.isDoubleTap(SystemClock.uptimeMillis() - event.time, prefs.keyboard.hummingDoubleTapTimeout.get())
     }
 
     fun isUninterruptedEventSequence(data: KeyData): Boolean {

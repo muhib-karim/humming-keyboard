@@ -129,8 +129,10 @@ fun PrivacyScreen() = FlorisScreen {
 
     content {
         Text(
-            "Humming works offline. Typing, prediction, clipboard and dictation never leave this phone. The only " +
-                "network use is the one-time voice model download (Settings > Voice), pinned by SHA-256, Wi-Fi only by default.",
+            "Humming works offline. Typing, prediction (including the neural model), clipboard and dictation never leave " +
+                "this phone. Network use: the one-time voice model download (Settings > Voice), pinned by SHA-256, Wi-Fi " +
+                "only by default; and, only if you turn it on, GIF search in the sticker panel, which sends just the " +
+                "words typed into its search box (Settings > Stickers & GIFs). It is off by default and off in incognito.",
             modifier = Modifier.padding(16.dp),
             style = MaterialTheme.typography.bodyMedium,
         )
@@ -170,6 +172,19 @@ fun PrivacyScreen() = FlorisScreen {
                 summary = "Passwords and other items apps mark sensitive are removed quickly",
             )
             Preference(title = "Clipboard retention and more", onClick = { navController.navigate(Routes.Settings.Clipboard) })
+        }
+        PreferenceGroup(title = "Stickers & GIFs") {
+            SwitchPreference(
+                prefs.emoji.gifSearchEnabled,
+                title = "Online GIF search",
+                summary = "Off by default. Sends only your GIF search words to Openverse",
+            )
+            SwitchPreference(
+                prefs.emoji.gifSearchInIncognito,
+                title = "Allow GIF search in incognito",
+                summary = "Off by default",
+            )
+            Preference(title = "Stickers & GIFs settings", onClick = { navController.navigate(Routes.Settings.Stickers) })
         }
         PreferenceGroup(title = "Voice") {
             Preference(
@@ -272,5 +287,75 @@ fun BackgroundImageScreen() = FlorisScreen {
                 setPref { storePrefs.theme.hummingBackgroundImage.set("") }
             },
         )
+    }
+}
+
+/** Humming 1.2: Settings > Stickers & GIFs. Everything starts off; online GIF search says what it sends where. */
+@OptIn(ExperimentalJetPrefDatastoreUi::class)
+@Composable
+fun StickersScreen() = FlorisScreen {
+    title = "Stickers & GIFs"
+    previewFieldVisible = true
+
+    val context = LocalContext.current
+    var userCount by remember { mutableStateOf(com.humming.keyboard.Stickers.user(context).size) }
+    val picker = rememberLauncherForActivityResult(ActivityResultContracts.OpenMultipleDocuments()) { uris ->
+        if (uris.isNotEmpty()) {
+            val n = com.humming.keyboard.Stickers.import(context, uris)
+            userCount = com.humming.keyboard.Stickers.user(context).size
+            Toast.makeText(context, if (n > 0) "Added $n sticker${if (n == 1) "" else "s"}" else "Couldn't read those images", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    content {
+        val gifOn by prefs.emoji.gifSearchEnabled.observeAsState()
+        PreferenceGroup(title = "Sticker panel") {
+            SwitchPreference(
+                prefs.emoji.stickersEnabled,
+                title = "Show the sticker panel",
+                summary = "Adds \u201CStickers & GIFs\u201D to the emoji panel. The built-in stickers and your own work offline.",
+            )
+            DialogSliderPreference(
+                prefs.emoji.stickerColumns,
+                title = "Stickers per row",
+                valueLabel = { "$it" },
+                min = 3,
+                max = 6,
+                stepIncrement = 1,
+                enabledIf = { prefs.emoji.stickersEnabled isEqualTo true },
+            )
+            Preference(
+                title = "Add my own stickers",
+                summary = if (userCount == 0) "Pick images (PNG, WebP, GIF, JPEG). They stay on this phone." else "$userCount of your own. Long-press one in the panel to remove it.",
+                onClick = { picker.launch(arrayOf("image/*")) },
+            )
+            Preference(
+                title = "Built-in stickers",
+                summary = "32 stickers made from Noto Emoji images (Apache-2.0) with captions in the Bangers font (OFL-1.1).",
+            )
+        }
+        PreferenceGroup(title = "Online GIF search") {
+            SwitchPreference(
+                prefs.emoji.gifSearchEnabled,
+                title = "Search GIFs online",
+                summary = "Off by default. Uses the internet: only when you search in the GIFs tab.",
+                enabledIf = { prefs.emoji.stickersEnabled isEqualTo true },
+            )
+            SwitchPreference(
+                prefs.emoji.gifSearchInIncognito,
+                title = "Allow GIF search in incognito",
+                summary = "Off: in incognito the GIFs tab stays offline",
+                enabledIf = { prefs.emoji.gifSearchEnabled isEqualTo true },
+            )
+            Preference(
+                title = "What is sent, and where",
+                summary = "Only the words you type into the GIF search box go to Openverse (api.openverse.org, run by " +
+                    "the WordPress Foundation), which needs no account or key. The GIFs and previews then download from " +
+                    "the sites that host them (for example Wikimedia Commons or Flickr), which see your IP address. " +
+                    "Nothing else you type ever leaves your phone. Results are limited to openly licensed GIFs " +
+                    "(CC0, public domain, CC BY); each shows its creator and licence." +
+                    if (gifOn) "" else " (Currently off.)",
+            )
+        }
     }
 }

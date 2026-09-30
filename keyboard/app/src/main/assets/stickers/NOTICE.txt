@@ -1,0 +1,8 @@
+Humming built-in stickers (s01.png ... s32.png, index.tsv)
+
+Rendered by keyboard/tools/stickers/build.py (Humming, Apache-2.0) from:
+  * Noto Emoji images (github.com/googlefonts/noto-emoji, 2D/png/512). Copyright 2013 Google LLC.
+    Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
+  * captions drawn with the Bangers font (github.com/googlefonts/bangers). Copyright 2010 The Bangers Project
+    Authors. SIL Open Font License 1.1 (the font itself is not included).
+The composed sticker images are distributed under the Apache License, Version 2.0.
