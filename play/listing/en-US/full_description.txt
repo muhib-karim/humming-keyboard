@@ -1,0 +1,37 @@
+Humming is an Android keyboard with voice typing that runs entirely on your phone. Tap the mic and talk: your words appear in a live preview and land in the text field when you tap Done. The speech model runs on the device, so dictation works in airplane mode and your voice is never uploaded.
+
+VOICE TYPING, OFFLINE
+• On-device speech recognition (NVIDIA Parakeet models, run by sherpa-onnx)
+• Two models: Fast (104 MB, the default) and Best (482 MB, for phones with 6 GB+ RAM)
+• Live preview while you talk, then one clean commit when you tap Done
+• Clean mode removes "um"s and stutters and applies self-corrections: "ten, no, fifteen minutes" becomes "15 minutes"
+• Punctuation and capitals added automatically
+• Bluetooth headset microphone support
+• Download the model on Wi-Fi only, or delete it any time
+
+TYPING THAT KEEPS UP
+• Three-slot suggestion strip, next-word prediction and keyboard-aware autocorrect (Off, Mild, Normal or Aggressive)
+• A small neural next-word model that runs on the phone
+• Dictionaries for English, German, Spanish, French, Italian and Portuguese
+• Learns your words on the device only
+• Glide (swipe) typing, number row, long-press symbols
+• Emoji suggestions ("pizza" offers 🍕) and emoji search with :heart
+• Text shortcuts ("omw" → your own phrase)
+• Clipboard history with timestamps, kept on your phone for up to a week
+• Space-bar trackpad and edit shortcuts (select all, copy, cut, paste, undo, redo)
+
+MAKE IT YOURS
+• Light, dark and AMOLED black themes, a custom accent colour and your own background photo
+• One-handed mode, a floating keyboard and a split layout in landscape and on tablets
+• Built-in stickers, your own images, and optional GIF search (off until you turn it on)
+
+PRIVATE BY DESIGN
+• No account, no ads, no analytics, no tracking
+• Typing, learned words, clipboard and voice history stay on your phone
+• Incognito mode: no learning, no clipboard history and no voice history
+• The app only goes online to download the speech model you choose and, if you turn it on, to search GIFs
+
+ACCESSIBLE
+• TalkBack reads every key, and every theme meets WCAG AA contrast
+
+Humming is built on the open-source FlorisBoard keyboard (Apache License 2.0).
