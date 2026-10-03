@@ -5,3 +5,13 @@ android/local.properties
 *.apk
 __pycache__/
 .DS_Store
+
+# Signing material never enters the repository
+*.jks
+*.keystore
+*.p12
+*.p8
+*.pfx
+keystore.properties
+google-services.json
+GoogleService-Info.plist

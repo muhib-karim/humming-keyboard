@@ -1,5 +1,22 @@
 # Changelog
 
+## Unreleased: Humming for Windows and macOS, signed Android release
+Desktop (new, `desktop/`)
+- Humming for Windows and macOS (Tauri v2): push-to-talk dictation into any app, on-device Parakeet speech
+  recognition (sherpa-onnx, the same engine as Android) and the shared text clean-up from `core/`.
+- The installers are unsigned for now: a universal macOS `.dmg` and Windows `.msi` and setup `.exe`. README.md
+  explains the one-time "how to open it" step on each system. CI builds both on every push (`desktop.yml`).
+
+Android
+- Release signing: when the upload key is supplied through repository secrets, `android-release.yml` builds a signed
+  release APK and AAB and checks the certificate SHA-256 against the published fingerprint (docs/RELEASE_SIGNING.md).
+  Without the key, builds stay signed with the development key exactly as before.
+- Word lists: one personal name removed from the German, English, French and Italian frequency lists.
+
+Docs and web
+- docs/RELEASE_SIGNING.md, docs/FIREBASE_SETUP.md (prep only, no keys), and `landing/`, an app-link page with
+  `.well-known/assetlinks.json` for the upload certificate.
+
 ## 1.2.0: Humming Keyboard M7
 Prediction
 - An on-device neural next-word model for English: a small word-level LSTM (16,000 words, 128-dim embeddings, 256 hidden units, int8 weights, a 2.7 MB file) that reads the whole

@@ -1,0 +1,110 @@
+name: android-release
+
+# Signed release of the Humming keyboard (keyboard/): a release APK and AAB signed with the upload key held in
+# repository secrets, checked with apksigner against the published certificate fingerprint. Workflow artifacts only:
+# nothing is released, published or uploaded to a store from here. Secrets read (and only these):
+# HUMMING_KEYSTORE_BASE64, HUMMING_KEYSTORE_PASSWORD, HUMMING_KEY_ALIAS, HUMMING_KEY_PASSWORD.
+
+on:
+  push:
+    branches: ["main"]
+    paths: ["keyboard/**", ".github/workflows/android-release.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-release-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  signed-release:
+    name: signed release (APK + AAB)
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      # Upload certificate SHA-256 as published for the Humming upload key (also in landing/.well-known/assetlinks.json).
+      EXPECTED_CERT_SHA256: "8C:8B:68:BB:E6:3A:A4:2A:85:61:59:AA:A5:B0:C9:0C:D9:54:EE:F7:8A:98:0D:39:BC:B6:69:41:75:3E:1F:C6"
+      BUILD_TOOLS: "35.0.0"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Android SDK platform 36
+        run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "platforms;android-36" "build-tools;$BUILD_TOOLS" > /dev/null
+
+      - name: Upload key (decoded from repository secret to a temp file)
+        env:
+          KS_BASE64: ${{ secrets.HUMMING_KEYSTORE_BASE64 }}
+        run: |
+          set -euo pipefail
+          if [ -z "${KS_BASE64:-}" ]; then echo "::error::secret HUMMING_KEYSTORE_BASE64 is not set"; exit 1; fi
+          umask 077
+          KS="$RUNNER_TEMP/humming-upload.p12"
+          printf '%s' "$KS_BASE64" | tr -d '\r\n ' | base64 -d > "$KS"
+          test -s "$KS"
+          echo "HUMMING_KEYSTORE=$KS" >> "$GITHUB_ENV"
+          echo "upload key decoded to a temp file ($(stat -c %s "$KS") bytes)"
+
+      - name: Restore gradlew exec bit (web upload drops file mode)
+        working-directory: keyboard
+        run: chmod +x gradlew
+
+      - name: Signed release APK + AAB (R8)
+        working-directory: keyboard
+        env:
+          HUMMING_KEYSTORE_PASSWORD: ${{ secrets.HUMMING_KEYSTORE_PASSWORD }}
+          HUMMING_KEY_ALIAS: ${{ secrets.HUMMING_KEY_ALIAS }}
+          HUMMING_KEY_PASSWORD: ${{ secrets.HUMMING_KEY_PASSWORD }}
+        run: ./gradlew --no-daemon :app:assembleRelease :app:bundleRelease -Phumming.abis=arm64-v8a
+
+      - name: Verify signatures and the certificate SHA-256
+        run: |
+          set -euo pipefail
+          norm() { tr -d ' :\r\n' | tr 'a-f' 'A-F'; }
+          pretty() { sed 's/../&:/g; s/:$//'; }
+          want=$(printf '%s' "$EXPECTED_CERT_SHA256" | norm)
+          APK=$(ls keyboard/app/build/outputs/apk/release/*.apk | head -1)
+          AAB=$(ls keyboard/app/build/outputs/bundle/release/*.aab | head -1)
+          echo "APK: $APK"; echo "AAB: $AAB"
+          "$ANDROID_HOME/build-tools/$BUILD_TOOLS/apksigner" verify --verbose --print-certs "$APK" | tee "$RUNNER_TEMP/apksigner.txt"
+          apk_cert=$(grep -m1 'certificate SHA-256 digest:' "$RUNNER_TEMP/apksigner.txt" | sed 's/.*digest: *//' | norm)
+          jarsigner -verify "$AAB" | tee "$RUNNER_TEMP/jarsigner.txt" | tail -3
+          grep -q 'jar verified' "$RUNNER_TEMP/jarsigner.txt"
+          aab_cert=$(keytool -printcert -jarfile "$AAB" | grep -m1 'SHA256:' | sed 's/.*SHA256: *//' | norm)
+          echo "APK certificate SHA-256: $(printf '%s' "$apk_cert" | pretty)"
+          echo "AAB certificate SHA-256: $(printf '%s' "$aab_cert" | pretty)"
+          echo "Expected (published):    $EXPECTED_CERT_SHA256"
+          {
+            echo "### Signed release"
+            echo "- APK certificate SHA-256: \`$(printf '%s' "$apk_cert" | pretty)\`"
+            echo "- AAB certificate SHA-256: \`$(printf '%s' "$aab_cert" | pretty)\`"
+            echo "- Expected: \`$EXPECTED_CERT_SHA256\`"
+          } >> "$GITHUB_STEP_SUMMARY"
+          [ "$apk_cert" = "$want" ] || { echo "::error::APK certificate does not match the published SHA-256"; exit 1; }
+          [ "$aab_cert" = "$want" ] || { echo "::error::AAB certificate does not match the published SHA-256"; exit 1; }
+          echo "CERT_MATCH=yes" | tee -a "$GITHUB_STEP_SUMMARY"
+          mkdir -p signed
+          cp "$APK" signed/humming-keyboard-release.apk
+          cp "$AAB" signed/humming-keyboard-release.aab
+          cp "$RUNNER_TEMP/apksigner.txt" signed/apksigner-print-certs.txt
+          cd signed
+          sha256sum humming-keyboard-release.apk humming-keyboard-release.aab > SHA256SUMS.txt
+          ls -l; cat SHA256SUMS.txt
+          { echo '```'; ls -l; cat SHA256SUMS.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Delete the upload key file
+        if: always()
+        run: |
+          rm -f "$RUNNER_TEMP/humming-upload.p12"
+          test ! -e "$RUNNER_TEMP/humming-upload.p12" && echo "upload key file deleted"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: humming-keyboard-signed-release
+          path: signed/
+          if-no-files-found: error
+          retention-days: 30

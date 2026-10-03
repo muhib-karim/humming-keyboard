@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Humming: talk, and it types</title>
+  <meta name="description" content="Offline voice dictation for Android, Windows and macOS. Hold a key, speak, and clean text lands where your cursor is. Nothing leaves your device." />
+  <meta property="og:title" content="Humming: talk, and it types" />
+  <meta property="og:description" content="Offline voice dictation for Android, Windows and macOS. Nothing leaves your device." />
+  <meta property="og:type" content="website" />
+  <link rel="icon" href="icon.png" />
+  <style>
+    :root { --bg:#0f0f13; --fg:#f2f2f6; --muted:#a3a3b2; --accent:#e5486b; --card:#18181f; --line:#2a2a33; color-scheme: dark; }
+    * { box-sizing: border-box; }
+    body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.55 -apple-system,"Segoe UI",system-ui,sans-serif; }
+    main { max-width: 920px; margin: 0 auto; padding: 56px 22px 80px; }
+    header { display:flex; align-items:center; gap:12px; font-weight:700; font-size:20px; }
+    header img { width:40px; height:40px; border-radius:10px; }
+    h1 { font-size: clamp(34px, 6vw, 56px); line-height:1.08; margin: 48px 0 14px; letter-spacing:-.02em; }
+    .lead { color:var(--muted); font-size:19px; max-width: 640px; }
+    .cta { display:flex; flex-wrap:wrap; gap:12px; margin:30px 0 8px; }
+    .btn { display:inline-flex; gap:8px; align-items:center; padding:12px 18px; border-radius:12px; background:var(--card);
+      border:1px solid var(--line); color:var(--fg); text-decoration:none; font-weight:600; }
+    .btn.primary { background:var(--accent); border-color:var(--accent); }
+    .small { color:var(--muted); font-size:13px; }
+    .grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:14px; margin-top:44px; }
+    .card { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px; }
+    .card h3 { margin:0 0 6px; font-size:16px; }
+    .card p { margin:0; color:var(--muted); font-size:15px; }
+    .demo { margin-top:40px; background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px; font-size:15px; }
+    .demo .said { color:var(--muted); } .demo .typed { margin-top:8px; }
+    footer { margin-top:60px; color:var(--muted); font-size:13px; }
+    .howto { margin-top:44px; }
+    .howto h2 { font-size:22px; margin:0 0 8px; }
+    .howto ol { margin:6px 0 0 20px; padding:0; color:var(--muted); font-size:15px; }
+    .howto a { color:var(--fg); }
+    #open-app { display:none; }
+  </style>
+</head>
+<body>
+<main>
+  <header><img src="icon.png" alt="" />Humming</header>
+  <h1>Talk, and it types.</h1>
+  <p class="lead">Hold a key, speak, let go. Humming turns your voice into clean, punctuated text right where your
+    cursor is, in any app. It runs entirely on your device: no account, no cloud, no recordings kept.</p>
+
+  <div class="cta">
+    <a class="btn primary" id="dl-android" href="#android">Android keyboard</a>
+    <a class="btn" id="dl-windows" href="#windows">Windows</a>
+    <a class="btn" id="dl-mac" href="#mac">macOS</a>
+    <a class="btn" id="open-app" href="#">Open in Humming</a>
+  </div>
+  <p class="small" id="platform-note">Free. Works offline after a one-time model download.</p>
+
+  <div class="demo">
+    <div class="said">You say: "um so lets meet at 3, no wait, 4 pm. first, eggs, second, milk"</div>
+    <div class="typed">Humming types: "So let's meet at 4pm. First, eggs, second, milk." (or a bulleted list, your choice)</div>
+  </div>
+
+  <div class="grid">
+    <div class="card"><h3>Private by design</h3><p>Speech recognition runs on your phone or computer with NVIDIA Parakeet. Nothing is uploaded.</p></div>
+    <div class="card"><h3>Clean, not literal</h3><p>Fillers, false starts and "no wait" corrections disappear; punctuation and capitals appear.</p></div>
+    <div class="card"><h3>Works everywhere</h3><p>A full keyboard on Android; a shortcut that types into any app on Windows and macOS.</p></div>
+    <div class="card"><h3>Your words</h3><p>A personal dictionary for names and jargon, and a searchable history that stays on your device.</p></div>
+  </div>
+
+  <section class="howto" id="how-to-open">
+    <h2>How to open it</h2>
+    <p class="small">The Windows and macOS builds are <strong>unsigned</strong>: they are not signed with an Apple or
+      Microsoft developer certificate yet, so the first launch shows a warning. The app itself is the same either way.</p>
+    <div class="grid" style="margin-top:14px">
+      <div class="card" id="mac"><h3>macOS</h3>
+        <ol>
+          <li>Open the .dmg and drag Humming to Applications.</li>
+          <li>Open Humming. macOS blocks it the first time ("cannot be opened" / "could not verify"). Click Done.</li>
+          <li>Go to System Settings &gt; Privacy &amp; Security, scroll down, and click <strong>Open Anyway</strong> next to Humming.</li>
+          <li>Confirm with Open (and your password). After that it opens normally.</li>
+        </ol>
+        <p class="small" style="margin-top:8px">Apple's guide: <a href="https://support.apple.com/en-us/102445">Open a Mac app from an unknown developer</a>.</p>
+      </div>
+      <div class="card" id="windows"><h3>Windows</h3>
+        <ol>
+          <li>Run the installer (.exe or .msi).</li>
+          <li>SmartScreen says "Windows protected your PC" (unknown publisher). Click <strong>More info</strong>.</li>
+          <li>Click <strong>Run anyway</strong>, then finish the installer.</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <footer>Speech model: NVIDIA Parakeet (CC-BY-4.0) via sherpa-onnx (Apache-2.0) and ONNX Runtime (MIT).</footer>
+</main>
+<script>
+  // Download targets are filled in at publish time (see README.md in this folder).
+  const LINKS = { android: "", windows: "", mac: "" };
+  for (const [k, id] of [["android", "dl-android"], ["windows", "dl-windows"], ["mac", "dl-mac"]]) {
+    if (LINKS[k]) document.getElementById(id).href = LINKS[k];
+  }
+  // App Links: on Android with the keyboard installed, links under /open/ open the app directly (assetlinks.json).
+  // Visitors who land here instead get the store/download buttons, plus a retry button on Android.
+  const ua = navigator.userAgent;
+  if (/Android/i.test(ua)) {
+    document.getElementById("dl-android").classList.add("primary");
+    if (location.pathname.startsWith("/open")) {
+      const b = document.getElementById("open-app");
+      b.style.display = "inline-flex";
+      b.href = "intent://" + location.host + location.pathname + "#Intent;scheme=https;package=com.humming.keyboard;end";
+    }
+  } else if (/Mac/i.test(ua)) {
+    document.getElementById("dl-mac").classList.add("primary");
+    document.getElementById("dl-android").classList.remove("primary");
+  } else if (/Windows/i.test(ua)) {
+    document.getElementById("dl-windows").classList.add("primary");
+    document.getElementById("dl-android").classList.remove("primary");
+  }
+</script>
+</body>
+</html>

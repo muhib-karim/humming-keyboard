@@ -157,6 +157,28 @@ Honest limits:
 - CI checks this flow on a Google Play emulator image with Gboard preinstalled (long-press, menu tap, Gboard
   active, back to Humming).
 
+## Desktop (Windows and macOS): how to open it
+
+The Windows and macOS builds are **unsigned**: they are not signed with an Apple Developer ID or a Microsoft
+code-signing certificate yet, so the operating system warns on first launch. The app is the same either way; this
+is a one-time step.
+
+**macOS** (universal `.dmg`, Apple silicon and Intel)
+1. Open the `.dmg` and drag Humming to Applications.
+2. Open Humming. macOS blocks the first open ("cannot be opened" / "could not verify"). Click Done.
+3. Go to **System Settings > Privacy & Security**, scroll down, and click **Open Anyway** next to Humming.
+4. Confirm with Open (and your password). From then on it opens normally.
+
+Apple's guide: https://support.apple.com/en-us/102445
+
+**Windows** (`.msi` or the setup `.exe`)
+1. Run the installer.
+2. SmartScreen shows "Windows protected your PC" with an unknown publisher. Click **More info**.
+3. Click **Run anyway** and finish the installer.
+
+CI builds both installers on every push (`.github/workflows/desktop.yml`, artifacts `humming-desktop-macos-universal`
+and `humming-desktop-windows-x64`, each with a `SHA256SUMS.txt`). Signing options are in `docs/RELEASE_SIGNING.md`.
+
 ## Build
 
 Requirements: JDK 17 and the Android SDK (platform 36, build-tools 35).

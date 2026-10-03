@@ -1,0 +1,6 @@
+html, body { margin: 0; background: transparent; overflow: hidden; font: 600 13px/1 -apple-system, "Segoe UI", system-ui, sans-serif; }
+.bar { box-sizing: border-box; height: 48px; margin: 8px 10px; border-radius: 24px; background: rgba(20, 20, 26, 0.88);
+  color: #fff; display: flex; align-items: center; gap: 12px; padding: 0 18px; box-shadow: 0 4px 18px rgba(0,0,0,.35); }
+.bars { display: flex; align-items: center; gap: 3px; height: 24px; }
+.bars i { display: block; width: 4px; height: 24px; border-radius: 2px; background: #ff5a7a; transform-origin: center; transform: scaleY(.15); }
+body.busy .bars i { background: #8ab4ff; }

@@ -73,6 +73,13 @@ val sherpaAar: File = file("libs/sherpa-onnx-$sherpaVersion.aar").also { aar ->
     }
 }
 
+// Humming: release signing (prep). When HUMMING_KEYSTORE (path to the owner's upload/release key, PKCS12 or JKS) and
+// HUMMING_KEYSTORE_PASSWORD are set, release builds are signed with that key; otherwise they stay signed with the
+// debug key exactly as before. No key material lives in the repository (docs/RELEASE_SIGNING.md).
+val hummingKeystore: File? = System.getenv("HUMMING_KEYSTORE")?.takeIf { it.isNotBlank() }?.let { file(it) }?.takeIf { it.isFile }
+val hummingKeystorePassword: String? = System.getenv("HUMMING_KEYSTORE_PASSWORD")?.takeIf { it.isNotEmpty() }
+val hummingReleaseSigning: Boolean = hummingKeystore != null && hummingKeystorePassword != null
+
 android {
     namespace = "dev.patrickgold.florisboard"
     compileSdk = projectCompileSdk.toInt()
@@ -135,6 +142,17 @@ android {
         compose = true
     }
 
+    signingConfigs {
+        if (hummingReleaseSigning) {
+            create("release") {
+                storeFile = hummingKeystore
+                storePassword = hummingKeystorePassword
+                keyAlias = System.getenv("HUMMING_KEY_ALIAS")?.takeIf { it.isNotBlank() } ?: "humming"
+                keyPassword = System.getenv("HUMMING_KEY_PASSWORD")?.takeIf { it.isNotEmpty() } ?: hummingKeystorePassword
+            }
+        }
+    }
+
     buildTypes {
         named("debug") {
             applicationIdSuffix = ".debug"
@@ -152,9 +170,9 @@ android {
 
         named("release") {
             versionNameSuffix = projectVersionNameSuffix
-            // Humming: the sideload APK in GitHub Releases is signed with the development key so it installs anywhere;
-            // a store build replaces this with its own upload key (see BUILD.md).
-            signingConfig = signingConfigs.getByName("debug")
+            // Humming: signed with the owner's key when HUMMING_KEYSTORE is set (store builds); otherwise with the
+            // development key so the sideload APK still installs anywhere (docs/RELEASE_SIGNING.md).
+            signingConfig = signingConfigs.getByName(if (hummingReleaseSigning) "release" else "debug")
 
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             isMinifyEnabled = true

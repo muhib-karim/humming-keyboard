@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Humming</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <nav class="side">
+      <div class="brand"><span class="dot"></span>Humming</div>
+      <button data-tab="home" class="active">Home</button>
+      <button data-tab="history">History</button>
+      <button data-tab="dictionary">Dictionary</button>
+      <button data-tab="settings">Settings</button>
+      <div class="foot" id="version"></div>
+    </nav>
+    <main>
+      <section id="tab-home" class="tab active">
+        <h1>Talk, and it types.</h1>
+        <p class="lead">Hold <kbd id="hk-hint">Ctrl+Shift+Space</kbd> in any app, speak, let go. Humming transcribes on this
+          computer and pastes clean text where your cursor is.</p>
+        <div class="card status-card">
+          <span id="status-pill" class="pill">starting</span>
+          <span id="status-msg"></span>
+        </div>
+        <div class="card" id="model-card">
+          <h2>Speech model</h2>
+          <p class="muted">NVIDIA Parakeet, the same models as the Humming keyboard on Android. Runs offline: download once,
+            and nothing you say leaves this computer. English.</p>
+          <div id="model-list"></div>
+        </div>
+        <div class="card">
+          <h2>Try it here</h2>
+          <p class="muted">Click, talk, click again. The result shows below instead of being pasted.</p>
+          <button id="try-btn" class="primary">Start talking</button>
+          <div id="try-out" class="out" aria-live="polite"></div>
+          <details><summary>What the model heard</summary><div id="try-raw" class="out raw"></div></details>
+        </div>
+        <div class="card tips" id="tips"></div>
+      </section>
+
+      <section id="tab-history" class="tab">
+        <div class="row between">
+          <h1>History</h1>
+          <div class="row">
+            <input id="hist-search" type="search" placeholder="Search" />
+            <button id="hist-clear" class="danger">Clear all</button>
+          </div>
+        </div>
+        <p class="muted" id="hist-count"></p>
+        <ul id="hist-list" class="list"></ul>
+      </section>
+
+      <section id="tab-dictionary" class="tab">
+        <h1>Dictionary</h1>
+        <p class="muted">Names and terms Humming should get right. Leave "You say" empty to only fix the spelling or
+          casing (for example GitHub); fill it in to replace a phrase the model keeps hearing differently.</p>
+        <form id="dict-form" class="row">
+          <input id="dict-spoken" placeholder="You say (optional), e.g. hum ing" />
+          <input id="dict-written" placeholder="Humming writes, e.g. Humming" required />
+          <button class="primary" type="submit">Add</button>
+        </form>
+        <ul id="dict-list" class="list"></ul>
+        <div class="card">
+          <h2>Test the cleanup</h2>
+          <textarea id="clean-in" rows="3">um so the meeting is at 3, no wait, 4pm. first, eggs, second, milk, third, bread</textarea>
+          <button id="clean-btn">Clean it</button>
+          <pre id="clean-out" class="out"></pre>
+        </div>
+      </section>
+
+      <section id="tab-settings" class="tab">
+        <h1>Settings</h1>
+        <form id="settings-form">
+          <fieldset>
+            <legend>Shortcut</legend>
+            <label>Dictation shortcut
+              <input name="hotkey" placeholder="CommandOrControl+Shift+Space" />
+            </label>
+            <button type="button" id="hk-record">Record a shortcut</button>
+            <label>How the shortcut works
+              <select name="mode">
+                <option value="hold">Hold to talk (push-to-talk)</option>
+                <option value="toggle">Press to start, press again to stop</option>
+              </select>
+            </label>
+          </fieldset>
+          <fieldset>
+            <legend>Text</legend>
+            <label class="check"><input type="checkbox" name="clean_mode" /> Clean mode (off = word for word)</label>
+            <label class="check"><input type="checkbox" name="remove_fillers" /> Remove um, uh, you know</label>
+            <label class="check"><input type="checkbox" name="self_corrections" /> Apply self-corrections ("3, no, 4pm" &rarr; "4pm")</label>
+            <label class="check"><input type="checkbox" name="format_lists" /> Spoken lists become bullet points</label>
+            <label class="check"><input type="checkbox" name="voice_commands" /> Voice commands (new line, period, comma...)</label>
+            <label class="check"><input type="checkbox" name="trailing_space" /> Add a space after each dictation</label>
+          </fieldset>
+          <fieldset>
+            <legend>Inserting</legend>
+            <label>Method
+              <select name="insert_method">
+                <option value="paste">Paste (fast, recommended)</option>
+                <option value="type">Type it out key by key</option>
+              </select>
+            </label>
+            <label class="check"><input type="checkbox" name="restore_clipboard" /> Put my clipboard back after pasting</label>
+            <label>Paste wait (ms)<input name="paste_delay_ms" type="number" min="20" max="2000" /></label>
+          </fieldset>
+          <fieldset>
+            <legend>Microphone and app</legend>
+            <label>Microphone
+              <select name="input_device"></select>
+            </label>
+            <label>Longest dictation (seconds)<input name="max_seconds" type="number" min="10" max="900" /></label>
+            <label class="check"><input type="checkbox" name="show_overlay" /> Show the listening bar while dictating</label>
+            <label class="check"><input type="checkbox" name="launch_at_login" /> Start Humming when I log in</label>
+            <label class="check"><input type="checkbox" name="history_enabled" /> Keep a history on this computer</label>
+            <label>History size<input name="history_limit" type="number" min="10" max="5000" /></label>
+          </fieldset>
+          <div class="row">
+            <button class="primary" type="submit">Save</button>
+            <span id="settings-msg" class="muted"></span>
+          </div>
+        </form>
+        <p class="muted small" id="paths"></p>
+      </section>
+    </main>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,7 @@
+# sherpa-onnx ships its Windows static libraries built against the static C runtime (/MT), so the whole app links
+# the static CRT too (otherwise MSVC fails with LNK2038 RuntimeLibrary mismatches).
+[target.x86_64-pc-windows-msvc]
+rustflags = ["-C", "target-feature=+crt-static"]
+
+[target.aarch64-pc-windows-msvc]
+rustflags = ["-C", "target-feature=+crt-static"]
