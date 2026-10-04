@@ -1,6 +1,7 @@
 name: wer-bench
 
-# Accuracy and speed of the two offline voice models on public LibriSpeech test sets (README benchmark table).
+# Accuracy and speed of the offline voice models on public LibriSpeech test sets, on four kinds of machine
+# (README benchmark table). Same runtime (sherpa-onnx 1.13.8), files and SHA-256 pins as the apps' downloads.
 on:
   push:
     paths: [".github/workflows/wer-bench.yml", "keyboard/ci/wer_bench.py"]
@@ -18,36 +19,52 @@ permissions:
 
 jobs:
   bench:
-    runs-on: ubuntu-22.04
-    timeout-minutes: 60
+    name: bench (${{ matrix.device }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: ubuntu-22.04, device: "Linux x64 (GitHub runner)" }
+          - { os: ubuntu-24.04-arm, device: "Linux arm64 (GitHub runner)" }
+          - { os: macos-14, device: "macOS Apple Silicon (GitHub runner)" }
+          - { os: windows-2022, device: "Windows x64 (GitHub runner)" }
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 90
+    defaults:
+      run:
+        shell: bash
+    env:
+      BENCH_DEVICE: ${{ matrix.device }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
       - name: Tools
-        run: pip install -q sherpa-onnx==1.13.8 jiwer soundfile
+        run: python -m pip install -q sherpa-onnx==1.13.8 jiwer soundfile
       - name: Models (same files and SHA-256 as the app's download)
         run: |
           mkdir -p m && cd m
-          for f in sherpa-onnx-nemo-parakeet_tdt_ctc_110m-en-36000-int8:17f945007b52ccd8b7200ffc7c5652e9e8e961dfdf479cefcabd06cf5703630b \
+          for f in sherpa-onnx-moonshine-tiny-en-quantized-2026-02-27:9ec31b342d8fa3240c3b81b8f82e1cf7e3ac467c93ca5a999b741d5887164f8d \
+                   sherpa-onnx-nemo-parakeet_tdt_ctc_110m-en-36000-int8:17f945007b52ccd8b7200ffc7c5652e9e8e961dfdf479cefcabd06cf5703630b \
                    sherpa-onnx-nemo-parakeet-tdt-0.6b-v2-int8:157c157bc51155e03e37d2466522a3a737dd9c72bb25f36eb18912964161e1ad; do
             n=${f%%:*}; h=${f##*:}
-            curl -sSL -o "$n.tar.bz2" "https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/$n.tar.bz2"
-            echo "$h  $n.tar.bz2" | sha256sum -c -
+            curl -sSL --retry 3 -o "$n.tar.bz2" "https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/$n.tar.bz2"
+            got=$(python -c "import hashlib,sys;print(hashlib.sha256(open(sys.argv[1],'rb').read()).hexdigest())" "$n.tar.bz2")
+            [ "$got" = "$h" ] || { echo "sha256 mismatch for $n: $got"; exit 1; }
             tar xjf "$n.tar.bz2" && rm "$n.tar.bz2"
           done
       - name: LibriSpeech test-clean + test-other (OpenSLR 12, CC BY 4.0)
         run: |
-          for s in test-clean test-other; do curl -sSL "https://www.openslr.org/resources/12/$s.tar.gz" | tar xz; done
+          for s in test-clean test-other; do curl -sSL --retry 3 -o "$s.tar.gz" "https://www.openslr.org/resources/12/$s.tar.gz"; tar xzf "$s.tar.gz"; rm "$s.tar.gz"; done
           ls LibriSpeech
       - name: Bench
         run: |
-          python3 keyboard/ci/wer_bench.py m LibriSpeech wer.json "${{ inputs.n_clean || '200' }}" "${{ inputs.n_other || '100' }}" | tee bench.log
-          { echo '```'; cat wer.json; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+          python keyboard/ci/wer_bench.py m LibriSpeech wer.json "${{ inputs.n_clean || '200' }}" "${{ inputs.n_other || '100' }}" | tee bench.log
+          { echo "### $BENCH_DEVICE"; echo '```'; cat wer.json; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@v4
         with:
-          name: wer-bench
+          name: wer-bench-${{ matrix.os }}
           path: |
             wer.json
             bench.log

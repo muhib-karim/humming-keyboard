@@ -1,13 +1,14 @@
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 
-type Dict = { spoken: string; written: string };
+type Dict = { spoken: string; written: string; apps?: string[] };
 type Settings = {
   hotkey: string; mode: string; model: string;
   clean_mode: boolean; remove_fillers: boolean; self_corrections: boolean; voice_commands: boolean;
   format_lists: boolean; accuracy_mode: boolean; dictionary: Dict[]; insert_method: string; restore_clipboard: boolean;
   paste_delay_ms: number; trailing_space: boolean; input_device: string; show_overlay: boolean;
   launch_at_login: boolean; history_enabled: boolean; history_limit: number; max_seconds: number;
+  quick_start?: boolean;
 };
 type Status = { state: string; message: string };
 type Model = { id: string; label: string; blurb: string; download_bytes: number; disk_bytes: number; ram_mb: number; wer_pct: number; downloaded: boolean; active: boolean };
@@ -128,7 +129,7 @@ $("#hist-clear").addEventListener("click", async () => {
 // ---------------- dictionary ----------------
 function renderDict() {
   $("#dict-list").innerHTML = settings.dictionary.map((d, i) => `
-    <li class="row between"><span>${d.spoken ? `"${esc(d.spoken)}" &rarr; ` : ""}<b>${esc(d.written)}</b></span>
+    <li class="row between"><span>${d.spoken ? `"${esc(d.spoken)}" &rarr; ` : ""}<b>${esc(d.written)}</b>${d.apps && d.apps.length ? ` <span class="muted small">only in ${esc(d.apps.join(", "))}</span>` : ""}</span>
     <button class="link" data-dict="${i}">Remove</button></li>`).join("") || `<li class="muted">No words yet.</li>`;
   document.querySelectorAll<HTMLButtonElement>("[data-dict]").forEach((b) => b.addEventListener("click", async () => {
     const dictionary = settings.dictionary.filter((_, i) => i !== Number(b.dataset.dict));
@@ -141,7 +142,9 @@ $("#dict-form").addEventListener("submit", async (ev) => {
   const spoken = $<HTMLInputElement>("#dict-spoken").value.trim();
   const written = $<HTMLInputElement>("#dict-written").value.trim();
   if (!written) return;
-  settings = await invoke<Settings>("save_settings", { settings: { ...settings, dictionary: [...settings.dictionary, { spoken, written }] } });
+  const apps = $<HTMLInputElement>("#dict-apps").value.split(",").map((a) => a.trim()).filter(Boolean);
+  settings = await invoke<Settings>("save_settings", { settings: { ...settings, dictionary: [...settings.dictionary, { spoken, written, apps }] } });
+  $<HTMLInputElement>("#dict-apps").value = "";
   $<HTMLInputElement>("#dict-spoken").value = "";
   $<HTMLInputElement>("#dict-written").value = "";
   renderDict();

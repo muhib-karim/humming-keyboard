@@ -3,6 +3,7 @@
 //! the personal dictionary; a small click-through overlay shows the mic level while dictating.
 
 mod audio;
+mod focus;
 mod history;
 mod insert;
 mod models;
@@ -45,6 +46,8 @@ pub struct AppState {
     downloading: AtomicBool,
     /// Where the current dictation's text goes: true = paste into the focused app, false = the in-app test box.
     to_focused_app: AtomicBool,
+    /// Name of the app that had focus when the current dictation started (per-app dictionary, 1.5).
+    focused_app: Arc<Mutex<Option<String>>>,
 }
 
 #[derive(Debug, Clone, Serialize, PartialEq)]
@@ -102,23 +105,34 @@ fn engine_key(s: &Settings) -> String {
     s.model.clone()
 }
 
+/// Downloads one model, reporting progress to the window. Blocking; call it on a worker thread.
+fn fetch_model(app: &AppHandle, dir: &std::path::Path, info: &'static models::VoiceModel) -> Result<(), String> {
+    let progress_app = app.clone();
+    let pid = info.id.to_string();
+    set_status(app, "loading", format!("Downloading the {} model", info.label));
+    models::download(dir, info, move |done, total| {
+        let _ = progress_app.emit("model-progress", Progress { id: pid.clone(), done, total });
+    })
+}
+
 /// Loads (or reloads) the whisper model for the current settings on a worker thread.
 fn load_engine(app: &AppHandle) {
     let app = app.clone();
     std::thread::spawn(move || {
         let state = app.state::<AppState>();
         let s = state.settings.lock().map(|g| g.clone()).unwrap_or_default();
-        let key = engine_key(&s);
-        if state.engine.lock().map(|g| g.as_ref().map(|e| e.key == key).unwrap_or(false)).unwrap_or(false) {
-            set_status(&app, "ready", "");
-            return;
-        }
-        let Some(info) = models::find(&s.model) else { return };
-        if !models::is_downloaded(&state.models_dir, info) {
+        let Some(picked) = models::find(&s.model) else { return };
+        // The picked model, or (while it downloads) the best model already on disk.
+        let Some(info) = models::usable(&s.model, |m| models::is_downloaded(&state.models_dir, m)) else {
             if let Ok(mut g) = state.engine.lock() {
                 *g = None;
             }
-            set_status(&app, "no_model", format!("Download the {} model to start", info.label));
+            set_status(&app, "no_model", format!("Download the {} model to start", picked.label));
+            return;
+        };
+        let key = info.id.to_string();
+        if state.engine.lock().map(|g| g.as_ref().map(|e| e.key == key).unwrap_or(false)).unwrap_or(false) {
+            set_status(&app, "ready", "");
             return;
         }
         set_status(&app, "loading", "Loading the speech model");
@@ -141,10 +155,16 @@ fn load_engine(app: &AppHandle) {
 /// The text Humming inserts: the user's phrase replacements, the Android cleanup rules (with the user's switches;
 /// verbatim mode keeps every word), then spoken lists as bullets.
 pub fn finalize_text(raw: &str, s: &Settings) -> String {
+    finalize_text_for(raw, s, None)
+}
+
+/// As `finalize_text`, with per-app dictionary entries applied only while `app` (the focused app) has focus.
+pub fn finalize_text_for(raw: &str, s: &Settings, app: Option<&str>) -> String {
+    let active: Vec<&settings::VocabEntry> = s.dictionary.iter().filter(|d| d.applies_to(app)).collect();
     let phrases: Vec<humming_core::DictionaryEntry> =
-        s.dictionary.iter().filter(|d| !d.spoken.trim().is_empty()).cloned().collect();
+        active.iter().filter(|d| !d.spoken.trim().is_empty()).map(|d| d.to_core()).collect();
     let replaced = humming_core::cleanup::apply_dictionary(raw, &phrases);
-    let terms: Vec<String> = s.dictionary.iter().map(|d| d.written.clone()).collect();
+    let terms: Vec<String> = active.iter().map(|d| d.written.clone()).collect();
     let opts = if s.clean_mode {
         text_cleanup::Opts {
             remove_fillers: s.remove_fillers,
@@ -215,6 +235,20 @@ fn start_dictation(app: &AppHandle, to_focused_app: bool) -> Result<(), String> 
     }
     let s = state.settings.lock().map(|g| g.clone()).unwrap_or_default();
     state.to_focused_app.store(to_focused_app, Ordering::SeqCst);
+    // Which app the text is for (per-app dictionary). Looked up off the hotkey thread; it is ready long before
+    // the transcript is.
+    if let Ok(mut g) = state.focused_app.lock() {
+        *g = None;
+    }
+    if to_focused_app && s.dictionary.iter().any(|d| !d.apps.is_empty()) {
+        let slot = state.focused_app.clone();
+        std::thread::spawn(move || {
+            let name = focus::focused_app();
+            if let Ok(mut g) = slot.lock() {
+                *g = name;
+            }
+        });
+    }
     let level_app = app.clone();
     state
         .recorder
@@ -262,7 +296,8 @@ fn stop_dictation(app: &AppHandle) {
         let has_speech = !humming_core::vad::speech_ranges(&pcm, stt::SAMPLE_RATE, &vad).is_empty();
         let raw = if has_speech { engine.transcribe(&pcm) } else { String::new() };
         hide_overlay(&app);
-        let text = finalize_text(&raw, &s);
+        let focused = state.focused_app.lock().ok().and_then(|g| g.clone());
+        let text = finalize_text_for(&raw, &s, focused.as_deref());
         let latency_ms = released.elapsed().as_millis() as u64;
         let mut error = None;
         let mut inserted = false;
@@ -379,22 +414,30 @@ fn download_model(app: AppHandle, state: State<'_, AppState>, id: String) -> Res
         return Err("a download is already running".into());
     }
     let dir = state.models_dir.clone();
+    // Quick start (first run): nothing on disk yet and a big model picked -> fetch the 30 MB Lite model first and
+    // dictate with it while the picked model downloads; the engine switches over when that finishes.
+    let quick = state.settings.lock().map(|g| g.quick_start).unwrap_or(true)
+        && info.id != models::LITE.id
+        && !models::CATALOG.iter().any(|m| models::is_downloaded(&dir, m));
     std::thread::spawn(move || {
-        let progress_app = app.clone();
-        let pid = id.clone();
-        set_status(&app, "loading", format!("Downloading the {} model", info.label));
-        let r = models::download(&dir, info, move |done, total| {
-            let _ = progress_app.emit("model-progress", Progress { id: pid.clone(), done, total });
-        });
+        if quick {
+            match fetch_model(&app, &dir, &models::LITE) {
+                Ok(_) => {
+                    let _ = app.emit("model-downloaded", models::LITE.id.to_string());
+                    load_engine(&app);
+                }
+                Err(e) => {
+                    let _ = app.emit("model-error", e);
+                }
+            }
+        }
+        let r = fetch_model(&app, &dir, info);
         let state = app.state::<AppState>();
         state.downloading.store(false, Ordering::SeqCst);
         match r {
             Ok(_) => {
                 let _ = app.emit("model-downloaded", id.clone());
-                let active = state.settings.lock().map(|g| g.model.clone()).unwrap_or_default();
-                if active == id {
-                    load_engine(&app);
-                }
+                load_engine(&app);
             }
             Err(e) => {
                 let _ = app.emit("model-error", e.clone());
@@ -512,6 +555,7 @@ pub fn run() {
                 busy: AtomicBool::new(false),
                 downloading: AtomicBool::new(false),
                 to_focused_app: AtomicBool::new(true),
+                focused_app: Arc::new(Mutex::new(None)),
             });
 
             // Tray / menu bar.
@@ -615,10 +659,19 @@ mod tests {
     #[test]
     fn dictionary_applies() {
         let mut s = Settings { trailing_space: false, ..Settings::default() };
-        s.dictionary.push(humming_core::DictionaryEntry { spoken: "git hub".into(), written: "GitHub".into() });
-        s.dictionary.push(humming_core::DictionaryEntry { spoken: String::new(), written: "Okonkwo".into() });
+        s.dictionary.push(settings::VocabEntry { spoken: "git hub".into(), written: "GitHub".into(), apps: vec![] });
+        s.dictionary.push(settings::VocabEntry { spoken: String::new(), written: "Okonkwo".into(), apps: vec![] });
         let out = finalize_text("push it to git hub for okonkwo", &s);
         assert_eq!(out, "Push it to GitHub for Okonkwo.");
+    }
+
+    #[test]
+    fn per_app_dictionary_only_applies_in_its_app() {
+        let mut s = Settings { trailing_space: false, ..Settings::default() };
+        s.dictionary.push(settings::VocabEntry { spoken: "cube cuddle".into(), written: "kubectl".into(), apps: vec!["Terminal".into()] });
+        assert_eq!(finalize_text_for("run cube cuddle now", &s, Some("Terminal")), "Run kubectl now.");
+        assert_eq!(finalize_text_for("run cube cuddle now", &s, Some("Slack")), "Run cube cuddle now.");
+        assert_eq!(finalize_text("run cube cuddle now", &s), "Run cube cuddle now.");
     }
 
     #[test]

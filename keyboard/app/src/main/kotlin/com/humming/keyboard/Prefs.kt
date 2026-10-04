@@ -39,9 +39,16 @@ object Prefs {
 
     fun setMode(ctx: Context, mode: String) = get(ctx).edit().putString(KEY_MODE, mode).apply()
 
-    /** Personal dictionary: one term per line, applied with its exact casing. */
+    /** Package of the app the keyboard is typing into (set by the IME on every onStartInput; per-app words, 1.5). */
+    @Volatile var currentPackage: String? = null
+
+    /**
+     * Personal dictionary: one term per line, applied with its exact casing. A line ending in " @app1, app2" is
+     * per-app (1.5): it applies only while the keyboard types into an app whose package name contains one of those
+     * words ("Kubernetes @slack" -> com.Slack only).
+     */
     fun dictionary(ctx: Context): List<String> =
-        (get(ctx).getString(KEY_DICTIONARY, "") ?: "").lines().map { it.trim() }.filter { it.isNotEmpty() }.distinct()
+        AppVocabulary.select((get(ctx).getString(KEY_DICTIONARY, "") ?: "").lines(), currentPackage)
 
     /**
      * Clean mode (default on): fillers (um, uh), stutters and self-corrections ("3, no wait, 4pm" -> "4pm")

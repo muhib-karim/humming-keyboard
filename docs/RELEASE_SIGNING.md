@@ -67,3 +67,19 @@ public CI pipeline from a public repository are signed with a certificate issued
 Humming's eligibility has **not** been checked and nothing has been applied for. If it is ever pursued, the
 signing step would be added to `desktop.yml` after the tauri-action build, following SignPath's GitHub Actions
 integration. There is no equivalent free route for macOS notarisation (it needs an Apple Developer Program membership).
+
+## Desktop (desktop/), from 1.5.0
+
+- **macOS: ad-hoc signed.** `tauri.conf.json` sets `bundle.macOS.signingIdentity` to `"-"`, so CI signs the universal
+  `.app` inside the `.dmg` with an ad-hoc signature. That needs no certificate and fixes the "Humming is damaged and
+  can't be opened" message Apple Silicon Macs show for unsigned apps. It is not notarised, so the first launch still
+  needs right-click > Open (or System Settings > Privacy & Security > Open Anyway).
+- **Developer ID signing and notarisation: not possible with the secrets this repository has.** Both need an Apple
+  Developer Program membership (paid, yearly), and the owner's rule is no paid accounts. If one is ever added, Tauri
+  picks these repository secrets up as environment variables with no code change: `APPLE_CERTIFICATE` (base64 .p12),
+  `APPLE_CERTIFICATE_PASSWORD`, `APPLE_SIGNING_IDENTITY`, and for notarisation `APPLE_ID`, `APPLE_PASSWORD` (app-specific
+  password) and `APPLE_TEAM_ID`. Pass them as `env:` on the macOS build step in `.github/workflows/desktop.yml`.
+- **Windows: unsigned.** Authenticode needs a code-signing certificate from a CA (paid), so SmartScreen shows "More info >
+  Run anyway" on first launch. Set `bundle.windows.certificateThumbprint` (or a `signCommand`) if one is ever added.
+- **Linux: unsigned.** The `.AppImage` and `.deb` are checked with `SHA256SUMS.txt`.
+- **Every release** carries `SHA256SUMS.txt` for all installers. Each sum matches the CI run's own sums and GitHub's asset digest.

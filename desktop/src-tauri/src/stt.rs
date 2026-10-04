@@ -1,10 +1,10 @@
-//! On-device speech-to-text: NVIDIA Parakeet through sherpa-onnx 1.13.8, configured exactly like the Android app's
-//! `SherpaEngine` (CTC for Fast, TDT transducer for Best, CPU provider, 16 kHz 80-bin features).
+//! On-device speech-to-text through sherpa-onnx 1.13.8, configured exactly like the Android app's `SherpaEngine`:
+//! Moonshine v2 for Lite, Parakeet CTC for Fast, Parakeet TDT transducer for Best (CPU provider, 16 kHz).
 
 use crate::models::{dir_for, Kind, VoiceModel};
 use sherpa_onnx::{
-    OfflineModelConfig, OfflineNemoEncDecCtcModelConfig, OfflineRecognizer, OfflineRecognizerConfig,
-    OfflineTransducerModelConfig,
+    OfflineModelConfig, OfflineMoonshineModelConfig, OfflineNemoEncDecCtcModelConfig, OfflineRecognizer,
+    OfflineRecognizerConfig, OfflineTransducerModelConfig,
 };
 use std::path::Path;
 use std::time::Instant;
@@ -12,9 +12,13 @@ use std::time::Instant;
 pub const SAMPLE_RATE: u32 = 16_000;
 /// Long dictations are decoded in windows of at most this many seconds, cut at the quietest moment.
 const MAX_WINDOW_S: usize = 25;
+/// Moonshine (Lite) windows: sherpa-onnx 1.13.8 returns an empty result for Moonshine v2 clips longer than ~10 s.
+pub const MOONSHINE_WINDOW_S: usize = 8;
 
 pub struct SherpaEngine {
     recognizer: OfflineRecognizer,
+    /// Longest window one decode gets: Moonshine v2 returns nothing for clips over ~10 s in sherpa-onnx 1.13.8.
+    max_window_s: usize,
     pub model_id: &'static str,
     pub load_ms: u64,
 }
@@ -46,10 +50,18 @@ impl SherpaEngine {
                 };
                 mc.model_type = Some("nemo_transducer".into());
             }
+            Kind::MoonshineV2 => {
+                mc.moonshine = OfflineMoonshineModelConfig {
+                    encoder: p("encoder_model.ort"),
+                    merged_decoder: p("decoder_model_merged.ort"),
+                    ..Default::default()
+                };
+            }
         }
         let cfg = OfflineRecognizerConfig { model_config: mc, ..Default::default() };
         let recognizer = OfflineRecognizer::create(&cfg).ok_or_else(|| "the speech model could not be loaded".to_string())?;
-        Ok(Self { recognizer, model_id: m.id, load_ms: t0.elapsed().as_millis() as u64 })
+        let max_window_s = if m.kind == Kind::MoonshineV2 { MOONSHINE_WINDOW_S } else { MAX_WINDOW_S };
+        Ok(Self { recognizer, max_window_s, model_id: m.id, load_ms: t0.elapsed().as_millis() as u64 })
     }
 
     fn decode(&self, samples: &[f32]) -> String {
@@ -64,7 +76,7 @@ impl SherpaEngine {
 
     /// 16 kHz mono in, raw text out. Long audio is split into windows at quiet points so memory stays flat.
     pub fn transcribe(&self, samples: &[f32]) -> String {
-        split_points(samples, SAMPLE_RATE as usize)
+        split_points_max(samples, SAMPLE_RATE as usize, self.max_window_s)
             .windows(2)
             .map(|w| self.decode(&samples[w[0]..w[1]]))
             .filter(|t| !t.is_empty())
@@ -80,7 +92,12 @@ impl SherpaEngine {
 /// Boundaries [0, ..., len] so every window is at most MAX_WINDOW_S long; each cut sits at the lowest-energy
 /// 50 ms frame in the last third of the window (usually a pause between words).
 pub fn split_points(samples: &[f32], rate: usize) -> Vec<usize> {
-    let max = MAX_WINDOW_S * rate;
+    split_points_max(samples, rate, MAX_WINDOW_S)
+}
+
+/// As `split_points`, with windows of at most `max_s` seconds.
+pub fn split_points_max(samples: &[f32], rate: usize, max_s: usize) -> Vec<usize> {
+    let max = max_s * rate;
     let frame = rate / 20;
     let mut cuts = vec![0usize];
     let mut start = 0usize;
@@ -127,6 +144,14 @@ pub fn to_16k(samples: &[f32], rate: u32) -> Vec<f32> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn moonshine_windows_stay_under_ten_seconds() {
+        let s: Vec<f32> = (0..16_000 * 30).map(|i| ((i as f32) * 0.01).sin() * 0.3).collect();
+        let cuts = split_points_max(&s, 16_000, MOONSHINE_WINDOW_S);
+        assert!(cuts.windows(2).all(|w| w[1] - w[0] <= 16_000 * MOONSHINE_WINDOW_S));
+        assert_eq!(*cuts.last().unwrap(), s.len());
+    }
 
     #[test]
     fn short_audio_is_one_window() {

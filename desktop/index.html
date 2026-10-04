@@ -55,10 +55,12 @@
       <section id="tab-dictionary" class="tab">
         <h1>Dictionary</h1>
         <p class="muted">Names and terms Humming should get right. Leave "You say" empty to only fix the spelling or
-          casing (for example GitHub); fill it in to replace a phrase the model keeps hearing differently.</p>
+          casing (for example GitHub); fill it in to replace a phrase the model keeps hearing differently. Name apps to
+          make an entry per-app: "cube cuddle" &rarr; kubectl only in Terminal, Code.</p>
         <form id="dict-form" class="row">
           <input id="dict-spoken" placeholder="You say (optional), e.g. hum ing" />
           <input id="dict-written" placeholder="Humming writes, e.g. Humming" required />
+          <input id="dict-apps" placeholder="Only in apps (optional), e.g. Slack, Code" title="Comma-separated app names. Empty = every app." />
           <button class="primary" type="submit">Add</button>
         </form>
         <ul id="dict-list" class="list"></ul>

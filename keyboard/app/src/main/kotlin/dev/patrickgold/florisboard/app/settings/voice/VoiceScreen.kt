@@ -277,7 +277,7 @@ private fun CustomWordsSection() {
     val app = LocalContext.current.applicationContext
     var words by remember { mutableStateOf(Prefs.dictionaryText(app)) }
     Text("Custom words", fontWeight = FontWeight.SemiBold, fontSize = 15.sp, color = MaterialTheme.colorScheme.primary)
-    Text("Names, jargon and brands Humming should always spell your way. One per line, e.g. \"Kubernetes\" or \"iPhone\".",
+    Text("Names, jargon and brands Humming should always spell your way. One per line, e.g. \"Kubernetes\" or \"iPhone\". Add \" @app\" to use a word in one app only, e.g. \"kubectl @termux\".",
         fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
     OutlinedTextField(
         value = words,

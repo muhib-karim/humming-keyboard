@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Word error rate and speed of Humming's two offline models on public LibriSpeech test sets.
+"""Word error rate and speed of Humming's offline models on public LibriSpeech test sets.
 
 usage: wer_bench.py <models_dir> <librispeech_root> <out.json> [n_clean] [n_other]
 
@@ -7,7 +7,7 @@ Takes the first N utterances (sorted by id) of test-clean and test-other, decode
 runtime and model files the app downloads), and reports WER (jiwer, after lower-casing and stripping punctuation)
 plus the real-time factor and median decode latency per utterance. CPU only, 2 threads, like a phone's big cores.
 """
-import glob, json, os, re, statistics, sys, time
+import glob, json, os, platform, re, statistics, subprocess, sys, time
 
 import jiwer
 import sherpa_onnx
@@ -35,7 +35,27 @@ def norm(t):
     return re.sub(r"\s+", " ", t).strip()
 
 
+def cpu_name():
+    try:
+        if sys.platform == "darwin":
+            return subprocess.check_output(["sysctl", "-n", "machdep.cpu.brand_string"], text=True).strip()
+        if sys.platform == "win32":
+            out = subprocess.check_output(["powershell", "-NoProfile", "-Command",
+                                           "(Get-CimInstance Win32_Processor).Name"], text=True)
+            return out.strip().splitlines()[0].strip()
+        for line in open("/proc/cpuinfo"):
+            if line.lower().startswith(("model name", "cpu model")):
+                return line.split(":", 1)[1].strip()
+        return platform.processor() or platform.machine()
+    except Exception:
+        return platform.processor() or platform.machine()
+
+
 def recognizer(kind, d):
+    if kind == "lite":
+        return sherpa_onnx.OfflineRecognizer.from_moonshine_v2(
+            encoder=os.path.join(d, "encoder_model.ort"), decoder=os.path.join(d, "decoder_model_merged.ort"),
+            tokens=os.path.join(d, "tokens.txt"), num_threads=2)
     if kind == "fast":
         return sherpa_onnx.OfflineRecognizer.from_nemo_ctc(
             model=os.path.join(d, "model.int8.onnx"), tokens=os.path.join(d, "tokens.txt"), num_threads=2)
@@ -45,12 +65,30 @@ def recognizer(kind, d):
         num_threads=2, model_type="nemo_transducer")
 
 
+def windows(samples, sr, max_s):
+    """Cut at the quietest 50 ms frame in the last third of each window (as the desktop app does)."""
+    import numpy as np
+    out, start, mx, fr = [], 0, int(max_s * sr), sr // 20
+    while len(samples) - start > mx:
+        lo, hi = start + mx * 2 // 3, start + mx
+        e = [float(np.sum(samples[i:i + fr] ** 2)) for i in range(lo, hi - fr + 1, fr)]
+        cut = lo + int(np.argmin(e)) * fr + fr // 2
+        out.append(samples[start:cut]); start = cut
+    out.append(samples[start:])
+    return out
+
+
+# Moonshine v2 returns nothing for clips over ~10 s in sherpa-onnx 1.13.8, so the apps decode Lite in <= 8 s windows.
+MAX_WINDOW = {"lite": 8}
+
 MODELS = {
+    "lite": ("Moonshine v2 tiny int8 (Lite, 30 MB)", "sherpa-onnx-moonshine-tiny-en-quantized-2026-02-27"),
     "fast": ("Parakeet TDT-CTC 110M int8 (Fast, default)", "sherpa-onnx-nemo-parakeet_tdt_ctc_110m-en-36000-int8"),
     "best": ("Parakeet TDT 0.6B v2 int8 (Best, optional)", "sherpa-onnx-nemo-parakeet-tdt-0.6b-v2-int8"),
 }
 sets = {"test-clean": utterances("test-clean", n_clean), "test-other": utterances("test-other", n_other)}
-report = {"cpu": open("/proc/cpuinfo").read().split("model name")[1].split("\n")[0].strip(": ") if os.path.exists("/proc/cpuinfo") else "",
+report = {"device": os.environ.get("BENCH_DEVICE", f"{platform.system()} {platform.machine()}"),
+          "os": f"{platform.system()} {platform.release()}", "arch": platform.machine(), "cpu": cpu_name(),
           "threads": 2, "sets": {k: len(v) for k, v in sets.items()}, "models": {}}
 for key, (label, dirname) in MODELS.items():
     d = os.path.join(models, dirname)
@@ -64,11 +102,14 @@ for key, (label, dirname) in MODELS.items():
         refs, hyps, lat, audio = [], [], [], 0.0
         for uid, path, text in items:
             samples, sr = sf.read(path, dtype="float32")
-            s = rec.create_stream()
             t1 = time.perf_counter()
-            s.accept_waveform(sr, samples)
-            rec.decode_stream(s)
-            hyp = s.result.text
+            parts = []
+            for chunk in windows(samples, sr, MAX_WINDOW.get(key, 25)):
+                s = rec.create_stream()
+                s.accept_waveform(sr, chunk)
+                rec.decode_stream(s)
+                parts.append(s.result.text.strip())
+            hyp = " ".join(p for p in parts if p)
             lat.append(time.perf_counter() - t1)
             audio += len(samples) / sr
             refs.append(norm(text)); hyps.append(norm(hyp))
