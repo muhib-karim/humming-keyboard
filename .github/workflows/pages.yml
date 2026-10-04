@@ -1,10 +1,11 @@
 name: pages
 
-# Publishes only play/site/ (the Humming privacy policy) to GitHub Pages.
+# Publishes the Humming website (play/site/: the home page and the privacy policy) to GitHub Pages, with the banner
+# and screenshots copied in from docs/.
 on:
   push:
     branches: ["main"]
-    paths: ["play/site/**", ".github/workflows/pages.yml"]
+    paths: ["play/site/**", "docs/banner.png", "docs/screenshots/**", "landing/icon.png", ".github/workflows/pages.yml"]
   workflow_dispatch:
 
 permissions:
@@ -24,9 +25,20 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      - name: Assemble the site
+        run: |
+          mkdir -p _site/img
+          cp -R play/site/. _site/
+          cp docs/banner.png landing/icon.png _site/img/
+          for f in android_dictation.gif android_themes.gif android_keyboard_dark.png android_settings_voice.png \
+                   ios_walkthrough.gif ios_dictate.png ios_settings.png ios_keyboard.png \
+                   desktop_dictation.gif desktop_home_dark.png desktop_history.png desktop_settings.png; do
+            cp "docs/screenshots/$f" _site/img/
+          done
+          ls -la _site _site/img
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: play/site
+          path: _site
       - id: deployment
         uses: actions/deploy-pages@v4

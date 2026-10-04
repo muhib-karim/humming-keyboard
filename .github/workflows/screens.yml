@@ -1,0 +1,45 @@
+name: screens
+
+# README screenshots of the desktop app's own interface: the built frontend (desktop/dist, what the Tauri window
+# loads) in Chromium, with the native commands answered by fixed sample data (docs/ci/desktop_screens.mjs).
+# Light and dark, every tab, plus a short walkthrough GIF. Artifacts only; nothing is committed from here.
+on:
+  push:
+    paths: ["desktop/src/**", "desktop/index.html", "docs/ci/desktop_screens.mjs", ".github/workflows/screens.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  desktop:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: desktop/package-lock.json
+      - name: Build the desktop frontend
+        working-directory: desktop
+        run: npm ci && npx vite build
+      - name: Chromium (Playwright)
+        run: |
+          mkdir -p /tmp/pw && cd /tmp/pw && npm init -y > /dev/null && npm i -q playwright@1.47.2
+          npx playwright install --with-deps chromium
+      - name: Screenshots and walkthrough
+        run: |
+          mkdir -p screens
+          cp docs/ci/desktop_screens.mjs /tmp/pw/
+          node /tmp/pw/desktop_screens.mjs "$PWD/desktop/dist" "$PWD/screens"
+          command -v ffmpeg || { sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg > /dev/null; }
+          V=$(ls screens/video/*.webm | head -1)
+          ffmpeg -loglevel error -y -i "$V" -vf "fps=10,scale=760:-1:flags=lanczos,split[a][b];[a]palettegen=max_colors=128[p];[b][p]paletteuse=dither=bayer:bayer_scale=4" screens/desktop_dictation.gif
+          rm -rf screens/video
+          ls -la screens
+      - uses: actions/upload-artifact@v4
+        with:
+          name: desktop-screens
+          path: screens/
