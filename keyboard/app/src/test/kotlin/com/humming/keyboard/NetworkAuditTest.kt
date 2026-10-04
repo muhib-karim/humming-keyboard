@@ -6,8 +6,9 @@ import org.junit.Test
 import java.io.File
 
 /**
- * "Offline by design", enforced: only ModelDownload.kt (the one-time voice model fetch) and GifSearch.kt (the opt-in
- * GIF search, off by default) may use a network API.
+ * "Offline by design", enforced: only ModelDownload.kt (the one-time voice model fetch), GifSearch.kt (the opt-in
+ * GIF search, off by default) and LlmCleanup.kt (the opt-in AI clean-up with the user's own key, off by default) may
+ * use a network API.
  * Scans every Kotlin/Java source of the app and its libraries. Parsing a URI (java.net.URI) is not network I/O.
  */
 class NetworkAuditTest {
@@ -16,7 +17,7 @@ class NetworkAuditTest {
         "java.net.Socket", "java.net.ServerSocket", "DatagramSocket", "SocketChannel", "okhttp", "io.ktor",
         "android.webkit", "DownloadManager", "java.net.URL", "java.net.http",
     )
-    private val allowed = setOf("ModelDownload.kt", "GifSearch.kt")
+    private val allowed = setOf("ModelDownload.kt", "GifSearch.kt", "LlmCleanup.kt")
 
     private fun sources(): List<File> {
         val roots = listOf(File("src/main"), File("../lib"))
@@ -31,7 +32,7 @@ class NetworkAuditTest {
         assertTrue("found the sources (${files.size})", files.size > 200)
         val offenders = files.filter { f -> f.name !in allowed && networkApis.any { f.readText().contains(it) } }
             .map { f -> f.path + ": " + networkApis.filter { f.readText().contains(it) } }
-        assertEquals("network APIs outside ModelDownload.kt and GifSearch.kt", emptyList<String>(), offenders)
+        assertEquals("network APIs outside ModelDownload.kt, GifSearch.kt and LlmCleanup.kt", emptyList<String>(), offenders)
     }
 
     @Test

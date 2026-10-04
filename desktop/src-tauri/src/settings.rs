@@ -56,7 +56,8 @@ impl Default for Settings {
             launch_at_login: false,
             history_enabled: true,
             history_limit: 500,
-            max_seconds: 300,
+            // 0 = no length limit: record until the shortcut is released (or pressed again in toggle mode).
+            max_seconds: 0,
         }
     }
 }
@@ -97,7 +98,13 @@ impl Settings {
         }
         self.paste_delay_ms = self.paste_delay_ms.clamp(20, 2000);
         self.history_limit = self.history_limit.clamp(10, 5000);
-        self.max_seconds = self.max_seconds.clamp(10, 900);
+        // 300 was the 0.1.0 default cap; 1.3.0 has no limit unless the user sets one.
+        if self.max_seconds == 300 {
+            self.max_seconds = 0;
+        }
+        if self.max_seconds != 0 {
+            self.max_seconds = self.max_seconds.clamp(10, 86_400);
+        }
         self.dictionary.retain(|e| !e.written.trim().is_empty());
         self
     }

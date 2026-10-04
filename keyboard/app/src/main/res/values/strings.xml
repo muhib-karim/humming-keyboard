@@ -162,11 +162,11 @@
     <string name="settings__localization__subtype_delete_confirmation_warning" comment="Warning message in the confirmation dialog to confirm the user's intent to delete">Are you sure you want to delete this subtype?</string>
 
     <string name="settings__theme__title" comment="Title of the Theme screen">Theme</string>
-    <string name="pref__theme__mode__label" comment="Label of the theme mode preference">Theme mode</string>
+    <string name="pref__theme__mode__label" comment="Label of the theme mode preference">Light or dark keyboard</string>
     <string name="pref__theme__sunrise_time__label" comment="Label of the sunrise time preference">Sunrise time</string>
     <string name="pref__theme__sunset_time__label" comment="Label of the sunset time preference">Sunset time</string>
-    <string name="pref__theme__day" comment="Label of the day group (day means light theme)">Day theme</string>
-    <string name="pref__theme__night" comment="Label of the night group (night means dark theme)">Night theme</string>
+    <string name="pref__theme__day" comment="Label of the day group (day means light theme)">Light theme (used when the keyboard is light)</string>
+    <string name="pref__theme__night" comment="Label of the night group (night means dark theme)">Dark theme (used when the keyboard is dark)</string>
     <string name="pref__theme__theme_accent_color__label" comment="Label of accent color preference in Theme">
         Accent color (Material You themes)
     </string>
@@ -1098,10 +1098,10 @@
     <string name="enum__swipe_action__switch_to_next_subtype" comment="Enum value label">Switch to next subtype</string>
     <string name="enum__swipe_action__toggle_smartbar_visibility" comment="Enum value label">Toggle Smartbar visibility</string>
 
-    <string name="enum__theme_mode__always_day" comment="Enum value label">Always day</string>
-    <string name="enum__theme_mode__always_night" comment="Enum value label">Always night</string>
-    <string name="enum__theme_mode__follow_system" comment="Enum value label">Follow system</string>
-    <string name="enum__theme_mode__follow_time" comment="Enum value label">Follow time</string>
+    <string name="enum__theme_mode__always_day" comment="Enum value label">Always light</string>
+    <string name="enum__theme_mode__always_night" comment="Enum value label">Always dark</string>
+    <string name="enum__theme_mode__follow_system" comment="Enum value label">Match the phone (light or dark)</string>
+    <string name="enum__theme_mode__follow_time" comment="Enum value label">By time of day (sunrise to sunset)</string>
 
     <string name="enum__utility_key_action__switch_to_emojis" comment="Enum value label">Switch to emojis</string>
     <string name="enum__utility_key_action__switch_language" comment="Enum value label">Switch language</string>

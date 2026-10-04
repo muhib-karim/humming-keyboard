@@ -1,7 +1,7 @@
 name: desktop
 
-# Humming for Windows and macOS (Tauri v2). Builds unsigned installers as workflow artifacts:
-# a universal macOS .dmg and Windows .msi + NSIS setup .exe. Nothing is released or signed here.
+# Humming for macOS, Windows and Linux (Tauri v2). Builds unsigned installers as workflow artifacts:
+# a universal macOS .dmg, Windows .msi + NSIS setup .exe, and Linux .AppImage + .deb. Nothing is released or signed here.
 
 on:
   push:
@@ -36,6 +36,20 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with:
           workspaces: "desktop/src-tauri -> target"
+          prefix-key: v2-sherpa
+          cache-directories: desktop/src-tauri/target/sherpa-onnx-prebuilt
+      - name: sherpa-onnx static libraries present
+        # sherpa-onnx-sys downloads its prebuilt static libraries into target/sherpa-onnx-prebuilt from its build
+        # script. The Rust cache restores the compiled crate but not that folder, so the build script is skipped and
+        # linking fails ("could not find native static library sherpa-onnx-c-api"). Re-run it when the libs are gone.
+        shell: bash
+        working-directory: desktop/src-tauri
+        run: |
+          if [ -d target ] && ! find target -path '*sherpa-onnx-prebuilt*' \( -name 'libsherpa-onnx-c-api*' -o -name 'sherpa-onnx-c-api*.lib' \) | grep -q .; then
+            echo "prebuilt sherpa-onnx libraries missing from the cache: re-running its build script"
+            cargo clean -p sherpa-onnx-sys || true
+            for t in $(echo "${RUST_TARGETS:-}" | tr ',' ' '); do cargo clean -p sherpa-onnx-sys --target "$t" || true; done
+          fi
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -82,12 +96,22 @@ jobs:
             os: windows-latest
             args: ""
             rust_targets: ""
+          - name: linux-x64
+            os: ubuntu-22.04
+            args: --bundles appimage,deb
+            rust_targets: ""
     runs-on: ${{ matrix.os }}
     timeout-minutes: 90
     env:
       MACOSX_DEPLOYMENT_TARGET: "11.0"
     steps:
       - uses: actions/checkout@v4
+      - name: System libraries (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev \
+            libasound2-dev libxdo-dev libssl-dev cmake clang patchelf file > /dev/null
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -100,6 +124,22 @@ jobs:
         with:
           workspaces: "desktop/src-tauri -> target"
           key: ${{ matrix.name }}
+          prefix-key: v2-sherpa
+          cache-directories: desktop/src-tauri/target/sherpa-onnx-prebuilt
+      - name: sherpa-onnx static libraries present
+        # sherpa-onnx-sys downloads its prebuilt static libraries into target/sherpa-onnx-prebuilt from its build
+        # script. The Rust cache restores the compiled crate but not that folder, so the build script is skipped and
+        # linking fails ("could not find native static library sherpa-onnx-c-api"). Re-run it when the libs are gone.
+        shell: bash
+        working-directory: desktop/src-tauri
+        env:
+          RUST_TARGETS: ${{ matrix.rust_targets }}
+        run: |
+          if [ -d target ] && ! find target -path '*sherpa-onnx-prebuilt*' \( -name 'libsherpa-onnx-c-api*' -o -name 'sherpa-onnx-c-api*.lib' \) | grep -q .; then
+            echo "prebuilt sherpa-onnx libraries missing from the cache: re-running its build script"
+            cargo clean -p sherpa-onnx-sys || true
+            for t in $(echo "${RUST_TARGETS:-}" | tr ',' ' '); do cargo clean -p sherpa-onnx-sys --target "$t" || true; done
+          fi
       - name: npm ci
         working-directory: desktop
         run: npm ci
@@ -112,7 +152,7 @@ jobs:
         run: |
           mkdir -p out
           find desktop/src-tauri/target -path '*/release/bundle/*' -type f \
-            \( -name '*.dmg' -o -name '*.msi' -o -name '*-setup.exe' \) -exec cp {} out/ \;
+            \( -name '*.dmg' -o -name '*.msi' -o -name '*-setup.exe' -o -name '*.AppImage' -o -name '*.deb' \) -exec cp {} out/ \;
           cd out
           if command -v sha256sum > /dev/null; then sha256sum -- * > ../SHA256SUMS.txt; else shasum -a 256 -- * > ../SHA256SUMS.txt; fi
           mv ../SHA256SUMS.txt .

@@ -2,8 +2,9 @@
  * Humming (added file, Apache-2.0 like the rest of this fork).
  *
  * The voice hero of the keyboard: a big gradient mic in the Smartbar opens a full-height voice panel with a live
- * transcript, a level-reactive mic orb, Clean mode, Cancel and Done. Nothing reaches the app's text field until
- * Done (DictationOutput); the on-device engine is humming-core (whisper.cpp + VAD + rule cleanup).
+ * transcript, a level-reactive mic orb (tap to start, tap again to stop: the one control), Clean mode and Cancel.
+ * Words are typed into the field live as the user talks (DictationOutput); there is no length limit, and a
+ * foreground service keeps the mic and the on-device engine running with the screen off (DictationService).
  */
 package dev.patrickgold.florisboard.ime.voice
 
@@ -48,12 +49,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AutoAwesome
-import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.CloudOff
 import androidx.compose.material.icons.rounded.Headset
 import androidx.compose.material.icons.rounded.VisibilityOff
 import androidx.compose.material.icons.rounded.Mic
+import androidx.compose.material.icons.rounded.Stop
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -86,6 +87,7 @@ import androidx.compose.ui.unit.sp
 import com.humming.keyboard.CoreLoader
 import com.humming.keyboard.DictationOutput
 import com.humming.keyboard.DictationPipeline
+import com.humming.keyboard.DictationService
 import com.humming.keyboard.HistoryStore
 import com.humming.keyboard.ModelDownloader
 import com.humming.keyboard.ModelStore
@@ -137,6 +139,9 @@ object HummingVoice {
     val state: StateFlow<VoiceState> = _state.asStateFlow()
 
     private var recorder: WavRecorder? = null
+    /** Online mode (opt-in): the phone's speech service instead of the on-device engine. */
+    private var online: com.humming.keyboard.OnlineSession? = null
+    private fun recording() = recorder != null || online != null
     private var session: StreamingSession? = null
     private var output: DictationOutput? = null
     private var glue = ""
@@ -155,6 +160,8 @@ object HummingVoice {
     fun onStartInputView(ctx: Context) {
         val app = ctx.applicationContext
         appContext = app
+        // Back from screen-off or another app while still dictating: type what was said meanwhile, keep listening.
+        if (recording()) output?.attach()
         _state.update { it.copy(clean = Prefs.cleanMode(app), offline = ModelStore.ready(app)) }
         ModelDownloader.removeListener(modelListener)
         ModelDownloader.addListener(modelListener)
@@ -163,11 +170,14 @@ object HummingVoice {
         }
     }
 
-    /** Keyboard hidden mid-dictation: keep the words (History), never type into a field the user left. */
+    /**
+     * Keyboard hidden mid-dictation (screen off, lock screen, another app): keep listening; only the user stops a
+     * dictation (the panel's mic, or Stop in the notification). Nothing is typed while hidden; the words wait.
+     */
     fun onFinishInputView() {
         _menu.value = false
         main.removeCallbacks(warmRunnable)
-        if (recorder != null) stop(toField = false)
+        if (recording()) output?.detach()
         else if (!busy) close()
     }
 
@@ -243,13 +253,18 @@ object HummingVoice {
 
     /** The mic: open the panel and start listening (or stop, if already listening). */
     fun toggle(ctx: Context) {
-        if (recorder != null) done() else start(ctx)
+        if (recording()) done() else start(ctx)
+    }
+
+    /** Stop from the notification (screen off / lock screen): the rest goes into the field if the keyboard is up. */
+    private fun stopFromNotification() {
+        if (recording()) stop(toField = output?.attached ?: false)
     }
 
     fun start(ctx: Context) {
         val app = ctx.applicationContext
         appContext = app
-        if (recorder != null || busy) return
+        if (recording() || busy) return
         _state.update { VoiceState(open = true, phase = VoiceState.Phase.PREPARING, clean = Prefs.cleanMode(app),
             downloadPct = it.downloadPct, message = it.message) }
         if (app.checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
@@ -257,7 +272,8 @@ object HummingVoice {
             fail("Allow the microphone, then tap the mic again.")
             return
         }
-        val streaming = Prefs.mode(app) == Prefs.MODE_DEVICE
+        val onlineMode = Prefs.engine(app) == Prefs.ENGINE_ONLINE
+        val streaming = !onlineMode && Prefs.mode(app) == Prefs.MODE_DEVICE
         if (streaming) {
             CoreLoader.whyUnavailable(app)?.let { fail("Voice isn't available on this device: $it"); return }
             ModelDownloader.removeListener(modelListener)
@@ -284,14 +300,38 @@ object HummingVoice {
                     val ed by app.editorInstance()
                     ed.commitText(text)
                 }
+                override fun textBeforeCursor(n: Int): String? =
+                    dev.patrickgold.florisboard.FlorisImeService.currentInputConnection()
+                        ?.getTextBeforeCursor(n, 0)?.toString()
+                override fun deleteBefore(n: Int): Boolean =
+                    dev.patrickgold.florisboard.FlorisImeService.currentInputConnection()
+                        ?.deleteSurroundingText(n, 0) ?: false
             },
-        ) { p -> _state.update { it.copy(transcript = p) } }
+            { p -> _state.update { it.copy(transcript = p) } },
+            glue = glue,
+            live = Prefs.liveTyping(app),
+        )
+        if (onlineMode) {
+            val o = com.humming.keyboard.OnlineSession(app, onPartial = { p -> onOnlinePartial(app, p) },
+                onLevel = { lv -> pushLevelValue(lv) })
+            if (!o.start()) {
+                fail("Online mode isn't available: ${o.error ?: "no speech service"}. Switch to Offline in Settings › Voice.")
+                output = null
+                return
+            }
+            online = o
+            DictationService.onStopRequested = { main.post { stopFromNotification() } }
+            DictationService.begin(app)
+            _state.update { it.copy(phase = VoiceState.Phase.LISTENING, startedAt = SystemClock.elapsedRealtime(),
+                transcript = "", message = "", levels = emptyList(), level = 0f, downloadPct = -1,
+                offline = false, headset = null, incognito = incognito(app)) }
+            return
+        }
+        // No length limit: the recorder streams until the user stops it.
         val r = WavRecorder(ctx = app, onChunk = { buf: ShortArray, n: Int ->
             s?.feed(buf, n)
             pushLevel(buf, n)
-        }) {
-            main.post { if (recorder != null) _state.update { it.copy(message = "Time's up · tap Done to insert") } }
-        }
+        })
         if (!r.start()) {
             s?.cancel()
             fail("Couldn't open the microphone.")
@@ -299,6 +339,9 @@ object HummingVoice {
         }
         session = s
         recorder = r
+        // Screen off or keyboard hidden must not end the dictation: foreground service + wake lock while the mic is on.
+        DictationService.onStopRequested = { main.post { stopFromNotification() } }
+        DictationService.begin(app)
         _state.update { it.copy(phase = VoiceState.Phase.LISTENING, startedAt = SystemClock.elapsedRealtime(),
             transcript = "", message = "", levels = emptyList(), level = 0f, downloadPct = -1,
             offline = streaming && ModelStore.ready(app), headset = r.bluetoothName, incognito = incognito(app)) }
@@ -307,7 +350,24 @@ object HummingVoice {
 
     private fun onPartial(text: String) {
         if (session == null) return
-        output?.onPartial(glue.trimStart() + text)
+        output?.onPartial(text)
+    }
+
+    /** Online mode: the same on-device clean-up, personal dictionary and spoken commands as offline. */
+    private fun cleanOnline(app: Context, raw: String): com.humming.keyboard.VoiceCommands.Result {
+        val dict = Prefs.dictionary(app)
+        val t = if (Prefs.cleanMode(app)) com.humming.keyboard.TextCleanup.apply(raw, dict)
+        else com.humming.keyboard.TextCleanup.applyDictionary(raw, dict)
+        return com.humming.keyboard.VoiceCommands.apply(t)
+    }
+
+    private fun onOnlinePartial(app: Context, raw: String) {
+        if (online == null) return
+        output?.onPartial(cleanOnline(app, raw).text)
+    }
+
+    private fun pushLevelValue(lv: Float) {
+        _state.update { st -> st.copy(level = lv, levels = (st.levels + lv).takeLast(LEVEL_HISTORY)) }
     }
 
     private var levelAcc = 0.0
@@ -335,19 +395,19 @@ object HummingVoice {
         _state.update { it.copy(open = true, phase = VoiceState.Phase.ERROR, message = msg, level = 0f) }
     }
 
-    /** Done: stop the mic and put the final text into the field (one commit). */
+    /** Stop (the mic orb, tapped again): the rest of the words go into the field. */
     fun done() {
-        if (recorder != null) stop(toField = true) else if (!busy) close()
+        if (recording()) stop(toField = output?.attached ?: true) else if (!busy) close()
     }
 
-    /** Cancel: stop and throw the words away (they are still kept in History). */
+    /** Cancel: stop and take this dictation's words back out of the field (they are still kept in History). */
     fun cancel() {
-        if (recorder != null) stop(toField = false, discard = true) else if (!busy) close()
+        if (recording()) stop(toField = false, discard = true) else if (!busy) close()
     }
 
     fun close() {
-        // Never leave the microphone running behind a closed panel.
-        if (recorder != null) { stop(toField = false, discard = true); return }
+        // Never leave the microphone running behind a closed panel; what was said is kept.
+        if (recording()) { stop(toField = output?.attached ?: false); return }
         _state.update { VoiceState(clean = it.clean, downloadPct = it.downloadPct, offline = it.offline,
             message = if (it.downloadPct >= 0) it.message else "") }
     }
@@ -359,27 +419,49 @@ object HummingVoice {
     fun incognito(ctx: Context): Boolean = keyboardIncognito || Prefs.voiceIncognito(ctx)
 
     private fun stop(toField: Boolean, discard: Boolean = false) {
-        val r = recorder ?: return
+        val r = recorder
+        val o = online
+        if (r == null && o == null) return
         val app = appContext ?: return
         output?.onStop()
+        if (discard) output?.discard()
         recorder = null
+        online = null
+        DictationService.end(app)
+        DictationService.onStopRequested = null
         busy = true
         val stopAt = SystemClock.elapsedRealtime()
-        val clip = r.stop()
+        val clip = r?.stop() ?: com.humming.keyboard.AudioClip(ByteArray(0), WavRecorder.SAMPLE_RATE)
         val s = session
         _state.update { it.copy(phase = VoiceState.Phase.FINISHING, level = 0f,
             open = !discard && it.open) }
         Thread({
             val started = System.nanoTime()
             val result: Result<Pair<String, String>> = runCatching {
-                if (s != null) {
+                var instruction: String? = null
+                var (text, engine) = if (o != null) {
+                    val raw = o.finish()
+                    if (raw.isBlank() && o.error != null) throw TranscriberUnavailable(o.error ?: "")
+                    val c = cleanOnline(app, raw)
+                    instruction = c.instruction
+                    Pair(c.text, "online · speech service")
+                } else if (s != null) {
                     val res = s.finish()
                     if (res.text.isBlank() && res.error != null) throw TranscriberUnavailable(res.error)
+                    instruction = res.instruction
                     Pair(res.text, "on-device · ${CoreLoader.variant}")
                 } else {
                     val res = DictationPipeline.run(app, clip)
                     Pair(res.text, res.engine)
                 }
+                // Optional AI clean-up with the user's own key (never in incognito; failure keeps the text above).
+                if (!discard && com.humming.keyboard.LlmCleanup.enabled(app, incognito(app), text)) {
+                    main.post { _state.update { it.copy(message = "AI clean-up…") } }
+                    runCatching { com.humming.keyboard.LlmCleanup.polish(app, text, instruction) }
+                        .onSuccess { text = it; engine += " + AI clean-up" }
+                        .onFailure { e -> main.post { _state.update { it.copy(message = "AI clean-up failed (${e.message}); kept the on-device text") } } }
+                }
+                Pair(text, engine)
             }
             val ms = (System.nanoTime() - started) / 1_000_000
             result.getOrNull()?.let { (text, engine) ->
@@ -388,12 +470,14 @@ object HummingVoice {
             main.post {
                 result.onSuccess { (text, engine) ->
                     val out = output
-                    if (text.isBlank()) {
-                        out?.onFinal("", glue)
+                    if (discard) {
+                        // Cancelled: the words already typed were taken back out in stop().
+                    } else if (text.isBlank()) {
+                        out?.onFinal("")
                     } else if (!toField || out == null) {
-                        out?.onFinal(text, glue, toField = false)
+                        out?.onFinal(text, toField = false)
                     } else {
-                        out.onFinal(text, glue)
+                        out.onFinal(text)
                     }
                     if (BuildConfig.DEBUG) Log.i(TAG, "HUMMING_FINAL engine=$engine chars=${text.length} " +
                         "stop_to_insert_ms=${SystemClock.elapsedRealtime() - stopAt} to_field=$toField")
@@ -405,7 +489,7 @@ object HummingVoice {
                         close()
                     }
                 }.onFailure { e ->
-                    output?.onFinal("", glue)
+                    output?.onFinal("")
                     session = null; output = null; busy = false
                     fail("Couldn't transcribe: ${e.message ?: e.javaClass.simpleName}")
                 }
@@ -584,41 +668,31 @@ fun VoiceInputLayout(isNight: Boolean, height: Dp, modifier: Modifier = Modifier
             )
         }
 
-        // Bottom row: Cancel · orb · Done.
+        // Bottom row: Cancel · orb. One control: tap the orb to start, tap it again to stop (words are typed live).
         Row(modifier = Modifier.fillMaxWidth().height(124.dp), verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween) {
             RoundAction(p, onClick = {
                 haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                 HummingVoice.cancel()
-            }) { Icon(Icons.Rounded.Close, "Cancel", tint = p.onBackground, modifier = Modifier.size(24.dp)) }
+            }) { Icon(Icons.Rounded.Close, if (listening) "Cancel and remove these words" else "Close", tint = p.onBackground,
+                modifier = Modifier.size(24.dp)) }
 
             MicOrb(p, st, onClick = {
                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                 if (listening) HummingVoice.done() else if (!finishing) HummingVoice.start(context)
             })
 
-            val doneEnabled = listening
-            val interaction = remember { MutableInteractionSource() }
-            val pressed by interaction.collectIsPressedAsState()
-            val sc by animateFloatAsState(if (pressed) 0.92f else 1f, spring(dampingRatio = 0.5f, stiffness = 700f), label = "done")
-            Row(
-                modifier = Modifier
-                    .scale(sc)
-                    .height(52.dp)
-                    .clip(RoundedCornerShape(26.dp))
-                    .background(if (doneEnabled) p.accentBrush else Brush.linearGradient(listOf(p.surface, p.surface)))
-                    .clickable(interactionSource = interaction, indication = null, enabled = doneEnabled) {
-                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                        HummingVoice.done()
-                    }
-                    .padding(horizontal = 20.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Icon(Icons.Rounded.Check, null, tint = if (doneEnabled) p.onAccent else p.secondary, modifier = Modifier.size(22.dp))
-                Spacer(Modifier.width(6.dp))
-                Text("Done", color = if (doneEnabled) p.onAccent else p.secondary, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
-            }
+            // Balances the Cancel button so the orb stays centred.
+            Spacer(Modifier.size(52.dp))
         }
+        Text(
+            when {
+                listening -> "Tap the circle to stop · no time limit"
+                finishing -> ""
+                else -> "Tap the circle to talk"
+            },
+            color = p.secondary, fontSize = 12.sp, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth(),
+        )
     }
 }
 
@@ -707,8 +781,9 @@ private fun MicOrb(p: HummingPalette, st: VoiceState, onClick: () -> Unit) {
             drawCircle(brush = Brush.linearGradient(listOf(p.accentStart, p.accentEnd), start = Offset(c.x - orbR, c.y - orbR),
                 end = Offset(c.x + orbR, c.y + orbR)), radius = orbR * (if (listening) 1f + 0.05f * level else 1f), center = c)
         }
-        Icon(Icons.Rounded.Mic, contentDescription = if (listening) "Stop and insert" else "Start dictating",
-            tint = p.onAccent, modifier = Modifier.size(36.dp))
+        Icon(if (listening) Icons.Rounded.Stop else Icons.Rounded.Mic,
+            contentDescription = if (listening) "Stop dictating" else "Start dictating",
+            tint = p.onAccent, modifier = Modifier.size(if (listening) 30.dp else 36.dp))
     }
 }
 

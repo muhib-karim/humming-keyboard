@@ -1,15 +1,84 @@
 # Humming Keyboard
 
-**A private Android keyboard with offline voice typing that beats FUTO's best model.** You tap the mic and talk.
-The words appear in a live preview and land in the text field when you tap Done. The speech model runs on the
-phone, so dictation works in airplane mode and your voice never leaves the device.
+**A private keyboard with offline voice typing, for Android, Windows, macOS and Linux.** Tap the mic and talk:
+the words are typed into the text field as you speak, for as long as you speak, even with the screen off. Tap the
+mic again to stop. The speech model runs on your device, so dictation works in airplane mode and your voice never
+leaves it. Free and open source.
 
-![Humming Keyboard: light, dark and voice](docs/images/hero.png)
+![Humming Keyboard: light, dark and voice](docs/screenshots/hero.png)
 
-<p align="center"><img src="docs/images/dictation_demo.gif" width="300" alt="Offline dictation demo, recorded in airplane mode"></p>
+<p align="center"><img src="docs/screenshots/android_dictation.gif" width="300" alt="Offline dictation, recorded in airplane mode"></p>
 
-*The demo was recorded on a CI Android emulator in airplane mode, with a spoken WAV clip fed in as the microphone.
-The middle part is sped up 8x because emulator CPUs are slow. The text is committed only when you tap Done.*
+*Frames from a CI Android emulator run in airplane mode, with a spoken WAV clip fed in as the microphone (the
+emulator CPU is much slower than a phone, so the real wait is shorter).* More screens are in [Screenshots](#screenshots).
+
+## Get Humming
+
+| Platform | Download | Install |
+|---|---|---|
+| **Android** 8.0+ | the release `.apk` | Open the APK, allow "install unknown apps" for your browser or file manager, install. Then open Humming and follow the two steps: enable the keyboard, then switch to it. The first mic tap downloads the Fast speech model (104 MB, once). |
+| **Windows** 10/11 x64 | `Humming_1.3.0_x64-setup.exe` or `.msi` | Run the installer. SmartScreen: **More info** > **Run anyway** ([details](#desktop-windows-macos-and-linux-how-to-open-it)). |
+| **macOS** 11+ (Apple silicon and Intel) | `Humming_1.3.0_universal.dmg` | Drag to Applications, open once, then **System Settings > Privacy & Security > Open Anyway**. Allow Microphone and Accessibility. |
+| **Linux** x86-64 | `Humming_1.3.0_amd64.AppImage` or `.deb` | `chmod +x` the AppImage and run it, or `sudo apt install ./Humming_1.3.0_amd64.deb`. |
+
+All four share one version number (1.3.0) and the same offline Parakeet models. On the desktop you hold a shortcut
+(Ctrl/Cmd + Shift + Space by default) in any app, talk, and let go: the text is pasted where your cursor is.
+
+## Screenshots
+
+All captured from the 1.3.0 build: Android on a CI emulator (Pixel 6, Android 15), desktop from the app's own
+interface. Sample text is made up.
+
+**Dictation: tap once, talk, text is typed as you go**
+
+<p>
+<img src="docs/screenshots/android_dictation.gif" width="220" alt="Dictation: tap the mic, talk, the text is typed into the field">
+<img src="docs/screenshots/android_screen_off.gif" width="220" alt="Dictation keeps going with the screen off">
+<img src="docs/screenshots/android_dictation_listening.png" width="220" alt="Listening: one round control, no time limit">
+<img src="docs/screenshots/android_screen_off_listening.png" width="220" alt="Still listening after the screen was turned off and on">
+</p>
+
+**Keyboard**
+
+<p>
+<img src="docs/screenshots/android_keyboard_light.png" width="200" alt="Keyboard, light">
+<img src="docs/screenshots/android_keyboard_dark.png" width="200" alt="Keyboard, dark">
+<img src="docs/screenshots/android_swipe.gif" width="200" alt="Glide typing">
+<img src="docs/screenshots/android_emoji.png" width="200" alt="Emoji panel">
+<img src="docs/screenshots/android_stickers.png" width="200" alt="Stickers and GIFs">
+</p>
+
+**Themes**
+
+<p>
+<img src="docs/screenshots/android_themes.gif" width="200" alt="Light, dark, AMOLED and day themes">
+<img src="docs/screenshots/android_theme_picker.png" width="200" alt="Theme picker with clearer labels">
+<img src="docs/screenshots/android_theme_amoled.png" width="200" alt="AMOLED black theme">
+</p>
+
+**Settings**
+
+<p>
+<img src="docs/screenshots/android_voice_settings.gif" width="200" alt="Voice settings walkthrough">
+<img src="docs/screenshots/android_settings_voice.png" width="200" alt="Voice: model and download">
+<img src="docs/screenshots/android_settings_online_mode.png" width="200" alt="Offline / Online voice input">
+<img src="docs/screenshots/android_settings_custom_words.png" width="200" alt="Custom words">
+<img src="docs/screenshots/android_settings_ai_cleanup.png" width="200" alt="AI clean-up with your own key">
+<img src="docs/screenshots/android_settings_home.png" width="200" alt="Settings home">
+</p>
+
+**Desktop (Windows, macOS, Linux)**
+
+<p>
+<img src="docs/screenshots/desktop_dictation.gif" width="520" alt="Desktop: try it, talk, get clean text">
+</p>
+<p>
+<img src="docs/screenshots/desktop_home.png" width="400" alt="Desktop home">
+<img src="docs/screenshots/desktop_home_dark.png" width="400" alt="Desktop home, dark">
+<img src="docs/screenshots/desktop_history.png" width="400" alt="Desktop history">
+<img src="docs/screenshots/desktop_dictionary.png" width="400" alt="Desktop dictionary">
+<img src="docs/screenshots/desktop_settings.png" width="400" alt="Desktop settings">
+</p>
 
 ## Features
 
@@ -17,8 +86,20 @@ The middle part is sped up 8x because emulator CPUs are slow. The text is commit
 - Offline dictation on NVIDIA Parakeet, run by sherpa-onnx. Two models:
   - **Fast** (default): Parakeet TDT-CTC 110M int8, a 104 MB download.
   - **Best**: Parakeet TDT 0.6B v2 int8, a 482 MB download. It is offered on phones with 6 GB+ RAM.
-- Live preview while you talk. Phrases are cut by Silero VAD. The field gets one clean commit when you tap Done, so
-  half-finished words never reach your chat app.
+- **One control** (1.3): tap the round mic to start, tap it again to stop. Each phrase (cut by Silero VAD) is typed
+  into the field as soon as it is recognised, so you see your words land live.
+- **No length limit** (1.3): dictate for as long as you like. Audio is recognised phrase by phrase as you talk and memory use stays
+  flat, so a one-hour session works like a ten-second one.
+- **Keeps going with the screen off** (1.3): dictation runs in a microphone foreground service with a "Humming is
+  listening" notification (tap Stop there too), so turning the screen off or switching apps does not cut it.
+- **Online mode** (1.3, off by default): switch Voice input from Offline to Online to use Android's own speech
+  recogniser (Google, no account needed, more languages). Offline stays the default and is unchanged.
+- **AI clean-up with your own key** (1.3, off by default): an optional pass with Gemini, OpenAI or Groq that removes
+  fillers, fixes punctuation and structure, and follows a closing spoken command such as "make it formal", "make it
+  a list" or "translate to Spanish". Only the finished text is sent (never audio), never in incognito, and the key is
+  stored encrypted on the phone (Android Keystore). Any failure keeps the on-device text.
+- **Voice commands**: "scratch that" / "delete that" removes the last sentence; "new line" and "new paragraph".
+- **Custom words** (Settings > Voice > Custom words): teach spellings and names ("hum ming" → Humming).
 - Clean mode (on by default) removes fillers and stutters. It also applies self-corrections: "ten, no, fifteen
   minutes" becomes "15 minutes", and "scratch that" drops the sentence. Punctuation and capitals come from the model.
 - Model manager in Settings > Voice. You can choose Fast or Best, see the size, delete a model and turn on
@@ -60,7 +141,7 @@ emoji suggestion, in one screenshot.
 | Everything on together | "Sounds gre" → "gre" · **great** · grew | Emoji search `:heart` |
 | ![Floating keyboard](docs/images/m6_floating.png) | ![German](docs/images/m6_lang_3.png) | ![Settings search](docs/images/m6_settings_search.png) |
 | Floating keyboard | German layout and dictionary | Settings search |
-| ![Model manager](docs/images/model_manager.png) | ![Clipboard grid](docs/images/clipboard.png) | ![Dark voice panel](docs/images/dark_voice.png) |
+| ![Model manager](docs/screenshots/android_model_manager.png) | ![Clipboard grid](docs/screenshots/android_clipboard.png) | ![Dark voice panel](docs/screenshots/android_dark_voice.png) |
 | Settings > Voice: model manager | Clipboard history | Voice panel (dark) |
 
 ## Settings
@@ -88,6 +169,52 @@ Restore to import):
 The full audit (privacy, permissions, security, performance, accessibility, crash risk, licences, tests and a gap
 list against Gboard, SwiftKey and FUTO) is in [AUDIT.md](AUDIT.md).
 
+## How Humming compares
+
+Checked on the vendors' own pages on 3 October 2026 (links below the table). Prices are per user per month.
+
+| | **Humming** | Wispr Flow | Typeless | Gboard voice typing |
+|---|---|---|---|---|
+| Works fully offline | **Yes**, every platform | No: "Transcription always occurs on the cloud" [1] | No: uses cloud LLM providers [2] | Partly: some on-device voice typing; advanced features need a Pixel 6+ [3] |
+| Where your voice goes | **Stays on the device** | Wispr's cloud; training use is a setting [1] | Cloud, "zero data retention" [2] | Google (on-device on some phones) [3][4] |
+| Price | **Free, open source (Apache-2.0)** | Free tier; Pro $12-15 [5] | Free tier; Pro $12 yearly / $30 monthly [6] | Free |
+| Free-tier limit | **None** | 2,000 words/week desktop, 1,000/week mobile [5] | "Limited words" [6] | None |
+| Longest single dictation | **No limit** | 20 min desktop [7], 5 min on Android [8] | 9 min [9] | Not stated |
+| Platforms | **Android, Windows, macOS, Linux** | Mac, Windows, iOS, Android [5] | macOS, Windows, iOS, Android; Linux listed on the pricing page [6] | Android, iOS |
+| Languages | English offline (Parakeet); Online mode: Android's recogniser languages | 100+ [5][10] | 100+ [6] | Many; advanced features fewer [3][4] |
+| Clean-up (fillers, punctuation) | **On-device** Clean mode; optional AI pass with your own key | Yes (cloud) [11] | Yes (cloud) [6] | "Fix it" on Pixel 8+, US English [4] |
+| Custom words | Yes | Yes, dictionary [5] | Yes, personal dictionary [6] | Personal dictionary (typing) |
+| Spoken edit commands | "scratch that", "new line"; "make it formal", "translate to …" with AI clean-up | Corrections as you speak ("Backtrack") [11] | Translate, "Ask anything" [6] | Voice commands for writing tools on Pixel [4] |
+
+**Why Humming:** it is the only one of the four that is fully offline on every platform, free with no word caps,
+open source, and has no session length limit. The trade-off is language coverage offline (English today) and that
+the AI clean-up needs your own API key.
+
+[1] https://wisprflow.ai/data-controls ·
+[2] https://www.typeless.com/data-controls ·
+[3] https://support.google.com/gboard/answer/2781851 ·
+[4] https://support.google.com/gboard/answer/11197787 ·
+[5] https://wisprflow.ai/pricing ·
+[6] https://www.typeless.com/pricing ·
+[7] https://docs.wisprflow.ai/articles/4841123325-longer-dictation-sessions-now-up-to-20-minutes ·
+[8] https://docs.wisprflow.ai/articles/6391241694-use-flow-hands-free ·
+[9] https://www.typeless.com/help/troubleshooting/dictation-limit ·
+[10] https://docs.wisprflow.ai/articles/6409258247-supported-languages ·
+[11] https://wisprflow.ai/features
+
+## Accuracy: word error rate
+
+Measured by CI (`.github/workflows/wer-bench.yml`) on LibriSpeech, the standard read-English benchmark, with the
+exact models and decoder settings the app ships, on a 2-thread x86-64 CPU. Lower is better.
+
+| Model | test-clean WER (200 clips) | test-other WER (100 clips) | Speed (real-time factor) | Median time per clip |
+|---|---|---|---|---|
+| **Fast** (default): Parakeet TDT-CTC 110M int8 | **2.74 %** | **4.01 %** | 0.033 (30x faster than real time) | 0.24 s |
+| **Best**: Parakeet TDT 0.6B v2 int8 | **1.77 %** | **3.12 %** | 0.13 (7.5x faster than real time) | 0.98 s |
+
+test-other is the harder, noisier half of LibriSpeech. The sample is a fixed subset, so treat the numbers as
++/- 0.5 points; the full-set figures published for these models are in the same range.
+
 ## Offline by design
 
 - **The voice path has no network code.** Recording, voice detection, recognition, cleanup and history run on the
@@ -107,7 +234,7 @@ list against Gboard, SwiftKey and FUTO) is in [AUDIT.md](AUDIT.md).
 
   Airplane mode is still on at the end. The screenshots, a screen recording and the logs are kept as build artifacts.
 
-![Committed offline, airplane mode on](docs/images/offline_committed.png)
+![Committed offline, airplane mode on](docs/screenshots/android_offline_committed.png)
 
 There is no cloud speech engine, no account, no analytics and no ads.
 
@@ -143,7 +270,7 @@ long-pressing Humming's mic shows a menu:
 
 | | | |
 |---|---|---|
-| ![Long-press menu](docs/images/voice_menu.png) | ![Gboard active](docs/images/gboard_after_handoff.png) | ![Back to Humming](docs/images/back_to_humming.png) |
+| ![Long-press menu](docs/screenshots/android_voice_menu.png) | ![Gboard active](docs/screenshots/android_gboard_after_handoff.png) | ![Back to Humming](docs/screenshots/android_back_to_humming.png) |
 | Long-press the mic | Gboard takes over | Back to Humming |
 
 Honest limits:
@@ -157,7 +284,7 @@ Honest limits:
 - CI checks this flow on a Google Play emulator image with Gboard preinstalled (long-press, menu tap, Gboard
   active, back to Humming).
 
-## Desktop (Windows and macOS): how to open it
+## Desktop (Windows, macOS and Linux): how to open it
 
 The Windows and macOS builds are **unsigned**: they are not signed with an Apple Developer ID or a Microsoft
 code-signing certificate yet, so the operating system warns on first launch. The app is the same either way; this
@@ -176,8 +303,14 @@ Apple's guide: https://support.apple.com/en-us/102445
 2. SmartScreen shows "Windows protected your PC" with an unknown publisher. Click **More info**.
 3. Click **Run anyway** and finish the installer.
 
-CI builds both installers on every push (`.github/workflows/desktop.yml`, artifacts `humming-desktop-macos-universal`
-and `humming-desktop-windows-x64`, each with a `SHA256SUMS.txt`). Signing options are in `docs/RELEASE_SIGNING.md`.
+**Linux** (`.AppImage` or `.deb`, x86-64; builds are not signed, and Linux shows no warning)
+1. AppImage: `chmod +x Humming_*_amd64.AppImage` and run it. Debian / Ubuntu: `sudo apt install ./Humming_*_amd64.deb`,
+   then open Humming from your app menu.
+2. Pasting into other apps works on X11 sessions and in XWayland apps. On a pure Wayland session auto-paste may not
+   land; every dictation is kept in History, one click to copy.
+
+CI builds every installer on every push (`.github/workflows/desktop.yml`, artifacts `humming-desktop-macos-universal`,
+`humming-desktop-windows-x64` and `humming-desktop-linux-x64`, each with a `SHA256SUMS.txt`). Signing options are in `docs/RELEASE_SIGNING.md`.
 
 ## Build
 

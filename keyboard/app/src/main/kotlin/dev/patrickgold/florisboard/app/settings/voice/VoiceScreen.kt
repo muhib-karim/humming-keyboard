@@ -33,6 +33,17 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import com.humming.keyboard.LlmCleanup
+import com.humming.keyboard.OnlineSession
+import com.humming.keyboard.SecretStore
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -146,16 +157,33 @@ fun VoiceScreen() = FlorisScreen {
 
             ToggleRow("Download on Wi-Fi only", "Never use mobile data for the model download.", Prefs.KEY_WIFI_ONLY, Prefs.wifiOnly(app))
             HorizontalDivider()
+            EngineSection()
+            HorizontalDivider()
+            ToggleRow("Type as you talk", "Words appear in the text field while you speak. Off: everything is typed once, when you tap stop.",
+                Prefs.KEY_LIVE_TYPING, Prefs.liveTyping(app))
             ToggleRow("Clean up speech", "Removes um and uh, stutters and repeats, and applies corrections like \"3pm, no wait, 4pm\" → \"4pm\".",
                 Prefs.KEY_CLEAN, Prefs.cleanMode(app))
             ToggleRow("Bluetooth headset mic", "Dictate through a connected headset's microphone.", Prefs.KEY_BT_MIC, Prefs.bluetoothMic(app))
             ToggleRow("Voice incognito", "Keep no voice history. The keyboard's incognito mode also turns this on, and keeps nothing in the clipboard.",
                 Prefs.KEY_INCOGNITO, Prefs.voiceIncognito(app))
             HorizontalDivider()
+            CustomWordsSection()
+            HorizontalDivider()
+            AiCleanupSection()
+            HorizontalDivider()
+            Text("Voice commands", fontWeight = FontWeight.SemiBold, fontSize = 15.sp, color = MaterialTheme.colorScheme.primary)
+            Text(
+                "Say \"new line\" or \"new paragraph\" anywhere, and \"delete that\" to remove the sentence before it. " +
+                    "With AI clean-up on, end with \"make it formal\", \"make it casual\", \"make it shorter\", " +
+                    "\"bullet points\", \"fix the grammar\" or \"translate it to Spanish\".",
+                fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            HorizontalDivider()
             Text("Offline by design", fontWeight = FontWeight.SemiBold, fontSize = 15.sp, color = MaterialTheme.colorScheme.primary)
             Text(
-                "Humming has no servers and no accounts. Speech recognition, clean-up and history run on this phone. " +
-                    "The only time Humming uses the internet is to fetch the voice model you choose, once, from its public release.",
+                "Humming has no servers and no accounts. In the default Offline mode, speech recognition, clean-up and " +
+                    "history run on this phone, and the only time Humming uses the internet is to fetch the voice model you " +
+                    "choose, once, from its public release. Online mode and AI clean-up are off unless you turn them on.",
                 fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Text(
@@ -208,5 +236,100 @@ private fun ToggleRow(title: String, summary: String, key: String, initial: Bool
         }
         Spacer(Modifier.width(12.dp))
         Switch(checked = on, onCheckedChange = { on = it; Prefs.set(app, key, it) })
+    }
+}
+
+/** Offline (default) or Online speech engine, with the privacy trade-off spelled out. */
+@Composable
+private fun EngineSection() {
+    val app = LocalContext.current.applicationContext
+    var engine by remember { mutableStateOf(Prefs.engine(app)) }
+    val onlineOk = remember { OnlineSession.available(app) }
+    Text("Speech engine", fontWeight = FontWeight.SemiBold, fontSize = 15.sp, color = MaterialTheme.colorScheme.primary)
+    EngineRow("Offline (recommended)", "Runs on this phone with the model above. Works in airplane mode; your voice never leaves the phone.",
+        engine == Prefs.ENGINE_OFFLINE) { engine = Prefs.ENGINE_OFFLINE; Prefs.set(app, Prefs.KEY_ENGINE, Prefs.ENGINE_OFFLINE) }
+    EngineRow("Online", if (onlineOk) "Uses this phone's online speech service (usually Google). No account or key. " +
+        "Your audio is sent to that service while you dictate, so use it only if you are fine with that." else
+        "This phone has no online speech service.", engine == Prefs.ENGINE_ONLINE, enabled = onlineOk) {
+        engine = Prefs.ENGINE_ONLINE; Prefs.set(app, Prefs.KEY_ENGINE, Prefs.ENGINE_ONLINE)
+    }
+}
+
+@Composable
+private fun EngineRow(title: String, summary: String, selected: Boolean, enabled: Boolean = true, onPick: () -> Unit) {
+    Row(Modifier.fillMaxWidth().clickable(enabled = enabled, onClick = onPick).padding(vertical = 4.dp),
+        verticalAlignment = Alignment.CenterVertically) {
+        RadioButton(selected = selected, onClick = onPick, enabled = enabled)
+        Spacer(Modifier.width(6.dp))
+        Column(Modifier.weight(1f)) {
+            Text(title, fontWeight = FontWeight.Medium, fontSize = 15.sp)
+            Text(summary, fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
+    }
+}
+
+/** Personal dictionary: names, jargon and brands, typed with their exact spelling. */
+@Composable
+private fun CustomWordsSection() {
+    val app = LocalContext.current.applicationContext
+    var words by remember { mutableStateOf(Prefs.dictionaryText(app)) }
+    Text("Custom words", fontWeight = FontWeight.SemiBold, fontSize = 15.sp, color = MaterialTheme.colorScheme.primary)
+    Text("Names, jargon and brands Humming should always spell your way. One per line, e.g. \"Kubernetes\" or \"iPhone\".",
+        fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+    OutlinedTextField(
+        value = words,
+        onValueChange = { words = it; Prefs.set(app, Prefs.KEY_DICTIONARY, it) },
+        modifier = Modifier.fillMaxWidth().height(140.dp),
+        placeholder = { Text("One word or phrase per line") },
+    )
+}
+
+/** Optional AI clean-up with the user's own key. Off by default; the key is encrypted on the phone. */
+@Composable
+private fun AiCleanupSection() {
+    val app = LocalContext.current.applicationContext
+    val scope = rememberCoroutineScope()
+    var provider by remember { mutableStateOf(LlmCleanup.provider(app)) }
+    var hasKey by remember { mutableStateOf(SecretStore.has(app, LlmCleanup.KEY_SECRET)) }
+    var key by remember { mutableStateOf("") }
+    var model by remember { mutableStateOf(Prefs.get(app).getString(Prefs.KEY_LLM_MODEL, "") ?: "") }
+    var status by remember { mutableStateOf("") }
+    Text("AI clean-up (optional, your own key)", fontWeight = FontWeight.SemiBold, fontSize = 15.sp, color = MaterialTheme.colorScheme.primary)
+    Text("After you stop, the finished TEXT (never audio) is sent to the provider you pick, with your own API key, to " +
+        "remove fillers, fix punctuation and structure, or follow a closing command like \"make it formal\". " +
+        "Off by default, never used in incognito, and the on-device text is kept if it fails. Your key is encrypted " +
+        "on this phone and is only ever sent to that provider.",
+        fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+    LlmCleanup.Provider.values().forEach { p ->
+        EngineRow(p.label, if (p == LlmCleanup.Provider.OFF) "Only on-device clean-up." else "Get a key at ${p.keyUrl}",
+            provider == p) { provider = p; Prefs.set(app, Prefs.KEY_LLM_PROVIDER, p.id); status = "" }
+    }
+    if (provider != LlmCleanup.Provider.OFF) {
+        OutlinedTextField(
+            value = key, onValueChange = { key = it },
+            label = { Text(if (hasKey) "API key (saved; type to replace)" else "API key") },
+            singleLine = true, visualTransformation = PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            modifier = Modifier.fillMaxWidth(),
+        )
+        OutlinedTextField(
+            value = model, onValueChange = { model = it; Prefs.set(app, Prefs.KEY_LLM_MODEL, it.trim()) },
+            label = { Text("Model (blank = ${provider.defaultModel})") }, singleLine = true, modifier = Modifier.fillMaxWidth(),
+        )
+        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            Button(onClick = {
+                if (key.isNotBlank()) { SecretStore.put(app, LlmCleanup.KEY_SECRET, key); key = ""; hasKey = true }
+                status = "Testing…"
+                scope.launch {
+                    status = withContext(Dispatchers.IO) {
+                        runCatching { "Works: \"" + LlmCleanup.test(app) + "\"" }.getOrElse { "Didn't work: ${it.message}" }
+                    }
+                }
+            }, enabled = key.isNotBlank() || hasKey) { Text(if (key.isNotBlank()) "Save and test" else "Test") }
+            if (hasKey) OutlinedButton(onClick = {
+                SecretStore.put(app, LlmCleanup.KEY_SECRET, null); hasKey = false; status = "Key removed"
+            }) { Text("Remove key") }
+        }
+        if (status.isNotEmpty()) Text(status, fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }

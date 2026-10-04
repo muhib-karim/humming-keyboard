@@ -7,15 +7,18 @@ import android.media.MediaRecorder
 import java.io.ByteArrayOutputStream
 
 /**
- * 16 kHz mono PCM16 capture with a hard cap (default 300 s). [onChunk] gets every block as it arrives (live dictation).
- * [onLimit] runs on the capture thread when the cap is hit; the caller then calls [stop].
+ * 16 kHz mono PCM16 capture. No length limit: capture runs until [stop] (live dictation streams every block to
+ * [onChunk] and never needs the whole recording). [maxSeconds] > 0 restores a hard cap ([onLimit] then runs on the
+ * capture thread and the caller calls [stop]). Only the first [keepSeconds] of audio are kept in memory for the clip
+ * [stop] returns (History's "retry" copy); a longer dictation keeps streaming without growing memory.
  * The caller must hold RECORD_AUDIO before calling [start].
  */
 class WavRecorder(
     private val ctx: android.content.Context? = null,
-    private val maxSeconds: Int = BuildConfig.MAX_RECORD_SECONDS,
+    private val maxSeconds: Int = 0,
+    private val keepSeconds: Int = BuildConfig.MAX_RECORD_SECONDS,
     private val onChunk: ((ShortArray, Int) -> Unit)? = null,
-    private val onLimit: () -> Unit,
+    private val onLimit: () -> Unit = {},
 ) {
     companion object {
         const val SAMPLE_RATE = 16_000
@@ -29,9 +32,18 @@ class WavRecorder(
     /** The Bluetooth headset dictation is using, or null for the phone's own mic. */
     val bluetoothName: String? get() = bt?.label
     private val pcm = ByteArrayOutputStream()
+    private val keepBytes: Long = SAMPLE_RATE * 2L * keepSeconds
+    /** Bytes captured so far (the whole session, not just the kept part). */
+    @Volatile var capturedBytes = 0L
+        private set
+    val capturedSeconds: Double get() = capturedBytes / (SAMPLE_RATE * 2.0)
 
     private fun deliver(buf: ByteArray, n: Int) {
-        synchronized(pcm) { pcm.write(buf, 0, n) }
+        synchronized(pcm) {
+            val room = keepBytes - pcm.size()
+            if (room > 0) pcm.write(buf, 0, minOf(n.toLong(), room).toInt())
+        }
+        capturedBytes += n
         val cb = onChunk ?: return
         val s = ShortArray(n / 2)
         for (i in s.indices) s[i] = ((buf[2 * i + 1].toInt() shl 8) or (buf[2 * i].toInt() and 0xFF)).toShort()
@@ -43,7 +55,7 @@ class WavRecorder(
         val bytes = try { java.io.File(path).readBytes() } catch (e: Exception) { return false }
         val data = if (bytes.size > Wav.HEADER_BYTES) bytes.copyOfRange(Wav.HEADER_BYTES, bytes.size) else ByteArray(0)
         running = true
-        val maxBytes = SAMPLE_RATE * 2 * maxSeconds
+        val maxBytes = if (maxSeconds > 0) SAMPLE_RATE * 2L * maxSeconds else Long.MAX_VALUE
         thread = Thread({
             val block = SAMPLE_RATE / 10 * 2 // 100 ms
             var off = 0
@@ -63,7 +75,7 @@ class WavRecorder(
                 }
                 deliver(buf, n)
                 sent += n
-                if (pcm.size() >= maxBytes) {
+                if (capturedBytes >= maxBytes) {
                     running = false
                     onLimit()
                     break
@@ -110,13 +122,18 @@ class WavRecorder(
         }
         record = rec
         running = true
-        val maxBytes = SAMPLE_RATE * 2 * maxSeconds
+        val maxBytes = if (maxSeconds > 0) SAMPLE_RATE * 2L * maxSeconds else Long.MAX_VALUE
         thread = Thread({
             val buf = ByteArray(bufSize)
             while (running) {
                 val n = rec.read(buf, 0, buf.size)
                 if (n > 0) deliver(buf, n)
-                if (pcm.size() >= maxBytes) {
+                else if (n < 0) {
+                    // ERROR_DEAD_OBJECT etc.: the audio server dropped this recorder (rare; e.g. a call took the mic).
+                    // Keep the thread alive briefly instead of spinning; the panel's stop still works.
+                    try { Thread.sleep(20) } catch (e: InterruptedException) { break }
+                }
+                if (capturedBytes >= maxBytes) {
                     running = false
                     onLimit()
                     break

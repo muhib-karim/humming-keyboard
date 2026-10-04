@@ -7,9 +7,15 @@
 
     <!-- Humming: voice dictation (microphone) and the one-time speech model download -->
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
-    <!-- Humming: INTERNET is used ONLY by ModelDownload.kt to fetch the voice model once (NetworkAuditTest). -->
+    <!-- Humming: INTERNET is used ONLY by ModelDownload.kt (the voice model, once), the opt-in GIF search, and the opt-in
+         AI clean-up with the user's own key (LlmCleanup.kt); enforced by NetworkAuditTest. -->
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <!-- Humming: dictation keeps going with the screen off (foreground service of type microphone + partial wake lock,
+         only while the mic is on; DictationService.kt) -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <!-- Humming: route dictation to a Bluetooth headset's microphone -->
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
 
@@ -26,6 +32,10 @@
         </intent>
         <intent>
             <action android:name="android.service.textservice.SpellCheckerService"/>
+        </intent>
+        <!-- Humming: Online mode (opt-in) finds the phone's speech recognition service -->
+        <intent>
+            <action android:name="android.speech.RecognitionService"/>
         </intent>
     </queries>
 
@@ -50,6 +60,12 @@
             android:noHistory="true"
             android:taskAffinity=""
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+        <!-- Humming: runs only while dictating; shows "Humming is listening" with a Stop action -->
+        <service
+            android:name="com.humming.keyboard.DictationService"
+            android:exported="false"
+            android:foregroundServiceType="microphone" />
 
         <!-- Allow app to be profiled for benchmarking and baseline profile generation -->
         <profileable android:shell="true"/>

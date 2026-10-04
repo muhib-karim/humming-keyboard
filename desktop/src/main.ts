@@ -206,7 +206,15 @@ $("#hk-record").addEventListener("click", () => {
   window.addEventListener("keydown", onKey, true);
 });
 
+const isLinux = !isMac && navigator.userAgent.includes("Linux");
 function renderTips() {
+  if (isLinux) {
+    $("#tips").innerHTML = `<h2>First run on Linux</h2><ul>
+        <li>AppImage: make it executable (<code>chmod +x Humming_*.AppImage</code>) and run it. Debian/Ubuntu: <code>sudo apt install ./Humming_*_amd64.deb</code>.</li>
+        <li>Pasting into other apps works on X11 sessions and XWayland apps. On a pure Wayland session auto-paste may not land; every dictation is kept in History, one click to copy.</li>
+        <li>Allow the microphone if your desktop asks (PipeWire / PulseAudio).</li></ul>`;
+    return;
+  }
   $("#tips").innerHTML = isMac
     ? `<h2>First run on a Mac</h2><ul>
         <li>Allow the microphone when asked.</li>

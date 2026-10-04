@@ -1,0 +1,53 @@
+name: wer-bench
+
+# Accuracy and speed of the two offline voice models on public LibriSpeech test sets (README benchmark table).
+on:
+  push:
+    paths: [".github/workflows/wer-bench.yml", "keyboard/ci/wer_bench.py"]
+  workflow_dispatch:
+    inputs:
+      n_clean:
+        description: "test-clean utterances"
+        default: "200"
+      n_other:
+        description: "test-other utterances"
+        default: "100"
+
+permissions:
+  contents: read
+
+jobs:
+  bench:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Tools
+        run: pip install -q sherpa-onnx==1.13.8 jiwer soundfile
+      - name: Models (same files and SHA-256 as the app's download)
+        run: |
+          mkdir -p m && cd m
+          for f in sherpa-onnx-nemo-parakeet_tdt_ctc_110m-en-36000-int8:17f945007b52ccd8b7200ffc7c5652e9e8e961dfdf479cefcabd06cf5703630b \
+                   sherpa-onnx-nemo-parakeet-tdt-0.6b-v2-int8:157c157bc51155e03e37d2466522a3a737dd9c72bb25f36eb18912964161e1ad; do
+            n=${f%%:*}; h=${f##*:}
+            curl -sSL -o "$n.tar.bz2" "https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/$n.tar.bz2"
+            echo "$h  $n.tar.bz2" | sha256sum -c -
+            tar xjf "$n.tar.bz2" && rm "$n.tar.bz2"
+          done
+      - name: LibriSpeech test-clean + test-other (OpenSLR 12, CC BY 4.0)
+        run: |
+          for s in test-clean test-other; do curl -sSL "https://www.openslr.org/resources/12/$s.tar.gz" | tar xz; done
+          ls LibriSpeech
+      - name: Bench
+        run: |
+          python3 keyboard/ci/wer_bench.py m LibriSpeech wer.json "${{ inputs.n_clean || '200' }}" "${{ inputs.n_other || '100' }}" | tee bench.log
+          { echo '```'; cat wer.json; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wer-bench
+          path: |
+            wer.json
+            bench.log

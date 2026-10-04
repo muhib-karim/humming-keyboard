@@ -28,6 +28,40 @@ pub fn input_devices() -> Vec<String> {
     }
 }
 
+/// Streaming linear resampler to 16 kHz, so a dictation of any length is stored at speech rate (an hour is ~230 MB
+/// of f32 instead of ~690 MB at 48 kHz) and nothing needs resampling after the key is released.
+struct Down16 {
+    ratio: f64,
+    /// Input-sample time of the next output sample.
+    pos: f64,
+    /// Index of the next input sample.
+    i: u64,
+    last: f32,
+}
+
+impl Down16 {
+    fn new(rate: u32) -> Self {
+        Down16 { ratio: rate as f64 / crate::stt::SAMPLE_RATE as f64, pos: 0.0, i: 0, last: 0.0 }
+    }
+    fn push(&mut self, input: &[f32], out: &mut Vec<f32>, cap: usize) {
+        for &s in input {
+            if self.i == 0 {
+                self.last = s;
+            }
+            let i = self.i as f64;
+            while self.pos <= i {
+                if out.len() < cap {
+                    let f = (self.pos - (i - 1.0)) as f32;
+                    out.push(self.last + (s - self.last) * f.clamp(0.0, 1.0));
+                }
+                self.pos += self.ratio;
+            }
+            self.last = s;
+            self.i += 1;
+        }
+    }
+}
+
 fn to_mono<T: Copy>(data: &[T], channels: usize, conv: impl Fn(T) -> f32) -> Vec<f32> {
     let ch = channels.max(1);
     data.chunks(ch).map(|frame| frame.iter().map(|&s| conv(s)).sum::<f32>() / ch as f32).collect()
@@ -80,13 +114,15 @@ impl Recorder {
                 };
                 let rate = config.sample_rate().0;
                 let channels = config.channels() as usize;
-                let cap = rate as usize * max_seconds as usize;
+                // 0 = no limit (the default): record until the user stops.
+                let cap = if max_seconds == 0 { usize::MAX } else { crate::stt::SAMPLE_RATE as usize * max_seconds as usize };
                 let fmt = config.sample_format();
                 let stream_cfg: cpal::StreamConfig = config.into();
 
                 macro_rules! build {
                     ($t:ty, $conv:expr) => {{
                         let b = thread_buf.clone();
+                        let mut down = Down16::new(rate);
                         let mut last = Instant::now();
                         let mut acc = 0.0f32;
                         let mut n = 0usize;
@@ -99,8 +135,7 @@ impl Recorder {
                                 }
                                 n += mono.len();
                                 if let Ok(mut v) = b.lock() {
-                                    let room = cap.saturating_sub(v.len());
-                                    v.extend_from_slice(&mono[..mono.len().min(room)]);
+                                    down.push(&mono, &mut v, cap);
                                 }
                                 if last.elapsed() >= Duration::from_millis(50) && n > 0 {
                                     level((acc / n as f32).sqrt());
@@ -153,16 +188,40 @@ impl Recorder {
                 return Err("the microphone did not start within 5 s".into());
             }
         };
-        *guard = Some(Session { stop_tx, join, buf, rate, started: Instant::now() });
+        // Samples are stored at 16 kHz whatever the device rate.
+        let _device_rate = rate;
+        *guard = Some(Session { stop_tx, join, buf, rate: crate::stt::SAMPLE_RATE, started: Instant::now() });
         Ok(())
     }
 
-    /// Stops capture and returns (mono samples, sample rate, wall-clock ms recorded).
+    /// Stops capture and returns (mono samples at 16 kHz, sample rate, wall-clock ms recorded).
     pub fn stop(&self) -> Option<(Vec<f32>, u32, u64)> {
         let session = self.session.lock().ok()?.take()?;
         let _ = session.stop_tx.send(());
         let _ = session.join.join();
         let samples = std::mem::take(&mut *session.buf.lock().ok()?);
         Some((samples, session.rate, session.started.elapsed().as_millis() as u64))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::Down16;
+
+    #[test]
+    fn streaming_resampler_matches_rate_and_has_no_cap() {
+        let mut d = Down16::new(48_000);
+        let mut out = Vec::new();
+        // One minute of 48 kHz in 10 ms callbacks.
+        let block = vec![0.25f32; 480];
+        for _ in 0..6_000 {
+            d.push(&block, &mut out, usize::MAX);
+        }
+        assert!((out.len() as i64 - 960_000).abs() <= 1, "got {}", out.len());
+        assert!((out[1234] - 0.25).abs() < 1e-6);
+        let mut d = Down16::new(44_100);
+        let mut out = Vec::new();
+        d.push(&vec![0.0f32; 44_100], &mut out, usize::MAX);
+        assert!((out.len() as i64 - 16_000).abs() <= 1, "got {}", out.len());
     }
 }

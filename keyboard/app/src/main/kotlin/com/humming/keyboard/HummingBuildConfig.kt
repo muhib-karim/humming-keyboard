@@ -5,5 +5,6 @@ package com.humming.keyboard
 
 object BuildConfig {
     @JvmField val DEBUG: Boolean = dev.patrickgold.florisboard.BuildConfig.DEBUG
-    const val MAX_RECORD_SECONDS: Int = 900
+    /** Seconds of a dictation's audio kept for History's retry copy. Dictation itself has no length limit. */
+    const val MAX_RECORD_SECONDS: Int = 300
 }

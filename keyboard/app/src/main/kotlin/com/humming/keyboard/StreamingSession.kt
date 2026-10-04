@@ -25,6 +25,8 @@ class StreamingSession(
         val tailAudioMs: Long = 0,
         val tailSttMs: Long = 0,
         val tailTiming: String = "{}",
+        /** A closing style command ("make it formal") for the optional AI clean-up, or null. */
+        val instruction: String? = null,
     )
 
     private val app = ctx.applicationContext
@@ -129,7 +131,10 @@ class StreamingSession(
         if (partial.isNotBlank()) onPartial(partial)
     }
 
-    private fun clean(raw: String): String {
+    /** Spoken editing commands ("delete that") applied; a closing style command is left for the AI pass. */
+    private fun clean(raw: String): String = VoiceCommands.apply(cleanText(raw)).text
+
+    private fun cleanText(raw: String): String {
         if (!cleanMode) return TextCleanup.applyDictionary(raw.trim().replace(Regex("\\s+"), " "), dictionary)
         val core = try { synchronized(CoreLoader.lock) { engine?.cleanup(raw) } ?: raw } catch (t: Throwable) { raw }
         // A spoken list the core already formatted as bullets keeps its lines as they are.
@@ -147,12 +152,13 @@ class StreamingSession(
         worker.shutdown()
         worker.awaitTermination(600, TimeUnit.SECONDS)
         val raw = synchronized(raws) { raws.joinToString(" ") }
-        val text = if (raw.isBlank()) "" else clean(raw)
+        val cmd = if (raw.isBlank()) VoiceCommands.Result("", null) else VoiceCommands.apply(cleanText(raw))
+        val text = cmd.text
         closed = true
         releaseEngine()
         val ms = (System.nanoTime() - t0) / 1_000_000
         return Result(text, raw, segmenter.segmentsEmitted, ms, if (text.isBlank()) error else null,
-            if (tail) lastAudioMs else 0, if (tail) lastSttMs else 0, if (tail) lastTiming else "{}")
+            if (tail) lastAudioMs else 0, if (tail) lastSttMs else 0, if (tail) lastTiming else "{}", cmd.instruction)
     }
 
     private companion object {
