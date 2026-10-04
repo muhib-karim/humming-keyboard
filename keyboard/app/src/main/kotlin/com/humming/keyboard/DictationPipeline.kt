@@ -18,7 +18,7 @@ object DictationPipeline {
         }
         val started = System.nanoTime()
         val raw = transcriber.transcribe(clip)
-        val text = if (transcriber is MockTranscriber) raw else TextCleanup.apply(raw, Prefs.dictionary(ctx))
+        val text = if (transcriber is MockTranscriber) raw else TextCleanup.apply(raw, Prefs.dictionary(ctx), Prefs.accuracyMode(ctx))
         val ms = (System.nanoTime() - started) / 1_000_000
         return Result(text, transcriber.label, ms, if (text.isBlank()) "no speech heard" else null)
     }

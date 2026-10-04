@@ -80,6 +80,29 @@ class TextCleanupTest {
         assertEquals("Ask Nova Beta.", TextCleanup.apply("ask nova   beta", listOf("Nova Beta")))
     }
 
+    private fun strict(s: String) = TextCleanup.apply(s, dict, strict = true)
+
+    @Test fun accuracyModeRemovesHedgeFillers() {
+        assertEquals("I was thinking we could meet at 4pm.",
+            strict("So, um, I was, like, thinking we could, you know, meet at 3, no, 4pm"))
+        assertEquals("The build is fine.", strict("Basically, the build is, honestly, fine"))
+        assertEquals("We ship on Friday.", strict("We ship on Friday, you know."))
+        assertEquals("Let's go.", strict("ah, mm, let's go"))
+        assertEquals("Send the report.", strict("send the report period"))
+    }
+
+    @Test fun accuracyModeKeepsMeaningfulWords() {
+        assertEquals("I like this one.", strict("I like this one"))
+        assertEquals("It looks like rain.", strict("it looks like rain"))
+        assertEquals("It is actually done.", strict("it is actually done"))
+        assertEquals("The period ends in May.", strict("the period ends in May"))
+    }
+
+    @Test fun defaultModeKeepsHedges() {
+        assertEquals("It was, like, huge.", clean("it was, like, huge"))
+        assertEquals("It was huge.", strict("it was, like, huge"))
+    }
+
     @Test fun emptyStaysEmpty() {
         assertEquals("", clean(""))
         assertEquals("", clean("um, uh"))

@@ -40,6 +40,21 @@ object TextCleanup {
         Regex("\\s*\\bnew line\\b\\s*", RegexOption.IGNORE_CASE) to "\n",
         Regex("\\s*\\bcomma\\b", RegexOption.IGNORE_CASE) to ",",
     )
+    // Accuracy mode (strict): hedge words that are only filler when set off by commas, extra hesitation sounds,
+    // a spoken "period" at the very end, and doubled punctuation. Same rules as desktop and iOS.
+    private val STRICT_FILLER = Regex("(?<!$W)(?:ah+|eh+|mm+|mhm|hm+)(?!$W)[,.]?\\s*", RegexOption.IGNORE_CASE)
+    private val STRICT_HEDGE = Regex(
+        ",\\s*(?:like|basically|actually|literally|honestly|sort of|kind of|i mean|you see|anyway)\\s*,\\s*",
+        RegexOption.IGNORE_CASE,
+    )
+    private val STRICT_LEADING = Regex(
+        "(^|[.?!]\\s+)(?:(?:basically|actually|honestly|i mean|you know|anyway|anyways|so yeah)\\s*,\\s*)+",
+        RegexOption.IGNORE_CASE,
+    )
+    private val STRICT_TRAILING = Regex(",\\s*(?:you know|i guess|or something)\\s*(?=[.?!]|$)", RegexOption.IGNORE_CASE)
+    private val STRICT_PERIOD = Regex("\\s*\\bperiod\\s*$", RegexOption.IGNORE_CASE)
+    private val DOUBLED = Regex("([,;:])\\s*([,.?!;:])")
+
     private val KEEP_REPEAT = setOf(
         "had", "that", "very", "really", "so", "no", "bye", "ha", "haha", "go", "too", "more", "knock", "yeah", "yes",
     )
@@ -54,18 +69,27 @@ object TextCleanup {
         "like and subscribe", "you",
     )
 
-    fun apply(raw: String, dictionary: List<String> = emptyList()): String {
+    /** [strict] is accuracy mode: it never drops a "like" that carries meaning, only one set off by commas. */
+    fun apply(raw: String, dictionary: List<String> = emptyList(), strict: Boolean = false): String {
         var t = NON_SPEECH.replace(raw, "")
         if (isHallucination(t)) return ""
         t = FILLER.replace(t, "")
+        if (strict) t = STRICT_FILLER.replace(t, "")
         t = YOU_KNOW.replace(t, " ")
         for ((re, rep) in SPOKEN) t = re.replace(t, rep)
+        if (strict) {
+            t = STRICT_PERIOD.replace(t, ".")
+            t = STRICT_TRAILING.replace(t, "")
+            t = STRICT_HEDGE.replace(t, " ")
+            t = STRICT_LEADING.replace(t, "$1")
+        }
         t = collapseSpaces(t)
         t = LEADING.replace(t, "")
         t = selfCorrect(t)
         t = removeRepeats(t)
         t = applyDictionary(t, dictionary)
         t = compactTimes(t)
+        if (strict) t = DOUBLED.replace(t, "$2")
         return finish(t)
     }
 

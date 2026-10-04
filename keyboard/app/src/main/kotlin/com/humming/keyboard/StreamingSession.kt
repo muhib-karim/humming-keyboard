@@ -34,6 +34,7 @@ class StreamingSession(
     private val raws = ArrayList<String>()
     private val dictionary = Prefs.dictionary(app)
     private val cleanMode = Prefs.cleanMode(app)
+    private val accuracyMode = Prefs.accuracyMode(app)
     @Volatile private var engine: LocalEngine? = null
     private val acquired = java.util.concurrent.atomic.AtomicBoolean(false)
     @Volatile private var closed = false
@@ -139,7 +140,7 @@ class StreamingSession(
         val core = try { synchronized(CoreLoader.lock) { engine?.cleanup(raw) } ?: raw } catch (t: Throwable) { raw }
         // A spoken list the core already formatted as bullets keeps its lines as they are.
         if (core.contains("\n- ")) return TextCleanup.applyDictionary(core, dictionary)
-        return TextCleanup.apply(core, dictionary)
+        return TextCleanup.apply(core, dictionary, accuracyMode)
     }
 
     /** Blocking (call off the main thread): flushes the tail, waits for the transcriber, returns the final text. */

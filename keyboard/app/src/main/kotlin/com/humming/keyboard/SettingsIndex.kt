@@ -16,6 +16,7 @@ object SettingsIndex {
         Entry("Voice model (Fast / Best)", "Voice", Screen.VOICE, "dictation parakeet engine model download offline speech"),
         Entry("Download on Wi-Fi only", "Voice", Screen.VOICE, "data mobile network model"),
         Entry("Clean mode (remove um, uh)", "Voice", Screen.VOICE, "filler punctuation dictation"),
+        Entry("Accuracy mode (strict clean-up)", "Voice", Screen.VOICE, "accuracy filler like basically you know period strict"),
         Entry("Bluetooth headset microphone", "Voice", Screen.VOICE, "bt mic headset"),
         Entry("Voice incognito", "Voice", Screen.VOICE, "privacy history dictation"),
         Entry("Dictation history retention", "Voice", Screen.VOICE, "history keep delete"),

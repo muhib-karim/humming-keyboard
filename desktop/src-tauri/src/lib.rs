@@ -150,9 +150,10 @@ pub fn finalize_text(raw: &str, s: &Settings) -> String {
             remove_fillers: s.remove_fillers,
             voice_commands: s.voice_commands,
             self_corrections: s.self_corrections,
+            strict: s.accuracy_mode,
         }
     } else {
-        text_cleanup::Opts { remove_fillers: false, voice_commands: s.voice_commands, self_corrections: false }
+        text_cleanup::Opts { remove_fillers: false, voice_commands: s.voice_commands, self_corrections: false, strict: false }
     };
     let mut text = text_cleanup::apply(&replaced, &terms, opts);
     if s.clean_mode && s.format_lists {

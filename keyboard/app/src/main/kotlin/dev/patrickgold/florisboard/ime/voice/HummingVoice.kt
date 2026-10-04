@@ -356,7 +356,7 @@ object HummingVoice {
     /** Online mode: the same on-device clean-up, personal dictionary and spoken commands as offline. */
     private fun cleanOnline(app: Context, raw: String): com.humming.keyboard.VoiceCommands.Result {
         val dict = Prefs.dictionary(app)
-        val t = if (Prefs.cleanMode(app)) com.humming.keyboard.TextCleanup.apply(raw, dict)
+        val t = if (Prefs.cleanMode(app)) com.humming.keyboard.TextCleanup.apply(raw, dict, Prefs.accuracyMode(app))
         else com.humming.keyboard.TextCleanup.applyDictionary(raw, dict)
         return com.humming.keyboard.VoiceCommands.apply(t)
     }

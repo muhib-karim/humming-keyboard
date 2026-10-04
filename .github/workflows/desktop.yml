@@ -36,17 +36,19 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with:
           workspaces: "desktop/src-tauri -> target"
-          prefix-key: v2-sherpa
-          cache-directories: desktop/src-tauri/target/sherpa-onnx-prebuilt
+          prefix-key: v3-sherpa
       - name: sherpa-onnx static libraries present
         # sherpa-onnx-sys downloads its prebuilt static libraries into target/sherpa-onnx-prebuilt from its build
-        # script. The Rust cache restores the compiled crate but not that folder, so the build script is skipped and
-        # linking fails ("could not find native static library sherpa-onnx-c-api"). Re-run it when the libs are gone.
+        # script. The Rust cache prunes the library files but can leave the empty lib/ folders behind, and the build
+        # script trusts any existing lib/ folder, so linking fails ("could not find native static library
+        # sherpa-onnx-c-api"). When the libraries are missing, delete the whole prebuilt folder (empty dirs included)
+        # and re-run the build script, so it downloads and unpacks a fresh copy.
         shell: bash
         working-directory: desktop/src-tauri
         run: |
           if [ -d target ] && ! find target -path '*sherpa-onnx-prebuilt*' \( -name 'libsherpa-onnx-c-api*' -o -name 'sherpa-onnx-c-api*.lib' \) | grep -q .; then
-            echo "prebuilt sherpa-onnx libraries missing from the cache: re-running its build script"
+            echo "prebuilt sherpa-onnx libraries missing from the cache: removing the stale folder, re-running its build script"
+            find target -maxdepth 4 -type d -name sherpa-onnx-prebuilt -prune -exec rm -rf {} +
             cargo clean -p sherpa-onnx-sys || true
             for t in $(echo "${RUST_TARGETS:-}" | tr ',' ' '); do cargo clean -p sherpa-onnx-sys --target "$t" || true; done
           fi
@@ -124,19 +126,21 @@ jobs:
         with:
           workspaces: "desktop/src-tauri -> target"
           key: ${{ matrix.name }}
-          prefix-key: v2-sherpa
-          cache-directories: desktop/src-tauri/target/sherpa-onnx-prebuilt
+          prefix-key: v3-sherpa
       - name: sherpa-onnx static libraries present
         # sherpa-onnx-sys downloads its prebuilt static libraries into target/sherpa-onnx-prebuilt from its build
-        # script. The Rust cache restores the compiled crate but not that folder, so the build script is skipped and
-        # linking fails ("could not find native static library sherpa-onnx-c-api"). Re-run it when the libs are gone.
+        # script. The Rust cache prunes the library files but can leave the empty lib/ folders behind, and the build
+        # script trusts any existing lib/ folder, so linking fails ("could not find native static library
+        # sherpa-onnx-c-api"). When the libraries are missing, delete the whole prebuilt folder (empty dirs included)
+        # and re-run the build script, so it downloads and unpacks a fresh copy.
         shell: bash
         working-directory: desktop/src-tauri
         env:
           RUST_TARGETS: ${{ matrix.rust_targets }}
         run: |
           if [ -d target ] && ! find target -path '*sherpa-onnx-prebuilt*' \( -name 'libsherpa-onnx-c-api*' -o -name 'sherpa-onnx-c-api*.lib' \) | grep -q .; then
-            echo "prebuilt sherpa-onnx libraries missing from the cache: re-running its build script"
+            echo "prebuilt sherpa-onnx libraries missing from the cache: removing the stale folder, re-running its build script"
+            find target -maxdepth 4 -type d -name sherpa-onnx-prebuilt -prune -exec rm -rf {} +
             cargo clean -p sherpa-onnx-sys || true
             for t in $(echo "${RUST_TARGETS:-}" | tr ',' ' '); do cargo clean -p sherpa-onnx-sys --target "$t" || true; done
           fi

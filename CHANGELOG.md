@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.4.0: iOS, accuracy mode, one version everywhere
+- **iOS (new, `ios/`)**: a SwiftUI app plus the Humming keyboard extension, for iPhone and iPad (iOS 16+). Dictation
+  runs on Apple's on-device recogniser with on-device recognition required (no server fallback), with the same
+  clean-up rules as Android and desktop (a Swift port, tested on Linux and on the iOS simulator). No length limit:
+  recognition restarts phrase by phrase. Released as an unsigned `.ipa` for sideloading (docs/IOS_SIDELOAD.md);
+  CI (`ios.yml`) runs the tests, takes simulator screenshots and builds the `.ipa`.
+- **Accuracy mode** (Android, desktop, iOS; off by default): stricter on-device clean-up on top of Clean mode. It
+  also removes hedge fillers ("like", "basically", "actually", "you know", "I mean") when they are set off by commas,
+  extra hesitation sounds (ah, mm) and a spoken "period" at the end, and never touches a "like" that carries meaning.
+  Same rules and the same tests on all three platforms.
+- **One version**: Android 1.4.0 (versionCode 1400), desktop 1.4.0 and iOS 1.4.0 (build 1400).
+
 ## Unreleased: Humming for Windows and macOS, signed Android release
 Desktop (new, `desktop/`)
 - Humming for Windows and macOS (Tauri v2): push-to-talk dictation into any app, on-device Parakeet speech

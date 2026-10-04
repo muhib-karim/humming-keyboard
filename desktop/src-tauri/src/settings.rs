@@ -19,6 +19,8 @@ pub struct Settings {
     pub self_corrections: bool,
     pub voice_commands: bool,
     pub format_lists: bool,
+    /// Accuracy mode (1.4): strict clean-up on top of Clean mode (hedge fillers set off by commas, a final "period").
+    pub accuracy_mode: bool,
     /// Personal dictionary. `written` alone fixes spelling/casing; `spoken` -> `written` replaces a phrase.
     pub dictionary: Vec<DictionaryEntry>,
     /// "paste" (clipboard + Ctrl/Cmd+V, fastest and safest for long text) or "type" (synthetic key presses).
@@ -46,6 +48,7 @@ impl Default for Settings {
             self_corrections: true,
             voice_commands: true,
             format_lists: true,
+            accuracy_mode: false,
             dictionary: Vec::new(),
             insert_method: "paste".into(),
             restore_clipboard: true,

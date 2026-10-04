@@ -39,6 +39,18 @@ static SPOKEN: Lazy<Vec<(Regex, &'static str)>> = Lazy::new(|| {
         (re(r"(?i)\s*\bcomma\b"), ","),
     ]
 });
+// Accuracy mode (strict): hedge words that are only filler when set off by commas, extra hesitation sounds, a spoken
+// "period" at the very end, and doubled punctuation. Same rules as Android and iOS.
+static STRICT_FILLER: Lazy<Regex> = Lazy::new(|| re(&format!(r"(?i)(?<!{W})(?:ah+|eh+|mm+|mhm|hm+)(?!{W})[,.]?\s*")));
+static STRICT_HEDGE: Lazy<Regex> = Lazy::new(|| {
+    re(r"(?i),\s*(?:like|basically|actually|literally|honestly|sort of|kind of|i mean|you see|anyway)\s*,\s*")
+});
+static STRICT_LEADING: Lazy<Regex> = Lazy::new(|| {
+    re(r"(?i)(^|[.?!]\s+)(?:(?:basically|actually|honestly|i mean|you know|anyway|anyways|so yeah)\s*,\s*)+")
+});
+static STRICT_TRAILING: Lazy<Regex> = Lazy::new(|| re(r"(?i),\s*(?:you know|i guess|or something)\s*(?=[.?!]|$)"));
+static STRICT_PERIOD: Lazy<Regex> = Lazy::new(|| re(r"(?i)\s*\bperiod\s*$"));
+static DOUBLED: Lazy<Regex> = Lazy::new(|| re(r"([,;:])\s*([,.?!;:])"));
 static SENT_END: Lazy<Regex> = Lazy::new(|| re(r"[.?!;\n]"));
 static SPACES: Lazy<Regex> = Lazy::new(|| re(r"[ \t]+"));
 static WS: Lazy<Regex> = Lazy::new(|| re(r"\s+"));
@@ -75,11 +87,13 @@ pub struct Opts {
     pub remove_fillers: bool,
     pub voice_commands: bool,
     pub self_corrections: bool,
+    /// Accuracy mode: the strict rules (hedge fillers set off by commas, a final spoken "period").
+    pub strict: bool,
 }
 
 impl Default for Opts {
     fn default() -> Self {
-        Self { remove_fillers: true, voice_commands: true, self_corrections: true }
+        Self { remove_fillers: true, voice_commands: true, self_corrections: true, strict: false }
     }
 }
 
@@ -92,14 +106,24 @@ pub fn apply(raw: &str, dictionary: &[String], o: Opts) -> String {
     if is_hallucination(&t) {
         return String::new();
     }
+    let strict = o.strict && o.remove_fillers;
     if o.remove_fillers {
         t = replace_all(&FILLER, &t, "");
+        if strict {
+            t = replace_all(&STRICT_FILLER, &t, "");
+        }
         t = replace_all(&YOU_KNOW, &t, " ");
     }
     if o.voice_commands {
         for (r, rep) in SPOKEN.iter() {
             t = replace_all(r, &t, rep);
         }
+    }
+    if strict {
+        t = replace_all(&STRICT_PERIOD, &t, ".");
+        t = replace_all(&STRICT_TRAILING, &t, "");
+        t = replace_all(&STRICT_HEDGE, &t, " ");
+        t = replace_all(&STRICT_LEADING, &t, "$1");
     }
     t = collapse_spaces(&t);
     if o.remove_fillers {
@@ -111,6 +135,9 @@ pub fn apply(raw: &str, dictionary: &[String], o: Opts) -> String {
     t = remove_repeats(&t);
     t = apply_dictionary(&t, dictionary);
     t = compact_times(&t);
+    if strict {
+        t = replace_all(&DOUBLED, &t, "$2");
+    }
     finish(&t)
 }
 
@@ -315,9 +342,35 @@ mod tests {
         assert_eq!(apply("ask okonkwo about github", &["Okonkwo".into(), "GitHub".into()], Opts::default()), "Ask Okonkwo about GitHub.");
     }
 
+    fn strict(s: &str) -> String {
+        apply(s, &[], Opts { strict: true, ..Opts::default() })
+    }
+
+    #[test]
+    fn accuracy_mode_removes_hedge_fillers() {
+        assert_eq!(
+            strict("So, um, I was, like, thinking we could, you know, meet at 3, no, 4pm"),
+            "I was thinking we could meet at 4pm."
+        );
+        assert_eq!(strict("Basically, the build is, honestly, fine"), "The build is fine.");
+        assert_eq!(strict("We ship on Friday, you know."), "We ship on Friday.");
+        assert_eq!(strict("ah, mm, let's go"), "Let's go.");
+        assert_eq!(strict("send the report period"), "Send the report.");
+    }
+
+    #[test]
+    fn accuracy_mode_keeps_meaningful_words() {
+        assert_eq!(strict("I like this one"), "I like this one.");
+        assert_eq!(strict("it looks like rain"), "It looks like rain.");
+        assert_eq!(strict("it is actually done"), "It is actually done.");
+        assert_eq!(strict("the period ends in May"), "The period ends in May.");
+        assert_eq!(clean("it was, like, huge"), "It was, like, huge.");
+        assert_eq!(strict("it was, like, huge"), "It was huge.");
+    }
+
     #[test]
     fn verbatim_switches() {
-        let o = Opts { remove_fillers: false, voice_commands: false, self_corrections: false };
+        let o = Opts { remove_fillers: false, voice_commands: false, self_corrections: false, strict: false };
         assert_eq!(apply("um new line", &[], o), "Um new line.");
     }
 }

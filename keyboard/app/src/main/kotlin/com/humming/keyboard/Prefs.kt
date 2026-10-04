@@ -9,6 +9,7 @@ object Prefs {
     const val KEY_DICTIONARY = "dictionary"
     const val KEY_RETENTION = "history_retention"
     const val KEY_CLEAN = "clean_mode"
+    const val KEY_ACCURACY = "accuracy_mode"
     const val KEY_WIFI_ONLY = "model_wifi_only"
     const val KEY_VOICE_MODEL = "voice_model"
     const val KEY_BT_MIC = "bluetooth_mic"
@@ -47,6 +48,12 @@ object Prefs {
      * removed, spoken punctuation applied. Off = verbatim.
      */
     fun cleanMode(ctx: Context): Boolean = get(ctx).getBoolean(KEY_CLEAN, true)
+
+    /**
+     * Accuracy mode (default off, 1.4): the strict clean-up rules on top of Clean mode. Hedge fillers ("like",
+     * "basically", "you know") set off by commas, extra hesitation sounds and a spoken "period" at the end are removed.
+     */
+    fun accuracyMode(ctx: Context): Boolean = get(ctx).getBoolean(KEY_ACCURACY, false)
 
     fun retention(ctx: Context): String = get(ctx).getString(KEY_RETENTION, HistoryRetention.FOREVER) ?: HistoryRetention.FOREVER
 

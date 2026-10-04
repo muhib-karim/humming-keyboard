@@ -163,6 +163,9 @@ fun VoiceScreen() = FlorisScreen {
                 Prefs.KEY_LIVE_TYPING, Prefs.liveTyping(app))
             ToggleRow("Clean up speech", "Removes um and uh, stutters and repeats, and applies corrections like \"3pm, no wait, 4pm\" → \"4pm\".",
                 Prefs.KEY_CLEAN, Prefs.cleanMode(app))
+            ToggleRow("Accuracy mode", "Stricter clean-up, still on this phone: also removes \"like\", \"basically\" and \"you know\" " +
+                "when they are set off by commas, and a spoken \"period\" at the end. For the most accurate recognition, pick the Best model above.",
+                Prefs.KEY_ACCURACY, Prefs.accuracyMode(app))
             ToggleRow("Bluetooth headset mic", "Dictate through a connected headset's microphone.", Prefs.KEY_BT_MIC, Prefs.bluetoothMic(app))
             ToggleRow("Voice incognito", "Keep no voice history. The keyboard's incognito mode also turns this on, and keeps nothing in the clipboard.",
                 Prefs.KEY_INCOGNITO, Prefs.voiceIncognito(app))
