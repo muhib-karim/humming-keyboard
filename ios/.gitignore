@@ -1,0 +1,9 @@
+Humming.xcodeproj/
+App/Info.plist
+Keyboard/Info.plist
+App/Humming.entitlements
+Keyboard/HummingKeyboard.entitlements
+.build/
+build/
+*.xcworkspace
+HummingCore/.swiftpm/

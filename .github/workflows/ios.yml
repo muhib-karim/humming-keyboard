@@ -1,0 +1,124 @@
+name: ios
+
+# Humming for iOS (ios/): clean-up tests on Linux and on the iOS simulator, simulator screenshots, and an UNSIGNED
+# .ipa for sideloading (docs/IOS_SIDELOAD.md). No Apple developer account, certificate or secret is used.
+on:
+  push:
+    paths: ["ios/**", ".github/workflows/ios.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  core:
+    name: clean-up tests (swift test, Linux)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: swift test
+        run: |
+          swift --version
+          cd ios/HummingCore && swift test
+
+  simulator:
+    name: simulator tests, screenshots, unsigned ipa
+    needs: core
+    runs-on: macos-15
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Xcode and runtimes
+        run: |
+          xcodebuild -version
+          xcrun simctl list runtimes
+      - name: Generate the Xcode project (XcodeGen)
+        run: |
+          brew install xcodegen
+          cd ios && xcodegen generate
+      - name: Boot an iPhone simulator
+        id: sim
+        run: |
+          UDID=$(xcrun simctl list devices available -j | python3 -c '
+          import json, sys
+          d = json.load(sys.stdin)["devices"]
+          import re
+          c = [(r, x["name"], x["udid"]) for r, l in d.items() if "iOS" in r for x in l if x["name"].startswith("iPhone")]
+          pro = [t for t in c if re.fullmatch(r"iPhone \d+ Pro", t[1])]
+          print(sorted(pro or c)[-1][2])')
+          echo "udid=$UDID" >> "$GITHUB_OUTPUT"
+          xcrun simctl boot "$UDID" || true
+          xcrun simctl bootstatus "$UDID" -b
+      - name: Clean-up tests on the iOS simulator
+        run: |
+          cd ios/HummingCore
+          SCHEME=HummingCore
+          if xcodebuild -list | grep -q 'HummingCore-Package'; then SCHEME=HummingCore-Package; fi
+          xcodebuild test -scheme "$SCHEME" -destination "id=${{ steps.sim.outputs.udid }}" | tail -60
+      - name: Build the app for the simulator
+        run: |
+          xcodebuild -project ios/Humming.xcodeproj -scheme Humming -configuration Debug -sdk iphonesimulator \
+            -destination "id=${{ steps.sim.outputs.udid }}" -derivedDataPath build/sim CODE_SIGNING_ALLOWED=NO build | tail -40
+      - name: Screenshots and walkthrough recording
+        env:
+          UDID: ${{ steps.sim.outputs.udid }}
+        run: |
+          APP=build/sim/Build/Products/Debug-iphonesimulator/Humming.app
+          test -d "$APP/PlugIns/HummingKeyboard.appex"
+          xcrun simctl install "$UDID" "$APP"
+          xcrun simctl status_bar "$UDID" override --time 9:41 --batteryState charged --batteryLevel 100 --cellularBars 4 --wifiBars 3 || true
+          mkdir -p shots
+          shot() {
+            xcrun simctl terminate "$UDID" com.humming.ios || true
+            xcrun simctl launch "$UDID" com.humming.ios -demo "$1"
+            sleep 6
+            xcrun simctl io "$UDID" screenshot "shots/$2.png"
+          }
+          shot dictate ios_dictate
+          shot listening ios_listening
+          shot keyboard ios_keyboard
+          shot settings ios_settings
+          xcrun simctl terminate "$UDID" com.humming.ios || true
+          xcrun simctl io "$UDID" recordVideo --codec=h264 --force shots/ios_walkthrough.mov &
+          REC=$!
+          sleep 2
+          xcrun simctl launch "$UDID" com.humming.ios -demo walkthrough
+          sleep 10
+          kill -INT "$REC"; wait "$REC" || true
+          xcrun simctl ui "$UDID" appearance dark
+          sleep 3
+          shot dictate ios_dictate_dark
+          shot keyboard ios_keyboard_dark
+          ls -la shots
+      - name: Unsigned .ipa
+        run: |
+          xcodebuild -project ios/Humming.xcodeproj -scheme Humming -configuration Release -sdk iphoneos \
+            -destination generic/platform=iOS -derivedDataPath build/dev \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" build | tail -40
+          APP=build/dev/Build/Products/Release-iphoneos/Humming.app
+          test -d "$APP/PlugIns/HummingKeyboard.appex"
+          V=$(/usr/libexec/PlistBuddy -c 'Print CFBundleShortVersionString' "$APP/Info.plist")
+          mkdir -p ipa/Payload && cp -R "$APP" ipa/Payload/
+          (cd ipa && zip -qry "../Humming_${V}_unsigned.ipa" Payload)
+          shasum -a 256 Humming_*_unsigned.ipa | tee SHA256SUMS.txt
+          echo "### iOS ${V} unsigned ipa" >> "$GITHUB_STEP_SUMMARY"; cat SHA256SUMS.txt >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: humming-ios-ipa
+          path: |
+            Humming_*_unsigned.ipa
+            SHA256SUMS.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: humming-ios-screenshots
+          path: shots/

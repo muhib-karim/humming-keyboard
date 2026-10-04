@@ -1,0 +1,84 @@
+# XcodeGen spec for Humming on iOS (`brew install xcodegen && xcodegen` writes Humming.xcodeproj).
+name: Humming
+options:
+  bundleIdPrefix: com.humming
+  deploymentTarget:
+    iOS: "16.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    MARKETING_VERSION: "1.4.0"
+    CURRENT_PROJECT_VERSION: "1400"
+    SWIFT_VERSION: "5.0"
+    CODE_SIGN_STYLE: Automatic
+    DEVELOPMENT_TEAM: ""
+packages:
+  HummingCore:
+    path: HummingCore
+targets:
+  Humming:
+    type: application
+    platform: iOS
+    sources:
+      - App
+      - Shared
+    dependencies:
+      - package: HummingCore
+      - target: HummingKeyboard
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.humming.ios
+        TARGETED_DEVICE_FAMILY: "1,2"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+    info:
+      path: App/Info.plist
+      properties:
+        CFBundleDisplayName: Humming
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        UILaunchScreen: {}
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: false
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        UISupportedInterfaceOrientations~ipad: [UIInterfaceOrientationPortrait, UIInterfaceOrientationPortraitUpsideDown, UIInterfaceOrientationLandscapeLeft, UIInterfaceOrientationLandscapeRight]
+        NSMicrophoneUsageDescription: Humming listens while you dictate. Your voice is recognised on this iPhone and never leaves it.
+        NSSpeechRecognitionUsageDescription: Humming turns your speech into text with on-device recognition only.
+    entitlements:
+      path: App/Humming.entitlements
+      properties:
+        com.apple.security.application-groups: [group.com.humming.ios]
+  HummingKeyboard:
+    type: app-extension
+    platform: iOS
+    sources:
+      - Keyboard
+      - Shared
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.humming.ios.keyboard
+        TARGETED_DEVICE_FAMILY: "1,2"
+    info:
+      path: Keyboard/Info.plist
+      properties:
+        CFBundleDisplayName: Humming
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.keyboard-service
+          NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).KeyboardViewController
+          NSExtensionAttributes:
+            IsASCIICapable: false
+            PrefersRightToLeft: false
+            PrimaryLanguage: en-US
+            RequestsOpenAccess: true
+    entitlements:
+      path: Keyboard/HummingKeyboard.entitlements
+      properties:
+        com.apple.security.application-groups: [group.com.humming.ios]
+schemes:
+  Humming:
+    build:
+      targets:
+        Humming: all
+    run:
+      config: Debug
