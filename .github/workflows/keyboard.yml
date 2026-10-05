@@ -5,6 +5,8 @@ on:
   push:
     branches: ["main"]
     paths: ["keyboard/**", ".github/workflows/keyboard.yml"]
+  pull_request:
+    paths: ["keyboard/**", ".github/workflows/keyboard.yml"]
   workflow_dispatch:
 
 permissions:

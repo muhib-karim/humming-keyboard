@@ -4,14 +4,20 @@ name: ios
 # .ipa for sideloading (docs/IOS_SIDELOAD.md). No Apple developer account, certificate or secret is used.
 on:
   push:
+    branches: ["**"]
     paths: ["ios/**", ".github/workflows/ios.yml"]
+  pull_request:
+    paths: ["ios/**", ".github/workflows/ios.yml"]
+  # release.yml builds the unsigned .ipa for each tagged release through this workflow.
+  workflow_call:
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: ios-${{ github.ref }}
+  # github.workflow is the caller's name when release.yml calls this workflow, so the two never cancel each other.
+  group: ios-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 defaults:

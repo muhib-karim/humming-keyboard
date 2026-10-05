@@ -64,6 +64,9 @@ pub struct Settings {
     pub history_enabled: bool,
     pub history_limit: usize,
     pub max_seconds: u32,
+    /// Self-update (1.6, default on): download and install a new version on its own and relaunch (never mid-dictation).
+    /// Off = Humming still checks and shows "Update available", and installs only when asked.
+    pub auto_update: bool,
 }
 
 impl Default for Settings {
@@ -91,6 +94,7 @@ impl Default for Settings {
             history_limit: 500,
             // 0 = no length limit: record until the shortcut is released (or pressed again in toggle mode).
             max_seconds: 0,
+            auto_update: true,
         }
     }
 }
@@ -164,6 +168,15 @@ mod tests {
         assert_eq!(s.mode, "hold");
         assert_eq!(s.paste_delay_ms, 20);
         assert_eq!(s.hotkey, Settings::default().hotkey);
+    }
+
+    #[test]
+    fn auto_update_is_on_by_default_and_for_old_settings_files() {
+        assert!(Settings::default().auto_update);
+        let s: Settings = serde_json::from_str(r#"{"mode":"toggle"}"#).unwrap();
+        assert!(s.auto_update);
+        let s: Settings = serde_json::from_str(r#"{"auto_update":false}"#).unwrap();
+        assert!(!s.auto_update);
     }
 
     #[test]

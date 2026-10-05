@@ -27,6 +27,7 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.SentimentSatisfiedAlt
 import androidx.compose.material.icons.filled.SmartButton
+import androidx.compose.material.icons.filled.SystemUpdate
 import androidx.compose.material.icons.filled.Spellcheck
 import androidx.compose.material.icons.outlined.Build
 import androidx.compose.material.icons.outlined.Info
@@ -165,6 +166,12 @@ fun HomeScreen() = FlorisScreen {
             title = "Privacy",
             summary = "Incognito, learning, clipboard, network",
             onClick = { navController.navigate(Routes.Settings.Privacy) },
+        )
+        Preference(
+            icon = Icons.Default.SystemUpdate,
+            title = "Updates",
+            summary = "Check for and install new versions of Humming",
+            onClick = { navController.navigate(Routes.Settings.Updates) },
         )
         Preference(
             icon = Icons.Default.Extension,

@@ -1,7 +1,7 @@
 <p align="center"><img src="docs/banner.png" alt="Humming: private voice typing that never leaves your device" width="100%"></p>
 
 <p align="center">
-<a href="https://github.com/muhib-karim/humming-keyboard/releases/latest"><img alt="Release" src="https://img.shields.io/badge/release-v1.4.0-e5486b"></a>
+<a href="https://github.com/muhib-karim/humming-keyboard/releases/latest"><img alt="Release" src="https://img.shields.io/badge/release-v1.6.0-e5486b"></a>
 <a href="https://github.com/muhib-karim/humming-keyboard/actions/workflows/keyboard.yml"><img alt="Android CI" src="https://github.com/muhib-karim/humming-keyboard/actions/workflows/keyboard.yml/badge.svg"></a>
 <a href="https://github.com/muhib-karim/humming-keyboard/actions/workflows/desktop.yml"><img alt="Desktop CI" src="https://github.com/muhib-karim/humming-keyboard/actions/workflows/desktop.yml/badge.svg"></a>
 <a href="https://github.com/muhib-karim/humming-keyboard/actions/workflows/ios.yml"><img alt="iOS CI" src="https://github.com/muhib-karim/humming-keyboard/actions/workflows/ios.yml/badge.svg"></a>
@@ -37,17 +37,32 @@ never leaves it. Free and open source.
 
 ## Get Humming
 
-Every file is on the [latest GitHub Release](https://github.com/muhib-karim/humming-keyboard/releases/latest), with a `SHA256SUMS.txt` to check them.
+Every file is on the [latest GitHub Release](https://github.com/muhib-karim/humming-keyboard/releases/latest), with a `SHA256SUMS.txt` to check them, and the installers and update files are mirrored on the public download site, https://humming-keyboard.pages.dev/ (Cloudflare Pages, free).
 
 | Platform | Download | Install |
 |---|---|---|
-| **Android** 8.0+ | `Humming-1.4.0.apk` | Open the APK, allow "install unknown apps" for your browser or file manager, install. Then open Humming and follow the two steps: enable the keyboard, then switch to it. The first mic tap downloads the Fast speech model (104 MB, once). |
-| **iPhone / iPad** (iOS 16+) | `Humming_1.4.0_unsigned.ipa` | Sideload with your own free Apple ID through Sideloadly, AltStore or Xcode (re-sign every 7 days). Then Settings > General > Keyboard > Keyboards > Add New Keyboard > Humming. Step by step: [docs/IOS_SIDELOAD.md](docs/IOS_SIDELOAD.md). |
-| **Windows** 10/11 x64 | `Humming_1.4.0_x64-setup.exe` or `.msi` | Run the installer. SmartScreen: **More info** > **Run anyway** ([details](#desktop-windows-macos-and-linux-how-to-open-it)). |
-| **macOS** 11+ (Apple silicon and Intel) | `Humming_1.4.0_universal.dmg` | Drag to Applications, open once, then **System Settings > Privacy & Security > Open Anyway**. Allow Microphone and Accessibility. |
-| **Linux** x86-64 | `Humming_1.4.0_amd64.AppImage` or `.deb` | `chmod +x` the AppImage and run it, or `sudo apt install ./Humming_1.4.0_amd64.deb`. |
+| **Android** 8.0+ | `Humming-1.6.0.apk` | Open the APK, allow "install unknown apps" for your browser or file manager, install. Then open Humming and follow the two steps: enable the keyboard, then switch to it. The first mic tap downloads the Fast speech model (104 MB, once). |
+| **iPhone / iPad** (iOS 16+) | `Humming_1.5.0_unsigned.ipa` (1.6.0 has no iOS build yet) | Sideload with your own free Apple ID through Sideloadly, AltStore or Xcode (re-sign every 7 days). Then Settings > General > Keyboard > Keyboards > Add New Keyboard > Humming. Step by step: [docs/IOS_SIDELOAD.md](docs/IOS_SIDELOAD.md). |
+| **Windows** 10/11 x64 | `Humming_1.6.0_x64-setup.exe` (1.6.0 ships the setup .exe only; the last .msi is 1.5.0) | Run the installer. SmartScreen: **More info** > **Run anyway** ([details](#desktop-windows-macos-and-linux-how-to-open-it)). |
+| **macOS** 11+ (Apple silicon and Intel) | `Humming_1.5.0_universal.dmg` (1.6.0 has no macOS build yet, see below) | Drag to Applications, open once, then **System Settings > Privacy & Security > Open Anyway**. Allow Microphone and Accessibility. |
+| **Linux** x86-64 | `Humming_1.6.0_amd64.AppImage` or `.deb` | `chmod +x` the AppImage and run it, or `sudo apt install ./Humming_1.6.0_amd64.deb`. |
 
-All five share one version number (1.4.0). On the desktop you hold a shortcut (Ctrl/Cmd + Shift + Space by default)
+Android, Windows and Linux are 1.6.0. macOS and iOS stay on 1.5.0 for now: 1.6.0 was built without GitHub Actions, on Linux build machines (Windows cross-compiled with cargo-xwin), and Apple's tools only run on a Mac. The macOS and iOS 1.5.0 files are on the [v1.5.0 release](https://github.com/muhib-karim/humming-keyboard/releases/tag/v1.5.0) and on the download site.
+
+### Updates (1.6)
+
+| Platform | What happens |
+|---|---|
+| **Windows, Linux AppImage** (and macOS from its first 1.6 build) | Humming checks for a new version 45 seconds after it starts and every 4 hours, and on **Settings > Updates > Check for updates**. With **Automatically install updates** on (the default) it downloads the update, installs it and restarts itself, never in the middle of a dictation. Off: it shows "Update available" and an **Install now** button. Every update is signed with Humming's update key (minisign, Ed25519); the app refuses a file whose signature does not match the public key it ships with. |
+| **Linux .deb** | A .deb install cannot replace itself: Humming shows that a new version is out. Use the AppImage for automatic updates. |
+| **Android (APK)** | Humming checks the update feed at most every 6 hours (when the keyboard opens) and on **Settings > Updates > Check for updates**. With automatic download on (the default) it fetches the new APK on Wi-Fi, checks its SHA-256 against `SHA256SUMS.txt` and its signing certificate (`8C:8B:...:1F:C6`, the release key), then hands it to Android's installer. **Android asks you to confirm with one tap**: an app installed outside the Play Store cannot install itself silently, and Humming does not pretend otherwise. On Android 12+, once Humming has installed an update itself, Android may skip the prompt for later ones (Android's decision). The first time, Android asks you to allow Humming to install apps. |
+| **Android (Google Play)** | Play installs updates. The Play bundle has no self-updater and no install permission. |
+| **iPhone / iPad** | No automatic updates: an unsigned sideloaded .ipa cannot update itself. Download the new .ipa and sideload it again. |
+
+The update feeds (`latest.json` for desktop, `android.json` for Android) are published with every GitHub Release by
+`release.yml` and mirrored, with the update files, to https://humming-keyboard.pages.dev/updates/ (Cloudflare Pages), because
+this repository is private and its release downloads need a GitHub login. `scripts/verify_updater.py` checks every
+signature in the feed against the public key in `desktop/src-tauri/tauri.conf.json`, in CI and by hand. On the desktop you hold a shortcut (Ctrl/Cmd + Shift + Space by default)
 in any app, talk, and let go: the text is pasted where your cursor is.
 
 ## Walkthroughs
@@ -313,7 +328,7 @@ the AI clean-up needs your own API key.
 
 - **The voice path has no network code.** Recording, voice detection, recognition, cleanup and history run on the
   phone. A unit test (`NetworkAuditTest`) scans every Kotlin and Java source in the app and its libraries. It fails
-  the build if any file other than `ModelDownload.kt` (and, since 1.2, the opt-in `GifSearch.kt`) uses a network API (sockets, HTTP, URL connections, WebView,
+  the build if any file other than `ModelDownload.kt` (and the opt-in `GifSearch.kt` and `LlmCleanup.kt`, and since 1.6 the update check `AppUpdate.kt`) uses a network API (sockets, HTTP, URL connections, WebView,
   DownloadManager). It also checks that no voice-path file even imports `java.net`.
 - **Network use: the one-time model download, and GIF search only if you turn it on.** GIF search (off by default,
   off in incognito unless allowed) sends only the words typed into the sticker panel's search box to Openverse;

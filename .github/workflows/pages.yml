@@ -1,11 +1,16 @@
 name: pages
 
 # Publishes the Humming website (play/site/: the home page and the privacy policy) to GitHub Pages, with the banner
-# and screenshots copied in from docs/.
+# and screenshots copied in from docs/. 1.6: also mirrors the LATEST GitHub Release's update files to /updates/
+# (latest.json + the signed desktop update bundles, android.json + the APK, SHA256SUMS.txt). The repository is private,
+# so release downloads need a token; the apps read their update feeds from here instead. release.yml calls this after
+# each release, and every site deploy carries the mirror along, then checks the live feed's signatures.
 on:
   push:
     branches: ["main"]
-    paths: ["play/site/**", "docs/banner.png", "docs/screenshots/**", "landing/icon.png", ".github/workflows/pages.yml"]
+    paths: ["play/site/**", "docs/banner.png", "docs/screenshots/**", "landing/icon.png", ".github/workflows/pages.yml",
+            "scripts/verify_updater.py"]
+  workflow_call:
   workflow_dispatch:
 
 permissions:
@@ -36,9 +41,40 @@ jobs:
             cp "docs/screenshots/$f" _site/img/
           done
           ls -la _site _site/img
+      - name: Mirror the latest release's update files to /updates/
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p _site/updates
+          if ! gh release view --repo "$GITHUB_REPOSITORY" --json tagName > /dev/null 2>&1; then
+            echo "no release yet"; exit 0
+          fi
+          cd _site/updates
+          gh release download --repo "$GITHUB_REPOSITORY" --clobber \
+            -p latest.json -p android.json -p SHA256SUMS.txt -p 'Humming-*.apk' \
+            -p '*.app.tar.gz' -p '*.app.tar.gz.sig' -p '*-setup.exe' -p '*-setup.exe.sig' \
+            -p '*.msi' -p '*.msi.sig' -p '*.AppImage' -p '*.AppImage.sig' -p '*.dmg' || true
+          if [ -f latest.json ]; then
+            sha256sum -c --ignore-missing SHA256SUMS.txt
+          else
+            echo "the latest release has no update feed (released before 1.6): nothing mirrored"
+            rm -f ./*
+          fi
+          ls -la
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
       - id: deployment
         uses: actions/deploy-pages@v4
+      - name: Check the live update feeds (signatures against the app's public key)
+        if: hashFiles('_site/updates/latest.json') != ''
+        run: |
+          set -euo pipefail
+          pip install -q pynacl
+          BASE="${{ steps.deployment.outputs.page_url }}updates"
+          for i in 1 2 3 4 5 6; do curl -fsS -o /dev/null "$BASE/latest.json" && break; sleep 20; done
+          python3 scripts/verify_updater.py --config desktop/src-tauri/tauri.conf.json --latest "$BASE/latest.json" --download \
+            | tee -a "$GITHUB_STEP_SUMMARY"
+          curl -fsS "$BASE/android.json" | tee -a "$GITHUB_STEP_SUMMARY"

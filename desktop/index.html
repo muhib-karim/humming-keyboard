@@ -120,6 +120,15 @@
             <label class="check"><input type="checkbox" name="history_enabled" /> Keep a history on this computer</label>
             <label>History size<input name="history_limit" type="number" min="10" max="5000" /></label>
           </fieldset>
+          <fieldset id="updates">
+            <legend>Updates</legend>
+            <label class="check"><input type="checkbox" name="auto_update" /> Automatically install updates (Humming restarts itself, never mid-dictation)</label>
+            <div class="row">
+              <button type="button" id="upd-check">Check for updates</button>
+              <button type="button" id="upd-install" hidden>Install now</button>
+              <span id="upd-msg" class="muted small"></span>
+            </div>
+          </fieldset>
           <div class="row">
             <button class="primary" type="submit">Save</button>
             <span id="settings-msg" class="muted"></span>

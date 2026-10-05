@@ -16,10 +16,11 @@ Humming works on your device. What you type, the words it learns, your clipboard
 
 ## When the app uses the internet
 
-The app has internet permission for two things only. Both are checked by an automated test on every build.
+The app uses the internet only for the things below. An automated test on every build checks that no other part of the app can.
 
 1. **Speech model download.** When you choose a voice model, the app downloads it once from GitHub (github.com, the public sherpa-onnx release page). The download sends no personal data. As with any download, GitHub sees your IP address. You can limit this download to Wi-Fi.
 2. **GIF search (optional, off by default).** If you turn on GIF search in Settings > Stickers & GIFs, the words you type into the sticker search box are sent to Openverse (openverse.org, run by the WordPress Foundation) to find openly licensed GIFs. Openverse sees the search words and your IP address; see openverse.org/privacy. GIF search never runs in incognito unless you allow it separately. Nothing else you type is sent.
+3. **App updates (the APK from GitHub or the Humming download site; can be turned off).** About every 6 hours the app reads a small file (android.json) from the Humming download site (humming-keyboard.pages.dev, hosted by Cloudflare Pages) to see whether a newer version exists. If there is one, it downloads the new APK through the same site (the file itself is served from GitHub), checks its SHA-256 checksum and signing certificate, and asks Android to install it (Android asks you to confirm). The request sends no personal data; Cloudflare and GitHub see your IP address. Settings > Updates turns automatic checks and downloads off. The Google Play version does not do this: Play installs its updates. The desktop app checks for updates the same way and installs only files signed with Humming's update key.
 
 ## Other apps and Android features
 
@@ -30,7 +31,8 @@ The app has internet permission for two things only. Both are checked by an auto
 ## Permissions
 
 - **Microphone:** voice typing, only while you are dictating.
-- **Internet / network state:** the model download and optional GIF search described above.
+- **Internet / network state:** the model download, optional GIF search and the update check described above.
+- **Install apps (APK version only):** to install Humming updates. Android asks you to confirm. Not requested by the Google Play version.
 - **Notifications:** to let you know if the keyboard crashed. The log stays on the device.
 - **Vibrate:** key-press feedback.
 - **Audio settings:** routing dictation to a Bluetooth headset microphone.

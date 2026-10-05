@@ -7,8 +7,8 @@ import java.io.File
 
 /**
  * "Offline by design", enforced: only ModelDownload.kt (the one-time voice model fetch), GifSearch.kt (the opt-in
- * GIF search, off by default) and LlmCleanup.kt (the opt-in AI clean-up with the user's own key, off by default) may
- * use a network API.
+ * GIF search, off by default), LlmCleanup.kt (the opt-in AI clean-up with the user's own key, off by default) and
+ * AppUpdate.kt (the update check of the sideloaded APK, 1.6, can be switched off) may use a network API.
  * Scans every Kotlin/Java source of the app and its libraries. Parsing a URI (java.net.URI) is not network I/O.
  */
 class NetworkAuditTest {
@@ -17,7 +17,7 @@ class NetworkAuditTest {
         "java.net.Socket", "java.net.ServerSocket", "DatagramSocket", "SocketChannel", "okhttp", "io.ktor",
         "android.webkit", "DownloadManager", "java.net.URL", "java.net.http",
     )
-    private val allowed = setOf("ModelDownload.kt", "GifSearch.kt", "LlmCleanup.kt")
+    private val allowed = setOf("ModelDownload.kt", "GifSearch.kt", "LlmCleanup.kt", "AppUpdate.kt")
 
     private fun sources(): List<File> {
         val roots = listOf(File("src/main"), File("../lib"))
@@ -32,7 +32,7 @@ class NetworkAuditTest {
         assertTrue("found the sources (${files.size})", files.size > 200)
         val offenders = files.filter { f -> f.name !in allowed && networkApis.any { f.readText().contains(it) } }
             .map { f -> f.path + ": " + networkApis.filter { f.readText().contains(it) } }
-        assertEquals("network APIs outside ModelDownload.kt, GifSearch.kt and LlmCleanup.kt", emptyList<String>(), offenders)
+        assertEquals("network APIs outside ModelDownload.kt, GifSearch.kt, LlmCleanup.kt and AppUpdate.kt", emptyList<String>(), offenders)
     }
 
     @Test
@@ -58,6 +58,18 @@ class NetworkAuditTest {
         // Nothing but the sticker panel calls it.
         val callers = sources().filter { it.name != "GifSearch.kt" && it.readText().contains("GifSearch.search") }.map { it.name }
         assertEquals(listOf("StickerPanel.kt"), callers)
+    }
+
+    @Test
+    fun theUpdaterIsHttpsOnlyChecksummedAndCertificatePinned() {
+        val t = sources().first { it.name == "AppUpdate.kt" }.readText()
+        assertTrue("one fixed HTTPS feed", t.contains("const val FEED_BASE = \"https://humming-keyboard.pages.dev/updates/\""))
+        assertTrue(t.contains("require(url.startsWith(\"https://\"))"))
+        assertTrue("SHA-256 against SHA256SUMS.txt", t.contains("SHA256SUMS.txt") && t.contains("checksum mismatch"))
+        assertTrue("signing certificate pinned", t.contains("certMatches") && t.contains("GET_SIGNING_CERTIFICATES"))
+        assertTrue("Android's installer, never a silent root trick", t.contains("PackageInstaller") && !t.contains("Runtime.getRuntime"))
+        assertTrue("no account, key or identifier sent", !t.contains("Authorization") && !t.contains("ANDROID_ID"))
+        assertEquals("8C8B68BBE63AA42A856159AAA5B0C90CD954EEF78A980D39BCB66941753E1FC6", UpdatePolicy.RELEASE_CERT_SHA256)
     }
 
     @Test

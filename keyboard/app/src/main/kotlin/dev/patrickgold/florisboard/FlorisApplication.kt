@@ -114,6 +114,8 @@ class FlorisApplication : Application() {
         extensionManager.value.init()
         clipboardManager.value.initializeForContext(this)
         DictionaryManager.init(this)
+        // Humming 1.6: background update check (sideloaded APK only, switchable, at most every 6 hours).
+        com.humming.keyboard.AppUpdate.maybeCheckInBackground(this)
     }
 
     private inner class BootComplete : BroadcastReceiver() {

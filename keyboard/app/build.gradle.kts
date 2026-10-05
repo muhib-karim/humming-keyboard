@@ -80,6 +80,11 @@ val hummingKeystore: File? = System.getenv("HUMMING_KEYSTORE")?.takeIf { it.isNo
 val hummingKeystorePassword: String? = System.getenv("HUMMING_KEYSTORE_PASSWORD")?.takeIf { it.isNotEmpty() }
 val hummingReleaseSigning: Boolean = hummingKeystore != null && hummingKeystorePassword != null
 
+// Humming 1.6: in-app updates are for the sideloaded APK only. Google Play does not allow an app to update itself, so
+// the Play bundle is built with -Phumming.play=true: SELF_UPDATE = false and REQUEST_INSTALL_PACKAGES is removed from
+// its manifest (src/play/AndroidManifest.xml). The android-release workflow checks both.
+val hummingPlay: Boolean = (project.findProperty("humming.play") as String?) == "true"
+
 android {
     namespace = "dev.patrickgold.florisboard"
     compileSdk = projectCompileSdk.toInt()
@@ -108,6 +113,7 @@ android {
 
         buildConfigField("String", "BUILD_COMMIT_HASH", "\"${getGitCommitHash().get()}\"")
         buildConfigField("String", "FLADDONS_API_VERSION", "\"v~draft2\"")
+        buildConfigField("boolean", "SELF_UPDATE", if (hummingPlay) "false" else "true")
         buildConfigField("String", "FLADDONS_STORE_URL", "\"beta.addons.florisboard.org\"")
         // Humming: the on-device engine ships for 64-bit ARM phones and x86_64 emulators only. A build that asks for a
         // release task makes the phone APK (arm64-v8a only; the x86_64 libraries add 13 MB and no phone uses them);
@@ -189,6 +195,10 @@ android {
             signingConfig = signingConfigs.getByName("debug")
             matchingFallbacks += listOf("release")
         }
+    }
+
+    if (hummingPlay) {
+        sourceSets.getByName("release").manifest.srcFile("src/play/AndroidManifest.xml")
     }
 
     aboutLibraries {

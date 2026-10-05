@@ -8,7 +8,7 @@ import java.util.Locale
  * Covered by SettingsIndexTest (every entry resolves to a screen; common searches find the right setting).
  */
 object SettingsIndex {
-    enum class Screen { STICKERS, VOICE, LANGUAGES, THEME, KEYBOARD, FEEDBACK, TOOLBAR, TYPING, SHORTCUTS, DICTIONARY, GESTURES, CLIPBOARD, EMOJI, PRIVACY, BACKUP, RESTORE, OTHER, ABOUT }
+    enum class Screen { STICKERS, VOICE, LANGUAGES, THEME, KEYBOARD, FEEDBACK, TOOLBAR, TYPING, SHORTCUTS, DICTIONARY, GESTURES, CLIPBOARD, EMOJI, PRIVACY, UPDATES, BACKUP, RESTORE, OTHER, ABOUT }
 
     data class Entry(val title: String, val path: String, val screen: Screen, val keywords: String = "")
 
@@ -68,6 +68,7 @@ object SettingsIndex {
         Entry("Emoji search (type :word)", "Emoji", Screen.EMOJI, "emoji search colon find"),
         Entry("Incognito mode", "Privacy", Screen.PRIVACY, "incognito private privacy"),
         Entry("Privacy and network", "Privacy", Screen.PRIVACY, "privacy network offline internet data"),
+        Entry("App updates (check, install automatically)", "Updates", Screen.UPDATES, "update upgrade new version install automatic auto apk"),
         Entry("Export settings to a file", "Other > Backup", Screen.BACKUP, "export backup save file settings"),
         Entry("Import settings from a file", "Other > Restore", Screen.RESTORE, "import restore load file settings"),
         Entry("Settings app theme", "Other", Screen.OTHER, "app theme settings language icon"),
@@ -106,6 +107,7 @@ object SettingsIndex {
         Screen.CLIPBOARD -> Routes.Settings.Clipboard
         Screen.EMOJI -> Routes.Settings.Media
         Screen.PRIVACY -> Routes.Settings.Privacy
+        Screen.UPDATES -> Routes.Settings.Updates
         Screen.BACKUP -> Routes.Settings.Backup
         Screen.RESTORE -> Routes.Settings.Restore
         Screen.OTHER -> Routes.Settings.Other

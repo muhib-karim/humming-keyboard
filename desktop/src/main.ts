@@ -8,8 +8,9 @@ type Settings = {
   format_lists: boolean; accuracy_mode: boolean; dictionary: Dict[]; insert_method: string; restore_clipboard: boolean;
   paste_delay_ms: number; trailing_space: boolean; input_device: string; show_overlay: boolean;
   launch_at_login: boolean; history_enabled: boolean; history_limit: number; max_seconds: number;
-  quick_start?: boolean;
+  quick_start?: boolean; auto_update: boolean;
 };
+type UpdateStatus = { state: string; current: string; latest: string | null; notes: string | null; message: string; done: number; total: number; last_checked: number; can_install: boolean };
 type Status = { state: string; message: string };
 type Model = { id: string; label: string; blurb: string; download_bytes: number; disk_bytes: number; ram_mb: number; wer_pct: number; downloaded: boolean; active: boolean };
 type Entry = { id: number; ts: number; text: string; raw: string; audio_ms: number; latency_ms: number; model: string; inserted: boolean };
@@ -229,6 +230,25 @@ function renderTips() {
         <li>Apps running as administrator only accept pasted text from Humming if Humming also runs as administrator.</li></ul>`;
 }
 
+// ---------------- updates (1.6) ----------------
+function renderUpdate(u: UpdateStatus) {
+  let msg = u.message || "";
+  if (u.state === "downloading" && u.total > 0) msg = `${msg} (${Math.round((100 * u.done) / u.total)}%)`;
+  if (u.state === "idle") msg = `Version ${u.current}. Humming checks for updates on its own every few hours.`;
+  if (u.state === "up_to_date" && u.last_checked) msg = `${msg} (${u.current}, checked ${new Date(u.last_checked * 1000).toLocaleTimeString()})`;
+  $("#upd-msg").textContent = msg;
+  $<HTMLButtonElement>("#upd-install").hidden = !(u.state === "available" && u.can_install);
+  const busy = ["checking", "downloading", "installing", "restarting"].includes(u.state);
+  $<HTMLButtonElement>("#upd-check").disabled = busy;
+  $<HTMLButtonElement>("#upd-install").disabled = busy;
+}
+$("#upd-check").addEventListener("click", async () => {
+  try { renderUpdate(await invoke<UpdateStatus>("check_for_updates", { install: false })); } catch (e) { $("#upd-msg").textContent = String(e); }
+});
+$("#upd-install").addEventListener("click", async () => {
+  try { renderUpdate(await invoke<UpdateStatus>("check_for_updates", { install: true })); } catch (e) { $("#upd-msg").textContent = String(e); }
+});
+
 // ---------------- boot ----------------
 async function boot() {
   settings = await invoke<Settings>("get_settings");
@@ -242,6 +262,8 @@ async function boot() {
   loadDevices();
 
   await listen<Status>("status", (e) => renderStatus(e.payload));
+  await listen<UpdateStatus>("update-status", (e) => renderUpdate(e.payload));
+  renderUpdate(await invoke<UpdateStatus>("update_status"));
   await listen<string>("navigate", (e) => show(e.payload));
   await listen<{ id: string; done: number; total: number }>("model-progress", (e) => {
     const bar = document.querySelector<HTMLElement>(`#prog-${e.payload.id}`);

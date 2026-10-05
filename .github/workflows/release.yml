@@ -1,0 +1,66 @@
+name: release
+
+# One tagged release, end to end. Pushing an annotated tag vX.Y.Z builds every platform through the platform workflows
+# (signed Android APK + AAB, desktop installers with signed self-update bundles, unsigned iOS .ipa), then:
+#   - checks every updater signature against the public key in desktop/src-tauri/tauri.conf.json,
+#   - writes latest.json (desktop updater feed), android.json (Android update feed) and SHA256SUMS.txt,
+#   - creates the GitHub Release with all of it,
+#   - redeploys the website, which mirrors the latest release's update files to /updates/ (the repository is private,
+#     so the apps read their update feeds from the public Pages site), and checks the live feed end to end.
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  android:
+    uses: ./.github/workflows/android-release.yml
+    secrets: inherit
+  desktop:
+    uses: ./.github/workflows/desktop.yml
+    secrets: inherit
+  ios:
+    uses: ./.github/workflows/ios.yml
+
+  publish:
+    needs: [android, desktop, ios]
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: art
+      - name: Assemble the release (verify signatures, latest.json, android.json, SHA256SUMS.txt)
+        run: |
+          set -euo pipefail
+          pip install -q pynacl
+          V="${GITHUB_REF_NAME#v}"
+          python3 scripts/assemble_release.py art out "$V"
+          python3 scripts/verify_updater.py --config desktop/src-tauri/tauri.conf.json --latest out/latest.json --local-dir out
+          (cd out && sha256sum -c SHA256SUMS.txt)
+          { echo "### Humming $V release files"; echo '```'; ls -l out; cat out/SHA256SUMS.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+      - name: Create the GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          V="${GITHUB_REF_NAME#v}"
+          if gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" out/* --clobber
+          else
+            gh release create "$GITHUB_REF_NAME" out/* --verify-tag --latest --title "Humming $V" --notes-file NOTES.md
+          fi
+          gh release view "$GITHUB_REF_NAME" --json assets --jq '.assets[].name'
+
+  pages:
+    needs: publish
+    uses: ./.github/workflows/pages.yml

@@ -50,3 +50,7 @@ network code on iOS.
 ## Checking the download
 Each release lists the `.ipa` in `SHA256SUMS.txt`. On a Mac: `shasum -a 256 Humming_*_unsigned.ipa`; on Windows:
 `certutil -hashfile Humming_<version>_unsigned.ipa SHA256`.
+
+## Updates
+
+The iOS app cannot update itself. An unsigned .ipa that you sideload has no update channel (Apple allows in-app updates only through the App Store or TestFlight), so to update, download the new `.ipa` from the latest release and sideload it again the same way. The Android and desktop apps update themselves (see the README's Updates section).

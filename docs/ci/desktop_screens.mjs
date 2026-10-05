@@ -22,7 +22,7 @@ const mock = () => {
     self_corrections: true, voice_commands: true, format_lists: true, accuracy_mode: true,
     dictionary: [{ spoken: "hum ming", written: "Humming" }, { spoken: "", written: "Okonkwo" }, { spoken: "", written: "GitHub" }],
     insert_method: "paste", restore_clipboard: true, paste_delay_ms: 150, trailing_space: true, input_device: "",
-    show_overlay: true, launch_at_login: false, history_enabled: true, history_limit: 500, max_seconds: 0,
+    show_overlay: true, launch_at_login: false, history_enabled: true, history_limit: 500, max_seconds: 0, auto_update: true,
   };
   const history = [
     ["Please send the quarterly report to the whole team by Friday afternoon.", 4.8, 0.21],
@@ -39,7 +39,9 @@ const mock = () => {
     get_settings: () => settings,
     save_settings: (a) => Object.assign(settings, a.settings),
     get_status: () => status,
-    app_info: () => ({ version: "1.4.0", os: "linux", arch: "x86_64", models_dir: "~/.local/share/humming/models", history_file: "~/.local/share/humming/history.jsonl" }),
+    update_status: () => ({ state: "up_to_date", current: "1.6.0", latest: null, notes: null, message: "Humming is up to date", done: 0, total: 0, last_checked: 1790000000, can_install: true }),
+    check_for_updates: () => ({ state: "up_to_date", current: "1.6.0", latest: null, notes: null, message: "Humming is up to date", done: 0, total: 0, last_checked: 1790000000, can_install: true }),
+    app_info: () => ({ version: "1.6.0", os: "linux", arch: "x86_64", models_dir: "~/.local/share/humming/models", history_file: "~/.local/share/humming/history.jsonl" }),
     list_models: () => [
       { id: "fast", label: "Fast", blurb: "Parakeet 110M. Instant and very accurate. Recommended.", download_bytes: 104337827, disk_bytes: 126e6, ram_mb: 500, wer_pct: 3.7, downloaded: true, active: true },
       { id: "best", label: "Best", blurb: "Parakeet 0.6B. The most accurate; wants 8 GB of RAM or more.", download_bytes: 482468385, disk_bytes: 640e6, ram_mb: 1300, wer_pct: 2.6, downloaded: false, active: false },

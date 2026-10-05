@@ -2,20 +2,26 @@ name: android-release
 
 # Signed release of the Humming keyboard (keyboard/): a release APK and AAB signed with the upload key held in
 # repository secrets, checked with apksigner against the published certificate fingerprint. Workflow artifacts only:
-# nothing is released, published or uploaded to a store from here. Secrets read (and only these):
+# nothing is released, published or uploaded to a store from here (release.yml calls this workflow for tagged releases).
+# 1.6: the APK (sideload) carries the in-app updater and REQUEST_INSTALL_PACKAGES; the AAB (Google Play) is built with
+# -Phumming.play=true, which removes both, because Play does not allow apps to update themselves. Both are checked. Secrets read (and only these):
 # HUMMING_KEYSTORE_BASE64, HUMMING_KEYSTORE_PASSWORD, HUMMING_KEY_ALIAS, HUMMING_KEY_PASSWORD.
 
 on:
   push:
     branches: ["main"]
     paths: ["keyboard/**", ".github/workflows/android-release.yml"]
+  pull_request:
+    paths: ["keyboard/**", ".github/workflows/android-release.yml"]
+  workflow_call:
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: android-release-${{ github.ref }}
+  # github.workflow is the caller's name when release.yml calls this workflow, so the two never cancel each other.
+  group: android-release-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -59,7 +65,13 @@ jobs:
           HUMMING_KEYSTORE_PASSWORD: ${{ secrets.HUMMING_KEYSTORE_PASSWORD }}
           HUMMING_KEY_ALIAS: ${{ secrets.HUMMING_KEY_ALIAS }}
           HUMMING_KEY_PASSWORD: ${{ secrets.HUMMING_KEY_PASSWORD }}
-        run: ./gradlew --no-daemon :app:assembleRelease :app:bundleRelease -Phumming.abis=arm64-v8a
+        run: |
+          set -euo pipefail
+          # Sideload APK (with the in-app updater), then the Play bundle (no self-update, no install permission).
+          ./gradlew --no-daemon :app:assembleRelease -Phumming.abis=arm64-v8a
+          mkdir -p "$RUNNER_TEMP/apk" && cp app/build/outputs/apk/release/*.apk "$RUNNER_TEMP/apk/"
+          ./gradlew --no-daemon :app:bundleRelease -Phumming.abis=arm64-v8a -Phumming.play=true
+          rm -f app/build/outputs/apk/release/*.apk && cp "$RUNNER_TEMP/apk/"*.apk app/build/outputs/apk/release/
 
       - name: Verify signatures and the certificate SHA-256
         run: |
@@ -87,6 +99,15 @@ jobs:
           [ "$apk_cert" = "$want" ] || { echo "::error::APK certificate does not match the published SHA-256"; exit 1; }
           [ "$aab_cert" = "$want" ] || { echo "::error::AAB certificate does not match the published SHA-256"; exit 1; }
           echo "CERT_MATCH=yes" | tee -a "$GITHUB_STEP_SUMMARY"
+          # 1.6 self-update: the APK may install updates, the Play bundle may not.
+          AAPT2="$ANDROID_HOME/build-tools/$BUILD_TOOLS/aapt2"
+          "$AAPT2" dump badging "$APK" | grep -m1 '^package:' | tee -a "$GITHUB_STEP_SUMMARY"
+          "$AAPT2" dump permissions "$APK" | grep -q 'android.permission.REQUEST_INSTALL_PACKAGES' \
+            || { echo "::error::the sideload APK lacks REQUEST_INSTALL_PACKAGES (in-app updates)"; exit 1; }
+          if unzip -p "$AAB" base/manifest/AndroidManifest.xml | grep -a -q 'REQUEST_INSTALL_PACKAGES'; then
+            echo "::error::the Play bundle must not carry REQUEST_INSTALL_PACKAGES"; exit 1
+          fi
+          echo "SELF_UPDATE: APK has REQUEST_INSTALL_PACKAGES, AAB does not" | tee -a "$GITHUB_STEP_SUMMARY"
           mkdir -p signed
           cp "$APK" signed/humming-keyboard-release.apk
           cp "$AAB" signed/humming-keyboard-release.aab

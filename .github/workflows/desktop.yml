@@ -1,20 +1,25 @@
 name: desktop
 
-# Humming for macOS, Windows and Linux (Tauri v2). Builds unsigned installers as workflow artifacts:
-# a universal macOS .dmg, Windows .msi + NSIS setup .exe, and Linux .AppImage + .deb. Nothing is released or signed here.
+# Humming for macOS, Windows and Linux (Tauri v2). Builds installers (not code-signed) as workflow artifacts:
+# a universal macOS .dmg, Windows .msi + NSIS setup .exe, and Linux .AppImage + .deb. 1.6: also the self-update bundles
+# (macOS .app.tar.gz; the .exe, .msi and .AppImage themselves), each with a minisign .sig made with the updater key in
+# the TAURI_SIGNING_PRIVATE_KEY secret. release.yml calls this workflow for tagged releases and publishes them.
 
 on:
   push:
+    branches: ["**"]
     paths: ["desktop/**", "core/**", ".github/workflows/desktop.yml"]
   pull_request:
     paths: ["desktop/**", "core/**", ".github/workflows/desktop.yml"]
+  workflow_call:
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: desktop-${{ github.ref }}
+  # github.workflow is the caller's name when release.yml calls this workflow, so the two never cancel each other.
+  group: desktop-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 env:
@@ -148,6 +153,10 @@ jobs:
         working-directory: desktop
         run: npm ci
       - uses: tauri-apps/tauri-action@v0
+        env:
+          # Updater signing key (minisign). Signs the self-update bundles; the public half is in tauri.conf.json.
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
         with:
           projectPath: desktop
           args: ${{ matrix.args }}
@@ -156,8 +165,19 @@ jobs:
         run: |
           mkdir -p out
           find desktop/src-tauri/target -path '*/release/bundle/*' -type f \
-            \( -name '*.dmg' -o -name '*.msi' -o -name '*-setup.exe' -o -name '*.AppImage' -o -name '*.deb' \) -exec cp {} out/ \;
+            \( -name '*.dmg' -o -name '*.msi' -o -name '*-setup.exe' -o -name '*.AppImage' -o -name '*.deb' \
+               -o -name '*.app.tar.gz' -o -name '*.sig' \) -exec cp {} out/ \;
           cd out
+          # The macOS update bundle comes out as Humming.app.tar.gz: give it the versioned release name.
+          V=$(node -p "require('../desktop/src-tauri/tauri.conf.json').version")
+          for f in Humming.app.tar.gz Humming.app.tar.gz.sig; do
+            if [ -f "$f" ]; then mv "$f" "Humming_${V}_universal${f#Humming}"; fi
+          done
+          # Every self-update bundle must have its signature.
+          for f in *.app.tar.gz *-setup.exe *.msi *.AppImage; do
+            [ -f "$f" ] || continue
+            [ -s "$f.sig" ] || { echo "::error::$f has no updater signature (.sig)"; exit 1; }
+          done
           if command -v sha256sum > /dev/null; then sha256sum -- * > ../SHA256SUMS.txt; else shasum -a 256 -- * > ../SHA256SUMS.txt; fi
           mv ../SHA256SUMS.txt .
           ls -l

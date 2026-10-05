@@ -1,7 +1,7 @@
 # Google Play Data safety form: draft answers
 
 App: Humming Keyboard (`com.humming.keyboard`) 1.2.0 (versionCode 1200). Drafted 3 Oct 2026 from the code on main 80e1deff. Checked against the code, not assumed:
-- Network use: only `ModelDownload.kt` (speech model from github.com/k2-fsa/sherpa-onnx releases, sha256-pinned) and `GifSearch.kt` (Openverse, opt-in, off by default, off in incognito). `NetworkAuditTest` fails the build if any other source file uses a network API.
+- Network use: only `ModelDownload.kt` (speech model from github.com/k2-fsa/sherpa-onnx releases, sha256-pinned) `GifSearch.kt` (Openverse, opt-in, off by default, off in incognito), `LlmCleanup.kt` (opt-in, user's own key) and `AppUpdate.kt` (update check of the sideloaded APK only; compiled out of the Play bundle with `-Phumming.play=true`, which also drops REQUEST_INSTALL_PACKAGES). `NetworkAuditTest` fails the build if any other source file uses a network API.
 - No analytics, ads, crash-reporting or account SDKs in the Gradle dependencies (no Firebase, Play services, Sentry, ACRA and so on).
 - Voice path (`HummingVoice`, `LocalEngine`, `Transcriber`, `WavRecorder`, ...) has no network code, also enforced by `NetworkAuditTest`.
 

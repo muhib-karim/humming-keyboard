@@ -132,7 +132,9 @@ fun PrivacyScreen() = FlorisScreen {
             "Humming works offline. Typing, prediction (including the neural model), clipboard and dictation never leave " +
                 "this phone. Network use: the one-time voice model download (Settings > Voice), pinned by SHA-256, Wi-Fi " +
                 "only by default; and, only if you turn it on, GIF search in the sticker panel, which sends just the " +
-                "words typed into its search box (Settings > Stickers & GIFs). It is off by default and off in incognito.",
+                "words typed into its search box (Settings > Stickers & GIFs). It is off by default and off in incognito. " +
+                "The APK version also checks the Humming website for updates about every 6 hours (Settings > Updates, " +
+                "can be turned off); it sends nothing about you.",
             modifier = Modifier.padding(16.dp),
             style = MaterialTheme.typography.bodyMedium,
         )

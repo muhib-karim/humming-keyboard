@@ -83,3 +83,22 @@ integration. There is no equivalent free route for macOS notarisation (it needs 
   Run anyway" on first launch. Set `bundle.windows.certificateThumbprint` (or a `signCommand`) if one is ever added.
 - **Linux: unsigned.** The `.AppImage` and `.deb` are checked with `SHA256SUMS.txt`.
 - **Every release** carries `SHA256SUMS.txt` for all installers. Each sum matches the CI run's own sums and GitHub's asset digest.
+
+## Desktop self-update signing (1.6)
+
+The desktop updater (tauri-plugin-updater) installs only files signed with Humming's update key, a minisign
+(Ed25519) key pair separate from the Android key:
+
+- Public key: `plugins.updater.pubkey` in `desktop/src-tauri/tauri.conf.json` (key id 5C5C8FC917CBFA8F).
+- Private key and its password: repository secrets `TAURI_SIGNING_PRIVATE_KEY` and `TAURI_SIGNING_PRIVATE_KEY_PASSWORD`,
+  read only by the desktop build. The owner keeps an offline copy; it is never committed.
+- Losing the private key means installed copies can no longer be updated automatically (they would need one manual
+  install of a build with a new public key), so keep that copy safe.
+- `scripts/verify_updater.py` checks a signature, a local `latest.json`, or the live feed against the public key.
+
+## Android self-update (1.6)
+
+The sideloaded APK checks `android.json` on the project website, verifies the download's SHA-256 against
+`SHA256SUMS.txt` and requires its signing certificate to be the release certificate above before handing it to
+Android's PackageInstaller. The Play bundle is built with `-Phumming.play=true` (no updater, no
+REQUEST_INSTALL_PACKAGES); `android-release.yml` checks both.

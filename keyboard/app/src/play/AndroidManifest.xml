@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Humming 1.6: merged into the release manifest only for the Google Play bundle (-Phumming.play=true).
+     Play does not allow apps to update themselves, so the Play build drops the install permission. -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" tools:node="remove"/>
+</manifest>

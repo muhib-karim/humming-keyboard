@@ -141,6 +141,10 @@ object Routes {
         object Privacy
 
         @Serializable
+        @Deeplink("settings/updates")
+        object Updates
+
+        @Serializable
         @Deeplink("settings/typing/shortcuts")
         object TextShortcuts
 
@@ -316,6 +320,7 @@ object Routes {
             composableWithDeepLink(Settings.Voice::class) { dev.patrickgold.florisboard.app.settings.voice.VoiceScreen() }
             composableWithDeepLink(Settings.Search::class) { dev.patrickgold.florisboard.app.settings.humming.SettingsSearchScreen() }
             composableWithDeepLink(Settings.Privacy::class) { dev.patrickgold.florisboard.app.settings.humming.PrivacyScreen() }
+            composableWithDeepLink(Settings.Updates::class) { dev.patrickgold.florisboard.app.settings.humming.UpdatesScreen() }
             composableWithDeepLink(Settings.TextShortcuts::class) { dev.patrickgold.florisboard.app.settings.humming.TextShortcutsScreen() }
             composableWithDeepLink(Settings.BackgroundImage::class) { dev.patrickgold.florisboard.app.settings.humming.BackgroundImageScreen() }
             composableWithDeepLink(Settings.Stickers::class) { dev.patrickgold.florisboard.app.settings.humming.StickersScreen() }

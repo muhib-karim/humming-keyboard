@@ -10,6 +10,7 @@ mod models;
 mod settings;
 mod stt;
 mod text_cleanup;
+mod updater;
 
 use stt::SherpaEngine;
 use serde::Serialize;
@@ -521,6 +522,17 @@ fn app_info(state: State<'_, AppState>) -> serde_json::Value {
     })
 }
 
+#[tauri::command]
+fn update_status(app: AppHandle) -> updater::UpdateStatus {
+    updater::status(&app)
+}
+
+/// "Check for updates" (install = false) and "Install now" (install = true) in Settings.
+#[tauri::command]
+async fn check_for_updates(app: AppHandle, install: bool) -> Result<updater::UpdateStatus, String> {
+    Ok(updater::run_once(app, install).await)
+}
+
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| show_main(app, None)))
@@ -530,6 +542,7 @@ pub fn run() {
                 .build(),
         )
         .plugin(tauri_plugin_autostart::init(tauri_plugin_autostart::MacosLauncher::LaunchAgent, Some(vec!["--hidden"])))
+        .plugin(tauri_plugin_updater::Builder::new().build())
         .setup(|app| {
             #[cfg(target_os = "macos")]
             app.set_activation_policy(tauri::ActivationPolicy::Accessory);
@@ -588,6 +601,8 @@ pub fn run() {
                 set_status(&handle, "error", e);
             }
             load_engine(&handle);
+            // Self-update (1.6): first check shortly after launch, then every 4 hours.
+            updater::start_background(&handle);
 
             // First run (no model yet) or a normal launch: show the window; a login launch stays in the tray.
             let hidden = std::env::args().any(|a| a == "--hidden");
@@ -623,7 +638,9 @@ pub fn run() {
             test_start,
             test_stop,
             preview_cleanup,
-            app_info
+            app_info,
+            update_status,
+            check_for_updates
         ])
         .run(tauri::generate_context!())
         .expect("error while running Humming");

@@ -1,5 +1,37 @@
 # Changelog
 
+## 1.6.0: Humming updates itself
+- **Desktop (Windows, macOS, Linux AppImage)**: built-in, signed self-update. Humming checks for a new version 45
+  seconds after it starts, every 4 hours and on **Settings > Updates > Check for updates**. With **Automatically
+  install updates** on (the default) it downloads the update, installs it and restarts, and it waits if you are in the
+  middle of a dictation or a model download. Off: it shows "Update available" and an **Install now** button. Updates
+  are verified against the minisign (Ed25519) public key built into the app before they are installed. A Linux .deb
+  install cannot replace itself, so there Humming only says that a new version is out.
+- **Android (sideloaded APK)**: **Settings > Updates**, with "Check for updates automatically" and "Download and
+  install updates automatically" (both on by default) and a **Check for updates** button. Humming checks at most every
+  6 hours, downloads a newer APK on Wi-Fi, checks its SHA-256 against `SHA256SUMS.txt` and its signing certificate
+  (the release key, `8C:8B:...:1F:C6`), then hands it to Android's PackageInstaller. Android asks you to confirm the
+  update with one tap: an app installed outside the Play Store cannot install itself silently. On Android 12+, once
+  Humming has installed an update itself, Android may install later ones without asking; that is Android's call. The
+  Google Play bundle has no updater and no REQUEST_INSTALL_PACKAGES permission (Play updates it).
+- **iOS**: no automatic updates. An unsigned, sideloaded .ipa cannot update itself; sideload the new one.
+- **Release pipeline**: pushing a `v*` tag runs `release.yml`, which builds every platform, verifies every updater
+  signature, writes `latest.json`, `android.json` and `SHA256SUMS.txt`, creates the GitHub Release, and mirrors the
+  update files to a public site (`/updates/`), since the repository is private. The website deploy then checks
+  the live feed's signatures (`scripts/verify_updater.py`). The website gets a Download section.
+- **Built without GitHub Actions**: Actions can't run on this private repository right now, so 1.6.0 was built on
+  Linux build machines outside GitHub: the Android APK and Play AAB (signed with the release key, certificate
+  `8C:8B:...:1F:C6`), the Linux AppImage and .deb, and the Windows NSIS setup .exe (cross-compiled from Linux with
+  cargo-xwin). Every updater signature was checked against the app's public key before upload. Not in 1.6.0: the
+  macOS .dmg and the iOS .ipa (Apple's tools need a Mac) and the Windows .msi (WiX needs Windows); their 1.5.0 files
+  stay the current ones. `release.yml` still builds everything when Actions are available.
+- **Update mirror on Cloudflare Pages**: the update feeds (`latest.json`, `android.json`, `SHA256SUMS.txt`, the `.sig`
+  files) and every installer are served from https://humming-keyboard.pages.dev/updates/ (free, no GitHub login).
+  Installers are bigger than a Pages file may be, so the site redirects each one to a short-lived download link for
+  the release file; the app still checks every signature or SHA-256 itself. Moving from 1.5.0 to 1.6.0 is one manual
+  install (1.5.0 has no updater); from 1.6.0 on, updates arrive by themselves.
+- Versions: 1.6.0 (Android versionCode 1600; desktop 1.6.0; iOS build 1600 in the source).
+
 ## 1.4.0: iOS, accuracy mode, one version everywhere
 - **iOS (new, `ios/`)**: a SwiftUI app plus the Humming keyboard extension, for iPhone and iPad (iOS 16+). Dictation
   runs on Apple's on-device recogniser with on-device recognition required (no server fallback), with the same
