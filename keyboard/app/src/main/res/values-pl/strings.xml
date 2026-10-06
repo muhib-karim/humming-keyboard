@@ -533,8 +533,6 @@
     <string name="about__version_copied__error" comment="Title of the error toast for copying the version string">Coś poszło nie tak: {error_message}</string>
     <string name="about__changelog__title" comment="Preference title">Lista zmian</string>
     <string name="about__changelog__summary" comment="Preference summary">Nowości</string>
-    <string name="about__repository__title" comment="Preference title">Repozytorium (GitHub)</string>
-    <string name="about__repository__summary" comment="Preference summary">Kod źródłowy, dyskusje, problemy i informacje</string>
     <string name="about__privacy_policy__title" comment="Preference title">Polityka prywatności</string>
     <string name="about__privacy_policy__summary" comment="Preference summary">Polityka prywatności tego projektu</string>
     <string name="about__project_license__title" comment="Preference title">Licencja Projektu</string>
@@ -547,7 +545,6 @@
     <string name="setup__title" comment="Title of Setup">Witaj!</string>
     <string name="setup__intro_message" comment="Short intro message welcoming new users">Dziękujemy za korzystanie z aplikacji {app_name}! Ta szybka konfiguracja przeprowadzi Cię przez czynności wymagane do korzystania z aplikacji {app_name} na Twoim urządzeniu.</string>
     <string name="setup__footer__privacy_policy" comment="Privacy policy label for URL">Polityka prywatności</string>
-    <string name="setup__footer__repository" comment="Repository label for URL">Repozytorium</string>
     <string name="setup__enable_ime__title">Wlącz {app_name}</string>
     <string name="setup__enable_ime__description">Android wymaga, aby każda niestandardowa klawiatura była osobno włączona, zanim będzie można z niej korzystać. Otwórz System <i>Język &amp; Wprowadzanie</i> Ustawienia, tam włącz \"{app_name}\".</string>
     <string name="setup__enable_ime__open_settings_btn">Otwórz ustawienia systemowe</string>
@@ -605,11 +602,9 @@
     <!-- Crash Dialog strings -->
     <string name="crash_dialog__title" comment="Title of crash dialog">Pobierz raport o błędach</string>
     <string name="crash_dialog__description" comment="Description of crash dialog">Przepraszamy za niedogodności, ale Humming uległ awarii z powodu nieoczekiwanego błędu.</string>
-    <string name="crash_dialog__report_instructions" comment="Issue tracker report instructions for the crash dialog. The %s placeholder is the name of the crash report template and always in English/LTR.">Jeśli chcesz zgłosić ten błąd, najpierw sprawdź system do śledzenia zgłoszeń na GitHub, czy Twoja awaria nie została już zgłoszona.\nJeśli nie, skopiuj wygenerowany dziennik awarii i otwórz nowy \"issue\". Użyj szablonu „%s” i wypełnij opis, kroki do odtworzenia, a na końcu wklej wygenerowany dziennik awarii. Pomaga to uczynić Humming lepszym i bardziej stabilnym dla wszystkich. Dziękuję Ci!</string>
     <string name="crash_dialog__copy_to_clipboard" comment="Label of Copy to clipboard button in crash dialog">Skopiuj do schowka systemowego</string>
     <string name="crash_dialog__copy_to_clipboard_success" comment="Label of Copy to clipboard success message in crash dialog">Skopiowano do schowka systemowego</string>
     <string name="crash_dialog__copy_to_clipboard_failure" comment="Label of Copy to clipboard failure message in crash dialog">Nie można skopiować do schowka systemowego: Nie znaleziono instancji menedżera schowka</string>
-    <string name="crash_dialog__open_issue_tracker" comment="Label of Open issue tracker button in crash dialog">Otwórz system do śledzenia zgłoszeń (github.com)</string>
     <string name="crash_dialog__close" comment="Label of Close button in crash dialog">Zamknij</string>
     <string name="crash_notification_channel__title" comment="Title of crash notification channel">Raporty o błędach Humming</string>
     <string name="crash_once_notification__title" comment="Title of the notification for a single crash">Humming przestał działać…</string>

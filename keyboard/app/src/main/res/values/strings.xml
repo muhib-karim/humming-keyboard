@@ -582,8 +582,8 @@
     <string name="about__version_copied__error" comment="Title of the error toast for copying the version string">Something went wrong: {error_message}</string>
     <string name="about__changelog__title" comment="Preference title">Changelog</string>
     <string name="about__changelog__summary" comment="Preference summary">What\'s new</string>
-    <string name="about__repository__title" comment="Preference title">Repository (GitHub)</string>
-    <string name="about__repository__summary" comment="Preference summary">Source code, discussions, issues and info</string>
+    <string name="about__repository__title" comment="Preference title" translatable="false">Website</string>
+    <string name="about__repository__summary" comment="Preference summary" translatable="false">Downloads, updates and what\'s new</string>
     <string name="about__privacy_policy__title" comment="Preference title">Privacy policy</string>
     <string name="about__privacy_policy__summary" comment="Preference summary">The privacy policy for this project</string>
     <string name="about__project_license__title" comment="Preference title">Project license</string>
@@ -597,7 +597,7 @@
     <string name="setup__title" comment="Title of Setup">Welcome!</string>
     <string name="setup__intro_message" comment="Short intro message welcoming new users">Thanks for using {app_name}! This quick setup guides you through the required steps to use {app_name} on your device.</string>
     <string name="setup__footer__privacy_policy" comment="Privacy policy label for URL">Privacy policy</string>
-    <string name="setup__footer__repository" comment="Repository label for URL">Repository</string>
+    <string name="setup__footer__repository" comment="Repository label for URL" translatable="false">Website</string>
 
     <string name="setup__enable_ime__title">Enable {app_name}</string>
     <string name="setup__enable_ime__description">Android requires that every custom keyboard is separately enabled before you can use it. Open the System <i>Language &amp; Input</i> Settings, there enable "{app_name}".</string>
@@ -662,12 +662,12 @@
     <!-- Crash Dialog strings -->
     <string name="crash_dialog__title" comment="Title of crash dialog">Humming error report</string>
     <string name="crash_dialog__description" comment="Description of crash dialog">Sorry for the inconvenience, but Humming has crashed due to an unexpected error.</string>
-    <string name="crash_dialog__report_instructions" comment="Issue tracker report instructions for the crash dialog. The %s placeholder is the name of the crash report template and always in English/LTR.">If you wish to report this error, first check out the issue tracker on GitHub if your crash has not already been reported.\nIf it hasn\'t, copy the generated crash log and open a new issue. Use the \"%s\" template and fill out the description, the steps to reproduce, and paste the generated crash log at the end. This helps in making Humming better and more stable for everyone. Thank you!</string>
+    <string name="crash_dialog__report_instructions" comment="Issue tracker report instructions for the crash dialog. The %s placeholder is the name of the crash report template and always in English/LTR." translatable="false">To report this error, copy the error report below (%s) and send it with a short note on what you were doing. The Humming website says how to get in touch.</string>
     <string name="crash_dialog__bug_report_template" comment="Name of the template to use in the GitHub issue tracker (is always in English)" translatable="false">Crash report</string>
     <string name="crash_dialog__copy_to_clipboard" comment="Label of Copy to clipboard button in crash dialog">Copy to system clipboard</string>
     <string name="crash_dialog__copy_to_clipboard_success" comment="Label of Copy to clipboard success message in crash dialog">Copied to system clipboard</string>
     <string name="crash_dialog__copy_to_clipboard_failure" comment="Label of Copy to clipboard failure message in crash dialog">Cannot copy to system clipboard: Clipboard manager instance not found</string>
-    <string name="crash_dialog__open_issue_tracker" comment="Label of Open issue tracker button in crash dialog">Open issue tracker (github.com)</string>
+    <string name="crash_dialog__open_issue_tracker" comment="Label of Open issue tracker button in crash dialog" translatable="false">Open the Humming website</string>
     <string name="crash_dialog__close" comment="Label of Close button in crash dialog">Close</string>
     <string name="crash_notification_channel__title" comment="Title of crash notification channel">Humming error reports</string>
     <string name="crash_once_notification__title" comment="Title of the notification for a single crash">Humming has stopped working…</string>

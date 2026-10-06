@@ -530,8 +530,6 @@
     <string name="about__version_copied__error" comment="Title of the error toast for copying the version string">Valami rosszul sült el: {error_message}</string>
     <string name="about__changelog__title" comment="Preference title">Változáslista</string>
     <string name="about__changelog__summary" comment="Preference summary">Újdonságok</string>
-    <string name="about__repository__title" comment="Preference title">Tároló (GitHub)</string>
-    <string name="about__repository__summary" comment="Preference summary">Forráskód, megbeszélések, hibák és információ</string>
     <string name="about__privacy_policy__title" comment="Preference title">Adatvédelmi irányelvek</string>
     <string name="about__privacy_policy__summary" comment="Preference summary">A projekt adatvédelmi irányelvei</string>
     <string name="about__project_license__title" comment="Preference title">Projekt licence</string>
@@ -544,7 +542,6 @@
     <string name="setup__title" comment="Title of Setup">Üdvözöljük!</string>
     <string name="setup__intro_message" comment="Short intro message welcoming new users">Köszönjük, hogy a {app_name}ot használja. Ez a gyors beállítás végigvezeti a {app_name} eszközön való használatához szükséges lépéseken.</string>
     <string name="setup__footer__privacy_policy" comment="Privacy policy label for URL">Adatvédelmi irányelvek</string>
-    <string name="setup__footer__repository" comment="Repository label for URL">Kódtár</string>
     <string name="setup__enable_ime__title">{app_name} engedélyezése</string>
     <string name="setup__enable_ime__description">Az Android megköveteli, hogy minden egyéni billentyűzet külön engedélyezve legyen, mielőtt használhatná. Nyissa meg a Beállításokban Rendszer <i>Nyelv és Bevitel</i> opciót, azon belül engedélyezze ezt: \"{app_name}\".</string>
     <string name="setup__enable_ime__open_settings_btn">Rendszerbeállítások megnyitása</string>
@@ -597,11 +594,9 @@
     <!-- Crash Dialog strings -->
     <string name="crash_dialog__title" comment="Title of crash dialog">Humming hibajelentés</string>
     <string name="crash_dialog__description" comment="Description of crash dialog">Elnézést a kellemetlenségért, de a Humming összeomlott egy váratlan hiba miatt.</string>
-    <string name="crash_dialog__report_instructions" comment="Issue tracker report instructions for the crash dialog. The %s placeholder is the name of the crash report template and always in English/LTR.">Ha szeretné jelenteni ezt a hibát, elsőnek nézze meg a hibakövetőt a GitHubon, hogy az összeomlása nem volt-e már jelentve.\nHa nem volt, másolja ki a generált összeomlásnaplót, és nyisson egy új hibajelentést. Használja a \"%s\" sablont, és töltse ki a leírást, írja le, hogy hogyan lehet előhozni a hibát, és illessze be az összeomlási naplót is a végére. Ez segít jobbá és stabilabbá tenni a Hummingot mindenki számára. Köszönöm!</string>
     <string name="crash_dialog__copy_to_clipboard" comment="Label of Copy to clipboard button in crash dialog">Rendszervágólapra másolás</string>
     <string name="crash_dialog__copy_to_clipboard_success" comment="Label of Copy to clipboard success message in crash dialog">Rendszervágólapra másolva</string>
     <string name="crash_dialog__copy_to_clipboard_failure" comment="Label of Copy to clipboard failure message in crash dialog">Nem lehet rendszervágólapra másolni: nem található vágólapkezelő</string>
-    <string name="crash_dialog__open_issue_tracker" comment="Label of Open issue tracker button in crash dialog">Hibakövető megnyitása (github.com)</string>
     <string name="crash_dialog__close" comment="Label of Close button in crash dialog">Bezárás</string>
     <string name="crash_notification_channel__title" comment="Title of crash notification channel">Humming hibajelentések</string>
     <string name="crash_once_notification__title" comment="Title of the notification for a single crash">A Humming leállt…</string>

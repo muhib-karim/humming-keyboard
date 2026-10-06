@@ -341,8 +341,6 @@
     <string name="about__version_copied__error" comment="Title of the error toast for copying the version string">Ocorreu  um erro: {error_message}</string>
     <string name="about__changelog__title" comment="Preference title">Alterações</string>
     <string name="about__changelog__summary" comment="Preference summary">Novidades</string>
-    <string name="about__repository__title" comment="Preference title">Repositório (GitHub)</string>
-    <string name="about__repository__summary" comment="Preference summary">Código-fonte, discussões, erros e informações</string>
     <string name="about__privacy_policy__title" comment="Preference title">Política de privacidade</string>
     <string name="about__privacy_policy__summary" comment="Preference summary">A política de privacidade deste projeto</string>
     <string name="about__project_license__title" comment="Preference title">Licença</string>
@@ -355,7 +353,6 @@
     <string name="setup__title" comment="Title of Setup">Boas vindas!</string>
     <string name="setup__intro_message" comment="Short intro message welcoming new users">Obrigado por utilizar {app_name}! Esta configuração permite-lhe dar os primeiros passos para começar a utilizar {app_name}.</string>
     <string name="setup__footer__privacy_policy" comment="Privacy policy label for URL">Política de privacidade</string>
-    <string name="setup__footer__repository" comment="Repository label for URL">Repositório</string>
     <string name="setup__enable_ime__title">Ativar {app_name}</string>
     <string name="setup__enable_ime__description">O sistema Android obriga a que ative o teclado separadamente antes de o poder utilizar. Aceda às definições do sistema e em <i>Idiomas e introdução</i>, ative \"{app_name}\".</string>
     <string name="setup__enable_ime__open_settings_btn">Abrir definições do sistema</string>
@@ -397,11 +394,9 @@
     <!-- Crash Dialog strings -->
     <string name="crash_dialog__title" comment="Title of crash dialog">Relatório de erros do Humming</string>
     <string name="crash_dialog__description" comment="Description of crash dialog">Desculpe o inconveniente mas a aplicação encerrou devido a um problema desconhecido.</string>
-    <string name="crash_dialog__report_instructions" comment="Issue tracker report instructions for the crash dialog. The %s placeholder is the name of the crash report template and always in English/LTR.">Se quiser reportar este erro, analise o registo de erros reportados no GitHub e verifique se este problema já foi reportado.\nSe não o encontrar, copie o relatório de erro e abra uma ocorrência. Utilize o modelo \"%s\", preencha a descrição, os passos necessários para reproduzir o erro e cole o relatório no final. Desta forma, pode ajudar a melhorar o Floriboard. Obrigado!</string>
     <string name="crash_dialog__copy_to_clipboard" comment="Label of Copy to clipboard button in crash dialog">Copiar para a área de transferência</string>
     <string name="crash_dialog__copy_to_clipboard_success" comment="Label of Copy to clipboard success message in crash dialog">Copiado para a área de transferência</string>
     <string name="crash_dialog__copy_to_clipboard_failure" comment="Label of Copy to clipboard failure message in crash dialog">Não foi possível copiar. Não existe um gestor para a área de transferência.</string>
-    <string name="crash_dialog__open_issue_tracker" comment="Label of Open issue tracker button in crash dialog">Abrir registo de erros (github.com)</string>
     <string name="crash_dialog__close" comment="Label of Close button in crash dialog">Fechar</string>
     <string name="crash_notification_channel__title" comment="Title of crash notification channel">Relatórios de erros do Humming</string>
     <string name="crash_once_notification__title" comment="Title of the notification for a single crash">O Humming parou de funcionar…</string>

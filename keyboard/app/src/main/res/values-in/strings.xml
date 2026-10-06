@@ -532,8 +532,6 @@ Klik di sini untuk menyelesaikan masalah ini.</string>
     <string name="about__version_copied__error" comment="Title of the error toast for copying the version string">Terjadi kesalahan: {error_message}</string>
     <string name="about__changelog__title" comment="Preference title">Changelog</string>
     <string name="about__changelog__summary" comment="Preference summary">Apa yang baru</string>
-    <string name="about__repository__title" comment="Preference title">Repositori (GitHub)</string>
-    <string name="about__repository__summary" comment="Preference summary">Sumber kode, diskusi, masalah dan info</string>
     <string name="about__privacy_policy__title" comment="Preference title">Kebijakan privasi</string>
     <string name="about__privacy_policy__summary" comment="Preference summary">Kebijakan privasi untuk proyek ini</string>
     <string name="about__project_license__title" comment="Preference title">Lisensi proyek</string>
@@ -546,7 +544,6 @@ Klik di sini untuk menyelesaikan masalah ini.</string>
     <string name="setup__title" comment="Title of Setup">Selamat datang!</string>
     <string name="setup__intro_message" comment="Short intro message welcoming new users">Terima kasih telah menggunakan {app_name}! Penyiapan cepat ini memandu Anda melalui langkah-langkah yang diperlukan untuk menggunakan {app_name} di perangkat Anda.</string>
     <string name="setup__footer__privacy_policy" comment="Privacy policy label for URL">Kebijakan privasi</string>
-    <string name="setup__footer__repository" comment="Repository label for URL">Repositori</string>
     <string name="setup__enable_ime__title">Aktifkan {app_name}</string>
     <string name="setup__enable_ime__description">Android mengharuskan setiap papan ketik kustom diaktifkan secara terpisah sebelum Anda dapat menggunakannya. Buka setelan <i>Bahasa &amp; masukan</i> sistem, dan di sana aktifkan \"{app_name}\".</string>
     <string name="setup__enable_ime__open_settings_btn">Buka Setelan Sistem</string>
@@ -601,11 +598,9 @@ Klik di sini untuk menyelesaikan masalah ini.</string>
     <!-- Crash Dialog strings -->
     <string name="crash_dialog__title" comment="Title of crash dialog">Laporan kesalahan Humming</string>
     <string name="crash_dialog__description" comment="Description of crash dialog">Maaf atas ketidaknyamanan ini, tetapi Humming mogok karena kesalahan yang tidak terduga.</string>
-    <string name="crash_dialog__report_instructions" comment="Issue tracker report instructions for the crash dialog. The %s placeholder is the name of the crash report template and always in English/LTR.">Jika Anda ingin melaporkan kesalahan ini, periksa dulu pelacak masalah di GitHub jika crash Anda belum dilaporkan.\nJika belum, salin log crash yang dihasilkan dan buka masalah baru. Gunakan template \"%s\" dan isi deskripsi, langkah-langkah untuk mereproduksi, dan tempel log crash yang dihasilkan di bagian akhir. Ini membantu membuat Humming lebih baik dan lebih stabil untuk semuanya. Terima kasih!</string>
     <string name="crash_dialog__copy_to_clipboard" comment="Label of Copy to clipboard button in crash dialog">Salin ke papan klip sistem</string>
     <string name="crash_dialog__copy_to_clipboard_success" comment="Label of Copy to clipboard success message in crash dialog">Disalin ke papan klip sistem</string>
     <string name="crash_dialog__copy_to_clipboard_failure" comment="Label of Copy to clipboard failure message in crash dialog">Tidak bisa salin ke papan klip sistem: Instansi pengelola papan klip tidak ditemukan</string>
-    <string name="crash_dialog__open_issue_tracker" comment="Label of Open issue tracker button in crash dialog">Buka pelacak masalah (github.com)</string>
     <string name="crash_dialog__close" comment="Label of Close button in crash dialog">Tutup</string>
     <string name="crash_notification_channel__title" comment="Title of crash notification channel">Laporan kesalahan Humming</string>
     <string name="crash_once_notification__title" comment="Title of the notification for a single crash">Humming berhenti bekerja…</string>

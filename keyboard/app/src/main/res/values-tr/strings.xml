@@ -531,8 +531,6 @@
     <string name="about__version_copied__error" comment="Title of the error toast for copying the version string">Bir şeyler ters gitti: {error_message}</string>
     <string name="about__changelog__title" comment="Preference title">Değişiklik günlüğü</string>
     <string name="about__changelog__summary" comment="Preference summary">Yenilikler</string>
-    <string name="about__repository__title" comment="Preference title">Depo (GitHub)</string>
-    <string name="about__repository__summary" comment="Preference summary">Kaynak kodu, tartışmalar, sorunlar ve bilgiler</string>
     <string name="about__privacy_policy__title" comment="Preference title">Gizlilik politikası</string>
     <string name="about__privacy_policy__summary" comment="Preference summary">Bu projenin gizlilik politikası</string>
     <string name="about__project_license__title" comment="Preference title">Proje lisansı</string>
@@ -545,7 +543,6 @@
     <string name="setup__title" comment="Title of Setup">Hoş geldiniz!</string>
     <string name="setup__intro_message" comment="Short intro message welcoming new users">{app_name} kullandığınız için teşekkürler! Bu hızlı kurulum, cihazınızda {app_name} kullanmak için gerekli adımlarda size rehberlik eder.</string>
     <string name="setup__footer__privacy_policy" comment="Privacy policy label for URL">Gizlilik politikası</string>
-    <string name="setup__footer__repository" comment="Repository label for URL">Depo</string>
     <string name="setup__enable_ime__title">{app_name} uygulamasını etkinleştirin</string>
     <string name="setup__enable_ime__description">Android, kullanabilmeniz için her özel klavyenin ayrı ayrı etkinleştirilmesini gerektirir. Sistem <i>Dil ve Giriş</i> Ayarlarını açın, orada \"{app_name}\" öğesini etkinleştirin.</string>
     <string name="setup__enable_ime__open_settings_btn">Sistem Ayarlarını Aç</string>
@@ -600,11 +597,9 @@
     <!-- Crash Dialog strings -->
     <string name="crash_dialog__title" comment="Title of crash dialog">Humming hata raporu</string>
     <string name="crash_dialog__description" comment="Description of crash dialog">Verdiğimiz rahatsızlıktan dolayı özür dileriz, ancak Humming beklenmedik bir hata nedeniyle çöktü.</string>
-    <string name="crash_dialog__report_instructions" comment="Issue tracker report instructions for the crash dialog. The %s placeholder is the name of the crash report template and always in English/LTR.">Bu hatayı bildirmek isterseniz, önce GitHub\'daki sorun izleyiciyi kontrol ederek çökmenizin daha önce bildirilip bildirilmediğini kontrol edin.\nBildirilmediyse, oluşturulan çökme günlüğünü kopyalayın ve yeni bir sorun açın. \"%s\" şablonunu kullanın ve açıklamayı, yeniden oluşturma adımlarını doldurun ve oluşturulan çökme günlüğünü sonuna yapıştırın. Bu, Humming\'un herkes için daha iyi ve daha kararlı hale gelmesine yardımcı olur. Teşekkür ederiz!</string>
     <string name="crash_dialog__copy_to_clipboard" comment="Label of Copy to clipboard button in crash dialog">Sistem panosuna kopyala</string>
     <string name="crash_dialog__copy_to_clipboard_success" comment="Label of Copy to clipboard success message in crash dialog">Sistem panosuna kopyalandı</string>
     <string name="crash_dialog__copy_to_clipboard_failure" comment="Label of Copy to clipboard failure message in crash dialog">Sistem panosuna kopyalanamıyor: Pano yöneticisi örneği bulunamadı</string>
-    <string name="crash_dialog__open_issue_tracker" comment="Label of Open issue tracker button in crash dialog">Sorun izleyiciyi aç (github.com)</string>
     <string name="crash_dialog__close" comment="Label of Close button in crash dialog">Kapat</string>
     <string name="crash_notification_channel__title" comment="Title of crash notification channel">Humming hata raporları</string>
     <string name="crash_once_notification__title" comment="Title of the notification for a single crash">Humming çalışmayı durdurdu…</string>

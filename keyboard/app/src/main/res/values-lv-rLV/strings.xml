@@ -497,8 +497,6 @@
     <string name="about__version_copied__error" comment="Title of the error toast for copying the version string">Kaut kas nogāja greizi: {error_message}</string>
     <string name="about__changelog__title" comment="Preference title">Izmaiņu žurnāls</string>
     <string name="about__changelog__summary" comment="Preference summary">Kas jauns?</string>
-    <string name="about__repository__title" comment="Preference title">Glabātava (GitHub)</string>
-    <string name="about__repository__summary" comment="Preference summary">Pirmkods, apspriedes, nepilnības un uzziņa</string>
     <string name="about__privacy_policy__title" comment="Preference title">Privātuma nosacījumi</string>
     <string name="about__privacy_policy__summary" comment="Preference summary">Šī projekta privātuma nosacījumi</string>
     <string name="about__project_license__title" comment="Preference title">Projekta licence</string>
@@ -511,7 +509,6 @@
     <string name="setup__title" comment="Title of Setup">Sveiciens!</string>
     <string name="setup__intro_message" comment="Short intro message welcoming new users">Paldies par {app_name} izmantošanu! Ātrā uzstādīšana virza caur nepieciešamajiem soļiem, lai ierīcē izmantotu {app_name}.</string>
     <string name="setup__footer__privacy_policy" comment="Privacy policy label for URL">Privātuma nosacījumi</string>
-    <string name="setup__footer__repository" comment="Repository label for URL">Glabātava</string>
     <string name="setup__enable_ime__title">Iespējot {app_name}</string>
     <string name="setup__enable_ime__description">Android ir nepieciešams pirms katras pielāgotās tastatūras izmantošanas to iespējot. Lai to izdarītu, jāatver sistēmas iestatījumi <i>Valoda un ievade</i> un tur jāiespējo \"{app_name}\".</string>
     <string name="setup__enable_ime__open_settings_btn">Atvērt sistēmas iestatījumus</string>
@@ -569,11 +566,9 @@
     <!-- Crash Dialog strings -->
     <string name="crash_dialog__title" comment="Title of crash dialog">Humming kļūdu ziņojums</string>
     <string name="crash_dialog__description" comment="Description of crash dialog">Atvainojamies par neērtībām, bet FlorsBoard avarēja neparedzētas kļūdas dēļ.</string>
-    <string name="crash_dialog__report_instructions" comment="Issue tracker report instructions for the crash dialog. The %s placeholder is the name of the crash report template and always in English/LTR.">Ja ir vēlme ziņot par šo kļūdu, vispirms jāpārliecinās, vai GitHub pieteikumu ceļrādī par šādu avāriju jau ir ziņots.\nJa nē, starpliktuvē jāievieto izveidotais avārijas žurnāls un jāatver jauns pieteikums. Jāizmanto \"%s\" veidne un jānorāda apraksts, darbības atkārtošanai un beigās jāielīmē avārijas žurnāls. Tas palīdz padarīt Humming labāku un noturīgāku ikvienam. Paldies!</string>
     <string name="crash_dialog__copy_to_clipboard" comment="Label of Copy to clipboard button in crash dialog">Ievietot sistēmas starpliktuvē</string>
     <string name="crash_dialog__copy_to_clipboard_success" comment="Label of Copy to clipboard success message in crash dialog">Ievietots sistēmas starpliktuvē</string>
     <string name="crash_dialog__copy_to_clipboard_failure" comment="Label of Copy to clipboard failure message in crash dialog">Nav iespējams ievietot sistēmas starpliktuvē: nav atrasts starpliktuves pārvaldnieks</string>
-    <string name="crash_dialog__open_issue_tracker" comment="Label of Open issue tracker button in crash dialog">Atvērt pieteikumu ceļrādi (GitHub.com)</string>
     <string name="crash_dialog__close" comment="Label of Close button in crash dialog">Aizvērt</string>
     <string name="crash_notification_channel__title" comment="Title of crash notification channel">Humming kļūdu ziņojumi</string>
     <string name="crash_once_notification__title" comment="Title of the notification for a single crash">Humming pārstāja darboties…</string>

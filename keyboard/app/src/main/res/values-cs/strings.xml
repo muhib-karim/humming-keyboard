@@ -531,8 +531,6 @@
     <string name="about__version_copied__error" comment="Title of the error toast for copying the version string">Něco se pokazilo: {error_message}</string>
     <string name="about__changelog__title" comment="Preference title">Změny</string>
     <string name="about__changelog__summary" comment="Preference summary">Co je nového</string>
-    <string name="about__repository__title" comment="Preference title">Repozitář (GitHub)</string>
-    <string name="about__repository__summary" comment="Preference summary">Zdrojový kód, diskuze, problémy a informace</string>
     <string name="about__privacy_policy__title" comment="Preference title">Soukromí</string>
     <string name="about__privacy_policy__summary" comment="Preference summary">Zásady ochrany soukromí tohoto projektu</string>
     <string name="about__project_license__title" comment="Preference title">Licence projektu</string>
@@ -545,7 +543,6 @@
     <string name="setup__title" comment="Title of Setup">Vítejte!</string>
     <string name="setup__intro_message" comment="Short intro message welcoming new users">Děkujeme za používání aplikace {app_name}! Toto rychlé nastavení vás provede kroky vyžadovanými k používání {app_name} na vašem zařízení.</string>
     <string name="setup__footer__privacy_policy" comment="Privacy policy label for URL">Soukromí</string>
-    <string name="setup__footer__repository" comment="Repository label for URL">Repozitář</string>
     <string name="setup__enable_ime__title">Povolit {app_name}</string>
     <string name="setup__enable_ime__description">Android vyžaduje, aby každá vlastní klávesnice byla ručně povolena, než ji budete moci použít. Otevřete systémové nastavení <i>Jazyk a vstup</i> a v něm povolte „{app_name}“.</string>
     <string name="setup__enable_ime__open_settings_btn">Otevřít systémová nastavení</string>
@@ -603,11 +600,9 @@
     <!-- Crash Dialog strings -->
     <string name="crash_dialog__title" comment="Title of crash dialog">Zpráva o chybě Hummingu</string>
     <string name="crash_dialog__description" comment="Description of crash dialog">Omlouváme se za potíže, ale aplikace Humming spadla kvůli neočekávané chybě.</string>
-    <string name="crash_dialog__report_instructions" comment="Issue tracker report instructions for the crash dialog. The %s placeholder is the name of the crash report template and always in English/LTR.">Pokud chcete tuto chybu nahlásit, podívejte se nejprve do nástroje pro sledování problémů na GitHubu, pokud již nebyla chyba nahlášena.\nPokud tomu tak není, zkopírujte vygenerovaný záznam o chybě a otevřete nový problém. Použijte šablonu „%s“ a vyplňte popis, kroky k reprodukci a na konec vložte vygenerovaný záznam o pádu. Pomůžete tak k tomu, aby byl Humming lepší a stabilnější pro všechny. Děkujeme!</string>
     <string name="crash_dialog__copy_to_clipboard" comment="Label of Copy to clipboard button in crash dialog">Kopírovat do schránky</string>
     <string name="crash_dialog__copy_to_clipboard_success" comment="Label of Copy to clipboard success message in crash dialog">Zkopírováno do schránky</string>
     <string name="crash_dialog__copy_to_clipboard_failure" comment="Label of Copy to clipboard failure message in crash dialog">Nepodařilo se zkopírovat do systémové schránky: Instance správce schránky nenalezena</string>
-    <string name="crash_dialog__open_issue_tracker" comment="Label of Open issue tracker button in crash dialog">Nahlásit problém (github.com)</string>
     <string name="crash_dialog__close" comment="Label of Close button in crash dialog">Zavřít</string>
     <string name="crash_notification_channel__title" comment="Title of crash notification channel">Chybová hlášení Humming</string>
     <string name="crash_once_notification__title" comment="Title of the notification for a single crash">Humming přestal pracovat…</string>

@@ -431,8 +431,6 @@
     <string name="about__version_copied__error" comment="Title of the error toast for copying the version string">Щось пішло не так: {error_message}</string>
     <string name="about__changelog__title" comment="Preference title">Журнал змін</string>
     <string name="about__changelog__summary" comment="Preference summary">Що нового</string>
-    <string name="about__repository__title" comment="Preference title">Репозиторій (GitHub)</string>
-    <string name="about__repository__summary" comment="Preference summary">Вихідний код, обговорення, проблеми та інформація</string>
     <string name="about__privacy_policy__title" comment="Preference title">Політика конфіденційності</string>
     <string name="about__privacy_policy__summary" comment="Preference summary">Політика приватності для цього проєкту</string>
     <string name="about__project_license__title" comment="Preference title">Ліцензія проєкту</string>
@@ -445,7 +443,6 @@
     <string name="setup__title" comment="Title of Setup">Ласкаво просимо!</string>
     <string name="setup__intro_message" comment="Short intro message welcoming new users">Дякуємо за використання {app_name}! Це коротке налаштування допоможе вам виконати необхідні кроки для використання {app_name} на вашому пристрої.</string>
     <string name="setup__footer__privacy_policy" comment="Privacy policy label for URL">Політика конфіденційності</string>
-    <string name="setup__footer__repository" comment="Repository label for URL">Сховище</string>
     <string name="setup__enable_ime__title">Ввімкнути {app_name}</string>
     <string name="setup__enable_ime__description"><i> </i> {app_name}.</string>
     <string name="setup__enable_ime__open_settings_btn">Відкрити системні налаштування</string>
@@ -497,11 +494,9 @@
     <!-- Crash Dialog strings -->
     <string name="crash_dialog__title" comment="Title of crash dialog">Звіт про помилку Humming</string>
     <string name="crash_dialog__description" comment="Description of crash dialog">Вибачте за незручності, але стався збій у Humming через несподівану помилку.</string>
-    <string name="crash_dialog__report_instructions" comment="Issue tracker report instructions for the crash dialog. The %s placeholder is the name of the crash report template and always in English/LTR.">Якщо ви хочете повідомити про цю помилку, спочатку перевірте відстеження проблем на GitHub, якщо про ваш збій ще не повідомлялося.\nЯкщо ні, скопіюйте згенерований журнал збоїв і створіть нову проблему. Використовуйте шаблон «%s» і заповніть опис, кроки для відтворення, а в кінці вставте згенерований лог збоїв. Це допоможе зробити Humming кращим і стабільнішим для всіх. Дякуємо!</string>
     <string name="crash_dialog__copy_to_clipboard" comment="Label of Copy to clipboard button in crash dialog">Зкопіювати в системний буфер обміну</string>
     <string name="crash_dialog__copy_to_clipboard_success" comment="Label of Copy to clipboard success message in crash dialog">Зкопійовано в системний буфер обміну</string>
     <string name="crash_dialog__copy_to_clipboard_failure" comment="Label of Copy to clipboard failure message in crash dialog">Не вдається скопіювати до системного буфера обміну: Не знайдено екземпляр диспетчера буфера обміну</string>
-    <string name="crash_dialog__open_issue_tracker" comment="Label of Open issue tracker button in crash dialog">Відкрити відстеження проблем (github.com)</string>
     <string name="crash_dialog__close" comment="Label of Close button in crash dialog">Закрити</string>
     <string name="crash_notification_channel__title" comment="Title of crash notification channel">Звіти про помилки Humming</string>
     <string name="crash_once_notification__title" comment="Title of the notification for a single crash">Humming перестав працювати…</string>

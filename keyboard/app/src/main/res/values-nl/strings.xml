@@ -449,8 +449,6 @@
     <string name="about__version_copied__error" comment="Title of the error toast for copying the version string">Er is iets misgegaan: {error_message}</string>
     <string name="about__changelog__title" comment="Preference title">Wijzigingenlogboek</string>
     <string name="about__changelog__summary" comment="Preference summary">Wat is er nieuw</string>
-    <string name="about__repository__title" comment="Preference title">Opslagplaats (GitHub)</string>
-    <string name="about__repository__summary" comment="Preference summary">Broncode, discussies, problemen en info</string>
     <string name="about__privacy_policy__title" comment="Preference title">Privacybeleid</string>
     <string name="about__privacy_policy__summary" comment="Preference summary">Het privacybeleid voor dit project</string>
     <string name="about__project_license__title" comment="Preference title">Projectlicentie</string>
@@ -463,7 +461,6 @@
     <string name="setup__title" comment="Title of Setup">Welkom!</string>
     <string name="setup__intro_message" comment="Short intro message welcoming new users">Bedankt voor het gebruik van {app_name}! Deze snelle installatie leidt u door de vereiste stappen om {app_name} op uw apparaat te gebruiken.</string>
     <string name="setup__footer__privacy_policy" comment="Privacy policy label for URL">Privacybeleid</string>
-    <string name="setup__footer__repository" comment="Repository label for URL">Opslagplaats</string>
     <string name="setup__enable_ime__title">{app_name} inschakelen</string>
     <string name="setup__enable_ime__description">Android vereist dat elk aangepast toetsenbord afzonderlijk is ingeschakeld voordat u het kunt gebruiken. Open het systeem<i> Taal</i> Instellingen, activeer daar \"{app_name}\".</string>
     <string name="setup__enable_ime__open_settings_btn">Systeeminstellingen openen</string>
@@ -515,11 +512,9 @@ Deze toestemming kan op elk moment worden gewijzigd in de systeeminstellingen.  
     <!-- Crash Dialog strings -->
     <string name="crash_dialog__title" comment="Title of crash dialog">Humming-foutenrapportage</string>
     <string name="crash_dialog__description" comment="Description of crash dialog">Sorry voor het ongemak, maar Humming is gecrashed omwille van een onverwachte fout.</string>
-    <string name="crash_dialog__report_instructions" comment="Issue tracker report instructions for the crash dialog. The %s placeholder is the name of the crash report template and always in English/LTR.">Als je deze fout wilt rapporteren, kijk dan eerst in de issuetracker op GitHub of de crash nog niet gerapporteerd is.\nAls dat niet het geval is, kopieer dan de gegenereerde crashlogboek en open een nieuwe issue. Gebruik het \"%s\"-sjabloon en vul de beschrijving in, de stappen om te reproduceren, en plak het gegenereerde crash log aan het eind. Dit helpt om Humming beter en stabieler te maken voor iedereen. Bedankt!</string>
     <string name="crash_dialog__copy_to_clipboard" comment="Label of Copy to clipboard button in crash dialog">Kopieer naar systeemklembord</string>
     <string name="crash_dialog__copy_to_clipboard_success" comment="Label of Copy to clipboard success message in crash dialog">Gekopieerd naar systeemklembord</string>
     <string name="crash_dialog__copy_to_clipboard_failure" comment="Label of Copy to clipboard failure message in crash dialog">Kan niet kopiëren naar systeemklembord: Klembordbeheerinstantie niet gevonden</string>
-    <string name="crash_dialog__open_issue_tracker" comment="Label of Open issue tracker button in crash dialog">Probleemtracker openen (github.com)</string>
     <string name="crash_dialog__close" comment="Label of Close button in crash dialog">Sluiten</string>
     <string name="crash_notification_channel__title" comment="Title of crash notification channel">Foutenrapporten van Humming</string>
     <string name="crash_once_notification__title" comment="Title of the notification for a single crash">Humming is gestopt met werken…</string>

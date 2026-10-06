@@ -14,8 +14,9 @@
   Built-in extensions show "Built-in" instead of their internal `org.florisboard.*` ID, and theme and language-pack
   details are readable ("Authors", "Night theme", "Language") instead of developer fields. Internal IDs are unchanged,
   so settings and themes carry over.
-- **About, setup, crash screen**: Changelog, Repository, Privacy policy, the issue tracker and crash-report links now
-  go to Humming's own repository and privacy policy instead of FlorisBoard's. The one credit line stays in About:
+- **About, setup, crash screen**: the Changelog, Website (was "Repository"), Privacy policy and crash-report links now
+  go to Humming's own public site (humming-keyboard.pages.dev, with a changelog page) and privacy policy instead of
+  FlorisBoard's. The one credit line stays in About:
   "Android keyboard built on FlorisBoard (Apache 2.0)". The extra credit in Settings > Voice was removed, as were two
   links to FlorisBoard's GitHub (a feedback thread and an internal key-code table in the theme editor).
 - Android version 1.6.2 (versionCode 1602). Desktop and iOS are unchanged.

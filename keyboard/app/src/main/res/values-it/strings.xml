@@ -445,8 +445,6 @@
     <string name="about__version_copied__error" comment="Title of the error toast for copying the version string">Qualcosa è andato storto: {error_message}</string>
     <string name="about__changelog__title" comment="Preference title">Registro delle modifiche</string>
     <string name="about__changelog__summary" comment="Preference summary">Cosa c\'è di nuovo</string>
-    <string name="about__repository__title" comment="Preference title">Repository (GitHub)</string>
-    <string name="about__repository__summary" comment="Preference summary">Codice sorgente, discussioni, problemi e informazioni</string>
     <string name="about__privacy_policy__title" comment="Preference title">Informativa sulla privacy</string>
     <string name="about__privacy_policy__summary" comment="Preference summary">L\'informativa sulla privacy per questo progetto</string>
     <string name="about__project_license__title" comment="Preference title">Licenza del progetto</string>
@@ -459,7 +457,6 @@
     <string name="setup__title" comment="Title of Setup">Benvenuto!</string>
     <string name="setup__intro_message" comment="Short intro message welcoming new users">Grazie per aver utilizzato {app_name}! Questa veloce guida potrebbe aiutarti a configurare la nostra tastiera {app_name} sul tuo dispositivo.</string>
     <string name="setup__footer__privacy_policy" comment="Privacy policy label for URL">Informativa sulla privacy</string>
-    <string name="setup__footer__repository" comment="Repository label for URL">Repository</string>
     <string name="setup__enable_ime__title">Abilita {app_name}</string>
     <string name="setup__enable_ime__description">Android richiede che ogni tastiera esterna sia separatamente abilitata prima di utilizzarla. Apri le impostazioni di Sistema <i> Lingue &amp; Impostazioni Immissione</i>, Impostazioni della tastiera. Abilita {app_name}.</string>
     <string name="setup__enable_ime__open_settings_btn">Apri le impostazioni di sistema</string>
@@ -501,11 +498,9 @@
     <!-- Crash Dialog strings -->
     <string name="crash_dialog__title" comment="Title of crash dialog">Segnalazione errore</string>
     <string name="crash_dialog__description" comment="Description of crash dialog">Ci dispiace per l\'inconveniente, ma Humming si è chiuso a causa di un errore inaspettato.</string>
-    <string name="crash_dialog__report_instructions" comment="Issue tracker report instructions for the crash dialog. The %s placeholder is the name of the crash report template and always in English/LTR.">Se desideri segnalare questo errore, prima controlla se è già stato segnalato nel centro problemi su GitHub.\nSe non lo è, copia il registro di \'interruzione generato e apri un nuovo problema. Usa il modello \"%s\" e compila la descrizione, i passi per riprodurre il problema, e incolla il registro di interruzione generato alla fine. Questo aiuta a migliorare Humming e a renderlo più stabile per tutti. Grazie!</string>
     <string name="crash_dialog__copy_to_clipboard" comment="Label of Copy to clipboard button in crash dialog">Copia negli appunti di sistema</string>
     <string name="crash_dialog__copy_to_clipboard_success" comment="Label of Copy to clipboard success message in crash dialog">Copiato negli appunti di sistema</string>
     <string name="crash_dialog__copy_to_clipboard_failure" comment="Label of Copy to clipboard failure message in crash dialog">Impossibile copiare sugli appunti di sistema: l\'istanza del gestore appunti non è stata trovata</string>
-    <string name="crash_dialog__open_issue_tracker" comment="Label of Open issue tracker button in crash dialog">Apri il centro problemi (github.com)</string>
     <string name="crash_dialog__close" comment="Label of Close button in crash dialog">Chiudi</string>
     <string name="crash_notification_channel__title" comment="Title of crash notification channel">Segnalazioni di errore di Humming</string>
     <string name="crash_once_notification__title" comment="Title of the notification for a single crash">Humming ha smesso di funzionare…</string>

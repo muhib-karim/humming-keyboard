@@ -1,9 +1,9 @@
 <resources>
     <string name="about__built_on_florisboard" translatable="false">Android keyboard built on FlorisBoard (Apache 2.0)</string>
-    <string name="florisboard__repo_url" translatable="false">https://github.com/muhib-karim/humming-keyboard</string>
-    <string name="florisboard__issue_tracker_url" translatable="false">https://github.com/muhib-karim/humming-keyboard/issues</string>
+    <string name="florisboard__repo_url" translatable="false">https://humming-keyboard.pages.dev/</string>
+    <string name="florisboard__issue_tracker_url" translatable="false">https://humming-keyboard.pages.dev/#support</string>
     <string name="florisboard__privacy_policy_url" translatable="false">https://muhib-karim.github.io/humming-keyboard/privacy.html</string>
-    <string name="florisboard__changelog_url" translatable="false">https://github.com/muhib-karim/humming-keyboard/releases/tag/v{version}</string>
+    <string name="florisboard__changelog_url" translatable="false">https://humming-keyboard.pages.dev/changelog.html#v{version}</string>
     <string name="florisboard__commit_by_hash_url" translatable="false">https://github.com/muhib-karim/humming-keyboard/commit/{hash}</string>
     <string name="florisboard__character_key_codes_url" translatable="false">https://unicode-table.com/en</string>
 

@@ -431,8 +431,6 @@
     <string name="about__version_copied__error" comment="Title of the error toast for copying the version string">لقد حدث خطأ ما: {error_message}</string>
     <string name="about__changelog__title" comment="Preference title">سِجل التغييرات</string>
     <string name="about__changelog__summary" comment="Preference summary">مالجديد</string>
-    <string name="about__repository__title" comment="Preference title">المستودع(چيتهب)</string>
-    <string name="about__repository__summary" comment="Preference summary">الكود المصدري, المناقشات, الاخطاء والمعلومات</string>
     <string name="about__privacy_policy__title" comment="Preference title">سياسة الخصوصية</string>
     <string name="about__privacy_policy__summary" comment="Preference summary">سياسة الخصوصية لهذا المشروع</string>
     <string name="about__project_license__title" comment="Preference title">رخصة المشروع</string>
@@ -445,7 +443,6 @@
     <string name="setup__title" comment="Title of Setup">مرحباً!</string>
     <string name="setup__intro_message" comment="Short intro message welcoming new users">شكرًا لاستخدامك {app_name}! سيرشدك هذا الإعداد السريع خلال الخطوات المطلوبة لاستخدام {app_name} على جهازك.</string>
     <string name="setup__footer__privacy_policy" comment="Privacy policy label for URL">سياسة الخصوصية</string>
-    <string name="setup__footer__repository" comment="Repository label for URL">المستودع</string>
     <string name="setup__enable_ime__title">تفعيل {app_name}</string>
     <string name="setup__enable_ime__description">يتطلب نظام Android تمكين كل لوحة مفاتيح مخصصة بشكل منفصل قبل أن تتمكن من استخدامها. افتح النظام <i> اعدادات اللغة و الأدخال </i> وتمكين \"{app_name}\".</string>
     <string name="setup__enable_ime__open_settings_btn">افتح إعدادات النظام</string>
@@ -496,11 +493,9 @@
     <!-- Crash Dialog strings -->
     <string name="crash_dialog__title" comment="Title of crash dialog">تقرير حول خطأ في Humming</string>
     <string name="crash_dialog__description" comment="Description of crash dialog">نأسف للإزعاج ، ولكن Humming تعطل بسبب خطأ غير متوقع.</string>
-    <string name="crash_dialog__report_instructions" comment="Issue tracker report instructions for the crash dialog. The %s placeholder is the name of the crash report template and always in English/LTR.">إذا كنت ترغب في الإبلاغ عن هذا الخطأ ، فتحقق أولاً من أداة تعقب المشكلات على GitHub إذا لم يتم الإبلاغ عن العطل بالفعل. \n إذا لم يتم الإبلاغ عن هذا الخطأ ، فقم بنسخ سجل التعطل الذي تم إنشاؤه وافتح مشكلة جديدة. استخدم القالب واملأ الوصف وخطوات إعادة إنتاج ولصق سجل العطل الذي تم إنشاؤه في النهاية. هذا يساعد\"%s\" في جعل Humming أفضل وأكثر استقرارًا للجميع. شكرا لك!</string>
     <string name="crash_dialog__copy_to_clipboard" comment="Label of Copy to clipboard button in crash dialog">نسخ الى حافظة النظام</string>
     <string name="crash_dialog__copy_to_clipboard_success" comment="Label of Copy to clipboard success message in crash dialog">تم النسخ الى حافظة النظام</string>
     <string name="crash_dialog__copy_to_clipboard_failure" comment="Label of Copy to clipboard failure message in crash dialog">لا يمكن النسخ إلى حافظة النظام: لم يتم العثور على جلسة مدير الحافظة</string>
-    <string name="crash_dialog__open_issue_tracker" comment="Label of Open issue tracker button in crash dialog">فتح نموذج تقرير الخطأ (github.com)</string>
     <string name="crash_dialog__close" comment="Label of Close button in crash dialog">إغلاق</string>
     <string name="crash_notification_channel__title" comment="Title of crash notification channel">تقارير حول خطأ في Humming</string>
     <string name="crash_once_notification__title" comment="Title of the notification for a single crash">توقف Humming عن العمل…</string>

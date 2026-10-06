@@ -517,8 +517,6 @@
     <string name="about__version_copied__error" comment="Title of the error toast for copying the version string">問題が発生しました: {error_message}</string>
     <string name="about__changelog__title" comment="Preference title">変更履歴</string>
     <string name="about__changelog__summary" comment="Preference summary">新機能</string>
-    <string name="about__repository__title" comment="Preference title">リポジトリ (GitHub)</string>
-    <string name="about__repository__summary" comment="Preference summary">ソースコード、ディスカッション、課題、情報</string>
     <string name="about__privacy_policy__title" comment="Preference title">プライバシーポリシー</string>
     <string name="about__privacy_policy__summary" comment="Preference summary">このプロジェクトのプライバシーポリシー</string>
     <string name="about__project_license__title" comment="Preference title">プロジェクトライセンス</string>
@@ -531,7 +529,6 @@
     <string name="setup__title" comment="Title of Setup">ようこそ！</string>
     <string name="setup__intro_message" comment="Short intro message welcoming new users">{app_name}をご利用いただきありがとうございます！このクイックセットアップでは、お使いのデバイスで{app_name}を使用するために必要な手順を案内します。</string>
     <string name="setup__footer__privacy_policy" comment="Privacy policy label for URL">プライバシーポリシー</string>
-    <string name="setup__footer__repository" comment="Repository label for URL">リポジトリ</string>
     <string name="setup__enable_ime__title">{app_name}を有効にする</string>
     <string name="setup__enable_ime__description">Androidでは、使用する前にすべてのカスタムキーボードを個別に有効にする必要があります。システムの<i>「言語と入力」</i>設定を開き、「{app_name}」を有効にしてください。</string>
     <string name="setup__enable_ime__open_settings_btn">システム設定を開く</string>
@@ -580,11 +577,9 @@
     <!-- Crash Dialog strings -->
     <string name="crash_dialog__title" comment="Title of crash dialog">Hummingエラーレポート</string>
     <string name="crash_dialog__description" comment="Description of crash dialog">ご不便をおかけして申し訳ありませんが、予期しないエラーによりHummingがクラッシュしました。</string>
-    <string name="crash_dialog__report_instructions" comment="Issue tracker report instructions for the crash dialog. The %s placeholder is the name of the crash report template and always in English/LTR.">このエラーを報告する場合、まずGitHubの課題トラッカーでクラッシュがまだ報告されていないか確認してください。\n報告されていない場合は、生成されたクラッシュログをコピーして新しい課題を開き、「%s」テンプレートを使用して説明と再現手順を入力し、最後に生成されたクラッシュログを貼り付けてください。これにより、Hummingをより良く、より安定させるのに役立ちます。ご協力ありがとうございます！</string>
     <string name="crash_dialog__copy_to_clipboard" comment="Label of Copy to clipboard button in crash dialog">システムクリップボードにコピー</string>
     <string name="crash_dialog__copy_to_clipboard_success" comment="Label of Copy to clipboard success message in crash dialog">システムクリップボードにコピーしました</string>
     <string name="crash_dialog__copy_to_clipboard_failure" comment="Label of Copy to clipboard failure message in crash dialog">システムクリップボードにコピーできません：クリップボードマネージャーのインスタンスが見つかりません</string>
-    <string name="crash_dialog__open_issue_tracker" comment="Label of Open issue tracker button in crash dialog">課題トラッカーを開く (github.com)</string>
     <string name="crash_dialog__close" comment="Label of Close button in crash dialog">閉じる</string>
     <string name="crash_notification_channel__title" comment="Title of crash notification channel">Hummingエラーレポート</string>
     <string name="crash_once_notification__title" comment="Title of the notification for a single crash">Hummingの動作が停止しました…</string>

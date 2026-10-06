@@ -450,8 +450,6 @@
     <string name="about__version_copied__error" comment="Title of the error toast for copying the version string">Alguna cosa ha anat malament: {error_message}</string>
     <string name="about__changelog__title" comment="Preference title">Registre de canvis</string>
     <string name="about__changelog__summary" comment="Preference summary">Novetats</string>
-    <string name="about__repository__title" comment="Preference title">Repositori (GitHub)</string>
-    <string name="about__repository__summary" comment="Preference summary">Codi font, debats, incidències i informació</string>
     <string name="about__privacy_policy__title" comment="Preference title">Política de privacitat</string>
     <string name="about__privacy_policy__summary" comment="Preference summary">La política de privacitat per a aquest projecte</string>
     <string name="about__project_license__title" comment="Preference title">Llicència del projecte</string>
@@ -464,7 +462,6 @@
     <string name="setup__title" comment="Title of Setup">Benvinguts!</string>
     <string name="setup__intro_message" comment="Short intro message welcoming new users">Gràcies per usar {app_name}! Aquesta configuració ràpida t\'acompanyarà en els passos necessaris per poder usar {app_name} al teu dispositiu.</string>
     <string name="setup__footer__privacy_policy" comment="Privacy policy label for URL">Política de privacitat</string>
-    <string name="setup__footer__repository" comment="Repository label for URL">Repositori</string>
     <string name="setup__enable_ime__title">Habilita {app_name}</string>
     <string name="setup__enable_ime__description">Android requereix que cada teclat personalitzat s\'habiliti per separat abans de poder usar-lo. Obre els paràmetres de <i>Idioma i entrada</i> a Sistema i allà habilita \"{app_name}\".</string>
     <string name="setup__enable_ime__open_settings_btn">Obre els paràmetres del sistema</string>
@@ -516,11 +513,9 @@
     <!-- Crash Dialog strings -->
     <string name="crash_dialog__title" comment="Title of crash dialog">Informe d\'errors de Humming</string>
     <string name="crash_dialog__description" comment="Description of crash dialog">Disculpa les molèsties, però Humming ha fallat a conseqüència d\'un error inesperat.</string>
-    <string name="crash_dialog__report_instructions" comment="Issue tracker report instructions for the crash dialog. The %s placeholder is the name of the crash report template and always in English/LTR.">Si vols informar d\'aquest error, mira\'t primer si ja s\'ha informat al rastrejador d\'incidències de GitHub.\nSi no, copia el registre de l\'error i obre una incidència nova. Usa la plantilla %s i emplena-la amb la descripció, els passos per reproduir-lo i enganxa el registre d\'error generat al final. Això ens ajuda a millorar Humming i fer-lo més estable per a tothom. Gràcies!</string>
     <string name="crash_dialog__copy_to_clipboard" comment="Label of Copy to clipboard button in crash dialog">Copia al porta-retalls del sistema</string>
     <string name="crash_dialog__copy_to_clipboard_success" comment="Label of Copy to clipboard success message in crash dialog">S\'ha copiat al porta-retalls del sistema</string>
     <string name="crash_dialog__copy_to_clipboard_failure" comment="Label of Copy to clipboard failure message in crash dialog">No es pot copiar al porta-retalls del sistema: No s\'ha trobat la instància d\'administració del porta-retalls</string>
-    <string name="crash_dialog__open_issue_tracker" comment="Label of Open issue tracker button in crash dialog">Obre el rastrejador d\'incidències (github.com)</string>
     <string name="crash_dialog__close" comment="Label of Close button in crash dialog">Tanca</string>
     <string name="crash_notification_channel__title" comment="Title of crash notification channel">Informes d\'error de Humming</string>
     <string name="crash_once_notification__title" comment="Title of the notification for a single crash">Humming ha deixat de funcionar…</string>

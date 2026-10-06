@@ -456,8 +456,6 @@
     <string name="about__version_copied__error" comment="Title of the error toast for copying the version string">Etwas ist schief gelaufen: {error_message}</string>
     <string name="about__changelog__title" comment="Preference title">Änderungsprotokoll</string>
     <string name="about__changelog__summary" comment="Preference summary">Was ist neu</string>
-    <string name="about__repository__title" comment="Preference title">Repository (GitHub)</string>
-    <string name="about__repository__summary" comment="Preference summary">Quellcode, Diskussionen, Probleme und Info</string>
     <string name="about__privacy_policy__title" comment="Preference title">Datenschutzrichtlinie</string>
     <string name="about__privacy_policy__summary" comment="Preference summary">Datenschutzrichtlinie für dieses Projekt</string>
     <string name="about__project_license__title" comment="Preference title">Projekt-Lizenz</string>
@@ -470,7 +468,6 @@
     <string name="setup__title" comment="Title of Setup">Herzlich willkommen!</string>
     <string name="setup__intro_message" comment="Short intro message welcoming new users">Vielen Dank für die Nutzung von {app_name}! Dieses Quick Setup leitet dich durch die erforderlichen Schritte {app_name} auf deinem Gerät zu nutzen.</string>
     <string name="setup__footer__privacy_policy" comment="Privacy policy label for URL">Datenschutzrichtlinie</string>
-    <string name="setup__footer__repository" comment="Repository label for URL">Quellcode</string>
     <string name="setup__enable_ime__title">{app_name} aktivieren</string>
     <string name="setup__enable_ime__description">Android erfordert, dass jede nachinstallierte Tastatur vor der Nutzung aktiviert (eingeschaltet) wird. Öffne <i> Sprachen und Eingabe</i> in den Systemeinstellungen und aktiviere dort {app_name}.</string>
     <string name="setup__enable_ime__open_settings_btn">Systemeinstellungen öffnen</string>
@@ -519,11 +516,9 @@
     <!-- Crash Dialog strings -->
     <string name="crash_dialog__title" comment="Title of crash dialog">Humming Fehlermeldung</string>
     <string name="crash_dialog__description" comment="Description of crash dialog">Entschuldigung für die Unannehmlichkeiten, aber Humming ist aufgrund eines unerwarteten Fehlers abgestürzt.</string>
-    <string name="crash_dialog__report_instructions" comment="Issue tracker report instructions for the crash dialog. The %s placeholder is the name of the crash report template and always in English/LTR.">Wenn du diesen Fehler melden möchtest, prüfe zuerst im Issue Tracker auf Github, ob der Absturz bereits gemeldet worden ist.\nFalls nicht, kopiere den erzeugten Absturzbericht und erstelle ein neues Problem. Benutze die \"%s\"-Vorlage, gib die Beschreibung und die Schritte zum Reproduzieren des Fehlers an und füge am Ende den erzeugten Absturzbericht hinzu. Dies hilft, Humming für alle besser und stabiler zu machen. Vielen Dank!</string>
     <string name="crash_dialog__copy_to_clipboard" comment="Label of Copy to clipboard button in crash dialog">In die System-Zwischenablage kopieren</string>
     <string name="crash_dialog__copy_to_clipboard_success" comment="Label of Copy to clipboard success message in crash dialog">In die System-Zwischenablage kopiert</string>
     <string name="crash_dialog__copy_to_clipboard_failure" comment="Label of Copy to clipboard failure message in crash dialog">Kopieren zur System-Zwischenablage nicht möglich: Zwischenablagen-Manager-Instanz nicht gefunden</string>
-    <string name="crash_dialog__open_issue_tracker" comment="Label of Open issue tracker button in crash dialog">Öffne \"Issue Tracker\" (github.com)</string>
     <string name="crash_dialog__close" comment="Label of Close button in crash dialog">Schließen</string>
     <string name="crash_notification_channel__title" comment="Title of crash notification channel">Humming Fehlermeldungen</string>
     <string name="crash_once_notification__title" comment="Title of the notification for a single crash">Humming funktioniert nicht mehr …</string>

@@ -261,8 +261,6 @@
     <string name="about__version_copied__error" comment="Title of the error toast for copying the version string">Vyskytla sa chyba: {error_message}</string>
     <string name="about__changelog__title" comment="Preference title">Prehľad zmien</string>
     <string name="about__changelog__summary" comment="Preference summary">Čo je nové?</string>
-    <string name="about__repository__title" comment="Preference title">Repozitár (GitHub)</string>
-    <string name="about__repository__summary" comment="Preference summary">Zdrojový kód, diskusie, problémy a informácie</string>
     <string name="about__privacy_policy__title" comment="Preference title">Zásady ochrany osobných údajov</string>
     <string name="about__privacy_policy__summary" comment="Preference summary">Zásady ochrany osobných údajov v rámci tohto projektu</string>
     <string name="about__project_license__title" comment="Preference title">Licencia projektu</string>
@@ -274,7 +272,6 @@
     <string name="setup__title" comment="Title of Setup">Vitajte!</string>
     <string name="setup__intro_message" comment="Short intro message welcoming new users">Ďakujeme, že ste sa rozhodli pre {app_name}! Toto rýchle nastavenie vás prevedie krokmi potrebnými na to, aby ste {app_name} mohli používať na svojom zariadení.</string>
     <string name="setup__footer__privacy_policy" comment="Privacy policy label for URL">Zásady ochrany osobných údajov</string>
-    <string name="setup__footer__repository" comment="Repository label for URL">Repozitár</string>
     <string name="setup__enable_ime__title">Povoliť {app_name}</string>
     <string name="setup__enable_ime__description">Android vyžaduje, aby bola každá vlastná klávesnica samostatne povolená, kým ju bude možné používať. Prejdite na Systém <i> Jazyk a vstup </i> Nastavenia a povoľte tam aplikáciu {app_name}.</string>
     <string name="setup__enable_ime__open_settings_btn">Otvoriť systémové nastavenia</string>
