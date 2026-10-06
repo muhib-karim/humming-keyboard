@@ -28,7 +28,7 @@
     "--fn-pressed": "#1E2026",
     "--primary-strong": "#C93A5B",
     "--primary-strong-pressed": "#B03050",
-    "--primary-light": "#A99BFF"
+    "--primary-light": "#FF9DB4"
   },
   "window": {
     "background": "var(--background)",
