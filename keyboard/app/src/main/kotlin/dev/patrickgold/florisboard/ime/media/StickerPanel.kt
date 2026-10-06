@@ -321,6 +321,7 @@ fun openStickerSettings(ctx: Context) {
     runCatching {
         ctx.startActivity(
             android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse("ui://florisboard/settings/stickers"))
+                .addCategory(android.content.Intent.CATEGORY_BROWSABLE) // without it the app treats the VIEW intent as an extension import
                 .setPackage(ctx.packageName).addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK),
         )
     }

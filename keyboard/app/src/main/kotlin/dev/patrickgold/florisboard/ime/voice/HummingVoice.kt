@@ -744,6 +744,7 @@ private fun StatusPill(p: HummingPalette, icon: androidx.compose.ui.graphics.vec
 fun openVoiceSettings(ctx: Context) {
     runCatching {
         ctx.startActivity(Intent(Intent.ACTION_VIEW, android.net.Uri.parse("ui://florisboard/settings/voice"))
+            .addCategory(Intent.CATEGORY_BROWSABLE) // without it the app treats the VIEW intent as an extension import
             .setPackage(ctx.packageName).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
     }
 }

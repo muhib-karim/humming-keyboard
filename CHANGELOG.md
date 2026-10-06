@@ -19,6 +19,9 @@
   FlorisBoard's. The one credit line stays in About:
   "Android keyboard built on FlorisBoard (Apache 2.0)". The extra credit in Settings > Voice was removed, as were two
   links to FlorisBoard's GitHub (a feedback thread and an internal key-code table in the theme editor).
+- **Voice and sticker settings shortcuts, fixed**: tapping the dictation panel when the speech model is not downloaded
+  yet, or "+" in the sticker panel, opened an "Import extension" screen instead of Settings > Voice or Settings >
+  Stickers & GIFs. They now open the right settings page. (This was in 1.6.0 and 1.6.1 too; found by the 1.6.2 audit.)
 - Android version 1.6.2 (versionCode 1602). Desktop and iOS are unchanged.
 
 ## 1.6.1: Humming everywhere in the app, new icon, pink everywhere
