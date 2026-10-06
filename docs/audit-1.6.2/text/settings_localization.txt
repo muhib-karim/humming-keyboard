@@ -1,0 +1,10 @@
+Display language names in
+System locale
+Display keyboard labels in subtype language
+Manage installed language packs
+Experimental: manage extensions that add support for specific languages (shape-based Chinese input for now)
+Subtypes
+It seems that you haven't configured any subtypes. As a fallback the subtype English/QWERTY will be used!
+Languages & Layouts
+Add subtype
+Try out your setup

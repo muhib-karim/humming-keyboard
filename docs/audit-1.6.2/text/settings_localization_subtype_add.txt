@@ -1,0 +1,18 @@
+Subtype presets
+English (United States)
+qwerty
+English (United Kingdom)
+qwerty
+English (Australia)
+qwerty
+English (Canada)
+qwerty
+Arabic
+arabic
+Armenian
+armenian_alt_phonetic
+Armenian
+western_armenian
+Armenian
+eastern_armenian
+Cancel

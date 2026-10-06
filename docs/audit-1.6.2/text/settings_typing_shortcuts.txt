@@ -1,0 +1,12 @@
+Type a shortcut and the phrase appears in the middle of the suggestion strip; space expands it.
+Shortcut (letters or digits)
+Phrase
+Add shortcut
+omw
+On my way!
+Delete shortcut omw
+tysm
+Thank you so much!
+Delete shortcut tysm
+Text shortcuts
+Try out your setup

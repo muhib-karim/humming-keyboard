@@ -1,7 +1,7 @@
 <p align="center"><img src="docs/banner.png" alt="Humming: private voice typing that never leaves your device" width="100%"></p>
 
 <p align="center">
-<a href="https://github.com/muhib-karim/humming-keyboard/releases/latest"><img alt="Release" src="https://img.shields.io/badge/release-v1.6.1-e5486b"></a>
+<a href="https://github.com/muhib-karim/humming-keyboard/releases/latest"><img alt="Release" src="https://img.shields.io/badge/release-v1.6.2-e5486b"></a>
 <a href="https://github.com/muhib-karim/humming-keyboard/actions/workflows/keyboard.yml"><img alt="Android CI" src="https://github.com/muhib-karim/humming-keyboard/actions/workflows/keyboard.yml/badge.svg"></a>
 <a href="https://github.com/muhib-karim/humming-keyboard/actions/workflows/desktop.yml"><img alt="Desktop CI" src="https://github.com/muhib-karim/humming-keyboard/actions/workflows/desktop.yml/badge.svg"></a>
 <a href="https://github.com/muhib-karim/humming-keyboard/actions/workflows/ios.yml"><img alt="iOS CI" src="https://github.com/muhib-karim/humming-keyboard/actions/workflows/ios.yml/badge.svg"></a>
@@ -12,8 +12,9 @@
 # Humming Keyboard
 
 **A private keyboard with offline voice typing, for Android, iPhone, Windows, macOS and Linux.** Tap the mic and
-talk: the words are typed into the text field as you speak, for as long as you speak, even with the screen off. Tap
-the mic again to stop. Speech recognition runs on your device, so dictation works in airplane mode and your voice
+talk: your words appear in the text field as you speak, as an underlined draft that corrects itself in place, for as
+long as you speak, even with the screen off. Tap the mic again to stop and the final text is typed once (or turn off
+"Live text while speaking" to see nothing until you stop). Speech recognition runs on your device, so dictation works in airplane mode and your voice
 never leaves it. Free and open source.
 
 Android keyboard built on FlorisBoard (Apache 2.0).
@@ -43,13 +44,13 @@ Every file is on the [latest GitHub Release](https://github.com/muhib-karim/humm
 
 | Platform | Download | Install |
 |---|---|---|
-| **Android** 8.0+ | `Humming-1.6.0.apk` | Open the APK, allow "install unknown apps" for your browser or file manager, install. Then open Humming and follow the two steps: enable the keyboard, then switch to it. The first mic tap downloads the Fast speech model (104 MB, once). |
+| **Android** 8.0+ | `Humming-1.6.2.apk` | Open the APK, allow "install unknown apps" for your browser or file manager, install. Then open Humming and follow the two steps: enable the keyboard, then switch to it. The first mic tap downloads the Fast speech model (104 MB, once). |
 | **iPhone / iPad** (iOS 16+) | `Humming_1.5.0_unsigned.ipa` (1.6.0 has no iOS build yet) | Sideload with your own free Apple ID through Sideloadly, AltStore or Xcode (re-sign every 7 days). Then Settings > General > Keyboard > Keyboards > Add New Keyboard > Humming. Step by step: [docs/IOS_SIDELOAD.md](docs/IOS_SIDELOAD.md). |
 | **Windows** 10/11 x64 | `Humming_1.6.0_x64-setup.exe` (1.6.0 ships the setup .exe only; the last .msi is 1.5.0) | Run the installer. SmartScreen: **More info** > **Run anyway** ([details](#desktop-windows-macos-and-linux-how-to-open-it)). |
 | **macOS** 11+ (Apple silicon and Intel) | `Humming_1.5.0_universal.dmg` (1.6.0 has no macOS build yet, see below) | Drag to Applications, open once, then **System Settings > Privacy & Security > Open Anyway**. Allow Microphone and Accessibility. |
 | **Linux** x86-64 | `Humming_1.6.0_amd64.AppImage` or `.deb` | `chmod +x` the AppImage and run it, or `sudo apt install ./Humming_1.6.0_amd64.deb`. |
 
-Android, Windows and Linux are 1.6.0. macOS and iOS stay on 1.5.0 for now: 1.6.0 was built without GitHub Actions, on Linux build machines (Windows cross-compiled with cargo-xwin), and Apple's tools only run on a Mac. The macOS and iOS 1.5.0 files are on the [v1.5.0 release](https://github.com/muhib-karim/humming-keyboard/releases/tag/v1.5.0) and on the download site.
+Android is 1.6.2; Windows and Linux are 1.6.0. macOS and iOS stay on 1.5.0 for now: 1.6.0 was built without GitHub Actions, on Linux build machines (Windows cross-compiled with cargo-xwin), and Apple's tools only run on a Mac. The macOS and iOS 1.5.0 files are on the [v1.5.0 release](https://github.com/muhib-karim/humming-keyboard/releases/tag/v1.5.0) and on the download site.
 
 ### Updates (1.6)
 

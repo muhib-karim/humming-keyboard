@@ -1,0 +1,18 @@
+Split keyboard
+Split the keys for two thumbs in landscape and on tablets
+Number row
+Show a number row above the character layout
+Hinted number row
+Smart prioritization
+Hinted symbols
+Disabled
+Show utility key
+Shows a configurable utility key next to space bar
+Utility key action
+Dynamic: Switch to emojis / Switch language
+Spacebar label
+No label
+Capitalization behavior
+Enable Capslock by double tapping shift
+Keyboard
+Try out your setup

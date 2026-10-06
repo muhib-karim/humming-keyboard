@@ -1,0 +1,8 @@
+Merge with current data
+Erase and overwrite current data
+Restore mode
+Select file
+No file selected
+Restore data
+Cancel
+Restore

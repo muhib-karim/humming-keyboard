@@ -1,0 +1,14 @@
+Local file system
+Third-party app via share menu
+Select backup destination
+Preferences
+Keyboard extensions
+Theme extensions
+Clipboard history
+Text items
+Images
+Videos
+Select what to back up
+Back up data
+Cancel
+Back up

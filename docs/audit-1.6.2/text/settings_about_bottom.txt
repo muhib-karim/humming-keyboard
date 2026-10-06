@@ -1,0 +1,18 @@
+Parakeet 110M. Instant, very accurate. Recommended.
+3.7% word errors in our test · ~500 MB RAM while dictating · needs more RAM than this phone has
+Best
+482 MB
+Parakeet 0.6B. The most accurate; needs a phone with 6 GB of RAM or more.
+2.6% word errors in our test · ~1300 MB RAM while dictating · needs more RAM than this phone has
+Download on Wi-Fi only
+Never use mobile data for the model download.
+Speech engine
+Offline (recommended)
+Runs on this phone with the model above. Works in airplane mode; your voice never leaves the phone.
+Online
+This phone has no online speech service.
+Live text while speaking
+Your words appear as an underlined draft while you speak and are corrected in place, then typed once when you stop. Off: nothing appears until you stop, then the whole text is typed at once.
+Clean up speech
+Voice
+Try out your setup

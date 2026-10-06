@@ -1,0 +1,17 @@
+Default composers which are always available.
+View details
+Edit
+Default composers
+Default currency sets which are always available.
+View details
+Edit
+Default currency sets
+Default layouts which are always available.
+View details
+Edit
+Default layouts
+Default subtype presets and popup mappings which are always available.
+View details
+Edit
+Default subtype presets / popup mappings
+Keyboard extensions

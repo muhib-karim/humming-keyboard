@@ -1,0 +1,18 @@
+Audio feedback / Sounds
+Enable audio feedback
+Never play sounds for input events, regardless of system settings
+Sound volume for input events
+50%
+Key press sounds
+e.g. keys, buttons, emoji tabs
+Key long press sounds
+e.g. popup menu
+Key repeated action sounds
+e.g. delete key
+Gesture swipe sounds
+not implemented
+Gesture moving swipe sounds
+Gesture moving swipe sounds
+Haptic feedback / Vibration
+Sounds & Vibration
+Try out your setup

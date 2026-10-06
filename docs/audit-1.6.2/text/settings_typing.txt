@@ -1,0 +1,17 @@
+Voice button size
+38 dp
+Animate the toolbar
+Slide the toolbar buttons in and out
+Enable Smartbar
+Will show on top of the keyboard
+Layout
+Suggestions & Actions shared
+Layout-specific options
+Suggestions display mode
+Classic (3 columns)
+Flip toggle buttons
+Flips action row toggles
+Auto-expand/collapse
+[Since v0.4.1] Always enabled due to UX issues
+Smartbar
+Try out your setup

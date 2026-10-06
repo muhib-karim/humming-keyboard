@@ -1,0 +1,17 @@
+Stickers & GIFs
+Built-in and your own stickers; optional online GIF search (off by default)
+Preferred emoji skin tone
+👋 Default skin tone
+Emoji history
+Enable emoji history
+Retain recently used emojis for quick access
+Update strategy (Pinned)
+Manual sort (prepend)
+Update strategy (Recent)
+Auto sort (prepend)
+Maximum items to keep
+Unlimited / 90 items
+Reset pinned emojis
+Reset recent emojis
+Emojis
+Try out your setup

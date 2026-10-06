@@ -1,0 +1,17 @@
+Downloading Fast voice model… 41%
+A one-time 104 MB download. After that, dictation runs entirely on this phone, with no internet.
+Delete (45 MB)
+Voice model
+Fast
+104 MB
+Parakeet 110M. Instant, very accurate. Recommended.
+3.7% word errors in our test · ~500 MB RAM while dictating · needs more RAM than this phone has
+Best
+482 MB
+Parakeet 0.6B. The most accurate; needs a phone with 6 GB of RAM or more.
+2.6% word errors in our test · ~1300 MB RAM while dictating · needs more RAM than this phone has
+Download on Wi-Fi only
+Never use mobile data for the model download.
+Speech engine
+Voice
+Try out your setup

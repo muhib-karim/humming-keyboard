@@ -1,0 +1,10 @@
+Enable system user dictionary
+Suggest words stored in the system user dictionary
+Manage system user dictionary
+Add, view, and remove entries for the system user dictionary
+Enable internal user dictionary
+Suggest words stored in the internal user dictionary
+Manage internal user dictionary
+Add, view, and remove entries for the internal user dictionary
+User dictionaries
+Try out your setup

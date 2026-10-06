@@ -1,0 +1,18 @@
+Light or dark keyboard
+Match the phone (light or dark)
+Background image
+Put your own photo behind the keys
+Light theme (used when the keyboard is light)
+Humming Light
+Dark theme (used when the keyboard is dark)
+Humming Dark
+Sunrise time
+6:00 AM
+Sunset time
+6:00 PM
+Accent color (Material You themes)
+All tasks related to importing, exporting, creating, customizing, and removing extensions can be handled through the centralized addon manager.
+Go to Theme extensions
+Managing theme extensions
+Theme
+Try out your setup

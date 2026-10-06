@@ -1,0 +1,5 @@
+System physical keyboard settings
+Only available when keyboard is attached
+Show on-screen keyboard
+Show on-screen keyboard while using physical keyboard
+Physical keyboard

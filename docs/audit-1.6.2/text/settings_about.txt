@@ -1,0 +1,16 @@
+Humming app icon
+Humming
+Android keyboard built on FlorisBoard (Apache 2.0)
+Version
+1.6.2 (1602)
+Changelog
+What's new
+Website
+Downloads, updates and what's new
+Privacy policy
+The privacy policy for this project
+Project license
+Humming is licensed under Apache 2.0
+Third-party licenses
+Licenses of the third-party libraries included in this app
+About

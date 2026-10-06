@@ -1,0 +1,14 @@
+Search settings
+Find any setting by name
+Voice
+Offline dictation, voice model, microphone
+Languages & Layouts
+Theme
+Keyboard
+Smartbar
+Typing
+Gestures & Glide typing
+Clipboard
+Emojis
+Welcome to Humming
+Try out your setup

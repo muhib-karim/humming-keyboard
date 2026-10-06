@@ -1,0 +1,16 @@
+Use internal clipboard
+Use an internal clipboard instead of the system clipboard
+Sync from system clipboard
+All events
+Sync to system clipboard
+No events
+Clipboard suggestions
+Clipboard content suggestions
+Suggest previously copied clipboard content
+Limit clipboard suggestions to
+Items copied within the last 60 s
+Clipboard history
+Enable clipboard history
+Retain clipboard items for quick access
+Clipboard
+Try out your setup

@@ -1,0 +1,7 @@
+Humming comes with its themes, layouts and language packs built in. You can also import an extension file (.flex) you have downloaded, such as a theme or a language pack.
+Import
+Built-in extensions update together with Humming (Settings › Updates). To update an imported extension, import its newer file.
+Theme extensions
+Keyboard extensions
+Language pack extensions
+Addons & Extensions
