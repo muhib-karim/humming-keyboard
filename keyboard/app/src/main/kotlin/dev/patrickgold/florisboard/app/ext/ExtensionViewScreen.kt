@@ -104,7 +104,7 @@ private fun ViewScreen(ext: Extension) = FlorisScreen {
                 }
             }
             ExtensionMetaRowSimpleText(label = stringRes(R.string.ext__meta__id)) {
-                Text(text = ext.meta.id)
+                Text(text = extensionDisplayId(ext.meta.id))
             }
             ExtensionMetaRowSimpleText(label = stringRes(R.string.ext__meta__version)) {
                 Text(text = ext.meta.version)

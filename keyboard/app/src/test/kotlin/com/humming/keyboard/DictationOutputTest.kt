@@ -10,24 +10,31 @@ import kotlin.math.sin
 class DictationOutputTest {
     private val sr = 16_000
 
-    /** A text field: commits append at the cursor (the end), deletes remove before it. */
+    /**
+     * A text field like Android's: committed text, then the composing draft at the cursor (the end).
+     * setComposingText replaces the draft; commitText replaces the draft (if any) with the committed text.
+     */
     private class FakeField : DictationOutput.Field {
         val committed = mutableListOf<String>()
-        val text = StringBuilder()
-        override fun commit(text: String) { committed.add(text); this.text.append(text) }
-        override fun textBeforeCursor(n: Int): String = text.substring(maxOf(0, text.length - n))
-        override fun deleteBefore(n: Int): Boolean { text.setLength(maxOf(0, text.length - n)); return true }
+        val base = StringBuilder()
+        var composing = ""
+        val text: String get() = base.toString() + composing
+        var composingCalls = 0
+        override fun setComposing(text: String): Boolean { composing = text; composingCalls++; return true }
+        override fun commitFinal(text: String, replacesDraft: Boolean): Boolean {
+            composing = ""; committed.add(text); base.append(text); return true
+        }
+        override fun clearComposing() { composing = "" }
+        fun type(s: String) { base.append(s) }
     }
 
     private val tone: ShortArray = ShortArray(sr / 10) { i -> (0.2 * 32767 * sin(2 * PI * 220 * i / sr)).toInt().toShort() }
     private val quiet = ShortArray(sr / 10)
 
-    /**
-     * [minutes] of talking with natural pauses, fed in 100 ms blocks like the recorder, every segment "transcribed".
-     * Returns the field, the output and the words spoken.
-     */
-    private fun talk(minutes: Double, field: FakeField, previews: MutableList<String>): Pair<DictationOutput, List<String>> {
-        val out = DictationOutput(field, { previews.add(it) }, glue = " ")
+    /** [minutes] of talking with natural pauses, fed in 100 ms blocks like the recorder, every segment "transcribed". */
+    private fun talk(minutes: Double, field: FakeField, previews: MutableList<String>, live: Boolean = true):
+        Pair<DictationOutput, List<String>> {
+        val out = DictationOutput(field, { previews.add(it) }, glue = " ", live = live)
         val words = mutableListOf<String>()
         val seg = Segmenter(sr) { _ ->
             words.add("phrase${words.size + 1}")
@@ -47,63 +54,88 @@ class DictationOutputTest {
         return out to words
     }
 
-    @Test fun wordsAreTypedLiveWhileTalking() {
+    @Test fun liveWordsAreADraftNotCommits() {
         val field = FakeField()
         val previews = mutableListOf<String>()
         val (out, words) = talk(1.5, field, previews)
-        assertTrue("text typed while talking", field.committed.size >= 10)
+        assertTrue("draft updated while talking", field.composingCalls >= 10)
+        assertEquals("nothing committed while talking", 0, field.committed.size)
+        assertEquals(" " + words.joinToString(" "), field.text)
         assertTrue("live preview updated", previews.size >= 10)
         out.onStop()
         out.onPartial("late partial after stop")
         assertTrue(out.onFinal(words.joinToString(" ")))
-        assertEquals(" " + words.joinToString(" "), field.text.toString())
+        assertEquals(listOf(" " + words.joinToString(" ")), field.committed)
+        assertEquals(" " + words.joinToString(" "), field.text)
+        assertEquals("", field.composing)
         assertFalse(previews.contains("late partial after stop"))
         assertEquals("", previews.last())
     }
 
-    /** No length limit: an hour of dictation keeps every phrase, in order, exactly once. */
+    /** No length limit: an hour of dictation keeps every phrase, in order, exactly once, in one commit. */
     @Test fun oneHourSessionLosesNothing() {
         val field = FakeField()
         val (out, words) = talk(60.0, field, mutableListOf())
         assertTrue("an hour has hundreds of phrases", words.size > 600)
         out.onStop()
         assertTrue(out.onFinal(words.joinToString(" ")))
-        assertEquals(" " + words.joinToString(" "), field.text.toString())
+        assertEquals(1, field.committed.size)
+        assertEquals(" " + words.joinToString(" "), field.text)
     }
 
-    @Test fun cleanupRewriteOfTypedWordsIsReplaced() {
+    /** The bug fixed in 1.6.2: rewritten words used to stay in the field next to their replacements. */
+    @Test fun rewritesHappenInPlaceWithNoDuplicates() {
         val field = FakeField()
         val out = DictationOutput(field, {}, glue = "")
         out.onPartial("so um we meet")
         out.onPartial("so um we meet at three")
-        out.onPartial("so um we meet at three no wait four")
-        assertEquals("so um we meet at ", field.text.toString())
+        assertEquals("so um we meet at three", field.text)
+        out.onPartial("So we meet at three, no wait, four")
+        assertEquals("So we meet at three, no wait, four", field.text)
         out.onStop()
         assertTrue(out.onFinal("So we meet at four."))
-        assertEquals("So we meet at four.", field.text.toString())
+        assertEquals("So we meet at four.", field.text)
+        assertEquals(listOf("So we meet at four."), field.committed)
     }
 
-    @Test fun hiddenKeyboardHoldsWordsUntilItComesBack() {
+    @Test fun existingTextIsNeverTouched() {
+        val field = FakeField()
+        field.type("Dear Sam,")
+        val out = DictationOutput(field, {}, glue = " ")
+        out.onPartial("thanks for")
+        out.onPartial("Thanks for the notes")
+        assertEquals("Dear Sam, Thanks for the notes", field.text)
+        out.onStop()
+        assertTrue(out.onFinal("thanks for the notes."))
+        assertEquals("Dear Sam, thanks for the notes.", field.text)
+    }
+
+    @Test fun hiddenKeyboardShowsNothingUntilItComesBack() {
         val field = FakeField()
         val out = DictationOutput(field, {}, glue = "")
         out.onPartial("one two")
+        assertEquals("one two", field.text)
         out.detach()
+        assertEquals("", field.text)
         out.onPartial("one two three")
         out.onPartial("one two three four five")
-        assertEquals("", field.text.toString())
+        assertEquals("", field.text)
         out.attach()
-        assertEquals("one two ", field.text.toString())
+        assertEquals("one two three four five", field.text)
         out.onStop()
-        assertTrue(out.onFinal("one two three four five"))
-        assertEquals("one two three four five", field.text.toString())
+        assertTrue(out.onFinal("One, two, three, four, five."))
+        assertEquals(listOf("One, two, three, four, five."), field.committed)
+        assertEquals("One, two, three, four, five.", field.text)
     }
 
-    @Test fun noFieldAtStopKeepsTheRestOut() {
+    @Test fun noFieldAtStopKeepsTextOutAndRemovesDraft() {
         val field = FakeField()
         val out = DictationOutput(field, {}, glue = "")
+        out.onPartial("hello there")
         out.onStop()
         assertFalse(out.onFinal("hello there", toField = false))
         assertEquals(0, field.committed.size)
+        assertEquals("", field.text)
     }
 
     @Test fun finalIsAppliedOnceOnly() {
@@ -115,34 +147,48 @@ class DictationOutputTest {
         assertEquals(listOf("one"), field.committed)
     }
 
-    @Test fun blankFinalCommitsNothing() {
+    @Test fun blankFinalCommitsNothingAndClearsDraft() {
         val field = FakeField()
         val out = DictationOutput(field, {})
+        out.onPartial("uh")
         out.onStop()
         assertFalse(out.onFinal("  "))
         assertEquals(0, field.committed.size)
+        assertEquals("", field.text)
     }
 
-    @Test fun cancelRemovesWhatThisDictationTyped() {
+    @Test fun cancelLeavesTheFieldAsItWas() {
         val field = FakeField()
-        field.commit("Dear Sam,")
+        field.type("Dear Sam,")
         val out = DictationOutput(field, {}, glue = " ")
         out.onPartial("thanks for")
         out.onPartial("thanks for the notes")
-        // Only words two partials agree on, minus the newest one (it may still be rewritten), are typed.
-        assertEquals("Dear Sam, thanks ", field.text.toString())
         assertTrue(out.discard())
-        assertEquals("Dear Sam,", field.text.toString())
+        assertEquals("Dear Sam,", field.text)
+        assertEquals(0, field.committed.size)
     }
 
-    @Test fun notLiveMeansOneCommitOnStop() {
+    @Test fun liveOffShowsNothingAndCommitsOnceOnStop() {
         val field = FakeField()
-        val out = DictationOutput(field, {}, glue = "", live = false)
+        val previews = mutableListOf<String>()
+        val out = DictationOutput(field, { previews.add(it) }, glue = "", live = false)
         out.onPartial("a b c")
         out.onPartial("a b c d e")
-        assertEquals(0, field.committed.size)
+        assertEquals("", field.text)
+        assertEquals(0, field.composingCalls)
+        assertTrue("no words in the panel either", previews.none { it.isNotEmpty() })
         out.onStop()
         assertTrue(out.onFinal("a b c d e."))
         assertEquals(listOf("a b c d e."), field.committed)
+        assertEquals("a b c d e.", field.text)
+    }
+
+    @Test fun liveOffLongSessionIsOneCommit() {
+        val field = FakeField()
+        val (out, words) = talk(5.0, field, mutableListOf(), live = false)
+        assertEquals(0, field.composingCalls)
+        out.onStop()
+        assertTrue(out.onFinal(words.joinToString(" ")))
+        assertEquals(listOf(" " + words.joinToString(" ")), field.committed)
     }
 }

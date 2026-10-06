@@ -159,7 +159,8 @@ fun VoiceScreen() = FlorisScreen {
             HorizontalDivider()
             EngineSection()
             HorizontalDivider()
-            ToggleRow("Type as you talk", "Words appear in the text field while you speak. Off: everything is typed once, when you tap stop.",
+            ToggleRow("Live text while speaking", "Your words appear as an underlined draft while you speak and are corrected in place, " +
+                "then typed once when you stop. Off: nothing appears until you stop, then the whole text is typed at once.",
                 Prefs.KEY_LIVE_TYPING, Prefs.liveTyping(app))
             ToggleRow("Clean up speech", "Removes um and uh, stutters and repeats, and applies corrections like \"3pm, no wait, 4pm\" → \"4pm\".",
                 Prefs.KEY_CLEAN, Prefs.cleanMode(app))
@@ -191,7 +192,7 @@ fun VoiceScreen() = FlorisScreen {
             )
             Text(
                 "Speech model: NVIDIA Parakeet (CC-BY-4.0), run with sherpa-onnx (Apache-2.0) and ONNX Runtime (MIT). " +
-                    "Voice activity detection: Silero VAD (MIT). Keyboard: FlorisBoard (Apache-2.0).",
+                    "Voice activity detection: Silero VAD (MIT).",
                 fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Spacer(Modifier.height(24.dp))

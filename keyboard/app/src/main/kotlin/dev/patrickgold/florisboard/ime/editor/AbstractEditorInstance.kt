@@ -93,6 +93,12 @@ abstract class AbstractEditorInstance(context: Context) {
             _activeContentFlow.value = v
         }
     private val expectedContentQueue = ExpectedContentQueue()
+
+    /**
+     * Humming dictation owns the composing region (its live draft) while true: selection updates must not re-mark or
+     * finish it, or the next draft update would land beside the old one instead of replacing it.
+     */
+    @Volatile var externalComposing: Boolean = false
     private val _lastCommitPosition = LastCommitPosition()
     val lastCommitPosition
         get() = LastCommitPosition(_lastCommitPosition)
@@ -156,7 +162,7 @@ abstract class AbstractEditorInstance(context: Context) {
     protected fun handleMassSelectionUpdate(newSelection: EditorRange, composing: EditorRange) {
         activeCursorCapsMode = InputAttributes.CapsMode.NONE
         activeContent = EditorContent.selectionOnly(newSelection)
-        if (composing.isValid) {
+        if (composing.isValid && !externalComposing) {
             currentInputConnection()?.setComposingRegion(EditorRange.Unspecified)
         }
         _lastCommitPosition.handleUpdateSelection(newSelection)
@@ -203,7 +209,7 @@ abstract class AbstractEditorInstance(context: Context) {
             activeCursorCapsMode = content.cursorCapsMode()
             activeContent = content
             keyboardManager.reevaluateInputShiftState()
-            if (content.composing != composing) {
+            if (content.composing != composing && !externalComposing) {
                 ic.setComposingRegion(content.composing)
             }
         }

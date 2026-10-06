@@ -3,8 +3,9 @@
  *
  * The voice hero of the keyboard: a big gradient mic in the Smartbar opens a full-height voice panel with a live
  * transcript, a level-reactive mic orb (tap to start, tap again to stop: the one control), Clean mode and Cancel.
- * Words are typed into the field live as the user talks (DictationOutput); there is no length limit, and a
- * foreground service keeps the mic and the on-device engine running with the screen off (DictationService).
+ * While the user talks the words show in the field as an underlined draft that is corrected in place, and the final
+ * text is committed once on stop (DictationOutput; "Live text while speaking" off = nothing until stop). There is no
+ * length limit, and a foreground service keeps the mic and the on-device engine running with the screen off (DictationService).
  */
 package dev.patrickgold.florisboard.ime.voice
 
@@ -296,16 +297,47 @@ object HummingVoice {
         val s = if (streaming) StreamingSession(app) { partial -> main.post { onPartial(partial) } } else null
         output = DictationOutput(
             object : DictationOutput.Field {
-                override fun commit(text: String) {
+                // Live words are the field's composing text (the underlined draft), replaced in place on every partial;
+                // the final text is committed once. While the draft is up the editor must not re-mark the composing
+                // region around the current word (externalComposing), or the next update would land beside the old one.
+                private fun ic() = dev.patrickgold.florisboard.FlorisImeService.currentInputConnection()
+                override fun setComposing(text: String): Boolean {
+                    val ic = ic() ?: return false
                     val ed by app.editorInstance()
-                    ed.commitText(text)
+                    ic.beginBatchEdit()
+                    if (!ed.externalComposing) {
+                        ed.externalComposing = true
+                        // The keyboard may have marked the word before the cursor as composing (suggestions): fix it in
+                        // place first so the draft goes after it instead of replacing it.
+                        ic.finishComposingText()
+                    }
+                    val ok = ic.setComposingText(text, 1)
+                    ic.endBatchEdit()
+                    return ok
                 }
-                override fun textBeforeCursor(n: Int): String? =
-                    dev.patrickgold.florisboard.FlorisImeService.currentInputConnection()
-                        ?.getTextBeforeCursor(n, 0)?.toString()
-                override fun deleteBefore(n: Int): Boolean =
-                    dev.patrickgold.florisboard.FlorisImeService.currentInputConnection()
-                        ?.deleteSurroundingText(n, 0) ?: false
+                override fun commitFinal(text: String, replacesDraft: Boolean): Boolean {
+                    val ed by app.editorInstance()
+                    val ic = ic()
+                    if (ic == null) { ed.externalComposing = false; return false }
+                    ic.beginBatchEdit()
+                    // commitText replaces the composing text: the draft when there is one, else nothing (the keyboard's
+                    // own composing word is fixed first).
+                    if (!replacesDraft) ic.finishComposingText()
+                    val ok = ic.commitText(text, 1)
+                    ic.endBatchEdit()
+                    ed.externalComposing = false
+                    return ok
+                }
+                override fun clearComposing() {
+                    val ed by app.editorInstance()
+                    ic()?.let { ic ->
+                        ic.beginBatchEdit()
+                        ic.setComposingText("", 1)
+                        ic.finishComposingText()
+                        ic.endBatchEdit()
+                    }
+                    ed.externalComposing = false
+                }
             },
             { p -> _state.update { it.copy(transcript = p) } },
             glue = glue,

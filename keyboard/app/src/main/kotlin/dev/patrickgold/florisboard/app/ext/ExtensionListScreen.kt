@@ -124,7 +124,7 @@ fun ExtensionListScreen(type: ExtensionListScreenType, showUpdate: Boolean) = Fl
                 FlorisOutlinedBox(
                     modifier = Modifier.defaultFlorisOutlinedBox(),
                     title = ext.meta.title,
-                    subtitle = ext.meta.id,
+                    subtitle = extensionDisplayId(ext.meta.id),
                 ) {
                     Text(
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),

@@ -16,6 +16,7 @@
 
 package dev.patrickgold.florisboard.app.settings.theme
 
+import dev.patrickgold.florisboard.app.ext.extensionDisplayId
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DarkMode
@@ -110,7 +111,7 @@ fun ThemeManagerScreen(action: ThemeManagerScreenAction?) = FlorisScreen {
             FlorisOutlinedBox(
                 modifier = Modifier.defaultFlorisOutlinedBox(),
                 title = ext.meta.title,
-                subtitle = extensionId,
+                subtitle = extensionDisplayId(extensionId),
             ) {
                 for (config in configs) key(extensionId, config.id) {
                     JetPrefListItem(

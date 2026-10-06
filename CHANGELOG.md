@@ -1,5 +1,25 @@
 # Changelog
 
+## 1.6.2: clean live dictation, a "Live text while speaking" switch, no FlorisBoard store left in Settings
+- **Dictation, fixed**: while you talk, your words now appear in the text field as an underlined draft (composing
+  text, the way Gboard shows voice typing) that is corrected in place as Humming hears more, and the final text is
+  typed once when you stop. Before 1.6.2, words were committed to the field as you spoke; when the final clean-up
+  changed words that were already typed and the app could not confirm them in the field, the corrected words were
+  added after the old ones, so some words showed up twice. Now nothing is committed until you stop, so that cannot
+  happen. Cancel leaves the field exactly as it was.
+- **New switch: Settings > Voice > Live text while speaking** (on by default, replaces "Type as you talk"). Off:
+  nothing appears while you talk, and the whole text is typed once when you stop.
+- **Settings > Addons & Extensions**: no more link to the FlorisBoard Addons Store or its update search (Humming's
+  themes, layouts and language packs are built in and update with the app; you can still import an extension file).
+  Built-in extensions show "Built-in" instead of their internal `org.florisboard.*` ID, and theme and language-pack
+  details are readable ("Authors", "Night theme", "Language") instead of developer fields. Internal IDs are unchanged,
+  so settings and themes carry over.
+- **About, setup, crash screen**: Changelog, Repository, Privacy policy, the issue tracker and crash-report links now
+  go to Humming's own repository and privacy policy instead of FlorisBoard's. The one credit line stays in About:
+  "Android keyboard built on FlorisBoard (Apache 2.0)". The extra credit in Settings > Voice was removed, as were two
+  links to FlorisBoard's GitHub (a feedback thread and an internal key-code table in the theme editor).
+- Android version 1.6.2 (versionCode 1602). Desktop and iOS are unchanged.
+
 ## 1.6.1: Humming everywhere in the app, new icon, pink everywhere
 - **Android**: every place the app showed the name "FlorisBoard" or "Floris" now says Humming: the setup and home
   screen warnings, the crash dialog, crash notifications and the crash report header, the About screen icon

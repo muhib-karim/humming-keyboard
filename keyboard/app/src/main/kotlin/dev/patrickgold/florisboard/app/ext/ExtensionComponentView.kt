@@ -66,10 +66,12 @@ fun ExtensionComponentView(
     onEditBtnClick: (() -> Unit)? = null,
 ) {
     val componentName = remember(meta.id, component.id) { ExtensionComponentName(meta.id, component.id).toString() }
+    val builtIn = isBuiltInExtensionId(meta.id)
+    val builtInLabel = stringRes(R.string.ext__meta__builtin)
     FlorisOutlinedBox(
         modifier = modifier,
         title = component.label,
-        subtitle = componentName,
+        subtitle = if (builtIn) builtInLabel else componentName,
     ) {
         Column(
             modifier = Modifier.padding(
@@ -84,9 +86,8 @@ fun ExtensionComponentView(
                         component.authors, component.isNightTheme, component.stylesheetPath(),
                     ) {
                         buildString {
-                            appendLine("authors = ${component.authors}")
-                            appendLine("isNightTheme = ${component.isNightTheme}")
-                            append("stylesheetPath = ${component.stylesheetPath()}")
+                            appendLine("Authors: ${component.authors.joinToString()}")
+                            append(if (component.isNightTheme) "Night theme" else "Day theme")
                         }
                     }
                     Text(
@@ -100,9 +101,8 @@ fun ExtensionComponentView(
                         component.authors, component.locale, component.hanShapeBasedKeyCode,
                     ) {
                         buildString {
-                            appendLine("authors = ${component.authors}")
-                            appendLine("locale = ${component.locale.localeTag()}")
-                            appendLine("hanShapeBasedKeyCode = ${component.hanShapeBasedKeyCode}")
+                            appendLine("Authors: ${component.authors.joinToString()}")
+                            append("Language: ${component.locale.displayName()}")
                         }
                     }
                     Text(

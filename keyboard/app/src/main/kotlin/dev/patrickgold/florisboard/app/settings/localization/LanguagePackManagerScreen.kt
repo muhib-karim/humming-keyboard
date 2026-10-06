@@ -16,6 +16,7 @@
 
 package dev.patrickgold.florisboard.app.settings.localization
 
+import dev.patrickgold.florisboard.app.ext.extensionDisplayId
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -128,7 +129,7 @@ fun LanguagePackManagerScreen(action: LanguagePackManagerScreenAction?) = Floris
                 modifier = Modifier.defaultFlorisOutlinedBox(),
                 title = ext.meta.title,
                 onTitleClick = { navController.navigate(Routes.Ext.View(extensionId)) },
-                subtitle = extensionId,
+                subtitle = extensionDisplayId(extensionId),
                 onSubtitleClick = { navController.navigate(Routes.Ext.View(extensionId)) },
             ) {
                 Column(

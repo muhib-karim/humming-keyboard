@@ -23,21 +23,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Input
 import androidx.compose.material.icons.filled.Shop
-import androidx.compose.material.icons.outlined.FileDownload
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import dev.patrickgold.florisboard.BuildConfig
 import dev.patrickgold.florisboard.R
 import dev.patrickgold.florisboard.app.LocalNavController
 import dev.patrickgold.florisboard.app.Routes
 import dev.patrickgold.florisboard.lib.ext.Extension
-import dev.patrickgold.florisboard.lib.ext.generateUpdateUrl
-import dev.patrickgold.florisboard.lib.util.launchUrl
 import org.florisboard.lib.compose.FlorisOutlinedBox
 import org.florisboard.lib.compose.FlorisTextButton
 import org.florisboard.lib.compose.defaultFlorisOutlinedBox
@@ -46,7 +41,6 @@ import org.florisboard.lib.kotlin.curlyFormat
 
 @Composable
 fun ImportExtensionBox(navController: NavController) {
-    val context = LocalContext.current
     FlorisOutlinedBox(
         modifier = Modifier.defaultFlorisOutlinedBox(),
     ) {
@@ -60,13 +54,7 @@ fun ImportExtensionBox(navController: NavController) {
                 .fillMaxWidth()
                 .padding(horizontal = 6.dp),
         ) {
-            FlorisTextButton(
-                onClick = {
-                    context.launchUrl("https://${BuildConfig.FLADDONS_STORE_URL}/")
-                },
-                icon = Icons.Default.Shop,
-                text = stringRes(id = R.string.ext__home__visit_store),
-            )
+            // Humming: no link to the upstream FlorisBoard Addons Store; extensions are built in or imported from a file.
             Spacer(modifier = Modifier.weight(1f))
             FlorisTextButton(
                 onClick = {
@@ -81,7 +69,6 @@ fun ImportExtensionBox(navController: NavController) {
 
 @Composable
 fun UpdateBox(extensionIndex: List<Extension>) {
-    val context = LocalContext.current
     FlorisOutlinedBox(
         modifier = Modifier.defaultFlorisOutlinedBox(),
     ) {
@@ -95,13 +82,7 @@ fun UpdateBox(extensionIndex: List<Extension>) {
                 .fillMaxWidth()
                 .padding(horizontal = 6.dp),
         ) {
-            FlorisTextButton(
-                onClick = {
-                    context.launchUrl(extensionIndex.generateUpdateUrl())
-                },
-                icon = Icons.Outlined.FileDownload,
-                text = stringRes(id = R.string.ext__update_box__search_for_updates)
-            )
+            // Humming: updates come with the app (Settings > Updates), not from the upstream store.
             Spacer(modifier = Modifier.weight(1f))
         }
     }

@@ -39,7 +39,6 @@ import dev.patrickgold.florisboard.app.Routes
 import dev.patrickgold.florisboard.app.enumDisplayEntriesOf
 import dev.patrickgold.florisboard.ime.keyboard.IncognitoMode
 import dev.patrickgold.florisboard.ime.nlp.SpellingLanguageMode
-import dev.patrickgold.florisboard.lib.compose.FlorisHyperlinkText
 import dev.patrickgold.florisboard.lib.compose.FlorisScreen
 import dev.patrickgold.jetpref.datastore.model.observeAsState
 import dev.patrickgold.jetpref.datastore.ui.ExperimentalJetPrefDatastoreUi
@@ -180,13 +179,8 @@ fun TypingScreen() = FlorisScreen {
                         Text(
                             text = """
                                 Auto-space after punctuation is an experimental feature which may break or behave
-                                unexpectedly. If you want, please give feedback about it in below linked feedback
-                                thread. This helps a lot in improving this feature. Thanks!
+                                unexpectedly.
                             """.trimIndent().replace('\n', ' '),
-                        )
-                        FlorisHyperlinkText(
-                            text = "Feedback thread (GitHub)",
-                            url = "https://github.com/florisboard/florisboard/discussions/1935",
                         )
                     }
                 }
