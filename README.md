@@ -1,7 +1,7 @@
 <p align="center"><img src="docs/banner.png" alt="Humming: private voice typing that never leaves your device" width="100%"></p>
 
 <p align="center">
-<a href="https://github.com/muhib-karim/humming-keyboard/releases/latest"><img alt="Release" src="https://img.shields.io/badge/release-v1.6.0-e5486b"></a>
+<a href="https://github.com/muhib-karim/humming-keyboard/releases/latest"><img alt="Release" src="https://img.shields.io/badge/release-v1.6.1-e5486b"></a>
 <a href="https://github.com/muhib-karim/humming-keyboard/actions/workflows/keyboard.yml"><img alt="Android CI" src="https://github.com/muhib-karim/humming-keyboard/actions/workflows/keyboard.yml/badge.svg"></a>
 <a href="https://github.com/muhib-karim/humming-keyboard/actions/workflows/desktop.yml"><img alt="Desktop CI" src="https://github.com/muhib-karim/humming-keyboard/actions/workflows/desktop.yml/badge.svg"></a>
 <a href="https://github.com/muhib-karim/humming-keyboard/actions/workflows/ios.yml"><img alt="iOS CI" src="https://github.com/muhib-karim/humming-keyboard/actions/workflows/ios.yml/badge.svg"></a>
@@ -15,6 +15,8 @@
 talk: the words are typed into the text field as you speak, for as long as you speak, even with the screen off. Tap
 the mic again to stop. Speech recognition runs on your device, so dictation works in airplane mode and your voice
 never leaves it. Free and open source.
+
+Android keyboard built on FlorisBoard (Apache 2.0).
 
 [Get Humming](#get-humming) · [Walkthroughs](#walkthroughs) · [Screenshots](#screenshots) · [Features](#features) ·
 [Benchmarks](#benchmarks) · [Compare](#how-humming-compares) · [Privacy](#offline-by-design) · [Website](https://muhib-karim.github.io/humming-keyboard/)
@@ -452,6 +454,8 @@ unsigned `.ipa`.
 ## Licence and credits
 
 Humming Keyboard is licensed under the **Apache License 2.0**. See `keyboard/LICENSE`.
+
+Android keyboard built on FlorisBoard (Apache 2.0).
 
 - **FlorisBoard** (Apache-2.0): the keyboard base. Copyright (C) 2020-2026 The FlorisBoard Contributors. The
   upstream licence and file headers are kept, and our changes are listed in `keyboard/NOTICE-HUMMING.md`. Humming is

@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.6.1: Humming everywhere in the app
+- **Android**: every place the app showed the name "FlorisBoard" or "Floris" now says Humming: the setup and home
+  screen warnings, the crash dialog, crash notifications and the crash report header, the About screen icon
+  description and licence line, the theme source label, and the notification-permission explanation, in every
+  translation. The built-in themes are now called Humming Day, Humming Night, Humming Pure Night (each also Borderless
+  and Material You). The app name, launcher and keyboard (IME) name were already Humming.
+- **Credit**: the About screen and the README now say "Android keyboard built on FlorisBoard (Apache 2.0)".
+  FlorisBoard's LICENSE, notices and copyright headers are unchanged. Internal package names, class names and IDs
+  (`dev.patrickgold.florisboard`, `org.florisboard.*` extension and theme IDs) are unchanged, so settings, themes and
+  dictionaries carry over and 1.6.0 updates in place.
+- Android version 1.6.1 (versionCode 1601). Desktop and iOS are unchanged and stay at 1.6.0.
+
 ## 1.6.0: Humming updates itself
 - **Desktop (Windows, macOS, Linux AppImage)**: built-in, signed self-update. Humming checks for a new version 45
   seconds after it starts, every 4 hours and on **Settings > Updates > Check for updates**. With **Automatically

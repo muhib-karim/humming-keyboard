@@ -3,7 +3,7 @@
   "meta": {
     "id": "org.florisboard.themes",
     "version": "0.2.0",
-    "title": "FlorisBoard default themes",
+    "title": "Humming default themes",
     "description": "Default themes (both day and night) for the keyboard UI",
     "maintainers": [
       "patrickgold <patrick@patrickgold.dev>",
@@ -38,7 +38,7 @@
     },
     {
       "id": "floris_day",
-      "label": "Floris Day",
+      "label": "Humming Day",
       "authors": [
         "patrickgold"
       ],
@@ -46,7 +46,7 @@
     },
     {
       "id": "floris_day_borderless",
-      "label": "Floris Day (Borderless)",
+      "label": "Humming Day (Borderless)",
       "authors": [
         "patrickgold"
       ],
@@ -54,7 +54,7 @@
     },
     {
       "id": "floris_night",
-      "label": "Floris Night",
+      "label": "Humming Night",
       "authors": [
         "patrickgold"
       ],
@@ -62,7 +62,7 @@
     },
     {
       "id": "floris_night_borderless",
-      "label": "Floris Night (Borderless)",
+      "label": "Humming Night (Borderless)",
       "authors": [
         "patrickgold"
       ],
@@ -70,7 +70,7 @@
     },
     {
       "id": "floris_pure_night",
-      "label": "Floris Pure Night",
+      "label": "Humming Pure Night",
       "authors": [
         "serebit"
       ],
@@ -78,7 +78,7 @@
     },
     {
       "id": "floris_pure_night_borderless",
-      "label": "Floris Pure Night (Borderless)",
+      "label": "Humming Pure Night (Borderless)",
       "authors": [
         "serebit"
       ],

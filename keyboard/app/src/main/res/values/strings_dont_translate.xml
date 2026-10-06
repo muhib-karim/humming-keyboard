@@ -1,4 +1,5 @@
 <resources>
+    <string name="about__built_on_florisboard" translatable="false">Android keyboard built on FlorisBoard (Apache 2.0)</string>
     <string name="florisboard__repo_url" translatable="false">https://github.com/florisboard/florisboard</string>
     <string name="florisboard__issue_tracker_url" translatable="false">https://github.com/florisboard/florisboard/issues</string>
     <string name="florisboard__privacy_policy_url" translatable="false">https://florisboard.org/legal/privacy/</string>

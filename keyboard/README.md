@@ -1,3 +1,5 @@
+> **Humming note:** this folder is the FlorisBoard source that Humming's Android keyboard is built on (Apache 2.0). The text below is FlorisBoard's own README, kept as upstream wrote it; Humming's README is [`../README.md`](../README.md).
+
 <img align="left" width="80" height="80"
 src=".github/repo_icon.png" alt="App icon">
 
