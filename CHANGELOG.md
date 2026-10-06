@@ -1,11 +1,19 @@
 # Changelog
 
-## 1.6.1: Humming everywhere in the app
+## 1.6.1: Humming everywhere in the app, new icon, pink everywhere
 - **Android**: every place the app showed the name "FlorisBoard" or "Floris" now says Humming: the setup and home
   screen warnings, the crash dialog, crash notifications and the crash report header, the About screen icon
   description and licence line, the theme source label, and the notification-permission explanation, in every
   translation. The built-in themes are now called Humming Day, Humming Night, Humming Pure Night (each also Borderless
   and Material You). The app name, launcher and keyboard (IME) name were already Humming.
+- **New Android app icon**: the Humming icon (white sound-wave bars on the pink gradient) replaces the FlorisBoard
+  icon on the launcher, the round and themed (monochrome) icons, the splash screen, Settings and About, for the
+  stable, beta and debug builds.
+- **Pink everywhere**: Android now uses the Humming pink (`#E5486B`) like desktop, iOS, the site and the Play
+  graphics: the default accent of Settings and the keyboard (it no longer falls back to FlorisBoard green or the
+  wallpaper colour; you can still pick another in Settings), the Humming Light/Dark/AMOLED keyboard themes, the mic
+  button and dictation panel, the crash screen and the notification tint. `docs/BRAND.md` lists the colours and
+  icon files.
 - **Credit**: the About screen and the README now say "Android keyboard built on FlorisBoard (Apache 2.0)".
   FlorisBoard's LICENSE, notices and copyright headers are unchanged. Internal package names, class names and IDs
   (`dev.patrickgold.florisboard`, `org.florisboard.*` extension and theme IDs) are unchanged, so settings, themes and

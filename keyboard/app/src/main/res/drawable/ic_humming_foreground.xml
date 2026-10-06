@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Humming (added): app icon foreground, a voice waveform -->
+<!-- Humming: app icon foreground, white sound-wave bars (same geometry as play/graphics/icon-512.png) -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp" android:height="108dp" android:viewportWidth="108" android:viewportHeight="108">
-  <path android:fillColor="#FFFFFFFF" android:pathData="M28.5,49.5 a3.5,3.5 0 0 1 7.0,0 V58.5 a3.5,3.5 0 0 1 -7.0,0 Z"/>
-  <path android:fillColor="#FFFFFFFF" android:pathData="M39.5,42.5 a3.5,3.5 0 0 1 7.0,0 V65.5 a3.5,3.5 0 0 1 -7.0,0 Z"/>
-  <path android:fillColor="#FFFFFFFF" android:pathData="M50.5,35.5 a3.5,3.5 0 0 1 7.0,0 V72.5 a3.5,3.5 0 0 1 -7.0,0 Z"/>
-  <path android:fillColor="#FFFFFFFF" android:pathData="M61.5,42.5 a3.5,3.5 0 0 1 7.0,0 V65.5 a3.5,3.5 0 0 1 -7.0,0 Z"/>
-  <path android:fillColor="#FFFFFFFF" android:pathData="M72.5,49.5 a3.5,3.5 0 0 1 7.0,0 V58.5 a3.5,3.5 0 0 1 -7.0,0 Z"/>
+  <path android:fillColor="#FFFFFFFF" android:pathData="M27.70,48.38 a3.38,3.38 0 0 1 6.75,0 V59.34 a3.38,3.38 0 0 1 -6.75,0 Z"/>
+  <path android:fillColor="#FFFFFFFF" android:pathData="M39.09,40.36 a3.38,3.38 0 0 1 6.75,0 V67.50 a3.38,3.38 0 0 1 -6.75,0 Z"/>
+  <path android:fillColor="#FFFFFFFF" android:pathData="M50.48,32.20 a3.38,3.38 0 0 1 6.75,0 V75.66 a3.38,3.38 0 0 1 -6.75,0 Z"/>
+  <path android:fillColor="#FFFFFFFF" android:pathData="M61.88,40.36 a3.38,3.38 0 0 1 6.75,0 V67.50 a3.38,3.38 0 0 1 -6.75,0 Z"/>
+  <path android:fillColor="#FFFFFFFF" android:pathData="M73.27,48.38 a3.38,3.38 0 0 1 6.75,0 V59.34 a3.38,3.38 0 0 1 -6.75,0 Z"/>
 </vector>

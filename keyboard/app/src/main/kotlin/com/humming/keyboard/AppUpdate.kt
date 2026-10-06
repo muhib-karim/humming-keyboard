@@ -357,6 +357,7 @@ object AppUpdate {
             nm.createNotificationChannel(NotificationChannel(CHANNEL, "App updates", NotificationManager.IMPORTANCE_DEFAULT))
             val n = NotificationCompat.Builder(ctx, CHANNEL)
                 .setSmallIcon(android.R.drawable.stat_sys_download_done)
+                .setColor(0xFFE5486B.toInt()) // Humming brand pink
                 .setContentTitle(title)
                 .setContentText(text)
                 .setAutoCancel(true)

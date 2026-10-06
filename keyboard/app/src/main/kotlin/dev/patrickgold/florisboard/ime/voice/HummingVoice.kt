@@ -526,12 +526,12 @@ data class HummingPalette(
     companion object {
         val Light = HummingPalette(
             background = Color(0xFFEEF0F5), surface = Color(0xFFFFFFFF), onBackground = Color(0xFF11131A),
-            secondary = Color(0xFF626879), accentStart = Color(0xFF7B61FF), accentEnd = Color(0xFF3D8BFF),
+            secondary = Color(0xFF626879), accentStart = Color(0xFFE5486B), accentEnd = Color(0xFFCA349C),
             onAccent = Color.White, rec = Color(0xFFFF3B5C),
         )
         val Dark = HummingPalette(
             background = Color(0xFF121418), surface = Color(0xFF24272E), onBackground = Color(0xFFF3F4F8),
-            secondary = Color(0xFF9BA1AF), accentStart = Color(0xFF8B74FF), accentEnd = Color(0xFF4C96FF),
+            secondary = Color(0xFF9BA1AF), accentStart = Color(0xFFF0607F), accentEnd = Color(0xFFD9479F),
             onAccent = Color.White, rec = Color(0xFFFF4D6A), ok = Color(0xFF3DD68C),
         )
     }

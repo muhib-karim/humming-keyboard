@@ -33,9 +33,13 @@ import org.florisboard.lib.android.AndroidVersion
 
 val DEFAULT_GREEN = Color(0xFF4CAF50)
 
+/** Humming brand pink (#E5486B), the default accent. */
+val HUMMING_PINK = Color(0xFFE5486B)
+
 object ColorMappings {
 
     val colors = listOf(
+        HUMMING_PINK, // Humming brand pink
         DEFAULT_GREEN, // GREEN 500
         Color(0xFFF44336), // RED 500
         Color(0xFFE91E63), // PINK 500

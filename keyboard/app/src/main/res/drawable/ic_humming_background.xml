@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Humming (added): app icon background, the brand gradient -->
+<!-- Humming (added): app icon background, the brand gradient (pink #EB4C7B to magenta #CA349C, top to bottom) -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:aapt="http://schemas.android.com/aapt"
     android:width="108dp" android:height="108dp" android:viewportWidth="108" android:viewportHeight="108">
   <path android:pathData="M0,0h108v108h-108z">
     <aapt:attr name="android:fillColor">
-      <gradient android:type="linear" android:startX="0" android:startY="0" android:endX="108" android:endY="108">
-        <item android:offset="0" android:color="#FF7B61FF"/>
-        <item android:offset="1" android:color="#FF3D8BFF"/>
+      <gradient android:type="linear" android:startX="54" android:startY="0" android:endX="54" android:endY="108">
+        <item android:offset="0" android:color="#FFEB4C7B"/>
+        <item android:offset="1" android:color="#FFCA349C"/>
       </gradient>
     </aapt:attr>
   </path>

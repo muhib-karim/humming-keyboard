@@ -103,6 +103,7 @@ class DictationService : Service() {
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
             return NotificationCompat.Builder(ctx, CHANNEL_ID)
                 .setSmallIcon(android.R.drawable.ic_btn_speak_now)
+                .setColor(0xFFE5486B.toInt()) // Humming brand pink
                 .setContentTitle("Humming is listening")
                 .setContentText("Dictation keeps going with the screen off. Tap Stop to finish.")
                 .setOngoing(true)

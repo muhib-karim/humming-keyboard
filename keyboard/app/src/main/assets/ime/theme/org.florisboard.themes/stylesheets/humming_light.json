@@ -1,19 +1,19 @@
 {
   "$schema": "https://schemas.florisboard.org/snygg/v2/stylesheet",
   "@defines": {
-    "--primary": "#6D5DFC",
-    "--primary-variant": "#5646E8",
-    "--secondary": "#3D8BFF",
-    "--secondary-variant": "#2F6FD6",
+    "--primary": "#E5486B",
+    "--primary-variant": "#C93A5B",
+    "--secondary": "#CA349C",
+    "--secondary-variant": "#A82A82",
     "--background": "#EDEFF4",
     "--background-variant": "#E1E4EB",
     "--surface": "#FFFFFF",
     "--surface-variant": "#DCE0E9",
     "--popup-surface": "#FFFFFF",
-    "--focused-popup-surface": "#E6E1FF",
+    "--focused-popup-surface": "#FDE3EA",
     "--drag-marker": "rgb(255,0,0)",
     "--spacer-color": "rgba(0, 0, 0, 0.10)",
-    "--one-hand-background": "#E6E1FF",
+    "--one-hand-background": "#FDE3EA",
     "--one-hand-foreground": "#3A3F4B",
     "--incognito-icon-color": "#00000011",
     "--on-primary": "#FFFFFF",
@@ -26,7 +26,7 @@
     "--shape-chip": "rounded-corner(50%, 50%, 50%, 50%)",
     "--fn": "#D3D8E2",
     "--fn-pressed": "#C3C9D5",
-    "--primary-text": "#5646E8"
+    "--primary-text": "#C93A5B"
   },
   "window": {
     "background": "var(--background)",

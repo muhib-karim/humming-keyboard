@@ -68,9 +68,8 @@ import dev.patrickgold.jetpref.datastore.model.PreferenceType
 import dev.patrickgold.jetpref.datastore.model.observeAsState
 import dev.patrickgold.jetpref.material.ui.ColorRepresentation
 import kotlinx.serialization.json.Json
-import org.florisboard.lib.android.AndroidVersion
 import org.florisboard.lib.android.isOrientationPortrait
-import org.florisboard.lib.color.DEFAULT_GREEN
+import org.florisboard.lib.color.HUMMING_PINK
 
 val FlorisPreferenceStore = jetprefDataStoreOf(FlorisPreferenceModel::class)
 
@@ -685,10 +684,7 @@ abstract class FlorisPreferenceModel : PreferenceModel() {
         )
         val accentColor = custom(
             key = "other__accent_color",
-            default = when (AndroidVersion.ATLEAST_API31_S) {
-                true -> Color.Unspecified
-                false -> DEFAULT_GREEN
-            },
+            default = HUMMING_PINK, // Humming: brand pink by default (was the system accent / green)
             serializer = ColorPreferenceSerializer,
         )
         val settingsLanguage = string(
@@ -868,10 +864,7 @@ abstract class FlorisPreferenceModel : PreferenceModel() {
         )
         val accentColor = custom(
             key = "theme__accent_color",
-            default = when (AndroidVersion.ATLEAST_API31_S) {
-                true -> Color.Unspecified
-                false -> DEFAULT_GREEN
-            },
+            default = HUMMING_PINK, // Humming: brand pink by default (was the system accent / green)
             serializer = ColorPreferenceSerializer,
         )
         val sunriseTime = localTime(

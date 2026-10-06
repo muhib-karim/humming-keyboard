@@ -278,6 +278,7 @@ abstract class CrashUtility private constructor() {
                     style = Notification.BigTextStyle().bigText(body)
                     setContentText(body)
                     setSmallIcon(android.R.drawable.stat_notify_error)
+                    setColor(0xFFE5486B.toInt()) // Humming brand pink
                     setContentIntent(PendingIntent.getActivity(context, 0, crashDialogIntent, PendingIntent.FLAG_IMMUTABLE)).setAutoCancel(
                         true
                     )
