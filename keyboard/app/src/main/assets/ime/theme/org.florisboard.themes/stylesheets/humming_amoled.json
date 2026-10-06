@@ -26,8 +26,8 @@
     "--shape-chip": "rounded-corner(50%, 50%, 50%, 50%)",
     "--fn": "#0E0F12",
     "--fn-pressed": "#1E2026",
-    "--primary-strong": "#E5486B",
-    "--primary-strong-pressed": "#C93A5B",
+    "--primary-strong": "#C93A5B",
+    "--primary-strong-pressed": "#B03050",
     "--primary-light": "#A99BFF"
   },
   "window": {
@@ -379,7 +379,7 @@
   },
   "extracted-landscape-input-action": {
     "background": "var(--primary-strong)",
-    "foreground": "var(--on-surface)",
+    "foreground": "var(--on-primary)",
     "shape": "rounded-corner(4dp, 4dp, 4dp, 4dp)"
   },
   "glide-trail": {
