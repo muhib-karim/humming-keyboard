@@ -124,7 +124,7 @@ Android keyboard built on FlorisBoard (Apache 2.0). Speech recognition by NVIDIA
 - **On-device neural next-word model** (1.2): a small word-level LSTM (16k words, int8, 2.7 MB) that reads the whole
   sentence so far, run by Humming's own Kotlin code with no native library and no network. Blended with the word
   tables, it lifts held-out next-word top-3 accuracy from 30.2 % to 36.5 % (sentences it never saw;
-  measured by a unit test on every build). "Smart prediction strength" in Settings sets the blend or turns it off.
+  measured by a unit test in the test suite). "Smart prediction strength" in Settings sets the blend or turns it off.
 - **Next-word prediction in six languages** (1.2): German, Spanish, French, Italian and Portuguese now suggest the
   next word too (held-out top-3 22-26 %, up from 1-5 %).
 - **Stickers & GIFs** (1.2, off until you turn it on): 32 built-in stickers, your own imported images, a search box,
@@ -407,7 +407,7 @@ benchmark, so there is no like-for-like comparison to make; where nothing is pub
 | WER, LibriSpeech test-other | **4.20 %** | **3.12 %** | Not published | Not published | Not published |
 | WER on the vendor's own data | n/a | n/a | Chart only, on 10 hours of Wispr's own dictations; no figures in text [13] | Not published | Not published |
 | Time to text | **312 ms** median per clip (measured above) | **1314 ms** | Not published as a measurement; states a 500 ms response goal [14] | Not published | Not published |
-| Measured by | this repo's CI, committed script, public data | same | vendor | — | — |
+| Measured by | this repo's committed benchmark script and public data (run in CI until hosted builds were paused) | same | vendor | — | — |
 | Works offline | Yes | Yes | No [1] | No [2] | Limited [12] |
 
 Run it yourself: Actions > wer-bench > Run workflow (inputs: number of test-clean and test-other clips), or locally:
