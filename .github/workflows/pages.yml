@@ -2,8 +2,8 @@ name: pages
 
 # Publishes the Humming website (play/site/: the home page and the privacy policy) to GitHub Pages, with the banner
 # and screenshots copied in from docs/. 1.6: also mirrors the LATEST GitHub Release's update files to /updates/
-# (latest.json + the signed desktop update bundles, android.json + the APK, SHA256SUMS.txt). The repository is private,
-# so release downloads need a token; the apps read their update feeds from here instead. release.yml calls this after
+# (latest.json + the signed desktop update bundles, android.json + the APK, SHA256SUMS.txt). The apps read their
+# update feeds from here, so they never need a GitHub login. release.yml calls this after
 # each release, and every site deploy carries the mirror along, then checks the live feed's signatures.
 on:
   push:

@@ -75,7 +75,7 @@
 - **iOS**: no automatic updates. An unsigned, sideloaded .ipa cannot update itself; sideload the new one.
 - **Release pipeline**: pushing a `v*` tag runs `release.yml`, which builds every platform, verifies every updater
   signature, writes `latest.json`, `android.json` and `SHA256SUMS.txt`, creates the GitHub Release, and mirrors the
-  update files to a public site (`/updates/`), so the apps need no GitHub login,. The website deploy then checks
+  update files to a public site (`/updates/`), so the apps need no GitHub login. The website deploy then checks
   the live feed's signatures (`scripts/verify_updater.py`). The website gets a Download section.
 - **Built without GitHub Actions**: Actions can't run on this private repository right now, so 1.6.0 was built on
   Linux build machines outside GitHub: the Android APK and Play AAB (signed with the release key, certificate
