@@ -1,6 +1,7 @@
 # Changelog
 
-## Unreleased (branch beta/humming-honest-engine-20261008)
+## 1.6.3: voice never types placeholder text, accurate README, reproducible WER bench
+- **Version**: Android 1.6.3 (versionCode 1603). Desktop stays 1.6.0, iOS unchanged.
 - **Voice never types placeholder text**: a phone whose CPU the on-device engine is not built for used to fall back
   silently to the internal test mode, which typed "[mock] Humming heard ... of audio" into the field. The mic now
   always uses the on-device engine and shows "Voice isn't available on this device" instead; test mode only runs when
