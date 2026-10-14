@@ -19,11 +19,11 @@ Everything in `play/` is ready. Only the steps marked **MK** need you; they're t
 
 ## Steps
 
-1. **MK: create the developer account** at play.google.com/console with **62206502+muhib-karim@users.noreply.github.com**. Choose a **Personal** account.
+1. **MK: create the developer account** at play.google.com/console with **your Google account email**. Choose a **Personal** account.
 2. **MK: pay the one-time US$25 fee** and finish **identity verification** (government ID; Google may also ask to verify a phone number and, for personal accounts, an Android device through the Play Console app). Approval can take a few days.
 3. Create the app: name "Humming Keyboard", default language English (United States), App, Free.
 4. Set up **Play App Signing** (the default). Upload `humming-keyboard-release.aab`; Play keeps the app signing key and our key becomes the **upload key**. Check the upload certificate shown under Setup > App integrity matches the SHA-256 above.
-5. Fill in **Store listing** from `listing/` and `graphics/`. Category: Tools (or Productivity). Contact email: 62206502+muhib-karim@users.noreply.github.com. Privacy policy: https://muhib-karim.github.io/humming-keyboard/privacy.html
+5. Fill in **Store listing** from `listing/` and `graphics/`. Category: Tools (or Productivity). Contact email: a public developer contact address. Privacy policy: https://muhib-karim.github.io/humming-keyboard/privacy.html
 6. Fill in **App content**: Privacy policy, Ads (none), App access (no login), Content rating (`CONTENT_RATING.md`), Target audience (13+ or 18+), Data safety (`DATA_SAFETY.md`).
 7. **Closed testing**: create a closed track, upload the AAB, add a testers email list with **at least 12 people** (more is safer, since people drop out), and share the opt-in link. Testers must stay opted in for **14 days in a row**.
 8. After 14 days, **apply for production access** (Dashboard > "Apply for production"). Google asks a few questions about the test; review usually takes up to 7 days.
