@@ -9,6 +9,7 @@ type Settings = {
   paste_delay_ms: number; trailing_space: boolean; input_device: string; show_overlay: boolean;
   launch_at_login: boolean; history_enabled: boolean; history_limit: number; max_seconds: number;
   quick_start?: boolean; auto_update: boolean;
+  schema: number; // settings file format; kept as received so one-time migrations do not run again
 };
 type UpdateStatus = { state: string; current: string; latest: string | null; notes: string | null; message: string; done: number; total: number; last_checked: number; can_install: boolean };
 type Status = { state: string; message: string };

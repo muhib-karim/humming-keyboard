@@ -30,6 +30,9 @@ impl VocabEntry {
 }
 use std::path::Path;
 
+/// Current settings file format (see `Settings::schema`).
+pub const SCHEMA: u32 = 2;
+
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(default)]
 pub struct Settings {
@@ -67,6 +70,10 @@ pub struct Settings {
     /// Self-update (1.6, default on): download and install a new version on its own and relaunch (never mid-dictation).
     /// Off = Humming still checks and shows "Update available", and installs only when asked.
     pub auto_update: bool,
+    /// Settings file format. Files written before 1.6.3 have none (0); the one-time migrations in `sanitized` run only
+    /// for those, so a value the user picks later (for example a 300 s cap) is kept.
+    #[serde(default)]
+    pub schema: u32,
 }
 
 impl Default for Settings {
@@ -95,6 +102,7 @@ impl Default for Settings {
             // 0 = no length limit: record until the shortcut is released (or pressed again in toggle mode).
             max_seconds: 0,
             auto_update: true,
+            schema: SCHEMA,
         }
     }
 }
@@ -135,9 +143,13 @@ impl Settings {
         }
         self.paste_delay_ms = self.paste_delay_ms.clamp(20, 2000);
         self.history_limit = self.history_limit.clamp(10, 5000);
-        // 300 was the 0.1.0 default cap; 1.3.0 has no limit unless the user sets one.
-        if self.max_seconds == 300 {
-            self.max_seconds = 0;
+        // 300 was the 0.1.0 default cap; 1.3.0 has no limit unless the user sets one. Migrate it once, only in a file
+        // written before the schema field existed, so a 300 s cap chosen later survives load and save.
+        if self.schema < SCHEMA {
+            if self.max_seconds == 300 {
+                self.max_seconds = 0;
+            }
+            self.schema = SCHEMA;
         }
         if self.max_seconds != 0 {
             self.max_seconds = self.max_seconds.clamp(10, 86_400);
@@ -188,13 +200,32 @@ mod tests {
 
     #[test]
     fn old_300_second_default_is_migrated_to_no_cap() {
+        // A file from before the schema field: the old 300 s default becomes "no cap", once.
         let s: Settings = serde_json::from_str(r#"{"max_seconds":300}"#).unwrap();
-        assert_eq!(s.sanitized().max_seconds, 0);
-        let dir = std::env::temp_dir().join(format!("humming-settings-test-{}", std::process::id()));
+        assert_eq!(s.schema, 0);
+        let s = s.sanitized();
+        assert_eq!(s.max_seconds, 0);
+        assert_eq!(s.schema, SCHEMA);
+        let dir = std::env::temp_dir().join(format!("humming-settings-test-old-{}", std::process::id()));
         let path = dir.join("settings.json");
         std::fs::create_dir_all(&dir).unwrap();
         std::fs::write(&path, r#"{"max_seconds":300}"#).unwrap();
         assert_eq!(Settings::load(&path).max_seconds, 0);
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn a_chosen_300_second_cap_survives_save_and_load() {
+        let s = Settings { max_seconds: 300, ..Settings::default() }.sanitized();
+        assert_eq!(s.max_seconds, 300);
+        let dir = std::env::temp_dir().join(format!("humming-settings-test-new-{}", std::process::id()));
+        let path = dir.join("settings.json");
+        s.save(&path).unwrap();
+        let loaded = Settings::load(&path);
+        assert_eq!(loaded.max_seconds, 300);
+        assert_eq!(loaded.schema, SCHEMA);
+        loaded.save(&path).unwrap();
+        assert_eq!(Settings::load(&path).max_seconds, 300);
         let _ = std::fs::remove_dir_all(&dir);
     }
 
@@ -204,6 +235,7 @@ mod tests {
         assert_eq!(cap(1), 10);
         assert_eq!(cap(10), 10);
         assert_eq!(cap(60), 60);
+        assert_eq!(cap(300), 300);
         assert_eq!(cap(86_400), 86_400);
         assert_eq!(cap(100_000), 86_400);
     }

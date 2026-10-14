@@ -52,7 +52,7 @@
     "category": "Productivity",
     "shortDescription": "Offline voice dictation into any app",
     "longDescription": "Hold a shortcut, speak, let go: Humming transcribes on your own machine and types clean text into whatever app has focus. No account, no cloud.",
-    "copyright": "MIT License",
+    "copyright": "Copyright 2026 Muhib Karim. Licensed under the Apache License 2.0",
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",

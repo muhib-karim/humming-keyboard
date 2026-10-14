@@ -25,6 +25,7 @@ h2{font-size:28px;margin:56px 0 14px}.lead{color:var(--mute);font-size:18px;max-
 .shots{display:flex;gap:14px;overflow-x:auto;padding-bottom:10px}.shots img{height:440px;border-radius:14px;border:1px solid var(--line)}
 .wide img{height:300px}
 table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{color:var(--mute);font-weight:600}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch}.tw table{min-width:640px}
 td.y{color:#7ee2a8}.mute{color:var(--mute)}footer{margin:70px 0 40px;color:var(--mute);font-size:14px}
 </style>
 </head>
@@ -77,22 +78,22 @@ td.y{color:#7ee2a8}.mute{color:var(--mute)}footer{margin:70px 0 40px;color:var(-
 <div class="shots wide"><img src="img/desktop_dictation.gif" alt="Desktop dictation"><img src="img/desktop_home_dark.png" alt="Desktop home"><img src="img/desktop_history.png" alt="Desktop history"><img src="img/desktop_settings.png" alt="Desktop settings"></div>
 
 <h2 id="compare">How it compares</h2>
-<table>
+<div class="tw"><table>
 <tr><th></th><th>Humming</th><th>Wispr Flow</th><th>Typeless</th><th>Gboard Rambler</th></tr>
 <tr><td>Fully offline</td><td class="y">Yes, every platform</td><td>No</td><td>No</td><td>Limited</td></tr>
 <tr><td>Price</td><td class="y">Free, Apache-2.0 (source public from 1.6.3)</td><td>Free tier; Pro $12-15</td><td>Free tier; Pro $12-30</td><td>Free, Pixel 11 only</td></tr>
 <tr><td>Longest dictation</td><td class="y">No limit on Android and iPhone (desktop: none by default)</td><td>20 min desktop, 5 min Android</td><td>9 min</td><td>Not stated</td></tr>
 <tr><td>Platforms</td><td class="y">Android, iOS, Windows, macOS, Linux</td><td>Mac, Windows, iOS, Android</td><td>macOS, Windows, iOS, Android</td><td>Pixel 11</td></tr>
-</table>
+</table></div>
 <p class="mute">Sources and the full table: <a href="https://github.com/muhib-karim/humming-keyboard#how-humming-compares">README</a>.</p>
 
 <h2 id="bench">Benchmarks</h2>
-<table>
+<div class="tw"><table>
 <tr><th>Model</th><th>WER test-clean (first 200 clips)</th><th>WER test-other (first 100 clips)</th><th>Median time to text</th></tr>
 <tr><td>Humming Fast (Parakeet 110M)</td><td>2.78 %</td><td>4.20 %</td><td>312 ms</td></tr>
 <tr><td>Humming Best (Parakeet 0.6B)</td><td>1.68 %</td><td>3.12 %</td><td>1314 ms</td></tr>
 <tr><td>Wispr Flow, Typeless, Gboard Rambler</td><td colspan="3" class="mute">No figures published on a public benchmark</td></tr>
-</table>
+</table></div>
 <p class="mute">LibriSpeech, first 200 test-clean and 100 test-other clips (treat the WER as +/- 0.5 points). Measured by the repo's benchmark script in a CI run on 4 October 2026, with the shipped models on a 2-thread x86-64 desktop CPU; speed on a phone has not been benchmarked. The other products publish no figure on a public benchmark, so this is not a like-for-like comparison. Details: <a href="https://github.com/muhib-karim/humming-keyboard#benchmarks">README</a>.</p>
 
 <footer>Humming is free software under the Apache License 2.0. Speech models: NVIDIA Parakeet (CC-BY-4.0) via sherpa-onnx. Keyboard base: FlorisBoard. <a href="privacy.html">Privacy policy</a>.</footer>

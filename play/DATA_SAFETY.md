@@ -31,8 +31,9 @@ Online voice mode (path 2) uses no network API in Humming's code: the system spe
 crash-reporting SDK. The crash screen shows the log on the device only and never sends it.
 
 **Retention.** The developer keeps nothing. On the device: voice history (user-set retention, `History.kt`), clipboard
-history (100 items by default; off in incognito; age-based auto-clean is optional and off by default, `AppPrefs.kt`)
-and learned words stay until the user deletes them or uninstalls the app. Data sent under paths 2 to 4 is kept by the speech service, the AI provider or Openverse under their own
+history (100 items by default, 10 to 500 or unlimited; off in incognito; age-based auto-clean is optional and off by default, `AppPrefs.kt`)
+and learned words stay until the user deletes them or uninstalls the app, except that clipboard items are also removed
+when the size limit pushes out the oldest, or by auto-clean when the user turns it on. Data sent under paths 2 to 4 is kept by the speech service, the AI provider or Openverse under their own
 policies; Humming cannot see or delete it.
 
 **Deletion.** Uninstalling the app, or clearing its storage in Android's app settings, deletes everything Humming
@@ -44,7 +45,7 @@ through those providers' own policies and tools. Android backup copies are manag
 | Question | Draft answer | Why |
 |---|---|---|
 | Does your app collect or share any of the required user data types? | **Yes** | Paths 2, 3 and 4 send user data off the device when the user turns them on. |
-| Is all of the user data collected by your app encrypted in transit? | **Yes** | `LlmCleanup.kt` and `GifSearch.kt` refuse anything but `https://`. Path 2 is the system speech service's own connection, not Humming's code. |
+| Is all of the user data collected by your app encrypted in transit? | **Unresolved: owner to decide, do not submit as is** | Paths 3 and 4: `LlmCleanup.kt` and `GifSearch.kt` refuse anything but `https://`. Path 2 (Online voice audio) is the phone's speech service's own connection; Humming's code cannot show how that service transmits audio, so encryption in transit for path 2 is not established here. |
 | Do you provide a way for users to request that their data is deleted? | Owner to choose; suggested: data is not stored by the developer | The developer holds no user data. Third-party copies follow the providers' policies (see Deletion). |
 
 ### Data types (draft answers)

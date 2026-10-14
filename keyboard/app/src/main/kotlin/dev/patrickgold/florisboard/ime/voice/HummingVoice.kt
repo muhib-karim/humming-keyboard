@@ -656,7 +656,8 @@ fun VoiceInputLayout(isNight: Boolean, height: Dp, modifier: Modifier = Modifier
             }
             if (st.incognito) {
                 Spacer(Modifier.width(6.dp))
-                StatusPill(p, Icons.Rounded.VisibilityOff, "Private", p.secondary)
+                // Online mode still sends audio to the phone's speech service in incognito; there incognito only skips history.
+                StatusPill(p, Icons.Rounded.VisibilityOff, if (st.offline) "Private" else "No history", p.secondary)
             }
             Spacer(Modifier.weight(1f))
             if (listening) {
@@ -839,7 +840,8 @@ fun VoiceEngineMenu(isNight: Boolean, modifier: Modifier = Modifier) {
         ) {
             Text("Dictate with", color = p.secondary, fontSize = 13.sp, fontWeight = FontWeight.Medium,
                 modifier = Modifier.padding(horizontal = 18.dp, vertical = 6.dp))
-            EngineRow(p, "Humming", if (st.offline) "Offline · on this phone · private" else "On this phone · private",
+            val onlineEngine = com.humming.keyboard.Prefs.engine(context) == com.humming.keyboard.Prefs.ENGINE_ONLINE
+            EngineRow(p, "Humming", if (onlineEngine) "Online · uses the phone's speech service" else "Offline · on this phone · private",
                 brush = p.accentBrush) {
                 HummingVoice.showMenu(false)
                 HummingVoice.start(context)

@@ -131,13 +131,13 @@ Android keyboard built on FlorisBoard (Apache 2.0). Speech recognition by NVIDIA
   next word too (held-out top-3 22-26 %, up from 1-5 %).
 - **Stickers & GIFs** (1.2, off until you turn it on): 32 built-in stickers, your own imported images, a search box,
   and optional online GIF search through Openverse (openly licensed GIFs, no account or key) that says exactly what
-  it sends and stays off in incognito.
+  it sends and stays off in incognito unless you allow it there separately.
 - Emoji in the strip ("pizza" offers 🍕), emoji search with `:heart`, and text shortcuts ("omw" → your phrase).
 - Glide (swipe) typing, fed by the same dictionary.
 - Number row, long-press symbols, key sound and vibration, one-handed mode, a **floating keyboard** you drag by its
   handle, and a split keyboard in landscape and on tablets.
 - Themes: Humming light, dark and AMOLED black, a custom accent colour, and your own **background photo**.
-- Clipboard history, on by default: a 2-column grid with timestamps, up to 100 items; automatic removal of old items is off by default (when on: 1 day by default, a week at most).
+- Clipboard history, on by default: a 2-column grid with timestamps, 100 items by default (adjustable from 10 to 500, or no limit); automatic removal of old items is off by default (when on: 1 day by default, a week at most).
 - Edit shortcuts: long-press a (select all), c (copy), x (cut), v (paste), z (undo) and y (redo).
 - Space-bar trackpad: slide to move the cursor left, right, up and down.
 - Incognito mode: no learning, no clipboard history and no voice history.
