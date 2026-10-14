@@ -2,6 +2,7 @@
 
 How to install Humming, turn on the keyboard, dictate, adjust the settings, keep it up to date, and fix common
 problems. Everything here applies to the current release; version-specific notes say which version they refer to.
+Notes about 1.6.3 describe the Android release candidate on `main`: they apply once its GitHub Release is published.
 
 - [1. Install](#1-install)
 - [2. Turn on the keyboard (Android)](#2-turn-on-the-keyboard-android)
@@ -113,7 +114,7 @@ copy and delete.
 | Accuracy mode | Stricter clean-up on top of Clean mode. Off by default. |
 | Bluetooth headset mic | Records from a connected Bluetooth headset. |
 | Voice incognito | Keeps no voice history. The keyboard's incognito mode turns this on too. |
-| Speech engine | **Offline (recommended)**: runs on the phone and works in airplane mode. **Online**: uses the phone's own speech service (usually Google), which sends audio off the phone. |
+| Speech engine | **Offline (recommended)**: runs on the phone and works in airplane mode. **Online**: uses the phone's own speech service (usually Google), which sends audio off the phone, also in incognito. |
 | Custom words | Names, jargon and brands Humming should always spell your way, one per line. |
 | AI clean-up (optional, your own key) | After you stop, the finished text (never audio) is sent to Gemini, OpenAI or Groq with your own API key. Off by default, never in incognito; the key is stored encrypted on the phone. |
 
@@ -146,7 +147,7 @@ Moving from 1.5.0 to 1.6.0 needs one manual install, because 1.5.0 has no update
 
 | Problem | What to do |
 |---|---|
-| "Voice isn't available on this device" (Android) | The on-device engine is built for 64-bit ARM (`arm64-v8a`) and x86_64 only; this phone's CPU is not one of them. Since 1.6.3 Humming says so instead of typing placeholder text. |
+| "Voice isn't available on this device" (Android) | The on-device engine is built for 64-bit ARM (`arm64-v8a`) and x86_64 only; this phone's CPU is not one of them. From 1.6.3 (release candidate, not yet published) Humming says so instead of typing placeholder text; earlier versions could type a "[mock]" placeholder on such phones. |
 | The speech model does not download | With **Download on Wi-Fi only** on, the download waits for Wi-Fi. Check the connection, or turn the option off in Settings > Voice. |
 | The mic does nothing / no permission prompt | Allow the microphone for Humming in Android's app settings, then tap the mic again. |
 | The Gboard option is missing on long-press | It only appears when Gboard is installed and enabled as a keyboard. |

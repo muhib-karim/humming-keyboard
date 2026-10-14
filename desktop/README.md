@@ -17,22 +17,26 @@ SHA-256) and a Rust port of the keyboard's `TextCleanup.kt`. No account and no c
 | Verbatim mode | yes |
 | Voice commands: new line, new paragraph, period, comma, question mark... | yes |
 | Personal dictionary: fixed spellings ("Okonkwo", "GitHub") and phrase replacements | yes |
-| Long dictation (up to 15 min; decoded in <= 25 s windows cut at pauses) | yes |
+| Long dictation (no limit by default; an optional cap in Settings; decoded after you stop, in <= 25 s windows cut at pauses) | yes |
 | History on this computer: search, copy, delete, clear | yes |
 | Tray / menu bar app, listening overlay with a live mic level | yes |
 | Settings: shortcut (with a recorder), mode, model, language, microphone, paste method, overlay, start at login | yes |
 | In-app "Try it" box (transcribe without pasting) and a cleanup tester | yes |
 | Languages other than English | not yet (Parakeet models are English, as on Android) |
 | Speak-to-edit ("make that shorter"), LLM rewrite | not yet |
-| Auto-update | yes (1.6): signed Tauri updater, Settings > Updates. Exceptions: the Linux .deb only shows that a new version is out, and macOS updates itself from its first 1.6 build on. See the main README |
+| Auto-update | yes (1.6): signed Tauri updater, Settings > Updates; checks 45 s after launch and every 4 hours. Exceptions: the Linux .deb only shows that a new version is out, and macOS updates itself from its first 1.6 build on. See the main README |
 | Code signing / notarisation | not yet (needs the owner's certificates) |
 
 ## Models
 
-| Model | Download | Word error rate (Android bake-off, 73 LibriSpeech clips) | RAM |
+| Model | Download | Word error rate (73-clip LibriSpeech bake-off, one-off run on a desktop CPU) | RAM |
 |---|---|---|---|
 | Fast: Parakeet TDT-CTC 110M int8 (default) | 104 MB | 3.7 % | ~500 MB |
 | Best: Parakeet TDT 0.6B v2 int8 | 482 MB | 2.6 % | ~1.3 GB |
+
+The bake-off's script and raw outputs are not in the repository (see the main README's
+[bake-off section](../README.md#why-parakeet-the-bake-off)). The committed CI benchmark (200 LibriSpeech test-clean
+clips, 4 October 2026) measured 2.78 % for Fast and 1.68 % for Best: [Benchmarks](../README.md#benchmarks).
 
 Archives come from the sherpa-onnx GitHub release (`asr-models`), are checked against the same pinned size and
 SHA-256 as the Android app (`src-tauri/src/models.rs`), and only the files the engine needs are unpacked into the
@@ -52,8 +56,10 @@ npm run tauri build                                       # installer for this m
 npm run tauri build -- --target universal-apple-darwin    # universal macOS .dmg
 ```
 
-CI (`.github/workflows/desktop.yml`) type-checks and unit-tests on Linux, then builds an unsigned universal macOS
-`.dmg` and Windows `.msi` + setup `.exe`, uploaded as workflow artifacts with `SHA256SUMS.txt`.
+CI (`.github/workflows/desktop.yml`) is configured to type-check and unit-test on Linux, then build an unsigned
+universal macOS `.dmg` and Windows `.msi` + setup `.exe`, uploaded as workflow artifacts with `SHA256SUMS.txt`.
+GitHub Actions has not run on this repository since 5 October 2026; desktop 1.6.0 was built outside Actions (see the
+CHANGELOG).
 
 ## How to open it (the builds are unsigned)
 
@@ -74,8 +80,8 @@ Apple's guide: https://support.apple.com/en-us/102445
 2. SmartScreen shows "Windows protected your PC" with an unknown publisher. Click **More info**.
 3. Click **Run anyway** and finish the installer.
 
-CI builds both installers on every push (`.github/workflows/desktop.yml`, artifacts `humming-desktop-macos-universal`
-and `humming-desktop-windows-x64`, each with a `SHA256SUMS.txt`). Signing options are in `../docs/RELEASE_SIGNING.md`.
+When GitHub Actions runs, `desktop.yml` builds both installers on every push that touches `desktop/` or `core/`
+(artifacts `humming-desktop-macos-universal` and `humming-desktop-windows-x64`, each with a `SHA256SUMS.txt`). Signing options are in `../docs/RELEASE_SIGNING.md`.
 
 ## First run
 

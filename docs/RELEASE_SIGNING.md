@@ -15,9 +15,10 @@ variables are set, and falls back to the debug key (today's behaviour) when they
 | `HUMMING_KEY_ALIAS` | key alias (default `humming`) |
 | `HUMMING_KEY_PASSWORD` | key password (default: the keystore password, as PKCS12 requires) |
 
-Status (2026-10-03): done in CI. An upload key exists (PKCS12, RSA 4096, generic DN) and its four repository
+Status (2026-10-03): set up for CI. An upload key exists (PKCS12, RSA 4096, generic DN) and its four repository
 secrets are set: `HUMMING_KEYSTORE_BASE64`, `HUMMING_KEYSTORE_PASSWORD`, `HUMMING_KEY_ALIAS`, `HUMMING_KEY_PASSWORD`.
-These four names are the only keystore secrets the workflows read.
+These four names are the only keystore secrets the workflows read. GitHub Actions has not run on this repository
+since 5 October 2026, so releases since 1.6.0 were signed with the same key outside Actions (see the CHANGELOG).
 
 `.github/workflows/android-release.yml` (push to `main` touching `keyboard/`, or run by hand):
 1. decodes `HUMMING_KEYSTORE_BASE64` to a temp file under `$RUNNER_TEMP` (mode 600) and points `HUMMING_KEYSTORE` at it;
@@ -82,7 +83,9 @@ integration. There is no equivalent free route for macOS notarisation (it needs 
 - **Windows: unsigned.** Authenticode needs a code-signing certificate from a CA (paid), so SmartScreen shows "More info >
   Run anyway" on first launch. Set `bundle.windows.certificateThumbprint` (or a `signCommand`) if one is ever added.
 - **Linux: unsigned.** The `.AppImage` and `.deb` are checked with `SHA256SUMS.txt`.
-- **Every release** carries `SHA256SUMS.txt` for all installers. Each sum matches the CI run's own sums and GitHub's asset digest.
+- **Every release** carries `SHA256SUMS.txt` for all installers. For releases built in CI each sum matches the CI
+  run's own sums and GitHub's asset digest; for releases built outside Actions (1.6.0 and later) the sums are written
+  on the build machine when the release is assembled (see [RELEASING.md](RELEASING.md)).
 
 ## Desktop self-update signing (1.6)
 

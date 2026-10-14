@@ -1,7 +1,8 @@
 # Humming on iPhone and iPad: sideloading the unsigned build
 
 Humming for iOS is released as an **unsigned `.ipa`** (`Humming_<version>_unsigned.ipa` on the GitHub Release, also
-built by `.github/workflows/ios.yml` on every change under `ios/`). It is not on the App Store: that needs a paid
+built by `.github/workflows/ios.yml` on changes under `ios/` when GitHub Actions runs; it has not run on this
+repository since 5 October 2026, so the current `.ipa` is 1.5.0). It is not on the App Store: that needs a paid
 Apple Developer Program membership, and Humming is free. Any of the three routes below signs it on your side with
 your own free Apple ID.
 

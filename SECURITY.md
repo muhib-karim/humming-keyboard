@@ -2,9 +2,11 @@
 
 ## Supported versions
 
-Security fixes go into the latest release of each platform. Older versions are not patched; the Android APK and the
-desktop apps update themselves (see the README's [Updates](README.md#updates-16) section), and the iOS build is
-updated by sideloading the new `.ipa`.
+Security fixes go into the latest release of each platform. Older versions are not patched. The sideloaded Android
+APK and the Windows, Linux AppImage and macOS desktop apps update themselves (see the README's
+[Updates](README.md#updates-16) section), with these exceptions: a Linux `.deb` install only says that a new version is
+out, a macOS install older than 1.6 needs the first 1.6 build installed by hand, the Google Play version is updated
+by Play, and the iOS build is updated by sideloading the new `.ipa`.
 
 | Platform | Supported |
 |---|---|
@@ -25,6 +27,9 @@ Report it privately through GitHub Security Advisories for this repository:
 
 You can expect an acknowledgement through the advisory. Once a fix is released, the advisory can be published with
 credit to you if you want it.
+
+**Privacy requests** (anything about your data that you do not want to post in a public issue) use the same private
+route. Everything else goes in a public issue.
 
 ## Scope
 
@@ -47,6 +52,7 @@ into (Google's speech service in Online mode, Openverse, Gemini, OpenAI, Groq, G
 
 ## Handling secrets
 
-Release signing keys and the desktop update key are held by the owner and are only available to CI as repository
-secrets ([docs/RELEASE_SIGNING.md](docs/RELEASE_SIGNING.md)). If you find a key, password or token committed
+Release signing keys and the desktop update key are held by the owner. The CI workflows read them from repository
+secrets ([docs/RELEASE_SIGNING.md](docs/RELEASE_SIGNING.md)); releases since 1.6.0 were built and signed outside GitHub
+Actions with the same keys, because Actions has not run on this repository since 5 October 2026. If you find a key, password or token committed
 anywhere in this repository or its history, report it privately as above.

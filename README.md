@@ -1,4 +1,4 @@
-<p align="center"><img src="docs/banner.png" alt="Humming: private voice typing that never leaves your device" width="100%"></p>
+<p align="center"><img src="docs/banner.png" alt="Humming: private voice typing on your device (default Offline mode)" width="100%"></p>
 
 <h1 align="center">Humming Keyboard</h1>
 
@@ -30,7 +30,8 @@ Android keyboard built on FlorisBoard (Apache 2.0). Speech recognition by NVIDIA
 
 > **Releases.** The newest build is always on the
 > [latest GitHub Release](https://github.com/muhib-karim/humming-keyboard/releases/latest); what changed in each
-> version, including 1.6.3, is in [CHANGELOG.md](CHANGELOG.md).
+> version, including the 1.6.3 release candidate (not released until its GitHub Release is published), is in
+> [CHANGELOG.md](CHANGELOG.md). The repository is private for now and is made public with the 1.6.3 release.
 
 ## Contents
 
@@ -54,7 +55,7 @@ Android keyboard built on FlorisBoard (Apache 2.0). Speech recognition by NVIDIA
 | | Android | iPhone / iPad | Windows · macOS · Linux |
 |---|:---:|:---:|:---:|
 | Offline dictation (default mode), audio not sent anywhere | ✅ Parakeet | ✅ Apple on-device | ✅ Parakeet |
-| One control, no length limit | ✅ | ✅ | ✅ (hold or toggle shortcut) |
+| One control, no length limit | ✅ | ✅ | ✅ (hold or toggle shortcut; no limit by default, optional cap in Settings) |
 | Clean mode (um, uh, stutters, "3, no, 4pm" → "4pm") | ✅ | ✅ | ✅ |
 | Accuracy mode (strict clean-up, new in 1.4) | ✅ | ✅ | ✅ |
 | Custom words | ✅ | ✅ | ✅ |
@@ -112,7 +113,8 @@ Android keyboard built on FlorisBoard (Apache 2.0). Speech recognition by NVIDIA
 - The same Parakeet Fast and Best models on sherpa-onnx 1.13.8 as Android, downloaded on first run with a SHA-256
   check, and a Rust port of the Android clean-up rules (Clean mode, Accuracy mode, verbatim mode).
 - Spoken lists become bullets ("first, eggs, second, milk"; can be turned off), voice commands ("new line",
-  "period", "question mark"), a personal dictionary, and dictations of up to 15 minutes.
+  "period", "question mark"), a personal dictionary, and no dictation length limit by default (you can set one in
+  Settings; the recording is transcribed when you stop, in windows of up to 25 s cut at pauses).
 - History on the computer (search, copy, delete), a tray / menu bar app with a listening overlay, an in-app
   "Try it" box, and signed self-updates (1.6; not the Linux .deb, and macOS only from its first 1.6 build). Details: [desktop/README.md](desktop/README.md).
 
@@ -202,8 +204,9 @@ Honest limits:
 - Humming can't read what you dictated in Gboard, so that text isn't added to Humming's voice history.
 - Android lets you come back with Gboard's switch key or the system keyboard picker. Humming can't pull focus back
   by itself.
-- CI checks this flow on a Google Play emulator image with Gboard preinstalled (long-press, menu tap, Gboard
-  active, back to Humming).
+- The 1.0 (M5) CI checked this flow on a Google Play emulator image with Gboard preinstalled (long-press, menu tap,
+  Gboard active, back to Humming). That emulator job is no longer in the workflows; today the choice logic is covered
+  by the `GboardHandoffTest` unit test.
 
 ## Download and install
 
@@ -279,13 +282,14 @@ signature in the feed against the public key in `desktop/src-tauri/tauri.conf.js
 |:---:|:---:|:---:|:---:|
 | <img src="docs/screenshots/android_dictation.gif" width="190" alt="Android dictation"> | <img src="docs/screenshots/android_screen_off.gif" width="190" alt="Dictation with the screen off"> | <img src="docs/screenshots/ios_walkthrough.gif" width="190" alt="iPhone dictation with accuracy mode"> | <img src="docs/screenshots/desktop_dictation.gif" width="300" alt="Desktop dictation"> |
 
-*Android frames come from a CI emulator run in airplane mode with a spoken clip fed in as the microphone. The iPhone
-and desktop recordings come from CI too (the iOS simulator and the desktop interface), playing a sample sentence,
-because CI machines have no microphone.*
+*Android frames come from an earlier CI emulator run (1.3 build) in airplane mode with a spoken clip fed in as the
+microphone. The iPhone and desktop recordings come from earlier CI runs too (the iOS simulator and the desktop
+interface), playing a sample sentence, because CI machines have no microphone. The Android emulator capture job is not
+in the current workflows, and no workflow has run since 5 October 2026.*
 
 ### Captures
 
-Every image is a real capture from CI on the 1.3/1.4 builds: Android on an emulator (Pixel 6, Android 15), iPhone
+Every image is a real capture from CI runs on the 1.3/1.4 builds (not re-captured since): Android on an emulator (Pixel 6, Android 15), iPhone
 on the iOS simulator, desktop from the app's own interface in Chromium. Sample text is made up.
 
 #### Android
@@ -410,7 +414,8 @@ benchmark, so there is no like-for-like comparison to make; where nothing is pub
 | Measured by | this repo's committed benchmark script and public data (run in CI until hosted builds were paused) | same | vendor | — | — |
 | Works offline | Yes | Yes | No [1] | No [2] | Limited [12] |
 
-Run it yourself: Actions > wer-bench > Run workflow (inputs: number of test-clean and test-other clips), or locally:
+Run it yourself: Actions > wer-bench > Run workflow (inputs: number of test-clean and test-other clips; only while
+GitHub Actions runs on this repository, which it has not since 5 October 2026), or locally:
 `python keyboard/ci/fetch_librispeech_sample.py bench test-clean 200` then
 `python keyboard/ci/wer_bench.py <models_dir> bench/LibriSpeech wer.json 200 0` (needs `sherpa-onnx==1.13.8 jiwer soundfile`).
 
@@ -444,9 +449,9 @@ Checked on the vendors' own pages on 4 October 2026 (links below the table). Pri
 |---|---|---|---|---|
 | Works fully offline | **Yes**, every platform | No: "Transcription always occurs on the cloud" [1] | No: uses cloud LLM providers [2] | Limited: offline keeps basic clean-up and punctuation only [12] |
 | Where your voice goes | **Stays on the device** (default Offline mode; opt-in Online mode uses the phone's speech service) | Wispr's cloud; training use is a setting [1] | Cloud, "zero data retention" [2] | Google; "never saved, stored, or shared" [12] |
-| Price | **Free and open source** (Apache-2.0) | Free tier; Pro $12-15 [5] | Free tier; Pro $12 yearly / $30 monthly [6] | Free with Gboard |
+| Price | **Free**, Apache-2.0 (source public with the 1.6.3 release) | Free tier; Pro $12-15 [5] | Free tier; Pro $12 yearly / $30 monthly [6] | Free with Gboard |
 | Free-tier limit | **None** | 2,000 words/week desktop, 1,000/week mobile [5] | "Limited words" [6] | None stated |
-| Longest single dictation | **No limit** on Android (desktop: 15 min) | 20 min desktop [7], 5 min on Android [8] | 9 min [9] | Not stated |
+| Longest single dictation | **No limit** on Android and iOS (desktop: none by default, optional cap) | 20 min desktop [7], 5 min on Android [8] | 9 min [9] | Not stated |
 | Platforms | **Android, iOS, Windows, macOS, Linux** | Mac, Windows, iOS, Android [5] | macOS, Windows, iOS, Android; Linux listed on the pricing page [6] | Pixel 11 phones only [12] |
 | Languages | English offline (Parakeet; Apple's on-device English on iOS); Online mode: Android's recogniser languages | 100+ [5][10] | 100+ [6] | A listed set of major languages [12] |
 | Clean-up (fillers, punctuation) | **On-device** Clean mode and Accuracy mode; optional AI pass with your own key | Yes (cloud) [11] | Yes (cloud) [6] | Yes; full style rewrites need the internet [12] |
@@ -455,7 +460,7 @@ Checked on the vendors' own pages on 4 October 2026 (links below the table). Pri
 | Full keyboard | **Yes** on Android; basic layout on iOS | Not checked | Calls its mobile app a "voice keyboard" [15]; typing features not checked | Yes (Gboard) |
 
 **Why Humming:** of the four in this table it is the only one that is fully offline on every platform, free with no
-word caps, and has no session length limit. It is not the only offline option overall (see below). The trade-offs:
+word caps, and has no session length limit (on desktop, none is set by default). It is not the only offline option overall (see below). The trade-offs:
 offline language coverage (English today), and the AI clean-up needs your own API key.
 
 **Other offline options** (vendors' own pages, checked 8 October 2026):
@@ -494,7 +499,7 @@ The full policy is on the website: [Privacy policy](https://muhib-karim.github.i
 
 - **The offline voice path has no network code.** Recording, voice detection, recognition, cleanup and history run on
   the phone. A unit test (`NetworkAuditTest`) scans every Kotlin and Java source in the app and its libraries. It fails
-  the build if any file other than these four uses a network API (sockets, HTTP, URL connections, WebView,
+  the unit-test run if any file other than these four uses a network API (sockets, HTTP, URL connections, WebView,
   DownloadManager): `ModelDownload.kt`, `GifSearch.kt`, `LlmCleanup.kt` and `AppUpdate.kt`. It also checks that no
   voice-path file even imports `java.net`.
 - **What does use the network, all of it listed:**
@@ -507,17 +512,23 @@ The full policy is on the website: [Privacy policy](https://muhib-karim.github.i
   4. AI clean-up (off by default, needs your own API key): sends the **dictated text** (not audio) to the provider you
      pick (Google Gemini, OpenAI or Groq).
   5. Online mode (off by default): hands your **audio** to the phone's own speech service (on most phones Google's).
-     Humming's own code does not send it anywhere, but it leaves the phone.
+     Humming's own code does not send it anywhere, but it leaves the phone. Incognito does not switch it off: in
+     incognito, Online mode still uses the speech service and only Humming's voice history is skipped.
+- **Android backup**: if you have turned on Android's own device backup, Android may copy Humming's settings and
+  personal dictionary to your Google account (the app's backup rules allow this; Humming itself sends nothing).
 - **The model download** goes to the sherpa-onnx GitHub release. Each file is
   checked against a pinned SHA-256 and rejected on a mismatch. With **Wi-Fi only** on, the download waits for Wi-Fi.
   After that, dictation needs no connection at all.
-- **Proven on an emulator.** The airplane-mode run behind the Android screenshots (Android 15 emulator, 1.3 build):
+- **Checked on an emulator (once, on the 1.3 build).** The airplane-mode run behind the Android screenshots (Android 15
+  emulator); that emulator job is not in the current workflows:
   1. turns on airplane mode and disables Wi-Fi, then checks that there is no default network and that ping fails;
   2. cold-starts the keyboard and dictates a real spoken clip;
   3. commits "Please send the quarterly report to the whole team by Friday afternoon." into the text field.
 
-  Airplane mode is still on at the end. `NetworkAuditTest` runs with the unit tests (`keyboard.yml`) and keeps the
-  network rule above enforced.
+  Airplane mode is still on at the end. `NetworkAuditTest` is part of the Android unit tests. `keyboard.yml` is
+  configured to run them on every Android change and did so until 5 October 2026; GitHub Actions has not run on this
+  repository since, so for now the test only runs when the unit tests are run locally
+  (`./gradlew :app:testDebugUnitTest`).
 
 ![Committed offline, airplane mode on](docs/screenshots/android_offline_committed.png)
 
@@ -561,7 +572,7 @@ The full picture (every module, the dictation pipeline step by step, the update 
 | Desktop | Tauri v2, Rust (sherpa-onnx, cpal, arboard, enigo, tauri-plugin-updater with minisign), TypeScript + Vite |
 | iOS | SwiftUI, Apple Speech with on-device recognition required, XcodeGen, Swift package `HummingCore` |
 | Shared core | Rust crate `humming-core` (optional whisper.cpp through whisper-rs, UniFFI bindings) |
-| Release and CI | GitHub Actions workflows, Python release scripts, GitHub Pages and Cloudflare Pages for the website and update feeds |
+| Release and CI | GitHub Actions workflows (configured; not run since 5 October 2026), Python release scripts, GitHub Pages and Cloudflare Pages for the website and update feeds |
 
 ## Build from source
 
@@ -597,7 +608,9 @@ Swift package (`ios/HummingCore`): `cd ios/HummingCore && swift test` runs their
 **CI** (`.github/workflows/`): `keyboard.yml` (Android unit tests, debug and release APK), `android-release.yml`
 (signed APK and AAB), `desktop.yml` (installers for every desktop platform), `ios.yml` (tests, simulator screenshots,
 unsigned `.ipa`), `screens.yml` (desktop screenshots), `wer-bench.yml` (the benchmark above), `release.yml` (a tagged
-release end to end) and `pages.yml` (the website and update mirror). See the repository status note at the top.
+release end to end) and `pages.yml` (the website and update mirror). These are configured but GitHub Actions has not
+started a job on this repository since 5 October 2026; releases since 1.6.0 were built outside Actions
+([docs/ARCHITECTURE.md](docs/ARCHITECTURE.md#ci-and-release-workflows), [CHANGELOG.md](CHANGELOG.md)).
 
 ## Documentation
 
@@ -638,8 +651,16 @@ Third-party components:
 - **sherpa-onnx** (**Apache-2.0**), by the k2-fsa project: the speech runtime.
 - **ONNX Runtime** (MIT), **Silero VAD** (MIT), Apache Commons Compress (Apache-2.0) and the AOSP word lists
   (Apache-2.0).
-- Prediction data: **Tatoeba** sentences (CC BY 2.0 FR; only counts and trained weights ship) and **Mozilla Common
-  Voice** sentence lists (CC0). The English neural model is Humming's own (Apache-2.0).
+- Prediction data: **Tatoeba** sentences (CC BY 2.0 FR) and **Mozilla Common Voice** sentence lists (CC0). No
+  sentences ship in the app. What ships: aggregated counts (next-word tables in all six languages, and English
+  word frequencies blended with Tatoeba counts) and the English neural next-word model `hlm_en.bin`, whose weights
+  were trained on the English Tatoeba and Common Voice sentences. The model is Humming's own (Apache-2.0); Tatoeba's
+  attribution applies to it.
 - Stickers: rendered from **Noto Emoji** images (Apache-2.0) with captions in the **Bangers** font (OFL-1.1).
 
-No GPL code is included. The full list with each obligation is in [`keyboard/LICENSES.md`](keyboard/LICENSES.md).
+No GPL code is included in the Android app. [`keyboard/LICENSES.md`](keyboard/LICENSES.md) lists each third-party
+component of the **Android keyboard** with its obligation. It does not yet cover the rest of the repository: the
+desktop app (Tauri and its plugins, the sherpa-onnx Rust crate, cpal, arboard, enigo and the npm packages in
+`desktop/`), the shared core (`core/`, with the optional whisper-rs / whisper.cpp and UniFFI dependencies) and the
+iOS app. Until a repository-wide inventory exists, those dependencies and their licences are the ones declared in
+`desktop/src-tauri/Cargo.toml`, `desktop/package.json`, `core/Cargo.toml` and their lock files.

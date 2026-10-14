@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Humming: private, offline voice typing</title>
-<meta name="description" content="A private keyboard with offline voice typing for Android, iPhone, Windows, macOS and Linux. Your voice never leaves your device. Free and open source.">
+<meta name="description" content="A private keyboard with offline voice typing for Android, iPhone, Windows, macOS and Linux. In the default Offline mode your voice never leaves your device. Free, Apache-2.0.">
 <meta property="og:title" content="Humming: private, offline voice typing">
-<meta property="og:description" content="Offline dictation on every platform. No word caps, free and open source.">
+<meta property="og:description" content="Offline dictation on every platform. No word caps. Free, Apache-2.0.">
 <meta property="og:image" content="https://muhib-karim.github.io/humming-keyboard/img/banner.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="img/icon.png">
@@ -33,11 +33,11 @@ td.y{color:#7ee2a8}.mute{color:var(--mute)}footer{margin:70px 0 40px;color:var(-
 <header><img src="img/icon.png" alt=""><b>Humming</b>
 <nav><a href="#download">Download</a><a href="#features">Features</a><a href="#screens">Screens</a><a href="#compare">Compare</a><a href="#bench">Benchmarks</a><a href="privacy.html">Privacy</a></nav></header>
 
-<section class="hero"><img src="img/banner.png" alt="Humming: private voice typing that never leaves your device">
+<section class="hero"><img src="img/banner.png" alt="Humming: private voice typing on your device (default Offline mode)">
 <div class="cta"><a class="btn p" href="#download">Download</a>
-<a class="btn s" href="https://github.com/muhib-karim/humming-keyboard">Source on GitHub</a>
+<a class="btn s" href="https://github.com/muhib-karim/humming-keyboard">Source on GitHub (public from the 1.6.3 release)</a>
 <a class="btn s" href="https://github.com/muhib-karim/humming-keyboard/blob/main/docs/IOS_SIDELOAD.md">iPhone install guide</a></div>
-<p class="lead">Tap the mic and talk. The words are typed as you speak, for as long as you speak, even with the screen off. Speech recognition runs on your device, so dictation works in airplane mode and your voice never leaves it.</p></section>
+<p class="lead">Tap the mic and talk. The words are typed as you speak, for as long as you speak, even with the screen off. In the default Offline mode, speech recognition runs on your device, so dictation works in airplane mode and your voice never leaves it. (Android also has an Online mode, off by default, that uses the phone's own speech service instead.)</p></section>
 
 <h2 id="download">Download</h2>
 <p>The current release, mirrored from the project's GitHub Release. Humming 1.6 and later update themselves, with two exceptions: the Windows, macOS and Linux AppImage apps install new versions on their own (signed, checked before install), but a Linux .deb install only tells you a new version is out, and a macOS install older than 1.6 needs the first 1.6 build installed by hand. The sideloaded Android app downloads updates and asks you to confirm; the Play Store version is updated by Play.</p>
@@ -58,16 +58,16 @@ td.y{color:#7ee2a8}.mute{color:var(--mute)}footer{margin:70px 0 40px;color:var(-
 
 <h2 id="features">Why Humming</h2>
 <div class="grid">
-<div class="card"><h3>Offline on every platform</h3><p>NVIDIA Parakeet on Android and desktop, Apple's on-device recogniser on iPhone. No server fallback.</p></div>
-<div class="card"><h3>No caps, no time limit on Android</h3><p>Dictate for an hour on Android like it's ten seconds (desktop: up to 15 minutes per dictation). No weekly word allowance, no account.</p></div>
+<div class="card"><h3>Offline on every platform</h3><p>NVIDIA Parakeet on Android and desktop, Apple's on-device recogniser on iPhone. No server fallback; Android's Online mode is opt-in.</p></div>
+<div class="card"><h3>No caps, no time limit</h3><p>Dictate for an hour on Android like it's ten seconds. iPhone has no time limit either, and the desktop app sets none by default (you can set one in Settings). No weekly word allowance, no account.</p></div>
 <div class="card"><h3>Clean text</h3><p>Clean mode drops um and uh and applies "3, no, 4pm" → "4pm". Accuracy mode also removes hedge fillers.</p></div>
 <div class="card"><h3>A real keyboard</h3><p>Prediction, glide typing, emoji, clipboard, themes and a floating keyboard on Android; a Humming keyboard on iPhone.</p></div>
 <div class="card"><h3>Custom words</h3><p>Names and terms spelled your way every time, on every platform.</p></div>
-<div class="card"><h3>Free and open source</h3><p>Apache-2.0. The Android app has an automated test suite, down to the word error rate (run locally while hosted CI builds are paused).</p></div>
+<div class="card"><h3>Free, Apache-2.0</h3><p>The source code is licensed Apache-2.0 and is made public with the 1.6.3 release. The Android app has a unit-test suite and the repository a word-error-rate benchmark; hosted CI ran them until 5 October 2026 and has been paused since.</p></div>
 </div>
 
 <h2 id="screens">See it</h2>
-<p class="mute">Real captures from the automated test runs: Android emulator, iOS simulator and the desktop interface.</p>
+<p class="mute">Real captures from earlier automated runs on the 1.3 and 1.4 builds: Android emulator, iOS simulator and the desktop interface.</p>
 <div class="shots">
 <img src="img/android_dictation.gif" alt="Android dictation"><img src="img/ios_walkthrough.gif" alt="iPhone dictation">
 <img src="img/android_keyboard_dark.png" alt="Keyboard dark"><img src="img/ios_dictate.png" alt="iPhone dictate">
@@ -80,8 +80,8 @@ td.y{color:#7ee2a8}.mute{color:var(--mute)}footer{margin:70px 0 40px;color:var(-
 <table>
 <tr><th></th><th>Humming</th><th>Wispr Flow</th><th>Typeless</th><th>Gboard Rambler</th></tr>
 <tr><td>Fully offline</td><td class="y">Yes, every platform</td><td>No</td><td>No</td><td>Limited</td></tr>
-<tr><td>Price</td><td class="y">Free, open source</td><td>Free tier; Pro $12-15</td><td>Free tier; Pro $12-30</td><td>Free, Pixel 11 only</td></tr>
-<tr><td>Longest dictation</td><td class="y">No limit on Android (desktop 15 min)</td><td>20 min desktop, 5 min Android</td><td>9 min</td><td>Not stated</td></tr>
+<tr><td>Price</td><td class="y">Free, Apache-2.0 (source public from 1.6.3)</td><td>Free tier; Pro $12-15</td><td>Free tier; Pro $12-30</td><td>Free, Pixel 11 only</td></tr>
+<tr><td>Longest dictation</td><td class="y">No limit on Android and iPhone (desktop: none by default)</td><td>20 min desktop, 5 min Android</td><td>9 min</td><td>Not stated</td></tr>
 <tr><td>Platforms</td><td class="y">Android, iOS, Windows, macOS, Linux</td><td>Mac, Windows, iOS, Android</td><td>macOS, Windows, iOS, Android</td><td>Pixel 11</td></tr>
 </table>
 <p class="mute">Sources and the full table: <a href="https://github.com/muhib-karim/humming-keyboard#how-humming-compares">README</a>.</p>
@@ -93,7 +93,7 @@ td.y{color:#7ee2a8}.mute{color:var(--mute)}footer{margin:70px 0 40px;color:var(-
 <tr><td>Humming Best (Parakeet 0.6B)</td><td>1.68 %</td><td>3.12 %</td><td>1314 ms</td></tr>
 <tr><td>Wispr Flow, Typeless, Gboard Rambler</td><td colspan="3" class="mute">No figures published on a public benchmark</td></tr>
 </table>
-<p class="mute">LibriSpeech, measured by the repo's benchmark script with the shipped models on a 2-thread CPU.</p>
+<p class="mute">LibriSpeech, first 200 test-clean and 100 test-other clips (treat the WER as +/- 0.5 points). Measured by the repo's benchmark script in a CI run on 4 October 2026, with the shipped models on a 2-thread x86-64 desktop CPU; speed on a phone has not been benchmarked. The other products publish no figure on a public benchmark, so this is not a like-for-like comparison. Details: <a href="https://github.com/muhib-karim/humming-keyboard#benchmarks">README</a>.</p>
 
 <footer>Humming is free software under the Apache License 2.0. Speech models: NVIDIA Parakeet (CC-BY-4.0) via sherpa-onnx. Keyboard base: FlorisBoard. <a href="privacy.html">Privacy policy</a>.</footer>
 </div>

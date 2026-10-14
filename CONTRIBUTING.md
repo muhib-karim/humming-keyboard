@@ -2,7 +2,8 @@
 
 Thank you for helping improve Humming. This guide covers bug reports, feature ideas and pull requests.
 
-Issues and pull requests are open to everyone. By taking part you agree to follow the [Code of Conduct](CODE_OF_CONDUCT.md).
+The repository is private for now and is made public with the 1.6.3 release; from then on, issues and pull requests
+are open to everyone. By taking part you agree to follow the [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## Reporting a bug
 
@@ -14,7 +15,8 @@ Open an issue with the **Bug report** template. The most useful reports include:
 - whether it happens in Offline or Online voice mode, and with the Fast or Best model (for voice problems);
 - for a crash on Android, the log from the crash screen (it is never sent automatically; copy it yourself).
 
-Please do not paste API keys, personal text you dictated, or anything else private into an issue.
+Please do not paste API keys, personal text you dictated, or anything else private into an issue: issues are public.
+For a privacy request, use the private route in [SECURITY.md](SECURITY.md) (GitHub private vulnerability reporting).
 
 **Security problems** must not be reported in a public issue. Follow [SECURITY.md](SECURITY.md) instead.
 
@@ -30,7 +32,9 @@ Build instructions per platform are in the README under [Build from source](READ
 detail in [desktop/README.md](desktop/README.md), [docs/IOS_SIDELOAD.md](docs/IOS_SIDELOAD.md) (Xcode route) and
 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) (how the code is organised).
 
-Run the tests for the part you changed before opening a pull request:
+Run the tests for the part you changed before opening a pull request. The GitHub Actions workflows are configured to
+run these too, but Actions has not run on this repository since 5 October 2026, so for now local runs are the only
+check:
 
 | Area | Command |
 |---|---|
@@ -48,7 +52,7 @@ Run the tests for the part you changed before opening a pull request:
 
 ### Project rules
 
-- **The offline voice path stays offline.** On Android, `NetworkAuditTest` fails the build if any file other than
+- **The offline voice path stays offline.** On Android, `NetworkAuditTest` fails the unit tests if any file other than
   `ModelDownload.kt`, `GifSearch.kt`, `LlmCleanup.kt` and `AppUpdate.kt` uses a network API. Do not widen that list
   without a clear reason, a default-off setting and an update to the privacy policy
   ([play/PRIVACY_POLICY.md](play/PRIVACY_POLICY.md) and `play/site/privacy.html`).
@@ -58,7 +62,9 @@ Run the tests for the part you changed before opening a pull request:
 - **Respect the FlorisBoard licence.** `keyboard/` is a fork of FlorisBoard (Apache-2.0). Keep upstream licence
   headers on modified files, mark new files as added by Humming, and list notable changes in
   [keyboard/NOTICE-HUMMING.md](keyboard/NOTICE-HUMMING.md). New third-party code, data or models need a licence
-  compatible with that and an entry in [keyboard/LICENSES.md](keyboard/LICENSES.md); no GPL code is included.
+  compatible with that and an entry in [keyboard/LICENSES.md](keyboard/LICENSES.md) (the Android inventory); no GPL code
+  is included. For the desktop app, core or iOS there is no inventory file yet: name the new dependency and its
+  licence in the pull request.
 - **Pin what you download.** Models and native libraries fetched at build or run time are checked against a pinned
   SHA-256; keep it that way for anything new.
 - **No secrets in the repository.** Signing keys and API keys live in repository secrets or on the user's device

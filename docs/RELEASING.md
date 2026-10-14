@@ -38,6 +38,8 @@ versions (for example "Android 1.6.3 (versionCode 1603). Desktop stays 1.6.0, iO
 
 `scripts/assemble_release.py` copies the section whose heading starts with `## <version>` into the GitHub release
 notes and into the `notes` field of both update feeds (the Android feed keeps the first 2,000 characters).
+While a version is only a candidate, its heading carries `(release candidate)` and a **Status** line; remove both
+before tagging, so the published notes do not call the release a candidate.
 
 ## 3. Signing
 

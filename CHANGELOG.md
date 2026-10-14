@@ -1,6 +1,7 @@
 # Changelog
 
-## 1.6.3: voice never types placeholder text, accurate README, reproducible WER bench
+## 1.6.3 (release candidate): voice never types placeholder text, accurate README, reproducible WER bench
+- **Status**: release candidate on `main`; it becomes the 1.6.3 release when its GitHub Release is published.
 - **Version**: Android 1.6.3 (versionCode 1603). Desktop stays 1.6.0, iOS unchanged.
 - **Open source**: the repository is licensed Apache-2.0 and is made public with this release (root LICENSE and NOTICE; desktop and core manifests now say Apache-2.0); docs and site updated to match; the privacy page lists GitHub contact routes instead of an email address.
 - **Voice never types placeholder text**: a phone whose CPU the on-device engine is not built for used to fall back
@@ -11,6 +12,13 @@
   including the update check that is on by default; FUTO Keyboard, Handy and Superwhisper added as offline
   alternatives; unverified "no keyboard" claims about Wispr Flow and Typeless removed; the CI WER run's output is
   committed under `docs/bench/`, plus a re-run with every reference and hypothesis.
+- **Docs, accurate to the code**: privacy policy dated 14 October 2026 (Online voice mode also runs in incognito;
+  Android backup in the short version; AI clean-up in the internet permission; desktop update checks 45 seconds after
+  launch and every 4 hours, which Settings cannot switch off; GitHub private vulnerability reporting as the private
+  route for privacy requests). Desktop dictation is documented as having no length limit by default (an optional cap
+  in Settings), as in the code, instead of "up to 15 minutes". CI claims say what is configured, what ran before
+  5 October 2026 and what runs now. `keyboard/LICENSES.md` says it covers the Android keyboard only and that the
+  English neural model's trained weights ship.
 - **Benchmark tooling**: `keyboard/ci/fetch_librispeech_sample.py` streams a fixed LibriSpeech sample (about 30 MB
   instead of 350 MB); `wer_bench.py` skips empty sets and can write per-utterance results (`WER_PER_UTT`).
 
@@ -105,7 +113,7 @@
   replacing six links that pointed at missing images), walkthrough GIFs, an at-a-glance feature table, a measured
   WER/latency table next to what Wispr Flow, Typeless and Gboard Rambler publish, and a home page on GitHub Pages.
 
-## Unreleased: Humming for Windows and macOS, signed Android release
+## M8: Humming for Windows and macOS, signed Android release (desktop 0.1.0; merged after 1.2.0, included in 1.3.0)
 Desktop (new, `desktop/`)
 - Humming for Windows and macOS (Tauri v2): push-to-talk dictation into any app, on-device Parakeet speech
   recognition (sherpa-onnx, the same engine as Android) and the shared text clean-up from `core/`.
@@ -275,26 +283,3 @@ Patch release: release hygiene only, no functional changes to the keyboard.
   encrypted dependency-info block is no longer embedded; it was the only difference between two builds.
 - The emulator proof (CI job `emulator-proof`, items 1-6) is re-run by CI on this tag; `evidence/` still holds the
   v1.0.0 run 36350013869.
-
-## 1.0.0
-
-- Works out of the box: the keyboard downloads its speech model by itself the first time it opens, with a progress
-  bar inside the keyboard (resumable, sha256-verified, retries on a dropped connection). No setup app needed; the
-  Humming app is now optional settings and history.
-- Dictate up to 5 minutes (was 60 s), with elapsed time, time left and a countdown for the last 30 seconds.
-- Live text: speech is cut at natural pauses and each phrase is transcribed while you keep talking; it appears in
-  the text field as you go (underlined until you stop). After stop only the last phrase is left to transcribe, so
-  the final text lands fast. On a slower device, phrases waiting in the queue are merged into one transcription
-  (up to 28 s), so a long dictation never falls behind the speaker and nothing is dropped at the end.
-- x86_64 devices (emulators, Chromebooks) get the smaller whisper tiny.en model (78 MB) because the engine's
-  x86_64 build is too slow for base.en to stay live; arm64 phones keep base.en (148 MB).
-- The engine does a one-time warm-up pass as soon as the model is loaded, so the first dictation isn't slower
-  than the rest.
-- Cleanup (on-device rules): fillers, repeated words, self-corrections ("3, no, 4pm"), spoken punctuation, capitals
-  and final punctuation, applied to the whole dictation; times are written the way people type them ("4pm"). No cloud or LLM polish in this build (no free route that
-  keeps keys out of the APK).
-- Full keyboard: number row, two symbol pages (?123 and =\<), cursor arrows, key repeat on space/arrows/backspace,
-  backspace-hold that speeds up to whole words, pressed-key highlight and key haptics.
-- Mic closes when the keyboard hides; whatever was said so far is still inserted.
-- Release APK signed with a stable release key (CI secret); debug-only test hooks are not in the release APK.
-- CI: emulator proof suite (API 35, KVM, 4 cores) and a release-APK smoke test; evidence in `evidence/`.
