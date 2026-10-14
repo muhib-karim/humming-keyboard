@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report a security vulnerability
+    url: https://github.com/muhib-karim/humming-keyboard/security/advisories/new
+    about: Please report security problems privately, not in a public issue.
+  - name: User guide and troubleshooting
+    url: https://github.com/muhib-karim/humming-keyboard/blob/main/docs/USER_GUIDE.md
+    about: Install steps, settings, updates and answers to common problems.
+  - name: Humming website
+    url: https://muhib-karim.github.io/humming-keyboard/
+    about: Downloads, screenshots and the privacy policy.

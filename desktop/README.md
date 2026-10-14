@@ -1,4 +1,4 @@
-# Humming for Windows and macOS
+# Humming for Windows, macOS and Linux
 
 Hold a shortcut, speak, let go: Humming transcribes on your own computer and pastes clean text into whatever
 app has focus (mail, chat, docs, the browser, the terminal). It is the desktop sibling of the Humming Android

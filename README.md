@@ -1,30 +1,55 @@
 <p align="center"><img src="docs/banner.png" alt="Humming: private voice typing that never leaves your device" width="100%"></p>
 
+<h1 align="center">Humming Keyboard</h1>
+
+<p align="center"><strong>Private voice typing that works offline: a full keyboard for Android, plus iPhone, Windows, macOS and Linux apps.</strong></p>
+
 <p align="center">
-<a href="https://github.com/muhib-karim/humming-keyboard/releases/latest"><img alt="Release" src="https://img.shields.io/badge/release-v1.6.3-e5486b"></a>
-<a href="https://github.com/muhib-karim/humming-keyboard/actions/workflows/keyboard.yml"><img alt="Android CI" src="https://github.com/muhib-karim/humming-keyboard/actions/workflows/keyboard.yml/badge.svg"></a>
-<a href="https://github.com/muhib-karim/humming-keyboard/actions/workflows/desktop.yml"><img alt="Desktop CI" src="https://github.com/muhib-karim/humming-keyboard/actions/workflows/desktop.yml/badge.svg"></a>
-<a href="https://github.com/muhib-karim/humming-keyboard/actions/workflows/ios.yml"><img alt="iOS CI" src="https://github.com/muhib-karim/humming-keyboard/actions/workflows/ios.yml/badge.svg"></a>
-<img alt="Licence" src="https://img.shields.io/badge/licence-Apache--2.0-2a2a33">
-<img alt="Platforms" src="https://img.shields.io/badge/Android%20%C2%B7%20iOS%20%C2%B7%20Windows%20%C2%B7%20macOS%20%C2%B7%20Linux-18181f">
+<a href="https://github.com/muhib-karim/humming-keyboard/releases/latest"><img alt="Latest release" src="https://img.shields.io/badge/release-v1.6.2-e5486b"></a>
+<a href="#download-and-install"><img alt="Platforms" src="https://img.shields.io/badge/platforms-Android%20%C2%B7%20iOS%20%C2%B7%20Windows%20%C2%B7%20macOS%20%C2%B7%20Linux-18181f"></a>
+<a href="#privacy"><img alt="Dictation: on-device by default" src="https://img.shields.io/badge/dictation-on--device%20by%20default-2a2a33"></a>
+<a href="#benchmarks"><img alt="WER 2.78% (Fast model, LibriSpeech test-clean)" src="https://img.shields.io/badge/WER%20test--clean-2.78%25%20Fast%20%C2%B7%201.68%25%20Best-2a2a33"></a>
+<a href="#licence-and-credits"><img alt="Licence" src="https://img.shields.io/badge/licence-Apache--2.0%20(Android)%20%C2%B7%20MIT%20(desktop%2C%20core)-2a2a33"></a>
 </p>
 
-> **CI status, 8 October 2026:** GitHub Actions has not started any job on this private repository since 5 October
-> 2026 (the account's Actions billing), so the CI badges above show failures that say nothing about the code. The last
-> green CI runs are from 4 October 2026 (1.4.0 code); 1.6.x was built and tested outside Actions.
+<p align="center">
+<a href="https://github.com/muhib-karim/humming-keyboard/releases/latest"><strong>Download</strong></a> ·
+<a href="docs/README.md"><strong>Docs</strong></a> ·
+<a href="CHANGELOG.md"><strong>Changelog</strong></a> ·
+<a href="https://muhib-karim.github.io/humming-keyboard/privacy.html"><strong>Privacy</strong></a> ·
+<a href="https://muhib-karim.github.io/humming-keyboard/"><strong>Website</strong></a>
+</p>
 
-# Humming Keyboard
+Tap the mic and talk: your words appear in the text field as you speak, as an underlined draft that corrects itself
+in place, for as long as you speak, even with the screen off. Tap the mic again to stop and the final text is typed
+once (or turn off "Live text while speaking" to see nothing until you stop). In the default Offline mode speech
+recognition runs on your device, so dictation works in airplane mode and your voice never leaves it. Free, no
+account, no analytics, no ads.
 
-**A private keyboard with offline voice typing, for Android, iPhone, Windows, macOS and Linux.** Tap the mic and
-talk: your words appear in the text field as you speak, as an underlined draft that corrects itself in place, for as
-long as you speak, even with the screen off. Tap the mic again to stop and the final text is typed once (or turn off
-"Live text while speaking" to see nothing until you stop). In the default Offline mode speech recognition runs on your device, so dictation works in airplane mode and your
-voice never leaves it. Free. The source code is not public yet (this repository is private).
+Android keyboard built on FlorisBoard (Apache 2.0). Speech recognition by NVIDIA Parakeet on sherpa-onnx.
 
-Android keyboard built on FlorisBoard (Apache 2.0).
+> **Repository status.** This repository is private for now, so the source code is not public yet. Version
+> **v1.6.2** is the latest GitHub Release; `main` holds the **1.6.3** release candidate (see
+> [CHANGELOG.md](CHANGELOG.md)). GitHub Actions has not started any job on this repository since 5 October 2026
+> (the account's Actions billing); the last green CI runs are from 4 October 2026 (1.4.0 code), and 1.6.x was built
+> and tested outside Actions.
 
-[Get Humming](#get-humming) · [Walkthroughs](#walkthroughs) · [Screenshots](#screenshots) · [Features](#features) ·
-[Benchmarks](#benchmarks) · [Compare](#how-humming-compares) · [Privacy](#offline-by-design) · [Website](https://muhib-karim.github.io/humming-keyboard/)
+## Contents
+
+- [At a glance](#at-a-glance)
+- [Features](#features)
+- [Download and install](#download-and-install)
+- [Screenshots](#screenshots)
+- [Benchmarks](#benchmarks)
+- [How Humming compares](#how-humming-compares)
+- [Privacy](#privacy)
+- [Architecture](#architecture)
+- [Tech stack](#tech-stack)
+- [Build from source](#build-from-source)
+- [Documentation](#documentation)
+- [Changelog](#changelog)
+- [Contributing and security](#contributing-and-security)
+- [Licence and credits](#licence-and-credits)
 
 ## At a glance
 
@@ -40,21 +65,196 @@ Android keyboard built on FlorisBoard (Apache 2.0).
 | Keeps going with the screen off | ✅ | — | — |
 | Optional AI clean-up with your own key | ✅ | — | — |
 | History you can search | ✅ | — | ✅ |
+| Self-updates (1.6) | ✅ APK, one-tap confirm | — | ✅ signed (not the .deb) |
 | Install | APK / AAB | unsigned `.ipa` (sideload) | `.exe` `.msi` `.dmg` `.AppImage` `.deb` |
 
-## Get Humming
+## Features
 
-Every file is on the [latest GitHub Release](https://github.com/muhib-karim/humming-keyboard/releases/latest), with a `SHA256SUMS.txt` to check them, and the installers and update files are mirrored on the public download site, https://humming-keyboard.pages.dev/ (Cloudflare Pages, free).
+**Voice**
+- Offline dictation on NVIDIA Parakeet, run by sherpa-onnx. Two models:
+  - **Fast** (default): Parakeet TDT-CTC 110M int8, a 104 MB download.
+  - **Best**: Parakeet TDT 0.6B v2 int8, a 482 MB download. It is offered on phones with 6 GB+ RAM.
+- **One control** (1.3): tap the round mic to start, tap it again to stop. Each phrase (cut by Silero VAD) is typed
+  into the field as soon as it is recognised, so you see your words land live.
+- **No length limit** (1.3): dictate for as long as you like. Audio is recognised phrase by phrase as you talk and memory use stays
+  flat, so a one-hour session works like a ten-second one.
+- **Keeps going with the screen off** (1.3): dictation runs in a microphone foreground service with a "Humming is
+  listening" notification (tap Stop there too), so turning the screen off or switching apps does not cut it.
+- **Online mode** (1.3, off by default): switch Voice input from Offline to Online to use Android's own speech
+  recogniser (Google, no account needed, more languages). Offline stays the default and is unchanged.
+- **AI clean-up with your own key** (1.3, off by default): an optional pass with Gemini, OpenAI or Groq that removes
+  fillers, fixes punctuation and structure, and follows a closing spoken command such as "make it formal", "make it
+  a list" or "translate to Spanish". Only the finished text is sent (never audio), never in incognito, and the key is
+  stored encrypted on the phone (Android Keystore). Any failure keeps the on-device text.
+- **Voice commands**: "scratch that" / "delete that" removes the last sentence; "new line" and "new paragraph".
+- **Custom words** (Settings > Voice > Custom words): teach spellings and names ("hum ming" → Humming).
+- **Accuracy mode** (1.4, off by default; Android, desktop and iOS): stricter on-device clean-up on top of Clean
+  mode. It also removes hedge fillers ("like", "basically", "actually", "you know", "I mean") when they are set off by
+  commas, extra hesitation sounds and a spoken "period" at the end, and never drops a "like" that carries meaning
+  ("I like it" stays). The same rules and tests run on all three platforms. Pair it with the Best model for the
+  lowest error rate.
+- Clean mode (on by default) removes fillers and stutters. It also applies self-corrections: "ten, no, fifteen
+  minutes" becomes "15 minutes", and "scratch that" drops the sentence. Punctuation and capitals come from the model.
+- Model manager in Settings > Voice. You can choose Fast or Best, see the size, delete a model and turn on
+  **Download on Wi-Fi only**. An **Offline** badge shows on the voice panel once a model is installed.
+- Bluetooth headset microphone support.
+- Long-press the mic to hand off to **Gboard voice typing** (see below).
+
+**iPhone and iPad** (1.4, `ios/`)
+- A SwiftUI app plus the Humming keyboard. Dictation runs on Apple's on-device recogniser with on-device recognition
+  required: Humming refuses to run rather than fall back to a server. Punctuation from the recogniser, then the same
+  Clean mode, Accuracy mode and custom words as Android.
+- One control and no length limit (recognition restarts phrase by phrase). iOS keyboards can't use the microphone,
+  so you dictate in the app and the keyboard's red strip inserts the result in one tap.
+- Released as an unsigned `.ipa`: sideload it with your own free Apple ID ([docs/IOS_SIDELOAD.md](docs/IOS_SIDELOAD.md)).
+
+**Windows, macOS and Linux** (Tauri v2, `desktop/`)
+- Hold a global shortcut (Ctrl/Cmd + Shift + Space by default) in any app, talk and let go: the text is pasted
+  where your cursor is. Press-to-toggle works too.
+- The same Parakeet Fast and Best models on sherpa-onnx 1.13.8 as Android, downloaded on first run with a SHA-256
+  check, and a Rust port of the Android clean-up rules (Clean mode, Accuracy mode, verbatim mode).
+- Spoken lists become bullets ("first, eggs, second, milk"; can be turned off), voice commands ("new line",
+  "period", "question mark"), a personal dictionary, and dictations of up to 15 minutes.
+- History on the computer (search, copy, delete), a tray / menu bar app with a listening overlay, an in-app
+  "Try it" box, and signed self-updates (1.6). Details: [desktop/README.md](desktop/README.md).
+
+**Typing** (built on FlorisBoard)
+- **Word prediction that reads like Gboard**: a three-slot strip with the best guess in the middle and what you typed
+  in quotes. A 156k-word English dictionary with frequencies, next-word prediction, keyboard-aware autocorrect
+  (Off / Mild / Normal / Aggressive), apostrophe fixes (dont → don't) and learning from what you type, on the phone
+  only. German, Spanish, French, Italian and Portuguese dictionaries too.
+- **On-device neural next-word model** (1.2): a small word-level LSTM (16k words, int8, 2.7 MB) that reads the whole
+  sentence so far, run by Humming's own Kotlin code with no native library and no network. Blended with the word
+  tables, it lifts held-out next-word top-3 accuracy from 30.2 % to 36.5 % (sentences it never saw;
+  measured by a unit test on every build). "Smart prediction strength" in Settings sets the blend or turns it off.
+- **Next-word prediction in six languages** (1.2): German, Spanish, French, Italian and Portuguese now suggest the
+  next word too (held-out top-3 22-26 %, up from 1-5 %).
+- **Stickers & GIFs** (1.2, off until you turn it on): 32 built-in stickers, your own imported images, a search box,
+  and optional online GIF search through Openverse (openly licensed GIFs, no account or key) that says exactly what
+  it sends and stays off in incognito.
+- Emoji in the strip ("pizza" offers 🍕), emoji search with `:heart`, and text shortcuts ("omw" → your phrase).
+- Glide (swipe) typing, fed by the same dictionary.
+- Number row, long-press symbols, key sound and vibration, one-handed mode, a **floating keyboard** you drag by its
+  handle, and a split keyboard in landscape and on tablets.
+- Themes: Humming light, dark and AMOLED black, a custom accent colour, and your own **background photo**.
+- Clipboard history, on by default: a 2-column grid with timestamps, up to 100 items kept for up to a week.
+- Edit shortcuts: long-press a (select all), c (copy), x (cut), v (paste), z (undo) and y (redo).
+- Space-bar trackpad: slide to move the cursor left, right, up and down.
+- Incognito mode: no learning, no clipboard history and no voice history.
+- TalkBack reads every key, and every theme meets WCAG AA contrast.
+
+All of it works at the same time: this is AMOLED + a background photo + floating + incognito + the number row + an
+emoji suggestion, in one screenshot.
+
+| | | |
+|---|---|---|
+| ![All features together](docs/images/m6_all_together.png) | ![Prediction](docs/images/m6_completion.png) | ![Emoji search](docs/images/m6_emoji_search.png) |
+| Everything on together | "Sounds gre" → "gre" · **great** · grew | Emoji search `:heart` |
+| ![Floating keyboard](docs/images/m6_floating.png) | ![German](docs/images/m6_lang_3.png) | ![Settings search](docs/images/m6_settings_search.png) |
+| Floating keyboard | German layout and dictionary | Settings search |
+| ![Model manager](docs/screenshots/android_model_manager.png) | ![Clipboard grid](docs/screenshots/android_clipboard.png) | ![Dark voice panel](docs/screenshots/android_dark_voice.png) |
+| Settings > Voice: model manager | Clipboard history | Voice panel (dark) |
+
+### Android settings
+
+One tree, every option searchable (Settings > Search) and exportable to a file (Settings > Other > Backup, and
+Restore to import):
+
+- **Voice**: model (Fast / Best), download on Wi-Fi only, delete, Clean mode, Accuracy mode, Bluetooth mic, voice incognito,
+  history retention, personal dictionary.
+- **Languages & layouts**: add languages and layouts (QWERTY, QWERTZ, AZERTY and more).
+- **Theme**: light / dark / AMOLED, day and night themes, accent colour, background photo and dim, theme editor
+  (colours, fonts, key shapes).
+- **Keyboard**: height, key spacing, font size, number row, long-press symbols and delay, one-handed, split,
+  floating, bottom offset; **Input feedback**: sound and vibration.
+- **Smartbar**: toolbar buttons (add, remove, reorder), voice button size.
+- **Typing**: suggestions, **Prediction** (autocorrect strength, next word, smart prediction strength, weight of
+  your own typing, suggestions shown (3-5), best suggestion in the middle or first, learn from my typing, emoji),
+  text shortcuts, auto-capitalisation, double-space period, personal dictionary.
+- **Gestures**: glide typing and its trail, swipe gestures, space-bar trackpad.
+- **Clipboard**: history and retention. **Emoji**: skin tone, history, emoji suggestions; **Stickers & GIFs**:
+  the panel, stickers per row, your own stickers, online GIF search and whether it may run in incognito.
+- **Privacy**: incognito, learning, clear learned words, block offensive words, what uses the network.
+- **Other**: backup / restore to a file, app theme. **About**: licences.
+
+The full audit (privacy, permissions, security, performance, accessibility, crash risk, licences, tests and a gap
+list against Gboard, SwiftKey and FUTO) is in [AUDIT.md](AUDIT.md).
+
+### Gboard voice typing hand-off (Rambler)
+
+Gboard's newer voice typing (code-named "Rambler" on Pixel phones) is part of Gboard, which is closed source.
+Humming can't embed it, so it offers a switch instead. If Gboard is installed and enabled as a keyboard,
+long-pressing Humming's mic shows a menu:
+
+- **Humming**: offline, on this phone.
+- **Gboard voice typing**: switches the active keyboard to Gboard through Android's input-method API. If Gboard
+  declares a voice subtype, Humming picks that. Otherwise it opens Gboard's keyboard, and Gboard's mic is one tap
+  away. Gboard's own keyboard-switch key brings you back to Humming.
+
+| | | |
+|---|---|---|
+| ![Long-press menu](docs/screenshots/android_voice_menu.png) | ![Gboard active](docs/screenshots/android_gboard_after_handoff.png) | ![Back to Humming](docs/screenshots/android_back_to_humming.png) |
+| Long-press the mic | Gboard takes over | Back to Humming |
+
+Honest limits:
+- The option is hidden when Gboard isn't enabled. A plain tap on the mic always uses Humming.
+- The current Gboard declares no voice subtype, so it takes one extra tap on Gboard's mic.
+- Gboard voice typing is Google's service. Whether it runs offline or sends audio to Google is set in Gboard and
+  Google's settings, not by Humming.
+- Humming can't read what you dictated in Gboard, so that text isn't added to Humming's voice history.
+- Android lets you come back with Gboard's switch key or the system keyboard picker. Humming can't pull focus back
+  by itself.
+- CI checks this flow on a Google Play emulator image with Gboard preinstalled (long-press, menu tap, Gboard
+  active, back to Humming).
+
+## Download and install
+
+Every file is on the [latest GitHub Release](https://github.com/muhib-karim/humming-keyboard/releases/latest), with a
+`SHA256SUMS.txt` to check them. Because this repository is private, the installers and update files are also
+mirrored on the public download site, https://humming-keyboard.pages.dev/ (Cloudflare Pages).
 
 | Platform | Download | Install |
 |---|---|---|
-| **Android** 8.0+ | `Humming-1.6.3.apk` | Open the APK, allow "install unknown apps" for your browser or file manager, install. Then open Humming and follow the two steps: enable the keyboard, then switch to it. The first mic tap downloads the Fast speech model (104 MB, once). |
+| **Android** 8.0+ | `Humming-<version>.apk` | Open the APK, allow "install unknown apps" for your browser or file manager, install. Then open Humming and follow the two steps: enable the keyboard, then switch to it. The first mic tap downloads the Fast speech model (104 MB, once). |
 | **iPhone / iPad** (iOS 16+) | `Humming_1.5.0_unsigned.ipa` (1.6.0 has no iOS build yet) | Sideload with your own free Apple ID through Sideloadly, AltStore or Xcode (re-sign every 7 days). Then Settings > General > Keyboard > Keyboards > Add New Keyboard > Humming. Step by step: [docs/IOS_SIDELOAD.md](docs/IOS_SIDELOAD.md). |
-| **Windows** 10/11 x64 | `Humming_1.6.0_x64-setup.exe` (1.6.0 ships the setup .exe only; the last .msi is 1.5.0) | Run the installer. SmartScreen: **More info** > **Run anyway** ([details](#desktop-windows-macos-and-linux-how-to-open-it)). |
-| **macOS** 11+ (Apple silicon and Intel) | `Humming_1.5.0_universal.dmg` (1.6.0 has no macOS build yet, see below) | Drag to Applications, open once, then **System Settings > Privacy & Security > Open Anyway**. Allow Microphone and Accessibility. |
+| **Windows** 10/11 x64 | `Humming_1.6.0_x64-setup.exe` (1.6.0 ships the setup .exe only; the last .msi is 1.5.0) | Run the installer. SmartScreen: **More info** > **Run anyway** ([details](#desktop-first-launch-unsigned-builds)). |
+| **macOS** 11+ (Apple silicon and Intel) | `Humming_1.5.0_universal.dmg` (1.6.0 has no macOS build yet, see the note below the table) | Drag to Applications, open once, then **System Settings > Privacy & Security > Open Anyway**. Allow Microphone and Accessibility. |
 | **Linux** x86-64 | `Humming_1.6.0_amd64.AppImage` or `.deb` | `chmod +x` the AppImage and run it, or `sudo apt install ./Humming_1.6.0_amd64.deb`. |
 
-Android is 1.6.3; Windows and Linux are 1.6.0. macOS and iOS stay on 1.5.0 for now: 1.6.0 was built without GitHub Actions, on Linux build machines (Windows cross-compiled with cargo-xwin), and Apple's tools only run on a Mac. The macOS and iOS 1.5.0 files are on the [v1.5.0 release](https://github.com/muhib-karim/humming-keyboard/releases/tag/v1.5.0) and on the download site.
+Versions: Android is at 1.6.2 on the latest release (1.6.3 is the release candidate on `main`); Windows and Linux
+are 1.6.0. macOS and iOS stay on 1.5.0 for now: 1.6.0 was built without GitHub Actions, on Linux build machines
+(Windows cross-compiled with cargo-xwin), and Apple's tools only run on a Mac. The macOS and iOS 1.5.0 files are on
+the [v1.5.0 release](https://github.com/muhib-karim/humming-keyboard/releases/tag/v1.5.0) and on the download site.
+
+A step-by-step guide for every platform, including settings and troubleshooting, is in
+[docs/USER_GUIDE.md](docs/USER_GUIDE.md).
+
+### Desktop first launch (unsigned builds)
+
+The Windows and macOS builds are **unsigned**: they are not signed with an Apple Developer ID or a Microsoft
+code-signing certificate yet, so the operating system warns on first launch. The app is the same either way; this
+is a one-time step.
+
+**macOS** (universal `.dmg`, Apple silicon and Intel)
+1. Open the `.dmg` and drag Humming to Applications.
+2. Open Humming. macOS blocks the first open ("cannot be opened" / "could not verify"). Click Done.
+3. Go to **System Settings > Privacy & Security**, scroll down, and click **Open Anyway** next to Humming.
+4. Confirm with Open (and your password). From then on it opens normally.
+
+Apple's guide: https://support.apple.com/en-us/102445
+
+**Windows** (`.msi` or the setup `.exe`)
+1. Run the installer.
+2. SmartScreen shows "Windows protected your PC" with an unknown publisher. Click **More info**.
+3. Click **Run anyway** and finish the installer.
+
+**Linux** (`.AppImage` or `.deb`, x86-64; builds are not signed, and Linux shows no warning)
+1. AppImage: `chmod +x Humming_*_amd64.AppImage` and run it. Debian / Ubuntu: `sudo apt install ./Humming_*_amd64.deb`,
+   then open Humming from your app menu.
+2. Pasting into other apps works on X11 sessions and in XWayland apps. On a pure Wayland session auto-paste may not
+   land; every dictation is kept in History, one click to copy.
+
+Signing options are in [docs/RELEASE_SIGNING.md](docs/RELEASE_SIGNING.md).
 
 ### Updates (1.6)
 
@@ -63,16 +263,18 @@ Android is 1.6.3; Windows and Linux are 1.6.0. macOS and iOS stay on 1.5.0 for n
 | **Windows, Linux AppImage** (and macOS from its first 1.6 build) | Humming checks for a new version 45 seconds after it starts and every 4 hours, and on **Settings > Updates > Check for updates**. With **Automatically install updates** on (the default) it downloads the update, installs it and restarts itself, never in the middle of a dictation. Off: it shows "Update available" and an **Install now** button. Every update is signed with Humming's update key (minisign, Ed25519); the app refuses a file whose signature does not match the public key it ships with. |
 | **Linux .deb** | A .deb install cannot replace itself: Humming shows that a new version is out. Use the AppImage for automatic updates. |
 | **Android (APK)** | Humming checks the update feed at most every 6 hours (when the keyboard opens) and on **Settings > Updates > Check for updates**. With automatic download on (the default) it fetches the new APK on Wi-Fi, checks its SHA-256 against `SHA256SUMS.txt` and its signing certificate (`8C:8B:...:1F:C6`, the release key), then hands it to Android's installer. **Android asks you to confirm with one tap**: an app installed outside the Play Store cannot install itself silently, and Humming does not pretend otherwise. On Android 12+, once Humming has installed an update itself, Android may skip the prompt for later ones (Android's decision). The first time, Android asks you to allow Humming to install apps. |
-| **Android (Google Play)** | Play installs updates. The Play bundle has no self-updater and no install permission. |
+| **Android (Google Play bundle)** | The Play bundle has no self-updater and no install permission; Play installs its updates. |
 | **iPhone / iPad** | No automatic updates: an unsigned sideloaded .ipa cannot update itself. Download the new .ipa and sideload it again. |
 
 The update feeds (`latest.json` for desktop, `android.json` for Android) are published with every GitHub Release by
-`release.yml` and mirrored, with the update files, to https://humming-keyboard.pages.dev/updates/ (Cloudflare Pages), because
-this repository is private and its release downloads need a GitHub login. `scripts/verify_updater.py` checks every
-signature in the feed against the public key in `desktop/src-tauri/tauri.conf.json`, in CI and by hand. On the desktop you hold a shortcut (Ctrl/Cmd + Shift + Space by default)
-in any app, talk, and let go: the text is pasted where your cursor is.
+`release.yml` and mirrored, with the update files, to https://humming-keyboard.pages.dev/updates/, because this
+repository is private and its release downloads need a GitHub login. `scripts/verify_updater.py` checks every
+signature in the feed against the public key in `desktop/src-tauri/tauri.conf.json`. How a release is cut:
+[docs/RELEASING.md](docs/RELEASING.md).
 
-## Walkthroughs
+## Screenshots
+
+### Walkthroughs
 
 | Android: tap, talk, it types | Android: screen off, still listening | iPhone: talk, clean text | Desktop: try it, talk, get clean text |
 |:---:|:---:|:---:|:---:|
@@ -82,12 +284,12 @@ in any app, talk, and let go: the text is pasted where your cursor is.
 and desktop recordings come from CI too (the iOS simulator and the desktop interface), playing a sample sentence,
 because CI machines have no microphone.*
 
-## Screenshots
+### Captures
 
 Every image is a real capture from CI on the 1.3/1.4 builds: Android on an emulator (Pixel 6, Android 15), iPhone
 on the iOS simulator, desktop from the app's own interface in Chromium. Sample text is made up.
 
-### Android
+#### Android
 
 **Dictation: tap once, talk, text is typed as you go**
 
@@ -138,7 +340,7 @@ on the iOS simulator, desktop from the app's own interface in Chromium. Sample t
 <img src="docs/screenshots/android_back_to_humming.png" width="200" alt="Back to Humming">
 </p>
 
-### iPhone
+#### iPhone
 
 <p>
 <img src="docs/screenshots/ios_dictate.png" width="200" alt="Dictate: clean text, offline badge">
@@ -149,7 +351,7 @@ on the iOS simulator, desktop from the app's own interface in Chromium. Sample t
 <img src="docs/screenshots/ios_keyboard_dark.png" width="200" alt="Keyboard, dark">
 </p>
 
-### Desktop (Windows, macOS, Linux)
+#### Desktop (Windows, macOS, Linux)
 
 <p>
 <img src="docs/screenshots/desktop_home.png" width="420" alt="Desktop home: status, model, try it">
@@ -159,108 +361,6 @@ on the iOS simulator, desktop from the app's own interface in Chromium. Sample t
 <img src="docs/screenshots/desktop_settings.png" width="420" alt="Settings, with accuracy mode">
 <img src="docs/screenshots/desktop_settings_dark.png" width="420" alt="Settings, dark">
 </p>
-
-## Features
-
-**Voice**
-- Offline dictation on NVIDIA Parakeet, run by sherpa-onnx. Two models:
-  - **Fast** (default): Parakeet TDT-CTC 110M int8, a 104 MB download.
-  - **Best**: Parakeet TDT 0.6B v2 int8, a 482 MB download. It is offered on phones with 6 GB+ RAM.
-- **One control** (1.3): tap the round mic to start, tap it again to stop. Each phrase (cut by Silero VAD) is typed
-  into the field as soon as it is recognised, so you see your words land live.
-- **No length limit** (1.3): dictate for as long as you like. Audio is recognised phrase by phrase as you talk and memory use stays
-  flat, so a one-hour session works like a ten-second one.
-- **Keeps going with the screen off** (1.3): dictation runs in a microphone foreground service with a "Humming is
-  listening" notification (tap Stop there too), so turning the screen off or switching apps does not cut it.
-- **Online mode** (1.3, off by default): switch Voice input from Offline to Online to use Android's own speech
-  recogniser (Google, no account needed, more languages). Offline stays the default and is unchanged.
-- **AI clean-up with your own key** (1.3, off by default): an optional pass with Gemini, OpenAI or Groq that removes
-  fillers, fixes punctuation and structure, and follows a closing spoken command such as "make it formal", "make it
-  a list" or "translate to Spanish". Only the finished text is sent (never audio), never in incognito, and the key is
-  stored encrypted on the phone (Android Keystore). Any failure keeps the on-device text.
-- **Voice commands**: "scratch that" / "delete that" removes the last sentence; "new line" and "new paragraph".
-- **Custom words** (Settings > Voice > Custom words): teach spellings and names ("hum ming" → Humming).
-- **Accuracy mode** (1.4, off by default; Android, desktop and iOS): stricter on-device clean-up on top of Clean
-  mode. It also removes hedge fillers ("like", "basically", "actually", "you know", "I mean") when they are set off by
-  commas, extra hesitation sounds and a spoken "period" at the end, and never drops a "like" that carries meaning
-  ("I like it" stays). The same rules and tests run on all three platforms. Pair it with the Best model for the
-  lowest error rate.
-- Clean mode (on by default) removes fillers and stutters. It also applies self-corrections: "ten, no, fifteen
-  minutes" becomes "15 minutes", and "scratch that" drops the sentence. Punctuation and capitals come from the model.
-- Model manager in Settings > Voice. You can choose Fast or Best, see the size, delete a model and turn on
-  **Download on Wi-Fi only**. An **Offline** badge shows on the voice panel once a model is installed.
-- Bluetooth headset microphone support.
-- Long-press the mic to hand off to **Gboard voice typing** (see below).
-
-**iPhone and iPad** (1.4, `ios/`)
-- A SwiftUI app plus the Humming keyboard. Dictation runs on Apple's on-device recogniser with on-device recognition
-  required: Humming refuses to run rather than fall back to a server. Punctuation from the recogniser, then the same
-  Clean mode, Accuracy mode and custom words as Android.
-- One control and no length limit (recognition restarts phrase by phrase). iOS keyboards can't use the microphone,
-  so you dictate in the app and the keyboard's red strip inserts the result in one tap.
-- Released as an unsigned `.ipa`: sideload it with your own free Apple ID ([docs/IOS_SIDELOAD.md](docs/IOS_SIDELOAD.md)).
-
-**Typing** (built on FlorisBoard)
-- **Word prediction that reads like Gboard**: a three-slot strip with the best guess in the middle and what you typed
-  in quotes. A 156k-word English dictionary with frequencies, next-word prediction, keyboard-aware autocorrect
-  (Off / Mild / Normal / Aggressive), apostrophe fixes (dont → don't) and learning from what you type, on the phone
-  only. German, Spanish, French, Italian and Portuguese dictionaries too.
-- **On-device neural next-word model** (1.2): a small word-level LSTM (16k words, int8, 2.7 MB) that reads the whole
-  sentence so far, run by Humming's own Kotlin code with no native library and no network. Blended with the word
-  tables, it lifts held-out next-word top-3 accuracy from 30.2 % to 36.5 % (sentences it never saw;
-  measured by a unit test on every build). "Smart prediction strength" in Settings sets the blend or turns it off.
-- **Next-word prediction in six languages** (1.2): German, Spanish, French, Italian and Portuguese now suggest the
-  next word too (held-out top-3 22-26 %, up from 1-5 %).
-- **Stickers & GIFs** (1.2, off until you turn it on): 32 built-in stickers, your own imported images, a search box,
-  and optional online GIF search through Openverse (openly licensed GIFs, no account or key) that says exactly what
-  it sends and stays off in incognito.
-- Emoji in the strip ("pizza" offers 🍕), emoji search with `:heart`, and text shortcuts ("omw" → your phrase).
-- Glide (swipe) typing, fed by the same dictionary.
-- Number row, long-press symbols, key sound and vibration, one-handed mode, a **floating keyboard** you drag by its
-  handle, and a split keyboard in landscape and on tablets.
-- Themes: Humming light, dark and AMOLED black, a custom accent colour, and your own **background photo**.
-- Clipboard history, on by default: a 2-column grid with timestamps, up to 100 items kept for up to a week.
-- Edit shortcuts: long-press a (select all), c (copy), x (cut), v (paste), z (undo) and y (redo).
-- Space-bar trackpad: slide to move the cursor left, right, up and down.
-- Incognito mode: no learning, no clipboard history and no voice history.
-- TalkBack reads every key, and every theme meets WCAG AA contrast.
-
-All of it works at the same time: this is AMOLED + a background photo + floating + incognito + the number row + an
-emoji suggestion, in one screenshot.
-
-| | | |
-|---|---|---|
-| ![All features together](docs/images/m6_all_together.png) | ![Prediction](docs/images/m6_completion.png) | ![Emoji search](docs/images/m6_emoji_search.png) |
-| Everything on together | "Sounds gre" → "gre" · **great** · grew | Emoji search `:heart` |
-| ![Floating keyboard](docs/images/m6_floating.png) | ![German](docs/images/m6_lang_3.png) | ![Settings search](docs/images/m6_settings_search.png) |
-| Floating keyboard | German layout and dictionary | Settings search |
-| ![Model manager](docs/screenshots/android_model_manager.png) | ![Clipboard grid](docs/screenshots/android_clipboard.png) | ![Dark voice panel](docs/screenshots/android_dark_voice.png) |
-| Settings > Voice: model manager | Clipboard history | Voice panel (dark) |
-
-## Settings
-
-One tree, every option searchable (Settings > Search) and exportable to a file (Settings > Other > Backup, and
-Restore to import):
-
-- **Voice**: model (Fast / Best), download on Wi-Fi only, delete, Clean mode, Accuracy mode, Bluetooth mic, voice incognito,
-  history retention, personal dictionary.
-- **Languages & layouts**: add languages and layouts (QWERTY, QWERTZ, AZERTY and more).
-- **Theme**: light / dark / AMOLED, day and night themes, accent colour, background photo and dim, theme editor
-  (colours, fonts, key shapes).
-- **Keyboard**: height, key spacing, font size, number row, long-press symbols and delay, one-handed, split,
-  floating, bottom offset; **Input feedback**: sound and vibration.
-- **Smartbar**: toolbar buttons (add, remove, reorder), voice button size.
-- **Typing**: suggestions, **Prediction** (autocorrect strength, next word, smart prediction strength, weight of
-  your own typing, suggestions shown (3-5), best suggestion in the middle or first, learn from my typing, emoji),
-  text shortcuts, auto-capitalisation, double-space period, personal dictionary.
-- **Gestures**: glide typing and its trail, swipe gestures, space-bar trackpad.
-- **Clipboard**: history and retention. **Emoji**: skin tone, history, emoji suggestions; **Stickers & GIFs**:
-  the panel, stickers per row, your own stickers, online GIF search and whether it may run in incognito.
-- **Privacy**: incognito, learning, clear learned words, block offensive words, what uses the network.
-- **Other**: backup / restore to a file, app theme. **About**: licences.
-
-The full audit (privacy, permissions, security, performance, accessibility, crash risk, licences, tests and a gap
-list against Gboard, SwiftKey and FUTO) is in [AUDIT.md](AUDIT.md).
 
 ## Benchmarks
 
@@ -315,6 +415,27 @@ Run it yourself: Actions > wer-bench > Run workflow (inputs: number of test-clea
 `python keyboard/ci/fetch_librispeech_sample.py bench test-clean 200` then
 `python keyboard/ci/wer_bench.py <models_dir> bench/LibriSpeech wer.json 200 0` (needs `sherpa-onnx==1.13.8 jiwer soundfile`).
 
+
+### Why Parakeet: the bake-off
+
+Every engine got the same 73 clips: 48 LibriSpeech test-clean and 25 test-other (accents, noise, fast speech).
+They were run on a desktop CPU with 2 threads. WER is the word error rate, so lower is better. RTF is decode time
+divided by audio length, so lower is faster.
+
+| Engine | WER clean | WER other | WER all | RTF | Download |
+|---|---:|---:|---:|---:|---:|
+| **Parakeet TDT 0.6B v2 int8 (Humming Best)** | 2.0% | 4.4% | **2.6%** | 0.092 | 482 MB |
+| **Parakeet TDT-CTC 110M int8 (Humming Fast)** | 2.6% | 6.6% | **3.7%** | **0.028** | 104 MB |
+| FUTO Whisper small.en ACFT q8 (FUTO's biggest) | 3.6% | 10.0% | 5.4% | 0.259 | ~260 MB |
+| Whisper base.en q8 (whisper.cpp) | 4.4% | 10.7% | 6.1% | 0.228 | 82 MB |
+| FUTO Whisper base.en ACFT q8 | 4.5% | 14.1% | 7.1% | 0.072 | 82 MB |
+| FUTO Whisper tiny.en ACFT q8 | 7.9% | 16.3% | 10.2% | 0.032 | 44 MB |
+
+The small Parakeet is more accurate than FUTO's biggest model and about 9x faster on these clips. Caveats: this was
+a one-off development run on a desktop CPU; its script and raw outputs are not in this repository, so treat the table
+as indicative and use the CI table above (script and output committed) for claims. With 73 clips, gaps under about
+half a point are noise. FUTO's models were only benchmarked, never shipped.
+
 ## How Humming compares
 
 Checked on the vendors' own pages on 4 October 2026 (links below the table). Prices are per user per month.
@@ -340,7 +461,7 @@ offline language coverage (English today), the AI clean-up needs your own API ke
 
 **Other offline options** (vendors' own pages, checked 8 October 2026):
 - **FUTO Keyboard** (Android): a full keyboard advertised as "100% Offline, 100% Private" with offline voice input
-  [16]. This is Humming's closest competitor on Android; on accuracy, the bake-off below measured FUTO's Whisper models
+  [16]. This is Humming's closest competitor on Android; on accuracy, the bake-off above measured FUTO's Whisper models
   against Parakeet on the same clips.
 - **Handy** (Windows, macOS, Linux): "a free, open source, and extensible speech-to-text application that works
   completely offline", MIT licence, Whisper or Parakeet models [17]. Desktop only, no keyboard.
@@ -366,7 +487,11 @@ the benchmark script and raw outputs in this repository.
 [17] https://github.com/cjpais/Handy ·
 [18] https://superwhisper.com/
 
-## Offline by design
+## Privacy
+
+Humming has no cloud speech engine of its own (Online mode uses the phone's), no account, no analytics and no ads.
+The full policy is on the website: [Privacy policy](https://muhib-karim.github.io/humming-keyboard/privacy.html)
+(source: [play/PRIVACY_POLICY.md](play/PRIVACY_POLICY.md)).
 
 - **The offline voice path has no network code.** Recording, voice detection, recognition, cleanup and history run on
   the phone. A unit test (`NetworkAuditTest`) scans every Kotlin and Java source in the app and its libraries. It fails
@@ -392,7 +517,7 @@ the benchmark script and raw outputs in this repository.
   2. cold-starts the keyboard and dictates a real spoken clip;
   3. commits "Please send the quarterly report to the whole team by Friday afternoon." into the text field.
 
-  Airplane mode is still on at the end. On every push, `NetworkAuditTest` (a unit test in `keyboard.yml`) keeps the
+  Airplane mode is still on at the end. `NetworkAuditTest` runs with the unit tests (`keyboard.yml`) and keeps the
   network rule above enforced.
 
 ![Committed offline, airplane mode on](docs/screenshots/android_offline_committed.png)
@@ -400,86 +525,51 @@ the benchmark script and raw outputs in this repository.
 On iPhone, dictation uses Apple's recogniser with on-device recognition required, so audio is processed on the
 phone and Humming refuses to run rather than fall back to a server. The iOS app has no network code.
 
-Humming has no cloud speech engine of its own (Online mode uses the phone's), no account, no analytics and no ads.
+## Architecture
 
-## Why Parakeet: the bake-off
+One repository, three apps that share the same speech models and the same clean-up rules:
 
-Every engine got the same 73 clips: 48 LibriSpeech test-clean and 25 test-other (accents, noise, fast speech).
-They were run on a desktop CPU with 2 threads. WER is the word error rate, so lower is better. RTF is decode time
-divided by audio length, so lower is faster.
+| Directory | What it is |
+|---|---|
+| [`keyboard/`](keyboard/) | The Android keyboard: a fork of FlorisBoard v0.5.2 (Kotlin, Jetpack Compose). Humming's voice engine lives in `com.humming.keyboard`; changes to upstream are listed in [`keyboard/NOTICE-HUMMING.md`](keyboard/NOTICE-HUMMING.md). |
+| [`desktop/`](desktop/) | The Windows, macOS and Linux app (Tauri v2: Rust back end, TypeScript UI). |
+| [`ios/`](ios/) | The iPhone and iPad app and keyboard extension (SwiftUI), with the clean-up rules as a Swift package. |
+| [`core/`](core/) | A shared Rust crate (VAD, audio helpers, clean-up; optional whisper.cpp from the first prototype). The desktop app uses it without whisper.cpp. |
+| [`play/`](play/) | The website source (`play/site/`, published to GitHub Pages), the privacy policy and Google Play listing material. |
+| [`landing/`](landing/) | An App Links landing page (not published yet) and the site icon. |
+| [`scripts/`](scripts/) | Release assembly and update-signature verification (Python). |
+| [`docs/`](docs/) | Documentation, screenshots, benchmark outputs and audits. |
 
-| Engine | WER clean | WER other | WER all | RTF | Download |
-|---|---:|---:|---:|---:|---:|
-| **Parakeet TDT 0.6B v2 int8 (Humming Best)** | 2.0% | 4.4% | **2.6%** | 0.092 | 482 MB |
-| **Parakeet TDT-CTC 110M int8 (Humming Fast)** | 2.6% | 6.6% | **3.7%** | **0.028** | 104 MB |
-| FUTO Whisper small.en ACFT q8 (FUTO's biggest) | 3.6% | 10.0% | 5.4% | 0.259 | ~260 MB |
-| Whisper base.en q8 (whisper.cpp) | 4.4% | 10.7% | 6.1% | 0.228 | 82 MB |
-| FUTO Whisper base.en ACFT q8 | 4.5% | 14.1% | 7.1% | 0.072 | 82 MB |
-| FUTO Whisper tiny.en ACFT q8 | 7.9% | 16.3% | 10.2% | 0.032 | 44 MB |
+```mermaid
+flowchart LR
+    Mic[Microphone<br/>16 kHz mono] --> VAD[Silero VAD<br/>cut at pauses]
+    VAD --> ASR[Parakeet on sherpa-onnx<br/>on-device]
+    ASR --> Clean[Clean-up rules<br/>Clean / Accuracy mode,<br/>custom words, voice commands]
+    Clean --> Draft[Underlined draft<br/>while speaking]
+    Draft --> Commit[Final text<br/>committed once on stop]
+```
 
-The small Parakeet is more accurate than FUTO's biggest model and about 9x faster on these clips. Caveats: this was
-a one-off development run on a desktop CPU; its script and raw outputs are not in this repository, so treat the table
-as indicative and use the CI table above (script and output committed) for claims. With 73 clips, gaps under about
-half a point are noise. FUTO's models were only benchmarked, never shipped.
+The full picture (every module, the dictation pipeline step by step, the update channel and CI) is in
+[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
-## Gboard voice typing hand-off (Rambler)
+## Tech stack
 
-Gboard's newer voice typing (code-named "Rambler" on Pixel phones) is part of Gboard, which is closed source.
-Humming can't embed it, so it offers a switch instead. If Gboard is installed and enabled as a keyboard,
-long-pressing Humming's mic shows a menu:
+| Area | Technology |
+|---|---|
+| Android | Kotlin, Jetpack Compose, FlorisBoard v0.5.2 base, sherpa-onnx 1.13.8 (ONNX Runtime), Silero VAD v4, min SDK 26, target SDK 36 |
+| Speech models | NVIDIA Parakeet TDT-CTC 110M int8 (Fast) and Parakeet TDT 0.6B v2 int8 (Best), sherpa-onnx ONNX exports |
+| Prediction | Dictionaries and next-word tables for six languages, plus an on-device int8 word-level LSTM run by Humming's own Kotlin code |
+| Desktop | Tauri v2, Rust (sherpa-onnx, cpal, arboard, enigo, tauri-plugin-updater with minisign), TypeScript + Vite |
+| iOS | SwiftUI, Apple Speech with on-device recognition required, XcodeGen, Swift package `HummingCore` |
+| Shared core | Rust crate `humming-core` (optional whisper.cpp through whisper-rs, UniFFI bindings) |
+| Release and CI | GitHub Actions workflows, Python release scripts, GitHub Pages and Cloudflare Pages for the website and update feeds |
 
-- **Humming**: offline, on this phone.
-- **Gboard voice typing**: switches the active keyboard to Gboard through Android's input-method API. If Gboard
-  declares a voice subtype, Humming picks that. Otherwise it opens Gboard's keyboard, and Gboard's mic is one tap
-  away. Gboard's own keyboard-switch key brings you back to Humming.
+## Build from source
 
-| | | |
-|---|---|---|
-| ![Long-press menu](docs/screenshots/android_voice_menu.png) | ![Gboard active](docs/screenshots/android_gboard_after_handoff.png) | ![Back to Humming](docs/screenshots/android_back_to_humming.png) |
-| Long-press the mic | Gboard takes over | Back to Humming |
+Short version below; requirements and every platform in detail are in the per-app READMEs and
+[docs/RELEASING.md](docs/RELEASING.md).
 
-Honest limits:
-- The option is hidden when Gboard isn't enabled. A plain tap on the mic always uses Humming.
-- The current Gboard declares no voice subtype, so it takes one extra tap on Gboard's mic.
-- Gboard voice typing is Google's service. Whether it runs offline or sends audio to Google is set in Gboard and
-  Google's settings, not by Humming.
-- Humming can't read what you dictated in Gboard, so that text isn't added to Humming's voice history.
-- Android lets you come back with Gboard's switch key or the system keyboard picker. Humming can't pull focus back
-  by itself.
-- CI checks this flow on a Google Play emulator image with Gboard preinstalled (long-press, menu tap, Gboard
-  active, back to Humming).
-
-## Desktop (Windows, macOS and Linux): how to open it
-
-The Windows and macOS builds are **unsigned**: they are not signed with an Apple Developer ID or a Microsoft
-code-signing certificate yet, so the operating system warns on first launch. The app is the same either way; this
-is a one-time step.
-
-**macOS** (universal `.dmg`, Apple silicon and Intel)
-1. Open the `.dmg` and drag Humming to Applications.
-2. Open Humming. macOS blocks the first open ("cannot be opened" / "could not verify"). Click Done.
-3. Go to **System Settings > Privacy & Security**, scroll down, and click **Open Anyway** next to Humming.
-4. Confirm with Open (and your password). From then on it opens normally.
-
-Apple's guide: https://support.apple.com/en-us/102445
-
-**Windows** (`.msi` or the setup `.exe`)
-1. Run the installer.
-2. SmartScreen shows "Windows protected your PC" with an unknown publisher. Click **More info**.
-3. Click **Run anyway** and finish the installer.
-
-**Linux** (`.AppImage` or `.deb`, x86-64; builds are not signed, and Linux shows no warning)
-1. AppImage: `chmod +x Humming_*_amd64.AppImage` and run it. Debian / Ubuntu: `sudo apt install ./Humming_*_amd64.deb`,
-   then open Humming from your app menu.
-2. Pasting into other apps works on X11 sessions and in XWayland apps. On a pure Wayland session auto-paste may not
-   land; every dictation is kept in History, one click to copy.
-
-CI builds every installer on every push (`.github/workflows/desktop.yml`, artifacts `humming-desktop-macos-universal`,
-`humming-desktop-windows-x64` and `humming-desktop-linux-x64`, each with a `SHA256SUMS.txt`). Signing options are in `docs/RELEASE_SIGNING.md`.
-
-## Build
-
-Requirements: JDK 17 and the Android SDK (platform 36, build-tools 35).
+**Android** (JDK 17 and the Android SDK, platform 36, build-tools 35):
 
 ```sh
 cd keyboard
@@ -489,30 +579,62 @@ cd keyboard
 ```
 
 The sherpa-onnx Android library (v1.13.8) is downloaded once during the build and checked against a pinned SHA-256.
-The speech models aren't part of the APK: the app downloads the one you choose. The release build is signed with
-the development key. For a store build, set your own keystore in `keyboard/app/build.gradle.kts`.
+The speech models aren't part of the APK: the app downloads the one you choose. Without the release-signing
+environment variables the release build is signed with the development key
+([docs/RELEASE_SIGNING.md](docs/RELEASE_SIGNING.md)).
 
-CI (`.github/workflows/keyboard.yml`) runs the unit tests plus the debug APK, and the release APK.
+**Desktop** (Node 20+, Rust stable, the platform toolchain):
 
-**Download:** the APK is attached to the GitHub Release.
+```sh
+cd desktop
+npm ci
+npm run tauri dev       # run it
+npm run tauri build     # installer for this machine
+```
 
 **iOS:** `brew install xcodegen && cd ios && xcodegen generate && open Humming.xcodeproj`. The clean-up rules are a
-Swift package (`ios/HummingCore`): `cd ios/HummingCore && swift test` runs their tests on macOS or Linux. CI
-(`.github/workflows/ios.yml`) runs the tests on Linux and the iOS simulator, takes the screenshots and builds the
-unsigned `.ipa`.
+Swift package (`ios/HummingCore`): `cd ios/HummingCore && swift test` runs their tests on macOS or Linux.
+
+**CI** (`.github/workflows/`): `keyboard.yml` (Android unit tests, debug and release APK), `android-release.yml`
+(signed APK and AAB), `desktop.yml` (installers for every desktop platform), `ios.yml` (tests, simulator screenshots,
+unsigned `.ipa`), `screens.yml` (desktop screenshots), `wer-bench.yml` (the benchmark above), `release.yml` (a tagged
+release end to end) and `pages.yml` (the website and update mirror). See the repository status note at the top.
+
+## Documentation
+
+| Document | Contents |
+|---|---|
+| [docs/README.md](docs/README.md) | Index of all documentation |
+| [docs/USER_GUIDE.md](docs/USER_GUIDE.md) | Install, enable the keyboard, voice typing, settings, updates, troubleshooting |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Modules, the dictation pipeline, the update channel, CI |
+| [docs/RELEASING.md](docs/RELEASING.md) | Versioning, signing, release assets, update feeds, tagging |
+| [docs/IOS_SIDELOAD.md](docs/IOS_SIDELOAD.md) | Installing the unsigned iOS build |
+| [AUDIT.md](AUDIT.md), [docs/AUDIT-1.6.2.md](docs/AUDIT-1.6.2.md) | Full audit (1.2.0) and production audit (1.6.2) |
+
+## Changelog
+
+Every release is described in [CHANGELOG.md](CHANGELOG.md); `release.yml` takes the GitHub release notes for a tag from it (`scripts/assemble_release.py`).
+
+## Contributing and security
+
+- [CONTRIBUTING.md](CONTRIBUTING.md): how to report bugs, propose features and open pull requests.
+- [SECURITY.md](SECURITY.md): report vulnerabilities privately through GitHub Security Advisories.
+- [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md): Contributor Covenant 2.1.
 
 ## Licence and credits
 
-Humming Keyboard is licensed under the **Apache License 2.0**. See `keyboard/LICENSE`.
+- **Android keyboard (`keyboard/`)**: licensed under the **Apache License 2.0**, see
+  [`keyboard/LICENSE`](keyboard/LICENSE). Android keyboard built on FlorisBoard (Apache 2.0).
+- **Desktop app (`desktop/`) and shared core (`core/`)**: their Cargo manifests declare the **MIT** licence.
 
-Android keyboard built on FlorisBoard (Apache 2.0).
+Third-party components:
 
 - **FlorisBoard** (Apache-2.0): the keyboard base. Copyright (C) 2020-2026 The FlorisBoard Contributors. The
-  upstream licence and file headers are kept, and our changes are listed in `keyboard/NOTICE-HUMMING.md`. Humming is
-  not affiliated with the FlorisBoard project.
+  upstream licence and file headers are kept, and our changes are listed in
+  [`keyboard/NOTICE-HUMMING.md`](keyboard/NOTICE-HUMMING.md). Humming is not affiliated with the FlorisBoard project.
 - **NVIDIA Parakeet** TDT-CTC 110M and TDT 0.6B v2: the speech model weights, licensed under
   **CC-BY-4.0** (https://creativecommons.org/licenses/by/4.0/). The ONNX int8 export is by the sherpa-onnx project
-  and is used unmodified. The credit is also shown in Settings > Voice.
+  and is used unmodified.
 - **sherpa-onnx** (**Apache-2.0**), by the k2-fsa project: the speech runtime.
 - **ONNX Runtime** (MIT), **Silero VAD** (MIT), Apache Commons Compress (Apache-2.0) and the AOSP word lists
   (Apache-2.0).
@@ -520,8 +642,4 @@ Android keyboard built on FlorisBoard (Apache 2.0).
   Voice** sentence lists (CC0). The English neural model is Humming's own (Apache-2.0).
 - Stickers: rendered from **Noto Emoji** images (Apache-2.0) with captions in the **Bangers** font (OFL-1.1).
 
-No GPL code is included. The full list with each obligation is in `keyboard/LICENSES.md`. See `CHANGELOG.md` for
-changes.
-
-The earlier standalone voice app (M1-M3) lives in `android/` and `core/`, and its notes are in `BUILD.md` and
-`evidence/`.
+No GPL code is included. The full list with each obligation is in [`keyboard/LICENSES.md`](keyboard/LICENSES.md).

@@ -1,0 +1,93 @@
+name: Bug report
+description: Something in Humming does not work as described.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug. Please do not include API keys, private dictated text or
+        anything else personal. Security problems go through private reporting instead (see SECURITY.md).
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options:
+        - Android (APK from GitHub Releases)
+        - Android (Google Play bundle)
+        - iPhone / iPad
+        - Windows
+        - macOS
+        - Linux (AppImage)
+        - Linux (.deb)
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Humming version
+      description: Android shows it under Settings > About; the desktop and iOS apps show it in their settings.
+      placeholder: "1.6.2"
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: Device and operating system
+      placeholder: "Pixel 8, Android 15 / Windows 11 x64 / macOS 14 on Apple silicon"
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Voice typing / dictation
+        - Speech model download
+        - Typing, prediction or autocorrect
+        - Themes or layout
+        - Settings
+        - Updates
+        - Installation or first launch
+        - Other
+    validations:
+      required: true
+  - type: dropdown
+    id: voice
+    attributes:
+      label: Voice setup (if the bug is about dictation)
+      options:
+        - Not about dictation
+        - Offline mode, Fast model
+        - Offline mode, Best model
+        - Online mode (Android)
+        - iPhone / iPad (Apple on-device recogniser)
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open ...
+        2. Tap ...
+        3. See ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: What happened instead
+      description: Screenshots or a short screen recording help a lot.
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Crash log or other output
+      description: On Android, copy the log from the crash screen. It is never sent automatically.
+      render: text

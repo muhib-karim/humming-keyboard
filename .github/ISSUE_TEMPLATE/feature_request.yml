@@ -1,0 +1,49 @@
+name: Feature request
+description: Suggest an idea or an improvement for Humming.
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Humming is built around private, on-device dictation. Ideas that would send audio or text off the device
+        are welcome, but they need to be opt-in and off by default.
+  - type: checkboxes
+    id: platforms
+    attributes:
+      label: Platforms
+      options:
+        - label: Android
+        - label: iPhone / iPad
+        - label: Windows
+        - label: macOS
+        - label: Linux
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: What are you trying to do, and what gets in the way today?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: How you would like Humming to handle it.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Workarounds you use now, or how other apps handle it.
+  - type: dropdown
+    id: privacy
+    attributes:
+      label: Does this need the network?
+      options:
+        - "No, it can work fully on the device"
+        - "Yes, as an opt-in feature"
+        - "Not sure"
+    validations:
+      required: true
