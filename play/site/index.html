@@ -14,8 +14,8 @@
 :root{--bg:#0f0f13;--card:#18181f;--line:#2a2a33;--ink:#f2f2f6;--mute:#a3a3b2;--acc:#e5486b}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Inter,Roboto,sans-serif}
 a{color:var(--acc)}.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
-header{padding:22px 0;display:flex;align-items:center;gap:12px}header img{width:36px;height:36px;border-radius:9px}header b{font-size:20px}
-header nav{margin-left:auto;display:flex;gap:18px}header nav a{color:var(--mute);text-decoration:none}header nav a:hover{color:var(--ink)}
+header{padding:22px 0;display:flex;flex-wrap:wrap;align-items:center;gap:12px}header img{width:36px;height:36px;border-radius:9px}header b{font-size:20px}
+header nav{margin-left:auto;display:flex;flex-wrap:wrap;gap:8px 18px}@media (max-width:640px){header nav{margin-left:0;width:100%;gap:6px 14px;font-size:15px}}header nav a{color:var(--mute);text-decoration:none}header nav a:hover{color:var(--ink)}
 .hero img{width:100%;border-radius:18px;border:1px solid var(--line)}
 .cta{display:flex;gap:12px;flex-wrap:wrap;margin:26px 0 8px}.btn{display:inline-block;padding:12px 20px;border-radius:999px;text-decoration:none;font-weight:600}
 .btn.p{background:var(--acc);color:#fff}.btn.s{border:1px solid var(--line);color:var(--ink)}
@@ -40,7 +40,7 @@ td.y{color:#7ee2a8}.mute{color:var(--mute)}footer{margin:70px 0 40px;color:var(-
 <p class="lead">Tap the mic and talk. The words are typed as you speak, for as long as you speak, even with the screen off. Speech recognition runs on your device, so dictation works in airplane mode and your voice never leaves it.</p></section>
 
 <h2 id="download">Download</h2>
-<p>The current release, mirrored from the project's GitHub Release. Humming 1.6 and later update themselves: the desktop apps install new versions on their own (signed, checked before install) and the Android app downloads them and asks you to confirm.</p>
+<p>The current release, mirrored from the project's GitHub Release. Humming 1.6 and later update themselves, with two exceptions: the Windows, macOS and Linux AppImage apps install new versions on their own (signed, checked before install), but a Linux .deb install only tells you a new version is out, and a macOS install older than 1.6 needs the first 1.6 build installed by hand. The sideloaded Android app downloads updates and asks you to confirm; the Play Store version is updated by Play.</p>
 <ul id="dl-list"><li class="mute">Loading the current version…</li></ul>
 <p class="mute">Checksums: <a href="updates/SHA256SUMS.txt">SHA256SUMS.txt</a>. iPhone: see the <a href="https://github.com/muhib-karim/humming-keyboard/blob/main/docs/IOS_SIDELOAD.md">install guide</a> (no automatic updates on iOS).</p>
 <script>

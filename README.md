@@ -63,7 +63,7 @@ Android keyboard built on FlorisBoard (Apache 2.0). Speech recognition by NVIDIA
 | Keeps going with the screen off | ✅ | — | — |
 | Optional AI clean-up with your own key | ✅ | — | — |
 | History you can search | ✅ | — | ✅ |
-| Self-updates (1.6) | ✅ APK, one-tap confirm | — | ✅ signed (not the .deb) |
+| Self-updates (1.6) | ✅ APK, one-tap confirm (Play: via Play) | — | ✅ signed (not the .deb; macOS from its first 1.6 build) |
 | Install | APK / AAB | unsigned `.ipa` (sideload) | `.exe` `.msi` `.dmg` `.AppImage` `.deb` |
 
 ## Features
@@ -114,7 +114,7 @@ Android keyboard built on FlorisBoard (Apache 2.0). Speech recognition by NVIDIA
 - Spoken lists become bullets ("first, eggs, second, milk"; can be turned off), voice commands ("new line",
   "period", "question mark"), a personal dictionary, and dictations of up to 15 minutes.
 - History on the computer (search, copy, delete), a tray / menu bar app with a listening overlay, an in-app
-  "Try it" box, and signed self-updates (1.6). Details: [desktop/README.md](desktop/README.md).
+  "Try it" box, and signed self-updates (1.6; not the Linux .deb, and macOS only from its first 1.6 build). Details: [desktop/README.md](desktop/README.md).
 
 **Typing** (built on FlorisBoard)
 - **Word prediction that reads like Gboard**: a three-slot strip with the best guess in the middle and what you typed
@@ -629,7 +629,7 @@ and the iOS app (`ios/`). Android keyboard built on FlorisBoard (Apache 2.0).
 
 Third-party components:
 
-- **FlorisBoard** (Apache-2.0): the keyboard base. Copyright (C) 2020-2026 The FlorisBoard Contributors. The
+- **FlorisBoard** (Apache-2.0): the keyboard base. Copyright (C) 2020-2025 The FlorisBoard Contributors. The
   upstream licence and file headers are kept, and our changes are listed in
   [`keyboard/NOTICE-HUMMING.md`](keyboard/NOTICE-HUMMING.md). Humming is not affiliated with the FlorisBoard project.
 - **NVIDIA Parakeet** TDT-CTC 110M and TDT 0.6B v2: the speech model weights, licensed under

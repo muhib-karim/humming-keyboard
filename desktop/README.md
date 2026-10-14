@@ -24,7 +24,7 @@ SHA-256) and a Rust port of the keyboard's `TextCleanup.kt`. No account and no c
 | In-app "Try it" box (transcribe without pasting) and a cleanup tester | yes |
 | Languages other than English | not yet (Parakeet models are English, as on Android) |
 | Speak-to-edit ("make that shorter"), LLM rewrite | not yet |
-| Auto-update | yes (1.6): signed Tauri updater, Settings > Updates; see the main README |
+| Auto-update | yes (1.6): signed Tauri updater, Settings > Updates. Exceptions: the Linux .deb only shows that a new version is out, and macOS updates itself from its first 1.6 build on. See the main README |
 | Code signing / notarisation | not yet (needs the owner's certificates) |
 
 ## Models

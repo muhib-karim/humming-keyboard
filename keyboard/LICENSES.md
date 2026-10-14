@@ -30,7 +30,7 @@ benchmark, never shipped.
 
 ## Notices
 
-- FlorisBoard: Copyright (C) 2020-2026 The FlorisBoard Contributors. Apache License 2.0.
+- FlorisBoard: Copyright (C) 2020-2025 The FlorisBoard Contributors. Apache License 2.0.
 - sherpa-onnx: Copyright (c) Xiaomi Corporation and the k2-fsa/sherpa-onnx contributors. Apache License 2.0.
 - ONNX Runtime: Copyright (c) Microsoft Corporation. MIT License.
 - NVIDIA Parakeet TDT-CTC 110M, Parakeet TDT 0.6B v2: Copyright (c) NVIDIA Corporation. Creative Commons Attribution 4.0

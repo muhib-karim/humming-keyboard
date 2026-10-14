@@ -59,7 +59,7 @@
 - Android version 1.6.1 (versionCode 1601). Desktop and iOS are unchanged and stay at 1.6.0.
 
 ## 1.6.0: Humming updates itself
-- **Desktop (Windows, macOS, Linux AppImage)**: built-in, signed self-update. Humming checks for a new version 45
+- **Desktop (Windows, macOS, Linux AppImage)**: built-in, signed self-update (not the Linux .deb, which only shows that a new version is out; macOS updates itself from its first 1.6 build on). Humming checks for a new version 45
   seconds after it starts, every 4 hours and on **Settings > Updates > Check for updates**. With **Automatically
   install updates** on (the default) it downloads the update, installs it and restarts, and it waits if you are in the
   middle of a dictation or a model download. Off: it shows "Update available" and an **Install now** button. Updates

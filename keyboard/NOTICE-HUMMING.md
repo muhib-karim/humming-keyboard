@@ -2,7 +2,7 @@
 
 This directory is a fork of FlorisBoard (https://github.com/florisboard/florisboard), upstream release
 v0.5.2 (commit 2e82060251897226c0739b9f52d1d051b02305fb, 2025-11-28), licensed under the Apache License 2.0
-(see `LICENSE` in this directory, kept unchanged). Copyright (C) 2020-2026 The FlorisBoard Contributors.
+(see `LICENSE` in this directory, kept unchanged). Copyright (C) 2020-2025 The FlorisBoard Contributors.
 
 Changes made by the Humming project (Apache-2.0 section 4(b) notice):
 - Removed the `lib:native` module (an upstream placeholder Rust library that the app did not use).
