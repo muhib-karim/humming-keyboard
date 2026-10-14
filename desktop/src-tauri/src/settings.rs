@@ -180,6 +180,35 @@ mod tests {
     }
 
     #[test]
+    fn no_recording_cap_by_default() {
+        assert_eq!(Settings::default().max_seconds, 0);
+        let s: Settings = serde_json::from_str(r#"{"mode":"toggle"}"#).unwrap();
+        assert_eq!(s.sanitized().max_seconds, 0);
+    }
+
+    #[test]
+    fn old_300_second_default_is_migrated_to_no_cap() {
+        let s: Settings = serde_json::from_str(r#"{"max_seconds":300}"#).unwrap();
+        assert_eq!(s.sanitized().max_seconds, 0);
+        let dir = std::env::temp_dir().join(format!("humming-settings-test-{}", std::process::id()));
+        let path = dir.join("settings.json");
+        std::fs::create_dir_all(&dir).unwrap();
+        std::fs::write(&path, r#"{"max_seconds":300}"#).unwrap();
+        assert_eq!(Settings::load(&path).max_seconds, 0);
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn a_set_cap_is_clamped_to_10_seconds_through_24_hours() {
+        let cap = |n: u32| Settings { max_seconds: n, ..Settings::default() }.sanitized().max_seconds;
+        assert_eq!(cap(1), 10);
+        assert_eq!(cap(10), 10);
+        assert_eq!(cap(60), 60);
+        assert_eq!(cap(86_400), 86_400);
+        assert_eq!(cap(100_000), 86_400);
+    }
+
+    #[test]
     fn old_dictionary_entries_load_as_every_app() {
         let s: Settings = serde_json::from_str(r#"{"dictionary":[{"spoken":"hum ing","written":"Humming"}]}"#).unwrap();
         assert!(s.dictionary[0].apps.is_empty());

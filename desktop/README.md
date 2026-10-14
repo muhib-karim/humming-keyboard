@@ -4,7 +4,9 @@ Hold a shortcut, speak, let go: Humming transcribes on your own computer and pas
 app has focus (mail, chat, docs, the browser, the terminal). It is the desktop sibling of the Humming Android
 keyboard and uses the same engine and rules: NVIDIA Parakeet on sherpa-onnx 1.13.8 (the same two models, pinned by
 SHA-256) and a Rust port of the keyboard's `TextCleanup.kt`. No account, no cloud, and no Online or AI mode on desktop: audio never leaves the machine. The only
-network use is the one-time model download from GitHub and the update check.
+network use is the one-time model download from GitHub and the updater, which checks for updates and, with
+Settings > Updates > "Automatically install updates" on (the default), downloads and installs them (signed builds only;
+the Linux .deb only reports a new version).
 
 ## What it does
 
@@ -36,8 +38,8 @@ network use is the one-time model download from GitHub and the update check.
 | Best: Parakeet TDT 0.6B v2 int8 | 482 MB | 2.6 % | ~1.3 GB |
 
 The bake-off's script and raw outputs are not in the repository (see the main README's
-[bake-off section](../README.md#why-parakeet-the-bake-off)). The committed CI benchmark (200 LibriSpeech test-clean
-clips, 4 October 2026) measured 2.78 % for Fast and 1.68 % for Best: [Benchmarks](../README.md#benchmarks).
+[bake-off section](../README.md#why-parakeet-the-bake-off)). The committed CI benchmark (the first 200 LibriSpeech test-clean
+clips, 4 October 2026) measured 2.78 % for Fast and 1.68 % for Best (treat as +/- 0.5 points): [Benchmarks](../README.md#benchmarks).
 
 Archives come from the sherpa-onnx GitHub release (`asr-models`), are checked against the same pinned size and
 SHA-256 as the Android app (`src-tauri/src/models.rs`), and only the files the engine needs are unpacked into the

@@ -8,7 +8,7 @@
 <a href="https://github.com/muhib-karim/humming-keyboard/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/muhib-karim/humming-keyboard?color=e5486b"></a>
 <a href="#download-and-install"><img alt="Platforms" src="https://img.shields.io/badge/platforms-Android%20%C2%B7%20iOS%20%C2%B7%20Windows%20%C2%B7%20macOS%20%C2%B7%20Linux-18181f"></a>
 <a href="#privacy"><img alt="Dictation: on-device by default" src="https://img.shields.io/badge/dictation-on--device%20by%20default-2a2a33"></a>
-<a href="#benchmarks"><img alt="WER 2.78% (Fast model, LibriSpeech test-clean)" src="https://img.shields.io/badge/WER%20test--clean-2.78%25%20Fast%20%C2%B7%201.68%25%20Best-2a2a33"></a>
+<a href="#benchmarks"><img alt="WER 2.78% (Fast model, first 200 clips of LibriSpeech test-clean, treat as +/- 0.5 points)" src="https://img.shields.io/badge/WER%20test--clean%2C%20first%20200%20clips-2.78%25%20Fast%20%C2%B7%201.68%25%20Best%20%28%C2%B1%200.5%29-2a2a33"></a>
 <a href="LICENSE"><img alt="Licence: Apache-2.0" src="https://img.shields.io/badge/licence-Apache--2.0-2a2a33"></a>
 </p>
 
@@ -137,7 +137,7 @@ Android keyboard built on FlorisBoard (Apache 2.0). Speech recognition by NVIDIA
 - Number row, long-press symbols, key sound and vibration, one-handed mode, a **floating keyboard** you drag by its
   handle, and a split keyboard in landscape and on tablets.
 - Themes: Humming light, dark and AMOLED black, a custom accent colour, and your own **background photo**.
-- Clipboard history, on by default: a 2-column grid with timestamps, up to 100 items kept for up to a week.
+- Clipboard history, on by default: a 2-column grid with timestamps, up to 100 items; automatic removal of old items is off by default (when on: 1 day by default, a week at most).
 - Edit shortcuts: long-press a (select all), c (copy), x (cut), v (paste), z (undo) and y (redo).
 - Space-bar trackpad: slide to move the cursor left, right, up and down.
 - Incognito mode: no learning, no clipboard history and no voice history.
@@ -407,8 +407,8 @@ benchmark, so there is no like-for-like comparison to make; where nothing is pub
 
 | | **Humming Fast** | **Humming Best** | Wispr Flow | Typeless | Gboard Rambler |
 |---|---|---|---|---|---|
-| WER, LibriSpeech test-clean | **2.78 %** | **1.68 %** | Not published | Not published | Not published |
-| WER, LibriSpeech test-other | **4.20 %** | **3.12 %** | Not published | Not published | Not published |
+| WER, LibriSpeech test-clean (first 200 clips; treat as +/- 0.5 points) | **2.78 %** | **1.68 %** | Not published | Not published | Not published |
+| WER, LibriSpeech test-other (first 100 clips; treat as +/- 0.5 points) | **4.20 %** | **3.12 %** | Not published | Not published | Not published |
 | WER on the vendor's own data | n/a | n/a | Chart only, on 10 hours of Wispr's own dictations; no figures in text [13] | Not published | Not published |
 | Time to text | **312 ms** median per clip (measured above) | **1314 ms** | Not published as a measurement; states a 500 ms response goal [14] | Not published | Not published |
 | Measured by | this repo's committed benchmark script and public data (run in CI until hosted builds were paused) | same | vendor | — | — |

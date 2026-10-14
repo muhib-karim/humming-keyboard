@@ -99,7 +99,7 @@ not say; it does not mean the feature is missing.
 | Clipboard manager | Yes (upstream) | Not on the pages checked | Yes; clips expire after 1 hour unless pinned [7] | Yes [4] | — |
 | Translate in the keyboard | Only with AI clean-up and your own key ("translate it to Spanish") | Yes, Google Translate [2] | Yes (Translator) [3] | No | — |
 | Ads | **None** | None stated | "Contains ads" (Play listing) [3] | None | — |
-| Open source | **Yes, Apache-2.0** | No | No | Yes, Apache-2.0 | No |
+| Open source | **Yes, Apache-2.0** (repository public from 1.6.3) | No | No | Yes, Apache-2.0 | No |
 
 [1] https://support.google.com/gboard/answer/11197787 ·
 [2] https://play.google.com/store/apps/details?id=com.google.android.inputmethod.latin ·

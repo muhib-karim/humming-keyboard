@@ -1,5 +1,13 @@
 # Humming Keyboard: full audit (M7, version 1.2.0)
 
+> **Archived: this is the 1.2.0 audit (M7), kept as a historical record. It is not the current state.** Sections 0 to 10
+> describe the app and CI as they were at 1.2.0 and are superseded by "Remaining" in the Findings summary at the end
+> and by the main README. In particular: where section 3 says gitleaks ran on every push and section 9 says the
+> customisation check ran with the unit tests, that is how CI was configured at 1.2; GitHub Actions stopped starting jobs
+> during 1.2 (see Remaining) and has not run on this repository since 5 October 2026. The performance figures in
+> section 4 are from the CI emulator only; nothing was measured on a phone, and earlier wording that "a real phone is
+> faster" was an expectation, not a measurement.
+
 Scope: the Android keyboard in `keyboard/` (a FlorisBoard fork, Apache-2.0) at the M7 release commit `bb644b3` (code; the only later change is this audit), its CI
 (`.github/workflows/keyboard.yml`, `.github/workflows/lm-build.yml`), the JVM unit tests and benchmark of the release
 build of `bb644b3` (a Linux build machine running `./gradlew testDebugUnitTest :app:assembleRelease`), and the emulator evidence from CI run 36676272085 (1.2 on d137a7b, before the neural model was added;
@@ -60,9 +68,9 @@ system document picker (`OpenMultipleDocuments`, no storage permission) and copi
   and Android's `HttpURLConnection` does not follow a redirect from HTTPS to plain HTTP.
 - Stickers are shared with the target app through the app's `FileProvider` (content URIs, no file paths), only
   through the editor's own image-commit API; apps that do not accept images get a toast, not a crash.
-- gitleaks is clean on every push; the release APK is still signed with a development key (see Remaining).
+- gitleaks was clean on every push while CI ran (see the archive notice above); the release APK is still signed with a development key (see Remaining).
 
-## 4. Performance (CI emulator, x86_64 with software rendering; a real phone is faster)
+## 4. Performance (CI emulator, x86_64 with software rendering; not measured on a phone, which is expected but not shown to be faster)
 
 Measured by `screens.py` on the CI emulator (Android 15, x86_64, software GPU) in run 36676272085 (commit d137a7b: all of 1.2
 except the neural model; the model adds one LSTM step per new word, 8.4 ms on the JVM). Emulator hosts vary: run
@@ -130,7 +138,7 @@ GIF permission rules, the Openverse request and parser).
 ## 9. Customisation audit (goal 4)
 
 Method: every preference declared in `AppPrefs.kt` was checked for a control in a Settings screen, and the keyboard
-code was read for fixed values a user would want to change. The check now runs on every build
+code was read for fixed values a user would want to change. At 1.2 the check ran in every unit-test run
 (`CustomisationAuditTest`): 164 preferences, all with a control except 21 internal ones (developer
 overlays, version stamps, the floating keyboard's saved position, the toolbar's expanded state).
 

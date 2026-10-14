@@ -28,6 +28,11 @@ pub fn input_devices() -> Vec<String> {
     }
 }
 
+/// Most 16 kHz samples kept for one dictation. 0 = no limit (the default): record until the user stops.
+fn sample_cap(max_seconds: u32) -> usize {
+    if max_seconds == 0 { usize::MAX } else { crate::stt::SAMPLE_RATE as usize * max_seconds as usize }
+}
+
 /// Streaming linear resampler to 16 kHz, so a dictation of any length is stored at speech rate (an hour is ~230 MB
 /// of f32 instead of ~690 MB at 48 kHz) and nothing needs resampling after the key is released.
 struct Down16 {
@@ -114,8 +119,7 @@ impl Recorder {
                 };
                 let rate = config.sample_rate().0;
                 let channels = config.channels() as usize;
-                // 0 = no limit (the default): record until the user stops.
-                let cap = if max_seconds == 0 { usize::MAX } else { crate::stt::SAMPLE_RATE as usize * max_seconds as usize };
+                let cap = sample_cap(max_seconds);
                 let fmt = config.sample_format();
                 let stream_cfg: cpal::StreamConfig = config.into();
 
@@ -206,7 +210,13 @@ impl Recorder {
 
 #[cfg(test)]
 mod tests {
-    use super::Down16;
+    use super::{sample_cap, Down16};
+
+    #[test]
+    fn no_cap_by_default_and_seconds_to_samples_otherwise() {
+        assert_eq!(sample_cap(0), usize::MAX);
+        assert_eq!(sample_cap(60), crate::stt::SAMPLE_RATE as usize * 60);
+    }
 
     #[test]
     fn streaming_resampler_matches_rate_and_has_no_cap() {
