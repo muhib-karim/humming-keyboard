@@ -5,7 +5,7 @@ name: release
 #   - checks every updater signature against the public key in desktop/src-tauri/tauri.conf.json,
 #   - writes latest.json (desktop updater feed), android.json (Android update feed) and SHA256SUMS.txt,
 #   - creates the GitHub Release with all of it,
-#   - redeploys the website, which mirrors the latest release's update files to /updates/ (the repository is private,
+#   - redeploys the website, which mirrors the latest release's update files to /updates/ (so the apps need no GitHub login,
 #     so the apps read their update feeds from the public Pages site), and checks the live feed end to end.
 on:
   push:

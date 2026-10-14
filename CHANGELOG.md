@@ -7,7 +7,7 @@
   silently to the internal test mode, which typed "[mock] Humming heard ... of audio" into the field. The mic now
   always uses the on-device engine and shows "Voice isn't available on this device" instead; test mode only runs when
   set on purpose in a debuggable build (`Prefs.resolveMode`, `ModePolicyTest`).
-- **README made accurate**: no "open source" claim while the repository is private; every network use listed,
+- **README made accurate**: every network use listed,
   including the update check that is on by default; FUTO Keyboard, Handy and Superwhisper added as offline
   alternatives; unverified "no keyboard" claims about Wispr Flow and Typeless removed; the CI WER run's output is
   committed under `docs/bench/`, plus a re-run with every reference and hypothesis.
@@ -75,7 +75,7 @@
 - **iOS**: no automatic updates. An unsigned, sideloaded .ipa cannot update itself; sideload the new one.
 - **Release pipeline**: pushing a `v*` tag runs `release.yml`, which builds every platform, verifies every updater
   signature, writes `latest.json`, `android.json` and `SHA256SUMS.txt`, creates the GitHub Release, and mirrors the
-  update files to a public site (`/updates/`), since the repository is private. The website deploy then checks
+  update files to a public site (`/updates/`), so the apps need no GitHub login,. The website deploy then checks
   the live feed's signatures (`scripts/verify_updater.py`). The website gets a Download section.
 - **Built without GitHub Actions**: Actions can't run on this private repository right now, so 1.6.0 was built on
   Linux build machines outside GitHub: the Android APK and Play AAB (signed with the release key, certificate

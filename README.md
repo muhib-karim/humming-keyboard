@@ -219,7 +219,8 @@ https://humming-keyboard.pages.dev/ (Cloudflare Pages).
 | **macOS** 11+ (Apple silicon and Intel) | `Humming_1.5.0_universal.dmg` (1.6.0 has no macOS build yet, see the note below the table) | Drag to Applications, open once, then **System Settings > Privacy & Security > Open Anyway**. Allow Microphone and Accessibility. |
 | **Linux** x86-64 | `Humming_1.6.0_amd64.AppImage` or `.deb` | `chmod +x` the AppImage and run it, or `sudo apt install ./Humming_1.6.0_amd64.deb`. |
 
-Versions: Android is at 1.6.3 (see [CHANGELOG.md](CHANGELOG.md)); Windows and Linux
+Versions: Android 1.6.3 is the current release candidate on `main` until its GitHub Release is published (see
+[CHANGELOG.md](CHANGELOG.md)); Windows and Linux
 are 1.6.0. macOS and iOS stay on 1.5.0 for now: 1.6.0 was built without GitHub Actions, on Linux build machines
 (Windows cross-compiled with cargo-xwin), and Apple's tools only run on a Mac. The macOS and iOS 1.5.0 files are on
 the [v1.5.0 release](https://github.com/muhib-karim/humming-keyboard/releases/tag/v1.5.0) and on the download site.
@@ -445,7 +446,7 @@ Checked on the vendors' own pages on 4 October 2026 (links below the table). Pri
 | Where your voice goes | **Stays on the device** (default Offline mode; opt-in Online mode uses the phone's speech service) | Wispr's cloud; training use is a setting [1] | Cloud, "zero data retention" [2] | Google; "never saved, stored, or shared" [12] |
 | Price | **Free and open source** (Apache-2.0) | Free tier; Pro $12-15 [5] | Free tier; Pro $12 yearly / $30 monthly [6] | Free with Gboard |
 | Free-tier limit | **None** | 2,000 words/week desktop, 1,000/week mobile [5] | "Limited words" [6] | None stated |
-| Longest single dictation | **No limit** | 20 min desktop [7], 5 min on Android [8] | 9 min [9] | Not stated |
+| Longest single dictation | **No limit** on Android (desktop: 15 min) | 20 min desktop [7], 5 min on Android [8] | 9 min [9] | Not stated |
 | Platforms | **Android, iOS, Windows, macOS, Linux** | Mac, Windows, iOS, Android [5] | macOS, Windows, iOS, Android; Linux listed on the pricing page [6] | Pixel 11 phones only [12] |
 | Languages | English offline (Parakeet; Apple's on-device English on iOS); Online mode: Android's recogniser languages | 100+ [5][10] | 100+ [6] | A listed set of major languages [12] |
 | Clean-up (fillers, punctuation) | **On-device** Clean mode and Accuracy mode; optional AI pass with your own key | Yes (cloud) [11] | Yes (cloud) [6] | Yes; full style rewrites need the internet [12] |

@@ -68,5 +68,5 @@ Run the tests for the part you changed before opening a pull request:
 
 ## Licensing
 
-Different parts of the repository carry different licences (Apache-2.0 for the Android keyboard in `keyboard/`, MIT
-declared for `desktop/` and `core/`). See [Licence and credits](README.md#licence-and-credits) before contributing.
+The whole repository is licensed under Apache-2.0 (root `LICENSE` and `NOTICE`); contributions are accepted under the
+same licence. See [Licence and credits](README.md#licence-and-credits) before contributing.
