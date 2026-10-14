@@ -25,7 +25,7 @@ marked otherwise.
 
 ## 1. Privacy and network
 
-What touches the network, and nothing else (enforced by `NetworkAuditTest`, which fails the build if any other
+What touches the network, and nothing else (enforced by `NetworkAuditTest`, which fails the unit-test run if any other
 source file uses a network API):
 
 - **The one-time voice model download** (`ModelDownload.kt`): unchanged from M6. Pinned URLs on the sherpa-onnx

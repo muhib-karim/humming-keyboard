@@ -54,4 +54,4 @@ Each release lists the `.ipa` in `SHA256SUMS.txt`. On a Mac: `shasum -a 256 Humm
 
 ## Updates
 
-The iOS app cannot update itself. An unsigned .ipa that you sideload has no update channel (Apple allows in-app updates only through the App Store or TestFlight), so to update, download the new `.ipa` from the latest release and sideload it again the same way. The Android and desktop apps update themselves (see the README's Updates section).
+The iOS app cannot update itself. An unsigned .ipa that you sideload has no update channel (Apple allows in-app updates only through the App Store or TestFlight), so to update, download the new `.ipa` from the latest release and sideload it again the same way. The Android APK and the Windows and Linux AppImage desktop apps (and macOS from its first 1.6 build) update themselves; on Android you confirm each install with one tap. Exceptions: the Linux .deb only shows that a new version is out, and the Google Play bundle is updated by Play. See the README's Updates (1.6) section.

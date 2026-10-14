@@ -153,7 +153,7 @@ Stickers & GIFs (off until you turn it on)
 Everything customisable
 - New settings: key repeat speed and double-tap speed (both were fixed system values), voice button size, toolbar
   animation, stickers per row. All are found by Settings search and saved by Backup.
-- CustomisationAuditTest fails the build if any user preference has no control in Settings.
+- CustomisationAuditTest fails the unit-test run if any user preference has no control in Settings.
 
 Build and data
 - `keyboard/lm/` builds the tables, the benchmark sentences and the neural model from the corpora (the lm-build

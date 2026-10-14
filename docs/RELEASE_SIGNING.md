@@ -15,10 +15,10 @@ variables are set, and falls back to the debug key (today's behaviour) when they
 | `HUMMING_KEY_ALIAS` | key alias (default `humming`) |
 | `HUMMING_KEY_PASSWORD` | key password (default: the keystore password, as PKCS12 requires) |
 
-Status (2026-10-03): set up for CI. An upload key exists (PKCS12, RSA 4096, generic DN) and its four repository
+Set up for CI on 2026-10-03. An upload key exists (PKCS12, RSA 4096, generic DN) and its four repository
 secrets are set: `HUMMING_KEYSTORE_BASE64`, `HUMMING_KEYSTORE_PASSWORD`, `HUMMING_KEY_ALIAS`, `HUMMING_KEY_PASSWORD`.
-These four names are the only keystore secrets the workflows read. GitHub Actions has not run on this repository
-since 5 October 2026, so releases since 1.6.0 were signed with the same key outside Actions (see the CHANGELOG).
+These four names are the only keystore secrets the workflows read. Status as of 14 October 2026: GitHub Actions has
+not run on this repository since 5 October 2026, so releases since 1.6.0 were signed with the same key outside Actions (see the CHANGELOG).
 
 `.github/workflows/android-release.yml` (push to `main` touching `keyboard/`, or run by hand):
 1. decodes `HUMMING_KEYSTORE_BASE64` to a temp file under `$RUNNER_TEMP` (mode 600) and points `HUMMING_KEYSTORE` at it;
@@ -57,8 +57,9 @@ Windows, the owner supplies one of:
   DigiCert KeyLocker); then set `bundle.windows.certificateThumbprint` (local cert store) or
   `bundle.windows.signCommand` (cloud signing) in `desktop/src-tauri/tauri.conf.json`.
 
-Auto-update (later): `tauri-plugin-updater` needs an update signing key pair (`tauri signer generate`); the
-private key and its password become secrets `TAURI_SIGNING_PRIVATE_KEY` / `TAURI_SIGNING_PRIVATE_KEY_PASSWORD`.
+Auto-update (historical note, done in 1.6): the update signing key pair was generated once and is in use; see
+[Desktop self-update signing (1.6)](#desktop-self-update-signing-16) below. Do not generate a new key pair: installed
+copies only accept updates signed with the existing key, so a new key would break the update chain.
 
 ### Optional free route for Windows: SignPath Foundation
 

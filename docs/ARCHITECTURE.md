@@ -91,7 +91,7 @@ result to the keyboard extension through shared storage (`Shared/SharedStore.swi
 
 ## Network boundaries
 
-On Android, `NetworkAuditTest` (a unit test) fails the build if any source file other than these four uses a network
+On Android, `NetworkAuditTest` (a unit test) fails the unit-test run if any source file other than these four uses a network
 API, and checks that no voice-path file imports `java.net`:
 
 | File | Network use | Default |
