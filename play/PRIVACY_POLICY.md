@@ -4,7 +4,7 @@ Effective 3 October 2026. Applies to the Humming Keyboard Android app (package `
 
 ## The short version
 
-Humming works on your device. What you type, the words it learns, your clipboard and your voice stay on your phone. There is no account, no advertising, no analytics and no tracking. We (the developer) receive none of your data.
+Humming works on your device. By default, what you type, the words it learns, your clipboard and your voice stay on your phone. There is no account, no advertising, no analytics and no tracking. We (the developer) receive none of your data. Two optional features, both off by default, do send data to a service you choose: Online voice mode sends your audio to the phone's own speech service (on most phones Google's), and AI clean-up sends the dictated text (never audio) to Google Gemini, OpenAI or Groq using your own key. Details are under “When the app uses the internet” below.
 
 ## What stays on your device
 
