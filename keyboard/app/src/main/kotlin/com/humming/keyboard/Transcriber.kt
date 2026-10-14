@@ -6,8 +6,9 @@ import java.util.Locale
 
 /**
  * Turns one dictation into text to insert. Blocking: call off the main thread.
- * Engines: [OnDeviceTranscriber] (Parakeet on the phone, the default) and [MockTranscriber] (test mode).
- * There is no cloud engine: nothing you say leaves the phone.
+ * Engines: [OnDeviceTranscriber] (Parakeet on the phone, the only engine in a user build) and [MockTranscriber]
+ * (test mode, debuggable builds only, see [Prefs.resolveMode]). Neither sends audio anywhere. The opt-in Online mode
+ * is a separate path ([OnlineSession]) that hands audio to the phone's own speech service.
  */
 interface Transcriber {
     val label: String
@@ -32,7 +33,7 @@ class OnDeviceTranscriber(private val ctx: Context) : Transcriber {
     }
 }
 
-/** Offline test mode: proves mic → insert without any engine. Output is clearly marked. */
+/** Offline test mode (debuggable builds only): proves mic → insert without any engine. Output is clearly marked. */
 class MockTranscriber : Transcriber {
     override val label = "test mode"
 

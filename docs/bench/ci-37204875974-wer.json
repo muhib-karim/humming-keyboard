@@ -1,0 +1,46 @@
+{
+  "cpu": "\t: AMD EPYC 9V74 80-Core Processor",
+  "threads": 2,
+  "sets": {
+    "test-clean": 200,
+    "test-other": 100
+  },
+  "models": {
+    "fast": {
+      "label": "Parakeet TDT-CTC 110M int8 (Fast, default)",
+      "load_s": 1.16,
+      "test-clean": {
+        "n": 200,
+        "wer_pct": 2.78,
+        "rtf": 0.0427,
+        "median_latency_ms": 312,
+        "mean_audio_s": 9.1
+      },
+      "test-other": {
+        "n": 100,
+        "wer_pct": 4.2,
+        "rtf": 0.0426,
+        "median_latency_ms": 217,
+        "mean_audio_s": 6.3
+      }
+    },
+    "best": {
+      "label": "Parakeet TDT 0.6B v2 int8 (Best, optional)",
+      "load_s": 2.13,
+      "test-clean": {
+        "n": 200,
+        "wer_pct": 1.68,
+        "rtf": 0.1773,
+        "median_latency_ms": 1314,
+        "mean_audio_s": 9.1
+      },
+      "test-other": {
+        "n": 100,
+        "wer_pct": 3.12,
+        "rtf": 0.181,
+        "median_latency_ms": 937,
+        "mean_audio_s": 6.3
+      }
+    }
+  }
+}

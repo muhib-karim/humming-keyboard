@@ -1,5 +1,17 @@
 # Changelog
 
+## Unreleased (branch beta/humming-honest-engine-20261008)
+- **Voice never types placeholder text**: a phone whose CPU the on-device engine is not built for used to fall back
+  silently to the internal test mode, which typed "[mock] Humming heard ... of audio" into the field. The mic now
+  always uses the on-device engine and shows "Voice isn't available on this device" instead; test mode only runs when
+  set on purpose in a debuggable build (`Prefs.resolveMode`, `ModePolicyTest`).
+- **README made accurate**: no "open source" claim while the repository is private; every network use listed,
+  including the update check that is on by default; FUTO Keyboard, Handy and Superwhisper added as offline
+  alternatives; unverified "no keyboard" claims about Wispr Flow and Typeless removed; the CI WER run's output is
+  committed under `docs/bench/`, plus a re-run with every reference and hypothesis.
+- **Benchmark tooling**: `keyboard/ci/fetch_librispeech_sample.py` streams a fixed LibriSpeech sample (about 30 MB
+  instead of 350 MB); `wer_bench.py` skips empty sets and can write per-utterance results (`WER_PER_UTT`).
+
 ## 1.6.2: clean live dictation, a "Live text while speaking" switch, no FlorisBoard store left in Settings
 - **Dictation, fixed**: while you talk, your words now appear in the text field as an underlined draft (composing
   text, the way Gboard shows voice typing) that is corrected in place as Humming hears more, and the final text is

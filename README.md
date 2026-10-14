@@ -9,13 +9,17 @@
 <img alt="Platforms" src="https://img.shields.io/badge/Android%20%C2%B7%20iOS%20%C2%B7%20Windows%20%C2%B7%20macOS%20%C2%B7%20Linux-18181f">
 </p>
 
+> **CI status, 8 October 2026:** GitHub Actions has not started any job on this private repository since 5 October
+> 2026 (the account's Actions billing), so the CI badges above show failures that say nothing about the code. The last
+> green CI runs are from 4 October 2026 (1.4.0 code); 1.6.x was built and tested outside Actions.
+
 # Humming Keyboard
 
 **A private keyboard with offline voice typing, for Android, iPhone, Windows, macOS and Linux.** Tap the mic and
 talk: your words appear in the text field as you speak, as an underlined draft that corrects itself in place, for as
 long as you speak, even with the screen off. Tap the mic again to stop and the final text is typed once (or turn off
-"Live text while speaking" to see nothing until you stop). Speech recognition runs on your device, so dictation works in airplane mode and your voice
-never leaves it. Free and open source.
+"Live text while speaking" to see nothing until you stop). In the default Offline mode speech recognition runs on your device, so dictation works in airplane mode and your
+voice never leaves it. Free. The source code is not public yet (this repository is private).
 
 Android keyboard built on FlorisBoard (Apache 2.0).
 
@@ -26,7 +30,7 @@ Android keyboard built on FlorisBoard (Apache 2.0).
 
 | | Android | iPhone / iPad | Windows · macOS · Linux |
 |---|:---:|:---:|:---:|
-| Offline dictation, nothing sent anywhere | ✅ Parakeet | ✅ Apple on-device | ✅ Parakeet |
+| Offline dictation (default mode), audio not sent anywhere | ✅ Parakeet | ✅ Apple on-device | ✅ Parakeet |
 | One control, no length limit | ✅ | ✅ | ✅ (hold or toggle shortcut) |
 | Clean mode (um, uh, stutters, "3, no, 4pm" → "4pm") | ✅ | ✅ | ✅ |
 | Accuracy mode (strict clean-up, new in 1.4) | ✅ | ✅ | ✅ |
@@ -262,9 +266,12 @@ list against Gboard, SwiftKey and FUTO) is in [AUDIT.md](AUDIT.md).
 
 ### Humming: accuracy and speed (measured)
 
-Measured by CI (`.github/workflows/wer-bench.yml`, run [37204875974](https://github.com/muhib-karim/humming-keyboard/actions/runs/37204875974) on the 1.4.0 code) on
+Measured by CI (`.github/workflows/wer-bench.yml`, run [37204875974](https://github.com/muhib-karim/humming-keyboard/actions/runs/37204875974) on the 1.4.0 code, 4 October 2026) on
 LibriSpeech, the standard read-English benchmark, with the exact models and decoder settings the app ships, on a
-2-thread x86-64 CPU (AMD EPYC 9V74 80-Core Processor). Lower is better.
+2-thread x86-64 CPU (AMD EPYC 9V74 80-Core Processor). Lower is better. The run's own output is committed as
+[`docs/bench/ci-37204875974-wer.json`](docs/bench/ci-37204875974-wer.json) and
+[`bench.log`](docs/bench/ci-37204875974-bench.log), because Actions artifacts expire and are visible only to
+repository members.
 
 | Model | WER test-clean (200 clips) | WER test-other (100 clips) | Real-time factor | Median time to text per clip | Model load |
 |---|---|---|---|---|---|
@@ -272,8 +279,23 @@ LibriSpeech, the standard read-English benchmark, with the exact models and deco
 | **Best**: Parakeet TDT 0.6B v2 int8 | **1.68 %** | **3.12 %** | 0.177 (6x faster than real time) | 1314 ms clean · 937 ms other | 2.13 s |
 
 The clips average 9.1 s (clean) and 6.3 s (other). test-other is the harder, noisier half of LibriSpeech. The
-sample is a fixed subset, so treat the WER as +/- 0.5 points; the full-set figures published for these models are in
-the same range. Phones are roughly 2-4x slower than this CPU, still well under real time.
+sample is a fixed subset (the first 200 test-clean and first 100 test-other utterances by ID, out of 2,620 and 2,939),
+so treat the WER as +/- 0.5 points. These are desktop-CPU figures: speed on a phone has not been benchmarked in this
+repository yet, so no phone latency is claimed here.
+
+**Re-run on 8 October 2026 (outside CI, Fast model).** Same script, same model file (SHA-256 pinned), same first 200
+test-clean utterances, fetched with [`keyboard/ci/fetch_librispeech_sample.py`](keyboard/ci/fetch_librispeech_sample.py).
+Every reference and hypothesis is in [`docs/bench/`](docs/bench/) so each error can be checked by hand:
+
+| Model | WER test-clean (200 clips) | Real-time factor | Median time to text per clip | Model load | Machine |
+|---|---|---|---|---|---|
+| **Fast** (default) | **2.72 %** (CI run above: 2.78 %) | 0.081 | 581 ms | 1.49 s | shared 4-CPU Intel Xeon @ 2.60GHz cloud box with other jobs running, 2 threads |
+
+Files: [`local-20261008-fast-test-clean-200.json`](docs/bench/local-20261008-fast-test-clean-200.json) (summary) and
+[`local-20261008-fast-test-clean-200-per-utterance.jsonl`](docs/bench/local-20261008-fast-test-clean-200-per-utterance.jsonl)
+(200 lines: reference, hypothesis, audio length, latency; 74 of the 200 clips have at least one word wrong). The WER
+matches the CI run within the stated noise; speed is about half the CI runner's because the box was shared. The Best
+model and test-other were not re-run.
 
 ### Against Wispr Flow, Typeless and Gboard Rambler
 
@@ -286,10 +308,12 @@ benchmark, so there is no like-for-like comparison to make; where nothing is pub
 | WER, LibriSpeech test-other | **4.20 %** | **3.12 %** | Not published | Not published | Not published |
 | WER on the vendor's own data | n/a | n/a | Chart only, on 10 hours of Wispr's own dictations; no figures in text [13] | Not published | Not published |
 | Time to text | **312 ms** median per clip (measured above) | **1314 ms** | Not published as a measurement; states a 500 ms response goal [14] | Not published | Not published |
-| Measured by | this repo's CI, open script, public data | same | vendor | — | — |
+| Measured by | this repo's CI, committed script, public data | same | vendor | — | — |
 | Works offline | Yes | Yes | No [1] | No [2] | Limited [12] |
 
-Run it yourself: Actions > wer-bench > Run workflow (inputs: number of test-clean and test-other clips).
+Run it yourself: Actions > wer-bench > Run workflow (inputs: number of test-clean and test-other clips), or locally:
+`python keyboard/ci/fetch_librispeech_sample.py bench test-clean 200` then
+`python keyboard/ci/wer_bench.py <models_dir> bench/LibriSpeech wer.json 200 0` (needs `sherpa-onnx==1.13.8 jiwer soundfile`).
 
 ## How Humming compares
 
@@ -299,8 +323,8 @@ Checked on the vendors' own pages on 4 October 2026 (links below the table). Pri
 | | **Humming** | Wispr Flow | Typeless | Gboard Rambler |
 |---|---|---|---|---|
 | Works fully offline | **Yes**, every platform | No: "Transcription always occurs on the cloud" [1] | No: uses cloud LLM providers [2] | Limited: offline keeps basic clean-up and punctuation only [12] |
-| Where your voice goes | **Stays on the device** | Wispr's cloud; training use is a setting [1] | Cloud, "zero data retention" [2] | Google; "never saved, stored, or shared" [12] |
-| Price | **Free, open source (Apache-2.0)** | Free tier; Pro $12-15 [5] | Free tier; Pro $12 yearly / $30 monthly [6] | Free with Gboard |
+| Where your voice goes | **Stays on the device** (default Offline mode; opt-in Online mode uses the phone's speech service) | Wispr's cloud; training use is a setting [1] | Cloud, "zero data retention" [2] | Google; "never saved, stored, or shared" [12] |
+| Price | **Free** (source not public yet; keyboard base is FlorisBoard, Apache-2.0) | Free tier; Pro $12-15 [5] | Free tier; Pro $12 yearly / $30 monthly [6] | Free with Gboard |
 | Free-tier limit | **None** | 2,000 words/week desktop, 1,000/week mobile [5] | "Limited words" [6] | None stated |
 | Longest single dictation | **No limit** | 20 min desktop [7], 5 min on Android [8] | 9 min [9] | Not stated |
 | Platforms | **Android, iOS, Windows, macOS, Linux** | Mac, Windows, iOS, Android [5] | macOS, Windows, iOS, Android; Linux listed on the pricing page [6] | Pixel 11 phones only [12] |
@@ -308,11 +332,22 @@ Checked on the vendors' own pages on 4 October 2026 (links below the table). Pri
 | Clean-up (fillers, punctuation) | **On-device** Clean mode and Accuracy mode; optional AI pass with your own key | Yes (cloud) [11] | Yes (cloud) [6] | Yes; full style rewrites need the internet [12] |
 | Custom words | Yes | Yes, dictionary [5] | Yes, personal dictionary [6] | Not stated |
 | Spoken edit commands | "scratch that", "new line"; "make it formal", "translate to …" with AI clean-up | Corrections as you speak ("Backtrack") [11] | Translate, "Ask anything" [6] | Edit and rewrite by voice [12] |
-| Full keyboard | **Yes** (Android, iOS) | No, dictation app | No, dictation app | Yes (Gboard) |
+| Full keyboard | **Yes** on Android; basic layout on iOS | Not checked | Calls its mobile app a "voice keyboard" [15]; typing features not checked | Yes (Gboard) |
 
-**Why Humming:** it is the only one of the four that is fully offline on every platform, free with no word caps,
-open source, and has no session length limit. The trade-off is language coverage offline (English today) and that
-the AI clean-up needs your own API key.
+**Why Humming:** of the four in this table it is the only one that is fully offline on every platform, free with no
+word caps, and has no session length limit. It is not the only offline option overall (see below). The trade-offs:
+offline language coverage (English today), the AI clean-up needs your own API key, and the source is not public yet.
+
+**Other offline options** (vendors' own pages, checked 8 October 2026):
+- **FUTO Keyboard** (Android): a full keyboard advertised as "100% Offline, 100% Private" with offline voice input
+  [16]. This is Humming's closest competitor on Android; on accuracy, the bake-off below measured FUTO's Whisper models
+  against Parakeet on the same clips.
+- **Handy** (Windows, macOS, Linux): "a free, open source, and extensible speech-to-text application that works
+  completely offline", MIT licence, Whisper or Parakeet models [17]. Desktop only, no keyboard.
+- **Superwhisper** (Mac, Windows, iOS, Android): states it "works offline"; local and cloud models, paid Pro tier [18].
+
+Humming's angle against these: one dependable offline full keyboard on Android plus the same engine on desktop, with
+the benchmark script and raw outputs in this repository.
 
 [1] https://wisprflow.ai/data-controls ·
 [2] https://www.typeless.com/data-controls ·
@@ -325,17 +360,30 @@ the AI clean-up needs your own API key.
 [11] https://wisprflow.ai/features ·
 [12] https://support.google.com/pixelphone/answer/17468539 ·
 [13] https://wisprflow.ai/canto ·
-[14] https://wisprflow.ai/post/our-operating-principles
+[14] https://wisprflow.ai/post/our-operating-principles ·
+[15] https://www.typeless.com/ ·
+[16] https://keyboard.futo.org/ ·
+[17] https://github.com/cjpais/Handy ·
+[18] https://superwhisper.com/
 
 ## Offline by design
 
-- **The voice path has no network code.** Recording, voice detection, recognition, cleanup and history run on the
-  phone. A unit test (`NetworkAuditTest`) scans every Kotlin and Java source in the app and its libraries. It fails
-  the build if any file other than `ModelDownload.kt` (and the opt-in `GifSearch.kt` and `LlmCleanup.kt`, and since 1.6 the update check `AppUpdate.kt`) uses a network API (sockets, HTTP, URL connections, WebView,
-  DownloadManager). It also checks that no voice-path file even imports `java.net`.
-- **Network use: the one-time model download, and GIF search only if you turn it on.** GIF search (off by default,
-  off in incognito unless allowed) sends only the words typed into the sticker panel's search box to Openverse;
-  `NetworkAuditTest` allows network APIs in exactly these two files (`ModelDownload.kt`, `GifSearch.kt`).
+- **The offline voice path has no network code.** Recording, voice detection, recognition, cleanup and history run on
+  the phone. A unit test (`NetworkAuditTest`) scans every Kotlin and Java source in the app and its libraries. It fails
+  the build if any file other than these four uses a network API (sockets, HTTP, URL connections, WebView,
+  DownloadManager): `ModelDownload.kt`, `GifSearch.kt`, `LlmCleanup.kt` and `AppUpdate.kt`. It also checks that no
+  voice-path file even imports `java.net`.
+- **What does use the network, all of it listed:**
+  1. The one-time voice-model download (below).
+  2. The update check of the sideloaded APK (`AppUpdate.kt`, since 1.6): **on by default**. It fetches the release
+     feed from humming-keyboard.pages.dev and, on unmetered networks, may download the new APK. It sends no audio and
+     no typed text. Switch it off in Settings > Updates.
+  3. GIF search (off by default, off in incognito unless allowed): sends only the words typed into the sticker
+     panel's search box to Openverse.
+  4. AI clean-up (off by default, needs your own API key): sends the **dictated text** (not audio) to the provider you
+     pick (Google Gemini, OpenAI or Groq).
+  5. Online mode (off by default): hands your **audio** to the phone's own speech service (on most phones Google's).
+     Humming's own code does not send it anywhere, but it leaves the phone.
 - **The model download** goes to the sherpa-onnx GitHub release. Each file is
   checked against a pinned SHA-256 and rejected on a mismatch. With **Wi-Fi only** on, the download waits for Wi-Fi.
   After that, dictation needs no connection at all.
@@ -352,7 +400,7 @@ the AI clean-up needs your own API key.
 On iPhone, dictation uses Apple's recogniser with on-device recognition required, so audio is processed on the
 phone and Humming refuses to run rather than fall back to a server. The iOS app has no network code.
 
-There is no cloud speech engine, no account, no analytics and no ads.
+Humming has no cloud speech engine of its own (Online mode uses the phone's), no account, no analytics and no ads.
 
 ## Why Parakeet: the bake-off
 
@@ -369,9 +417,10 @@ divided by audio length, so lower is faster.
 | FUTO Whisper base.en ACFT q8 | 4.5% | 14.1% | 7.1% | 0.072 | 82 MB |
 | FUTO Whisper tiny.en ACFT q8 | 7.9% | 16.3% | 10.2% | 0.032 | 44 MB |
 
-The small Parakeet is more accurate than FUTO's biggest model and about 9x faster. Caveats: this was measured on a
-desktop CPU, and phones are roughly 2-4x slower. With 73 clips, gaps under about half a point are noise. FUTO's
-models were only benchmarked, never shipped.
+The small Parakeet is more accurate than FUTO's biggest model and about 9x faster on these clips. Caveats: this was
+a one-off development run on a desktop CPU; its script and raw outputs are not in this repository, so treat the table
+as indicative and use the CI table above (script and output committed) for claims. With 73 clips, gaps under about
+half a point are noise. FUTO's models were only benchmarked, never shipped.
 
 ## Gboard voice typing hand-off (Rambler)
 

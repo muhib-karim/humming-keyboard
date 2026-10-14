@@ -2,6 +2,7 @@
 """Word error rate and speed of Humming's offline models on public LibriSpeech test sets.
 
 usage: wer_bench.py <models_dir> <librispeech_root> <out.json> [n_clean] [n_other]
+       (set WER_PER_UTT=<file.jsonl> to also write every reference and hypothesis)
 
 Takes the first N utterances (sorted by id) of test-clean and test-other, decodes each with sherpa-onnx (the same
 runtime and model files the app downloads), and reports WER (jiwer, after lower-casing and stripping punctuation)
@@ -87,6 +88,8 @@ MODELS = {
     "best": ("Parakeet TDT 0.6B v2 int8 (Best, optional)", "sherpa-onnx-nemo-parakeet-tdt-0.6b-v2-int8"),
 }
 sets = {"test-clean": utterances("test-clean", n_clean), "test-other": utterances("test-other", n_other)}
+# Optional per-utterance reference/hypothesis lines (JSONL) so every WER figure can be re-checked by hand.
+per_utt = open(os.environ["WER_PER_UTT"], "w") if os.environ.get("WER_PER_UTT") else None
 report = {"device": os.environ.get("BENCH_DEVICE", f"{platform.system()} {platform.machine()}"),
           "os": f"{platform.system()} {platform.release()}", "arch": platform.machine(), "cpu": cpu_name(),
           "threads": 2, "sets": {k: len(v) for k, v in sets.items()}, "models": {}}
@@ -99,6 +102,8 @@ for key, (label, dirname) in MODELS.items():
     load_s = time.time() - t0
     res = {"label": label, "load_s": round(load_s, 2)}
     for split, items in sets.items():
+        if not items:  # e.g. n_other=0, or a sample with only test-clean (fetch_librispeech_sample.py)
+            continue
         refs, hyps, lat, audio = [], [], [], 0.0
         for uid, path, text in items:
             samples, sr = sf.read(path, dtype="float32")
@@ -113,10 +118,16 @@ for key, (label, dirname) in MODELS.items():
             lat.append(time.perf_counter() - t1)
             audio += len(samples) / sr
             refs.append(norm(text)); hyps.append(norm(hyp))
+            if per_utt is not None:
+                per_utt.write(json.dumps({"model": key, "split": split, "id": uid, "ref": refs[-1], "hyp": hyps[-1],
+                                          "audio_s": round(len(samples) / sr, 2),
+                                          "latency_ms": round(1000 * lat[-1])}) + "\n")
         res[split] = {"n": len(items), "wer_pct": round(100 * jiwer.wer(refs, hyps), 2),
                       "rtf": round(sum(lat) / audio, 4), "median_latency_ms": round(1000 * statistics.median(lat)),
                       "mean_audio_s": round(audio / len(items), 1)}
         print(key, split, res[split], flush=True)
     report["models"][key] = res
+if per_utt is not None:
+    per_utt.close()
 json.dump(report, open(out, "w"), indent=2)
 print(json.dumps(report, indent=2))

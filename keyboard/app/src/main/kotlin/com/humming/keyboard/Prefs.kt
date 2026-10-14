@@ -30,12 +30,20 @@ object Prefs {
     fun get(ctx: Context): SharedPreferences =
         ctx.getSharedPreferences("humming", Context.MODE_PRIVATE)
 
-    /** The engine the mic uses: on-device when this phone's CPU can run it, else the offline test mode. */
+    /**
+     * The engine the mic uses. Always the on-device engine, except in a debuggable build where test mode was set on
+     * purpose (unit tests, screenshots). A phone whose CPU the engine is not built for gets a clear "voice isn't
+     * available on this device" error from the on-device path, never placeholder "[mock] ..." text typed into the
+     * field (before this, such a phone silently fell back to test mode).
+     */
     fun mode(ctx: Context): String {
-        val saved = get(ctx).getString(KEY_MODE, null)
-        if (saved == MODE_DEVICE || saved == MODE_MOCK) return saved
-        return if (CoreLoader.whyUnavailable(ctx) == null) MODE_DEVICE else MODE_MOCK
+        val debuggable = (ctx.applicationInfo.flags and android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) != 0
+        return resolveMode(get(ctx).getString(KEY_MODE, null), debuggable)
     }
+
+    /** Pure rule behind [mode]: test mode only when saved explicitly and only in a debuggable build. */
+    fun resolveMode(saved: String?, debuggable: Boolean): String =
+        if (saved == MODE_MOCK && debuggable) MODE_MOCK else MODE_DEVICE
 
     fun setMode(ctx: Context, mode: String) = get(ctx).edit().putString(KEY_MODE, mode).apply()
 
