@@ -121,11 +121,10 @@ flowchart LR
 - **Feeds.** `latest.json` (Tauri updater format, one signed entry per desktop platform) and `android.json`
   (`versionCode`, `versionName`, APK name, SHA-256, notes) are written by `scripts/assemble_release.py` with
   `SHA256SUMS.txt` over every release file.
-- **Mirror.** The repository is private, so release downloads need a GitHub login. The apps therefore read their
-  feeds from a public mirror: `AppUpdate.FEED_BASE` and the desktop updater endpoint in
-  `desktop/src-tauri/tauri.conf.json` point at https://humming-keyboard.pages.dev/updates/. `pages.yml` also copies
-  the latest release's update files to the GitHub Pages site's `/updates/` and checks the live feed's signatures with
-  `scripts/verify_updater.py`.
+- **Mirror.** The apps read their feeds from a mirror of the release files: `AppUpdate.FEED_BASE` and the
+  desktop updater endpoint in `desktop/src-tauri/tauri.conf.json` point at https://humming-keyboard.pages.dev/updates/.
+  `pages.yml` also copies the latest release's update files to the GitHub Pages site's `/updates/` and checks the
+  live feed's signatures with `scripts/verify_updater.py`.
 - **Desktop.** `tauri-plugin-updater` installs only files signed with Humming's minisign (Ed25519) update key; the
   public key is `plugins.updater.pubkey` in `tauri.conf.json`.
 - **Android.** `AppUpdate` downloads a newer APK, compares its SHA-256 with `SHA256SUMS.txt`, requires the release

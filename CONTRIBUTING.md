@@ -2,8 +2,7 @@
 
 Thank you for helping improve Humming. This guide covers bug reports, feature ideas and pull requests.
 
-The repository is private for now, so issues and pull requests are open to people who have access to it. By
-taking part you agree to follow the [Code of Conduct](CODE_OF_CONDUCT.md).
+Issues and pull requests are open to everyone. By taking part you agree to follow the [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## Reporting a bug
 

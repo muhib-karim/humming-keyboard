@@ -87,8 +87,7 @@ It also refuses a version that does not match both `desktop/src-tauri/tauri.conf
 | `android.json` | Android APK (`AppUpdate.kt`) | `versionCode`, `versionName`, `apk` (file name), `sha256` and `notes` |
 
 The apps read both feeds from `https://humming-keyboard.pages.dev/updates/` (`AppUpdate.FEED_BASE` and the updater
-endpoint in `tauri.conf.json`), because the repository is private and release downloads need a GitHub login. The
-download URLs inside `latest.json` point at the same place.
+endpoint in `tauri.conf.json`). The download URLs inside `latest.json` point at the same place.
 
 `pages.yml` copies the latest GitHub Release's feeds, `SHA256SUMS.txt`, the APK and the desktop update files to
 `/updates/` on the GitHub Pages site and checks the live feed's signatures. It only mirrors a release that contains a

@@ -5,11 +5,11 @@
 <p align="center"><strong>Private voice typing that works offline: a full keyboard for Android, plus iPhone, Windows, macOS and Linux apps.</strong></p>
 
 <p align="center">
-<a href="https://github.com/muhib-karim/humming-keyboard/releases/latest"><img alt="Latest release" src="https://img.shields.io/badge/release-v1.6.2-e5486b"></a>
+<a href="https://github.com/muhib-karim/humming-keyboard/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/muhib-karim/humming-keyboard?color=e5486b"></a>
 <a href="#download-and-install"><img alt="Platforms" src="https://img.shields.io/badge/platforms-Android%20%C2%B7%20iOS%20%C2%B7%20Windows%20%C2%B7%20macOS%20%C2%B7%20Linux-18181f"></a>
 <a href="#privacy"><img alt="Dictation: on-device by default" src="https://img.shields.io/badge/dictation-on--device%20by%20default-2a2a33"></a>
 <a href="#benchmarks"><img alt="WER 2.78% (Fast model, LibriSpeech test-clean)" src="https://img.shields.io/badge/WER%20test--clean-2.78%25%20Fast%20%C2%B7%201.68%25%20Best-2a2a33"></a>
-<a href="#licence-and-credits"><img alt="Licence" src="https://img.shields.io/badge/licence-Apache--2.0%20(Android)%20%C2%B7%20MIT%20(desktop%2C%20core)-2a2a33"></a>
+<a href="LICENSE"><img alt="Licence: Apache-2.0" src="https://img.shields.io/badge/licence-Apache--2.0-2a2a33"></a>
 </p>
 
 <p align="center">
@@ -28,11 +28,9 @@ account, no analytics, no ads.
 
 Android keyboard built on FlorisBoard (Apache 2.0). Speech recognition by NVIDIA Parakeet on sherpa-onnx.
 
-> **Repository status.** This repository is private for now, so the source code is not public yet. Version
-> **v1.6.2** is the latest GitHub Release; `main` holds the **1.6.3** release candidate (see
-> [CHANGELOG.md](CHANGELOG.md)). GitHub Actions has not started any job on this repository since 5 October 2026
-> (the account's Actions billing); the last green CI runs are from 4 October 2026 (1.4.0 code), and 1.6.x was built
-> and tested outside Actions.
+> **Releases.** The newest build is always on the
+> [latest GitHub Release](https://github.com/muhib-karim/humming-keyboard/releases/latest); what changed in each
+> version, including 1.6.3, is in [CHANGELOG.md](CHANGELOG.md).
 
 ## Contents
 
@@ -210,8 +208,8 @@ Honest limits:
 ## Download and install
 
 Every file is on the [latest GitHub Release](https://github.com/muhib-karim/humming-keyboard/releases/latest), with a
-`SHA256SUMS.txt` to check them. Because this repository is private, the installers and update files are also
-mirrored on the public download site, https://humming-keyboard.pages.dev/ (Cloudflare Pages).
+`SHA256SUMS.txt` to check them. The installers and update files are also mirrored on the download site,
+https://humming-keyboard.pages.dev/ (Cloudflare Pages).
 
 | Platform | Download | Install |
 |---|---|---|
@@ -221,7 +219,7 @@ mirrored on the public download site, https://humming-keyboard.pages.dev/ (Cloud
 | **macOS** 11+ (Apple silicon and Intel) | `Humming_1.5.0_universal.dmg` (1.6.0 has no macOS build yet, see the note below the table) | Drag to Applications, open once, then **System Settings > Privacy & Security > Open Anyway**. Allow Microphone and Accessibility. |
 | **Linux** x86-64 | `Humming_1.6.0_amd64.AppImage` or `.deb` | `chmod +x` the AppImage and run it, or `sudo apt install ./Humming_1.6.0_amd64.deb`. |
 
-Versions: Android is at 1.6.2 on the latest release (1.6.3 is the release candidate on `main`); Windows and Linux
+Versions: Android is at 1.6.3 (see [CHANGELOG.md](CHANGELOG.md)); Windows and Linux
 are 1.6.0. macOS and iOS stay on 1.5.0 for now: 1.6.0 was built without GitHub Actions, on Linux build machines
 (Windows cross-compiled with cargo-xwin), and Apple's tools only run on a Mac. The macOS and iOS 1.5.0 files are on
 the [v1.5.0 release](https://github.com/muhib-karim/humming-keyboard/releases/tag/v1.5.0) and on the download site.
@@ -267,8 +265,8 @@ Signing options are in [docs/RELEASE_SIGNING.md](docs/RELEASE_SIGNING.md).
 | **iPhone / iPad** | No automatic updates: an unsigned sideloaded .ipa cannot update itself. Download the new .ipa and sideload it again. |
 
 The update feeds (`latest.json` for desktop, `android.json` for Android) are published with every GitHub Release by
-`release.yml` and mirrored, with the update files, to https://humming-keyboard.pages.dev/updates/, because this
-repository is private and its release downloads need a GitHub login. `scripts/verify_updater.py` checks every
+`release.yml` and mirrored, with the update files, to https://humming-keyboard.pages.dev/updates/, where the apps read them
+(`AppUpdate.FEED_BASE` on Android, the updater endpoint in `tauri.conf.json` on desktop). `scripts/verify_updater.py` checks every
 signature in the feed against the public key in `desktop/src-tauri/tauri.conf.json`. How a release is cut:
 [docs/RELEASING.md](docs/RELEASING.md).
 
@@ -445,7 +443,7 @@ Checked on the vendors' own pages on 4 October 2026 (links below the table). Pri
 |---|---|---|---|---|
 | Works fully offline | **Yes**, every platform | No: "Transcription always occurs on the cloud" [1] | No: uses cloud LLM providers [2] | Limited: offline keeps basic clean-up and punctuation only [12] |
 | Where your voice goes | **Stays on the device** (default Offline mode; opt-in Online mode uses the phone's speech service) | Wispr's cloud; training use is a setting [1] | Cloud, "zero data retention" [2] | Google; "never saved, stored, or shared" [12] |
-| Price | **Free** (source not public yet; keyboard base is FlorisBoard, Apache-2.0) | Free tier; Pro $12-15 [5] | Free tier; Pro $12 yearly / $30 monthly [6] | Free with Gboard |
+| Price | **Free and open source** (Apache-2.0) | Free tier; Pro $12-15 [5] | Free tier; Pro $12 yearly / $30 monthly [6] | Free with Gboard |
 | Free-tier limit | **None** | 2,000 words/week desktop, 1,000/week mobile [5] | "Limited words" [6] | None stated |
 | Longest single dictation | **No limit** | 20 min desktop [7], 5 min on Android [8] | 9 min [9] | Not stated |
 | Platforms | **Android, iOS, Windows, macOS, Linux** | Mac, Windows, iOS, Android [5] | macOS, Windows, iOS, Android; Linux listed on the pricing page [6] | Pixel 11 phones only [12] |
@@ -457,7 +455,7 @@ Checked on the vendors' own pages on 4 October 2026 (links below the table). Pri
 
 **Why Humming:** of the four in this table it is the only one that is fully offline on every platform, free with no
 word caps, and has no session length limit. It is not the only offline option overall (see below). The trade-offs:
-offline language coverage (English today), the AI clean-up needs your own API key, and the source is not public yet.
+offline language coverage (English today), and the AI clean-up needs your own API key.
 
 **Other offline options** (vendors' own pages, checked 8 October 2026):
 - **FUTO Keyboard** (Android): a full keyboard advertised as "100% Offline, 100% Private" with offline voice input
@@ -623,9 +621,10 @@ Every release is described in [CHANGELOG.md](CHANGELOG.md); `release.yml` takes 
 
 ## Licence and credits
 
-- **Android keyboard (`keyboard/`)**: licensed under the **Apache License 2.0**, see
-  [`keyboard/LICENSE`](keyboard/LICENSE). Android keyboard built on FlorisBoard (Apache 2.0).
-- **Desktop app (`desktop/`) and shared core (`core/`)**: their Cargo manifests declare the **MIT** licence.
+Humming is licensed under the **Apache License 2.0**: see [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE) at the
+repository root. This covers the whole repository: the Android keyboard (`keyboard/`, which also keeps the
+FlorisBoard copy in [`keyboard/LICENSE`](keyboard/LICENSE)), the desktop app (`desktop/`), the shared core (`core/`)
+and the iOS app (`ios/`). Android keyboard built on FlorisBoard (Apache 2.0).
 
 Third-party components:
 

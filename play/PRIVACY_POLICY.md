@@ -47,4 +47,5 @@ If this policy changes, the new version will be posted at this address with a ne
 
 ## Contact
 
-Muhib Karim: 62206502+muhib-karim@users.noreply.github.com
+- Questions or privacy requests: GitHub issues, https://github.com/muhib-karim/humming-keyboard/issues
+- Security reports: https://github.com/muhib-karim/humming-keyboard/security/advisories/new

@@ -1,0 +1,7 @@
+Humming Keyboard
+Copyright 2026 Muhib Karim
+
+This product includes software developed by the FlorisBoard project (Apache-2.0).
+This product includes sherpa-onnx by the k2-fsa project (Apache-2.0).
+This product uses the NVIDIA Parakeet speech model weights (CC-BY-4.0).
+This product includes Silero VAD (MIT).

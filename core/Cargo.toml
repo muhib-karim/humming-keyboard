@@ -3,7 +3,7 @@ name = "humming-core"
 version = "1.6.0"
 edition = "2021"
 description = "Humming core: VAD, whisper.cpp speech-to-text and dictation cleanup"
-license = "MIT"
+license = "Apache-2.0"
 publish = false
 
 [lib]
