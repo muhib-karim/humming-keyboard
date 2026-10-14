@@ -13,7 +13,7 @@ type Settings = {
 };
 type UpdateStatus = { state: string; current: string; latest: string | null; notes: string | null; message: string; done: number; total: number; last_checked: number; can_install: boolean };
 type Status = { state: string; message: string };
-type Model = { id: string; label: string; blurb: string; download_bytes: number; disk_bytes: number; ram_mb: number; wer_pct: number; downloaded: boolean; active: boolean };
+type Model = { id: string; label: string; blurb: string; download_bytes: number; disk_bytes: number; ram_mb: number; wer_pct: number | null; downloaded: boolean; active: boolean };
 type Entry = { id: number; ts: number; text: string; raw: string; audio_ms: number; latency_ms: number; model: string; inserted: boolean };
 type DictationEvent = { entry: Entry; to_focused_app: boolean; error: string | null };
 
@@ -63,7 +63,7 @@ async function loadModels() {
   const models = await invoke<Model[]>("list_models");
   $("#model-list").innerHTML = models.map((m) => `
     <div class="model ${m.active ? "active" : ""}">
-      <div><b>${esc(m.label)}</b> <span class="muted">${mb(m.download_bytes)} download &middot; ${m.wer_pct}% word error rate &middot; ~${m.ram_mb} MB RAM</span><br/><span class="muted small">${esc(m.blurb)}</span>
+      <div><b>${esc(m.label)}</b> <span class="muted">${mb(m.download_bytes)} download &middot; ${m.wer_pct == null ? "word error rate not measured" : `${m.wer_pct}% word error rate`} &middot; ~${m.ram_mb} MB RAM</span><br/><span class="muted small">${esc(m.blurb)}</span>
         <div class="progress" id="prog-${m.id}" hidden><div></div></div></div>
       <div class="row">
         ${m.downloaded

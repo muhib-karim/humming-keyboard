@@ -145,6 +145,8 @@ impl Settings {
         self.history_limit = self.history_limit.clamp(10, 5000);
         // 300 was the 0.1.0 default cap; 1.3.0 has no limit unless the user sets one. Migrate it once, only in a file
         // written before the schema field existed, so a 300 s cap chosen later survives load and save.
+        // Deliberate: a schemaless 300 cannot be told apart from the old default (and 1.3.0-1.6.0 never kept a chosen
+        // 300), so it is not preserved; desktop/README.md "Old 5-minute caps" tells users to set it again.
         if self.schema < SCHEMA {
             if self.max_seconds == 300 {
                 self.max_seconds = 0;

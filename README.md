@@ -186,7 +186,8 @@ Gboard's newer voice typing (code-named "Rambler" on Pixel phones) is part of Gb
 Humming can't embed it, so it offers a switch instead. If Gboard is installed and enabled as a keyboard,
 long-pressing Humming's mic shows a menu:
 
-- **Humming**: offline, on this phone.
+- **Humming**: with the Offline engine selected, "Offline · on this phone · private". With the Online engine selected
+  the row reads "Online · uses the phone's speech service", and audio goes to that service.
 - **Gboard voice typing**: switches the active keyboard to Gboard through Android's input-method API. If Gboard
   declares a voice subtype, Humming picks that. Otherwise it opens Gboard's keyboard, and Gboard's mic is one tap
   away. Gboard's own keyboard-switch key brings you back to Humming.
@@ -381,6 +382,8 @@ repository members.
 | **Fast** (default): Parakeet TDT-CTC 110M int8 | **2.78 %** | **4.20 %** | 0.043 (23x faster than real time) | 312 ms clean · 217 ms other | 1.16 s |
 | **Best**: Parakeet TDT 0.6B v2 int8 | **1.68 %** | **3.12 %** | 0.177 (6x faster than real time) | 1314 ms clean · 937 ms other | 2.13 s |
 
+The desktop-only Lite model (Moonshine tiny) is not in this benchmark; its word error rate is not measured.
+
 The clips average 9.1 s (clean) and 6.3 s (other). test-other is the harder, noisier half of LibriSpeech. The
 sample is a fixed subset (the first 200 test-clean and first 100 test-other utterances by ID, out of 2,620 and 2,939),
 so treat the WER as +/- 0.5 points. These are desktop-CPU figures: speed on a phone has not been benchmarked in this
@@ -567,7 +570,7 @@ The full picture (every module, the dictation pipeline step by step, the update 
 | Area | Technology |
 |---|---|
 | Android | Kotlin, Jetpack Compose, FlorisBoard v0.5.2 base, sherpa-onnx 1.13.8 (ONNX Runtime), Silero VAD v4, min SDK 26, target SDK 36 |
-| Speech models | NVIDIA Parakeet TDT-CTC 110M int8 (Fast) and Parakeet TDT 0.6B v2 int8 (Best), sherpa-onnx ONNX exports |
+| Speech models | NVIDIA Parakeet TDT-CTC 110M int8 (Fast) and Parakeet TDT 0.6B v2 int8 (Best), sherpa-onnx ONNX exports; desktop also has Lite, Moonshine tiny English (MIT), fetched first on a first run |
 | Prediction | Dictionaries and next-word tables for six languages, plus an on-device int8 word-level LSTM run by Humming's own Kotlin code |
 | Desktop | Tauri v2, Rust (sherpa-onnx, cpal, arboard, enigo, tauri-plugin-updater with minisign), TypeScript + Vite |
 | iOS | SwiftUI, Apple Speech with on-device recognition required, XcodeGen, Swift package `HummingCore` |

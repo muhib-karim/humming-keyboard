@@ -127,7 +127,8 @@ Every option is searchable (**Settings > Search**) and can be exported to a file
 
 ### Desktop settings
 
-Shortcut (with a recorder), hold-to-talk or press-to-toggle, speech model (Fast or Best), clean-up mode, language,
+Shortcut (with a recorder), hold-to-talk or press-to-toggle, speech model (Lite, Fast or Best; a first run fetches the 30 MB Lite model first so you can dictate within seconds,
+then switches to the one you picked), clean-up mode, language,
 microphone, paste method, listening overlay, start at login, and **Updates**. The **Dictionary** tab holds fixed
 spellings and phrase replacements, and has a clean-up tester.
 

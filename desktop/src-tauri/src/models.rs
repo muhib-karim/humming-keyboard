@@ -1,5 +1,5 @@
-//! Speech models: the same models (sherpa-onnx exports) the Android app ships, pinned by size and SHA-256:
-//! Lite (Moonshine v2 tiny, 30 MB), Fast (Parakeet 110M) and Best (Parakeet 0.6B). Each is downloaded only when the
+//! Speech models (sherpa-onnx exports), pinned by size and SHA-256: Fast (Parakeet 110M) and Best (Parakeet 0.6B),
+//! the same two models the Android app ships, plus desktop-only Lite (Moonshine v2 tiny, 30 MB, MIT). Each is downloaded only when the
 //! user picks it, unpacked while it streams (no second pass over the archive), resumed if the connection drops, and
 //! checked against its pinned SHA-256 before anything is used. Nothing is bundled in the installer.
 
@@ -33,7 +33,8 @@ pub struct VoiceModel {
     /// Peak RAM while dictating (Android bake-off measurement).
     pub ram_mb: u32,
     pub kind: Kind,
-    pub wer_pct: f32,
+    /// LibriSpeech test-clean word error rate from the README benchmark; None = not measured (shown as such).
+    pub wer_pct: Option<f32>,
 }
 
 const REL: &str = "https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/";
@@ -50,11 +51,9 @@ pub const LITE: VoiceModel = VoiceModel {
     disk_bytes: 44_243_206,
     ram_mb: 250,
     kind: Kind::MoonshineV2,
-    wer_pct: LITE_WER,
+    // Lite is not in the WER benchmark (README covers Fast and Best only), so no number is shown for it.
+    wer_pct: None,
 };
-
-/// LibriSpeech test-clean WER of Lite from the wer-bench run (README benchmark table).
-const LITE_WER: f32 = 0.0;
 
 pub const FAST: VoiceModel = VoiceModel {
     id: "fast",
@@ -68,7 +67,7 @@ pub const FAST: VoiceModel = VoiceModel {
     disk_bytes: 131_662_124,
     ram_mb: 500,
     kind: Kind::NemoCtc,
-    wer_pct: 3.7,
+    wer_pct: Some(3.7),
 };
 
 pub const BEST: VoiceModel = VoiceModel {
@@ -83,7 +82,7 @@ pub const BEST: VoiceModel = VoiceModel {
     disk_bytes: 661_190_513,
     ram_mb: 1300,
     kind: Kind::NemoTransducer,
-    wer_pct: 2.6,
+    wer_pct: Some(2.6),
 };
 
 pub const CATALOG: &[VoiceModel] = &[LITE, FAST, BEST];
@@ -273,6 +272,13 @@ pub fn release_base() -> &'static str {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn lite_wer_is_not_measured() {
+        assert_eq!(find("lite").unwrap().wer_pct, None);
+        assert!(find("fast").unwrap().wer_pct.is_some());
+        assert!(find("best").unwrap().wer_pct.is_some());
+    }
 
     #[test]
     fn catalog_matches_android() {

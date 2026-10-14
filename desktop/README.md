@@ -3,7 +3,7 @@
 Hold a shortcut, speak, let go: Humming transcribes on your own computer and pastes clean text into whatever
 app has focus (mail, chat, docs, the browser, the terminal). It is the desktop sibling of the Humming Android
 keyboard and uses the same engine and rules: NVIDIA Parakeet on sherpa-onnx 1.13.8 (the same two models, pinned by
-SHA-256) and a Rust port of the keyboard's `TextCleanup.kt`. No account, no cloud, and no Online or AI mode on desktop: audio never leaves the machine. The only
+SHA-256), plus a small desktop-only Lite model (Moonshine tiny, MIT) that a first run fetches first so dictation works within seconds and a Rust port of the keyboard's `TextCleanup.kt`. No account, no cloud, and no Online or AI mode on desktop: audio never leaves the machine. The only
 network use is the one-time model download from GitHub and the updater, which checks for updates and, with
 Settings > Updates > "Automatically install updates" on (the default), downloads and installs them (signed builds only;
 the Linux .deb only reports a new version).
@@ -14,13 +14,13 @@ the Linux .deb only reports a new version).
 |---|---|
 | Push-to-talk on a global shortcut (default `Ctrl+Shift+Space` / `Cmd+Shift+Space`), or press-to-toggle | yes |
 | Paste into the focused app (clipboard + Ctrl/Cmd+V, clipboard restored), or type key by key | yes |
-| Offline speech-to-text: Parakeet Fast (110M) / Best (0.6B) on sherpa-onnx, as on Android; downloaded on first run with a SHA-256 check | yes |
+| Offline speech-to-text: Parakeet Fast (110M) / Best (0.6B) on sherpa-onnx, as on Android, plus Lite (Moonshine tiny, 30 MB, desktop only); downloaded on first run with a SHA-256 check, Lite first by default (quick start) | yes |
 | Clean mode (Android rules): fillers, self-corrections ("3, no, 4pm" -> "4pm"), repeats, "4 pm" -> "4pm", capitals, final ? or . | yes |
 | Spoken lists -> bullets ("first, eggs, second, milk") | yes (desktop extra, can be turned off) |
 | Verbatim mode | yes |
 | Voice commands: new line, new paragraph, period, comma, question mark... | yes |
 | Personal dictionary: fixed spellings ("Okonkwo", "GitHub") and phrase replacements | yes |
-| Long dictation (no limit by default; an optional cap in Settings; decoded after you stop, in <= 25 s windows cut at pauses) | yes |
+| Long dictation (no limit by default; an optional cap in Settings; decoded after you stop, in <= 25 s windows cut at pauses, <= 8 s with Lite) | yes |
 | History on this computer: search, copy, delete, clear | yes |
 | Tray / menu bar app, listening overlay with a live mic level | yes |
 | Settings: shortcut (with a recorder), mode, model, language, microphone, paste method, overlay, start at login | yes |
@@ -34,16 +34,31 @@ the Linux .deb only reports a new version).
 
 | Model | Download | Word error rate (73-clip LibriSpeech bake-off, one-off run on a desktop CPU) | RAM |
 |---|---|---|---|
+| Lite: Moonshine tiny English, quantized (first-run quick start) | 30 MB | not measured | ~250 MB |
 | Fast: Parakeet TDT-CTC 110M int8 (default) | 104 MB | 3.7 % | ~500 MB |
 | Best: Parakeet TDT 0.6B v2 int8 | 482 MB | 2.6 % | ~1.3 GB |
 
 The bake-off's script and raw outputs are not in the repository (see the main README's
 [bake-off section](../README.md#why-parakeet-the-bake-off)). The committed CI benchmark (the first 200 LibriSpeech test-clean
 clips, 4 October 2026) measured 2.78 % for Fast and 1.68 % for Best (treat as +/- 0.5 points): [Benchmarks](../README.md#benchmarks).
+Lite is in neither run, so its word error rate is not measured and the app shows "not measured" for it.
+
+**Quick start (on by default).** On a first run, when no model is on disk and you pick Fast or Best, Humming downloads
+Lite first, dictates with it while the picked model downloads, then switches over (`quick_start` in the settings file,
+`download_model` in `src-tauri/src/lib.rs`). Lite is `sherpa-onnx-moonshine-tiny-en-quantized-2026-02-27` from the same
+sherpa-onnx release, pinned by size and SHA-256 in `src-tauri/src/models.rs`. Moonshine is made by Moonshine AI
+(formerly Useful Sensors); its models are released under the MIT License (upstream LICENSE in
+github.com/moonshine-ai/moonshine, read 14 October 2026). The NVIDIA CC-BY-4.0 attribution covers Parakeet only.
+
+**Old 5-minute caps (deliberate).** A settings file written by desktop 1.6.0 or earlier has no `schema` field. If it
+holds `max_seconds = 300`, it is read once as "no limit" (`Settings::sanitized` in `src-tauri/src/settings.rs`): before
+1.3.0, 300 was the default and cannot be told apart from a chosen 300, and 1.3.0 to 1.6.0 already rewrote 300 to "no
+limit" on every load and save, so no such file can hold a 5-minute cap chosen there. If you want a 5-minute cap, set it
+again in Settings; from the first desktop release after 1.6.0, a chosen cap (300 included) is kept.
 
 Archives come from the sherpa-onnx GitHub release (`asr-models`), are checked against the same pinned size and
 SHA-256 as the Android app (`src-tauri/src/models.rs`), and only the files the engine needs are unpacked into the
-app data folder (`HUMMING_MODELS_DIR` overrides it). Weights: CC-BY-4.0 (NVIDIA); ONNX export and runtime:
+app data folder (`HUMMING_MODELS_DIR` overrides it). Weights: Parakeet CC-BY-4.0 (NVIDIA), Moonshine MIT (Moonshine AI); ONNX export and runtime:
 sherpa-onnx (Apache-2.0), ONNX Runtime (MIT).
 
 ## Build

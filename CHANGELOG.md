@@ -4,6 +4,9 @@
 - **Status**: release candidate on `main`; it becomes the 1.6.3 release when its GitHub Release is published.
 - **Version**: Android 1.6.3 (versionCode 1603). Desktop stays 1.6.0, iOS unchanged.
 - **Open source**: the repository is licensed Apache-2.0 and is made public with this release (root LICENSE and NOTICE; desktop and core manifests now say Apache-2.0); docs and site updated to match; the privacy page lists GitHub contact routes instead of an email address.
+- **Desktop models shown honestly**: Lite (Moonshine tiny, MIT, fetched first on a first run) is documented, and the
+  model list says "word error rate not measured" for Lite instead of 0 % (`models.rs` `wer_pct: None`). A settings
+  file from desktop 1.6.0 or earlier holding a 300 s cap is read as "no limit" (deliberate; see desktop/README.md).
 - **Voice never types placeholder text**: a phone whose CPU the on-device engine is not built for used to fall back
   silently to the internal test mode, which typed "[mock] Humming heard ... of audio" into the field. The mic now
   always uses the on-device engine and shows "Voice isn't available on this device" instead; test mode only runs when
