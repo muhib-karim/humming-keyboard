@@ -2,8 +2,8 @@
 
 Thank you for helping improve Humming. This guide covers bug reports, feature ideas and pull requests.
 
-The repository is private for now and is made public with the 1.6.3 release; from then on, issues and pull requests
-are open to everyone. By taking part you agree to follow the [Code of Conduct](CODE_OF_CONDUCT.md).
+The repository is private for now and is planned to be made public with the 1.6.3 release. Once it is public,
+issues and pull requests will be open to everyone. By taking part you agree to follow the [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## Reporting a bug
 

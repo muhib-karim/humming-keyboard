@@ -1,1 +1,1 @@
-Private keyboard with offline voice typing. Your voice never leaves the phone.
+Private keyboard. In default Offline mode, your voice never leaves the phone.

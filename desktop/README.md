@@ -3,7 +3,8 @@
 Hold a shortcut, speak, let go: Humming transcribes on your own computer and pastes clean text into whatever
 app has focus (mail, chat, docs, the browser, the terminal). It is the desktop sibling of the Humming Android
 keyboard and uses the same engine and rules: NVIDIA Parakeet on sherpa-onnx 1.13.8 (the same two models, pinned by
-SHA-256) and a Rust port of the keyboard's `TextCleanup.kt`. No account and no cloud: audio never leaves the machine.
+SHA-256) and a Rust port of the keyboard's `TextCleanup.kt`. No account, no cloud, and no Online or AI mode on desktop: audio never leaves the machine. The only
+network use is the one-time model download from GitHub and the update check.
 
 ## What it does
 
