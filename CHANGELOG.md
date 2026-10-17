@@ -1,8 +1,8 @@
 # Changelog
 
-## 1.7.0-rc1 (release candidate): Bangla phonetic typing, dictation lists and replacements, a premium look
-- **Status**: release candidate, tagged `v1.7.0-rc1` and published as a GitHub pre-release; not mirrored to the update
-  feeds. Everything below is unit-tested in CI; it was not built on the development machine.
+## 1.7.0: Bangla phonetic typing, dictation lists and replacements, a premium look
+- **Status**: final release, tagged `v1.7.0` and published as the latest GitHub release; its update files are mirrored to
+  the website's update feeds. Everything below is unit-tested in CI; it was not built on the development machine.
 - **Version**: one version everywhere: Android 1.7.0 (versionCode 1700), desktop and core 1.7.0, iOS 1.7.0 (build 1700).
 - **Bangla phonetic typing (Android)**: add Bengali with a QWERTY layout and type romanised Bangla the Avro / Ridmik way
   (`ami bangla likhi` → আমি বাংলা লিখি). The Bangla word is the auto-commit suggestion (space or punctuation types it)
