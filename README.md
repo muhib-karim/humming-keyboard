@@ -192,7 +192,9 @@ No account, no analytics, no ads, and no cloud speech engine of Humming's own. F
      before installing) and of the desktop app (on by default); neither sends audio, text or identifiers;
   3. GIF search (off by default, off in incognito unless allowed): only the words typed in its search box, to Openverse;
   4. AI clean-up with your own key (off by default, never in incognito): the dictated **text**, never audio;
-  5. Online mode (off by default): hands **audio** to the phone's own speech service. Incognito does not switch it off.
+  5. Online mode (off by default): hands **audio** to the phone's own speech service. Incognito does not switch it off,
+     and neither does a password field: dictating into a password field in Online mode still sends that audio there
+     (Humming keeps no history or AI clean-up of it). Use the default offline mode for anything secret.
 - **Android backup**: if Android's device backup is on, Android may copy Humming's settings and personal dictionary
   to your Google account; Humming itself sends nothing.
 - **iPhone**: Apple's recogniser with on-device recognition required; the iOS app has no network code.

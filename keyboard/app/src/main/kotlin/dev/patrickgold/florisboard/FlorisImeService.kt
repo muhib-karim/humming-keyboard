@@ -447,6 +447,8 @@ class FlorisImeService : LifecycleInputMethodService() {
             editorInstance.handleStartInputView(editorInfo, isRestart = restarting)
         }
         dev.patrickgold.florisboard.ime.voice.HummingVoice.keyboardIncognito = activeState.isIncognitoMode // Humming
+        dev.patrickgold.florisboard.ime.voice.HummingVoice.fieldForcesIncognito = // Humming: passwords never kept
+            com.humming.keyboard.FieldPrivacy.forcesIncognito(info.inputType, info.imeOptions)
         dev.patrickgold.florisboard.ime.voice.HummingVoice.onStartInputView(this) // Humming
     }
 

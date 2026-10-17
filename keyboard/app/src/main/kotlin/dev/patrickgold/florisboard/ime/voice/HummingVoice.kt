@@ -312,6 +312,8 @@ object HummingVoice {
         // The dictation fits the sentence it lands in: no space after "(", lowercase when continuing a sentence, no
         // final period when the text after the cursor carries on (DictationJoin).
         glue = com.humming.keyboard.DictationJoin.glue(before)
+        // Snapshot the privacy state at capture start: leaving a private field mid-dictation must not make it keepable.
+        sessionIncognito = incognito(app)
         val dictionary = Prefs.dictionary(app)
         val s = if (streaming) StreamingSession(app) { partial -> main.post { onPartial(partial) } } else null
         val startedIn = focusedTarget()
@@ -380,7 +382,7 @@ object HummingVoice {
             DictationService.begin(app)
             _state.update { it.copy(phase = VoiceState.Phase.LISTENING, startedAt = SystemClock.elapsedRealtime(),
                 transcript = "", message = "", levels = emptyList(), level = 0f, downloadPct = -1,
-                offline = false, headset = null, incognito = incognito(app)) }
+                offline = false, headset = null, incognito = dictationIncognito(app)) }
             return
         }
         // No length limit: the recorder streams until the user stops it.
@@ -400,7 +402,7 @@ object HummingVoice {
         DictationService.begin(app)
         _state.update { it.copy(phase = VoiceState.Phase.LISTENING, startedAt = SystemClock.elapsedRealtime(),
             transcript = "", message = "", levels = emptyList(), level = 0f, downloadPct = -1,
-            offline = streaming && ModelStore.ready(app), headset = r.bluetoothName, incognito = incognito(app)) }
+            offline = streaming && ModelStore.ready(app), headset = r.bluetoothName, incognito = dictationIncognito(app)) }
         if (BuildConfig.DEBUG) Log.i(TAG, "HUMMING_REC start streaming=$streaming")
     }
 
@@ -475,14 +477,26 @@ object HummingVoice {
     /** Set by the keyboard when its incognito mode is on (private fields, or the incognito toggle). */
     @Volatile var keyboardIncognito: Boolean = false
 
-    /** Incognito: no voice history for this dictation. */
-    fun incognito(ctx: Context): Boolean = keyboardIncognito || Prefs.voiceIncognito(ctx)
+    /** Set by the keyboard: the focused field is a password field or asked for no personalised learning. */
+    @Volatile var fieldForcesIncognito: Boolean = false
+
+    /** Incognito right now: no voice history, no AI clean-up. */
+    fun incognito(ctx: Context): Boolean = keyboardIncognito || fieldForcesIncognito || Prefs.voiceIncognito(ctx)
+
+    /** Privacy state captured when this dictation started (see [start]); it only ever makes a dictation stricter. */
+    @Volatile private var sessionIncognito = false
+
+    /** Incognito for the running dictation: private when it started or private now. */
+    private fun dictationIncognito(ctx: Context): Boolean = sessionIncognito || incognito(ctx)
 
     private fun stop(toField: Boolean, discard: Boolean = false) {
         val r = recorder
         val o = online
         if (r == null && o == null) return
         val app = appContext ?: return
+        // Snapshot this dictation's privacy now: a new dictation may start (and overwrite sessionIncognito) while this
+        // one is still being transcribed on the worker thread below.
+        val keepPrivate = dictationIncognito(app)
         output?.onStop()
         if (discard) output?.discard()
         recorder = null
@@ -515,7 +529,7 @@ object HummingVoice {
                     Pair(res.text, res.engine)
                 }
                 // Optional AI clean-up with the user's own key (never in incognito; failure keeps the text above).
-                if (!discard && com.humming.keyboard.LlmCleanup.enabled(app, incognito(app), text)) {
+                if (!discard && com.humming.keyboard.LlmCleanup.enabled(app, keepPrivate || incognito(app), text)) {
                     main.post { _state.update { it.copy(message = "AI clean-up…") } }
                     runCatching { com.humming.keyboard.LlmCleanup.polish(app, text, instruction) }
                         .onSuccess { text = it; engine += " + AI clean-up" }
@@ -525,7 +539,7 @@ object HummingVoice {
             }
             val ms = (System.nanoTime() - started) / 1_000_000
             result.getOrNull()?.let { (text, engine) ->
-                if (text.isNotBlank() && !incognito(app)) runCatching { HistoryStore(app).add(text, engine, ms, clip) }
+                if (text.isNotBlank() && !(keepPrivate || incognito(app))) runCatching { HistoryStore(app).add(text, engine, ms, clip) }
             }
             main.post {
                 result.onSuccess { (text, engine) ->
