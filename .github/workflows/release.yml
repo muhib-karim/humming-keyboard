@@ -13,10 +13,8 @@ on:
   push:
     tags: ["v*"]
 
-permissions:
-  contents: write
-  pages: write
-  id-token: write
+# Least privilege: nothing by default; each job asks for what it needs.
+permissions: {}
 
 concurrency:
   group: release-${{ github.ref }}
@@ -24,12 +22,18 @@ concurrency:
 
 jobs:
   android:
+    permissions:
+      contents: read
     uses: ./.github/workflows/android-release.yml
     secrets: inherit
   desktop:
+    permissions:
+      contents: read
     uses: ./.github/workflows/desktop.yml
     secrets: inherit
   ios:
+    permissions:
+      contents: read
     uses: ./.github/workflows/ios.yml
 
   publish:
@@ -37,6 +41,8 @@ jobs:
     # Runs even when a platform build failed, so assemble_release.py can say exactly what is missing (and stop, unless
     # the repository variable RELEASE_ALLOW_MISSING names that platform, e.g. "ios").
     if: ${{ !cancelled() }}
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     timeout-minutes: 30
     outputs:
@@ -69,7 +75,7 @@ jobs:
         run: |
           set -euo pipefail
           V="${GITHUB_REF_NAME#v}"
-          if [ "$PRERELEASE" = "true" ]; then KIND=(--prerelease --latest=false); else KIND=(--latest); fi
+          if [ "$PRERELEASE" = "true" ]; then KIND=(--prerelease --latest=false); else KIND=(--prerelease=false --latest); fi
           if gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1; then
             gh release upload "$GITHUB_REF_NAME" out/* --clobber
             gh release edit "$GITHUB_REF_NAME" "${KIND[@]}" --notes-file NOTES.md
@@ -80,6 +86,12 @@ jobs:
 
   pages:
     # The website mirrors the latest final release's update files, so a pre-release has nothing to deploy.
+    # !cancelled() and the explicit result check replace the implicit success(), which would skip the mirror when a
+    # platform was published as missing on purpose (RELEASE_ALLOW_MISSING) after its build failed.
     needs: publish
-    if: ${{ needs.publish.outputs.prerelease == 'false' }}
+    if: ${{ !cancelled() && needs.publish.result == 'success' && needs.publish.outputs.prerelease == 'false' }}
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     uses: ./.github/workflows/pages.yml

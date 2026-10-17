@@ -51,7 +51,8 @@ jobs:
             -p latest.json -p android.json -p SHA256SUMS.txt -p 'Humming-*.apk' \
             -p '*.app.tar.gz' -p '*.app.tar.gz.sig' -p '*-setup.exe' -p '*-setup.exe.sig' \
             -p '*.msi' -p '*.msi.sig' -p '*.AppImage' -p '*.AppImage.sig' -p '*.dmg' || true
-          if [ -f latest.json ]; then
+          # Each feed is mirrored on its own: a release without a desktop build still updates Android, and vice versa.
+          if [ -f latest.json ] || [ -f android.json ]; then
             sha256sum -c --ignore-missing SHA256SUMS.txt
           else
             echo "the latest release has no update feed (released before 1.6): nothing mirrored"

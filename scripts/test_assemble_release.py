@@ -74,16 +74,13 @@ class AssembleReleaseTest(unittest.TestCase):
         names = set(os.listdir(self.out))
         for n in ["Humming-1.7.0-rc1.apk", "Humming-1.7.0-rc1.aab", "Humming_1.7.0-rc1_unsigned.ipa",
                   "Humming_1.7.0-rc1_universal.dmg", "Humming_1.7.0-rc1_x64-setup.exe", "Humming_1.7.0-rc1_x64_en-US.msi",
-                  "Humming_1.7.0-rc1_amd64.AppImage", "Humming_1.7.0-rc1_amd64.deb", "latest.json", "android.json",
-                  "SHA256SUMS.txt"]:
+                  "Humming_1.7.0-rc1_amd64.AppImage", "Humming_1.7.0-rc1_amd64.deb", "SHA256SUMS.txt"]:
             self.assertIn(n, names)
+        # A pre-release is never mirrored, so it carries no update feeds pointing at mirror files that won't exist.
+        self.assertNotIn("latest.json", names)
+        self.assertNotIn("android.json", names)
         sums = open(os.path.join(self.out, "SHA256SUMS.txt")).read()
         self.assertEqual(len(sums.strip().splitlines()), len(names) - 1)
-        android = json.load(open(os.path.join(self.out, "android.json")))
-        self.assertEqual(android["versionCode"], 1700)
-        self.assertEqual(android["apk"], "Humming-1.7.0-rc1.apk")
-        latest = json.load(open(os.path.join(self.out, "latest.json")))
-        self.assertTrue(latest["platforms"]["windows-x86_64"]["url"].endswith("Humming_1.7.0-rc1_x64-setup.exe"))
         notes = open(os.path.join(os.path.dirname(self.out), "NOTES.md")).read()
         self.assertIn("Bangla phonetic typing", notes)
         self.assertIn("release candidate", notes.lower())
@@ -95,6 +92,11 @@ class AssembleReleaseTest(unittest.TestCase):
         self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
         self.assertEqual(self.release_env()["PRERELEASE"], "false")
         self.assertIn("Humming-1.7.0.apk", os.listdir(self.out))
+        android = json.load(open(os.path.join(self.out, "android.json")))
+        self.assertEqual(android["versionCode"], 1700)
+        self.assertEqual(android["apk"], "Humming-1.7.0.apk")
+        latest = json.load(open(os.path.join(self.out, "latest.json")))
+        self.assertTrue(latest["platforms"]["windows-x86_64"]["url"].endswith("Humming_1.7.0_x64-setup.exe"))
 
     def test_version_mismatch_fails(self):
         self.artifacts()

@@ -34,7 +34,10 @@ stores accept no `-rc` suffix). `assemble_release.py` strips the suffix when it 
 files with the full version (`Humming-1.7.0-rc1.apk`), and `release.yml` publishes the candidate as a GitHub
 **pre-release** that is never marked latest and never mirrored to the update feed. Because a candidate's APK already
 carries the final `versionCode`, a second candidate or the final release must raise `projectVersionCode` (for example
-`1701`) so testers' phones can update to it.
+`1701`) so testers' phones can update to it. Desktop builds of a candidate already report the final version, so the desktop updater does
+not move testers from `1.7.0-rc1` to `1.7.0`: testers reinstall the final build by hand, or, if the final differs from
+the candidate, ship it as the next patch version (`1.7.1`). Candidates carry no update feeds (`latest.json`,
+`android.json`), so installed apps never update to one.
 
 ## 2. Changelog
 

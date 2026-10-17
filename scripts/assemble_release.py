@@ -14,8 +14,8 @@ ambiguous file stops the release with a per-platform report naming each missing 
 the release may go out without (said in the release notes). Each self-update bundle's minisign signature is checked
 against the public key in desktop/src-tauri/tauri.conf.json.
 
-Writes into <out>: the release files, latest.json (desktop updater feed), android.json (Android update feed) and
-SHA256SUMS.txt over every file. Next to <out>: NOTES.md (release notes from CHANGELOG.md plus the platform table) and
+Writes into <out>: the release files, latest.json (desktop updater feed) and android.json (Android update feed) for a
+final release only, and SHA256SUMS.txt over every file. Next to <out>: NOTES.md (release notes from CHANGELOG.md plus the platform table) and
 release.env (VERSION, BASE_VERSION, PRERELEASE=true for "-rc" and other pre-release tags), also appended to
 $GITHUB_OUTPUT when set. Tests: scripts/test_assemble_release.py (HUMMING_ROOT and HUMMING_RELEASE_DRY_RUN are for those
 tests only).
@@ -153,12 +153,14 @@ def main():
         platforms.update({"windows-x86_64": entry("nsis"), "windows-x86_64-nsis": entry("nsis"), "windows-x86_64-msi": entry("msi")})
     if "appimage" in names:
         platforms.update({"linux-x86_64": entry("appimage"), "linux-x86_64-appimage": entry("appimage")})
-    if platforms:
+    # Update feeds only for final releases: pages.yml mirrors the latest final release, so a pre-release's feeds would
+    # point at mirror files that never exist.
+    if platforms and not prerelease:
         latest = {"version": version, "notes": notes,
                   "pub_date": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
                   "platforms": platforms}
         json.dump(latest, open(os.path.join(a.out, "latest.json"), "w"), indent=2)
-    if "apk" in names:
+    if "apk" in names and not prerelease:
         json.dump({"versionCode": vcode, "versionName": version, "apk": names["apk"], "sha256": sha(names["apk"]),
                    "notes": notes[:2000]}, open(os.path.join(a.out, "android.json"), "w"), indent=2)
     files = sorted(f for f in os.listdir(a.out) if f != "SHA256SUMS.txt")
@@ -176,7 +178,7 @@ def main():
     head = ""
     if prerelease:
         head = ("**Release candidate.** Humming %s is a pre-release for testing; the final %s replaces it. "
-                "Update feeds are not published for pre-releases.\n\n" % (version, base))
+                "It carries no update feeds, so installed apps do not update to it.\n\n" % (version, base))
     if skipped:
         head += "**Not in this release: %s** (build not available; use the previous release for it).\n\n" % \
             ", ".join(PLATFORM_NAMES[p] for p in skipped)
