@@ -480,6 +480,9 @@ object HummingVoice {
         val o = online
         if (r == null && o == null) return
         val app = appContext ?: return
+        // Snapshot this dictation's privacy now: a new dictation may start (and overwrite sessionIncognito) while this
+        // one is still being transcribed on the worker thread below.
+        val keepPrivate = dictationIncognito(app)
         output?.onStop()
         if (discard) output?.discard()
         recorder = null
@@ -512,7 +515,7 @@ object HummingVoice {
                     Pair(res.text, res.engine)
                 }
                 // Optional AI clean-up with the user's own key (never in incognito; failure keeps the text above).
-                if (!discard && com.humming.keyboard.LlmCleanup.enabled(app, dictationIncognito(app), text)) {
+                if (!discard && com.humming.keyboard.LlmCleanup.enabled(app, keepPrivate || incognito(app), text)) {
                     main.post { _state.update { it.copy(message = "AI clean-up…") } }
                     runCatching { com.humming.keyboard.LlmCleanup.polish(app, text, instruction) }
                         .onSuccess { text = it; engine += " + AI clean-up" }
@@ -522,7 +525,7 @@ object HummingVoice {
             }
             val ms = (System.nanoTime() - started) / 1_000_000
             result.getOrNull()?.let { (text, engine) ->
-                if (text.isNotBlank() && !dictationIncognito(app)) runCatching { HistoryStore(app).add(text, engine, ms, clip) }
+                if (text.isNotBlank() && !(keepPrivate || incognito(app))) runCatching { HistoryStore(app).add(text, engine, ms, clip) }
             }
             main.post {
                 result.onSuccess { (text, engine) ->
