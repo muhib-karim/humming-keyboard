@@ -63,7 +63,12 @@ Usage: `python3 contrast.py ffffff:c93a5b c93a5b:f6f6f8` prints each ratio.
 - Impeccable `detect` on the assembled pages: one real finding fixed (footer column titles were 14 px `h2`s, flattening
   the heading scale; now labelled `nav` lists). Remaining: `cramped-padding` on `.table-wrap`, a false positive (the
   table's cells carry 12-16 px padding; the detector sees only the table flush with its wrapper).
-- Layout checked by arithmetic at 360 px: hero phones and feature phones size as percentages of their container; wide
-  tables scroll inside their own region. A rendered check at 360/768/1024/1440 px is pending (no browser on this machine).
+- Rendered check: there is no Playwright browser cache on this machine (`~/.cache/ms-playwright` is absent), but a
+  system Chromium (`/usr/bin/chromium`) is installed, so the assembled site was served locally and captured headless at
+  360, 768, 1280 and 1440 px, light and dark (no browser download). Captures: `docs/ci/site/`. Fixed from what the
+  render showed: list items with a bold lead-in split into two flex columns; five download cards wrapped 4 + 1 and a
+  button label overflowed its card; the comparison table's row headers forced a wide first column at 360 px. Bangla
+  sample text renders as boxes in that Chromium only because the server has no Bengali font; a `:lang(bn)` stack names
+  the platform Bangla fonts (Noto Sans Bengali, Nirmala UI, Kohinoor Bangla, Bangla Sangam MN, Vrinda).
 - Craft-floor ruling: the brief asks for system or self-hosted fonts, and no suitable font is installed to self-host, so
   the site uses the platform UI font stack with weight and size carrying the hierarchy.
