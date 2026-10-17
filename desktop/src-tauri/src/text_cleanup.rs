@@ -1,7 +1,8 @@
 //! Dictation cleanup: a line-for-line port of the Android keyboard's `TextCleanup.kt`, so a sentence dictated on
 //! the phone and on the desktop comes out the same. Order: drop non-speech/hallucinations -> fillers -> spoken
 //! punctuation and "delete last word" -> leading discourse markers -> self-corrections ("3, no, 4pm" -> "4pm") -> repeated words ->
-//! dictionary casing -> compact times -> capitals and final punctuation.
+//! dictionary casing -> compact times -> capitals and final punctuation -> "delete that" said as its own sentence
+//! (Android's `VoiceCommands.kt`). `bullet_list` (1.7) is Android's `ListFormat.bullets`, run by `finalize_text`.
 //!
 //! Uses `fancy_regex` because the Kotlin patterns need look-around and back-references.
 
@@ -73,6 +74,15 @@ static NORM_STRIP: Lazy<Regex> = Lazy::new(|| re(r"[^\p{L}\p{N}\s]"));
 static DOUBLE_PAIR: Lazy<Regex> = Lazy::new(|| re(r"(?i)\b(\p{L}+ \p{L}+) \1\b"));
 static TIME_AMPM: Lazy<Regex> =
     Lazy::new(|| re(r"(?<![\p{L}\p{N}])(\d{1,2}(?::\d{2})?)\s?([AaPp])\.?\s?[Mm](?=[\s,.;!?]|$)"));
+// 1.7: "bullet point" starts a list item; "delete that" said as its own sentence removes the sentence before it.
+static BULLET: Lazy<Regex> =
+    Lazy::new(|| re(r"(?i)[ \t]*[,;:]?[ \t]*\b(?:bullet point|next bullet|new bullet)\b[,.;:]?[ \t]*"));
+/// A marker after one of these words is the thing itself ("the second bullet point"), not a command.
+const NOT_AFTER: &[&str] =
+    &["a", "an", "the", "this", "that", "each", "every", "another", "my", "your", "our", "first", "second", "third", "last", "one"];
+static DELETE_SENTENCE: Lazy<Regex> =
+    Lazy::new(|| re(r"(?i)^(?:ok(?:ay)?,? )?(?:delete|scratch|undo|remove) (?:that|the last sentence)$"));
+static SENTENCE: Lazy<Regex> = Lazy::new(|| re(r"[^.!?]+(?:[.!?]+|$)"));
 static NEWLINE_INDENT: Lazy<Regex> = Lazy::new(|| re(r"\n[ \t]+"));
 static SPACE_BEFORE_PUNCT: Lazy<Regex> = Lazy::new(|| re(r"\s+([,.?!;:])"));
 static SPACE_AFTER_PUNCT: Lazy<Regex> = Lazy::new(|| re(r"([,;:])(?=[^\s\d])"));
@@ -155,7 +165,101 @@ pub fn apply(raw: &str, dictionary: &[String], o: Opts) -> String {
     if strict {
         t = replace_all(&DOUBLED, &t, "$2");
     }
-    finish(&t)
+    let out = finish(&t);
+    if o.voice_commands {
+        retract_sentences(&out)
+    } else {
+        out
+    }
+}
+
+/// "Book Friday. Scratch that. Book Saturday." -> "Book Saturday." The command must be the whole sentence
+/// ("delete that", "scratch that", "undo that", "remove that", "delete the last sentence", optionally after "okay,").
+pub fn retract_sentences(text: &str) -> String {
+    let mut out: Vec<&str> = Vec::new();
+    let mut changed = false;
+    for m in SENTENCE.find_iter(text).filter_map(|m| m.ok()) {
+        let s = m.as_str();
+        if s.trim().is_empty() {
+            continue;
+        }
+        let bare = s.trim().trim_end_matches(|c: char| ".!?,".contains(c)).trim();
+        if DELETE_SENTENCE.is_match(bare).unwrap_or(false) {
+            out.pop();
+            changed = true;
+        } else {
+            out.push(s);
+        }
+    }
+    if changed {
+        out.concat().trim().to_string()
+    } else {
+        text.to_string()
+    }
+}
+
+fn trim_item(s: &str) -> String {
+    s.trim().trim_end_matches(|c: char| ",.;:".contains(c)).trim().to_string()
+}
+
+fn capitalize(s: &str) -> String {
+    let mut c = s.chars();
+    match c.next() {
+        Some(f) => f.to_uppercase().collect::<String>() + c.as_str(),
+        None => String::new(),
+    }
+}
+
+/// "Groceries bullet point eggs bullet point milk." -> "Groceries:\n- Eggs\n- Milk"; None when there is no item.
+/// The last item ends at its line break and the rest of the text follows the list.
+pub fn bullet_list(text: &str) -> Option<String> {
+    let mut parts: Vec<&str> = Vec::new();
+    let mut from = 0;
+    for m in BULLET.find_iter(text).filter_map(|m| m.ok()) {
+        let prev = text[..m.start()].split_whitespace().last().unwrap_or("");
+        if NOT_AFTER.contains(&prev.to_lowercase().as_str()) {
+            continue;
+        }
+        parts.push(&text[from..m.start()]);
+        from = m.end();
+    }
+    parts.push(&text[from..]);
+    if parts.len() < 2 {
+        return None;
+    }
+    let last = parts.len() - 1;
+    let mut items: Vec<String> = Vec::new();
+    let mut tail = String::new();
+    for (i, p) in parts.iter().enumerate().skip(1) {
+        let mut item = p.to_string();
+        if let Some(nl) = p.find('\n') {
+            if i == last {
+                tail = p[nl..].to_string();
+                item = p[..nl].to_string();
+            } else {
+                item = p.split_whitespace().collect::<Vec<_>>().join(" ");
+            }
+        }
+        let item = trim_item(&item);
+        if !item.is_empty() {
+            items.push(capitalize(&item));
+        }
+    }
+    if items.is_empty() {
+        return None;
+    }
+    let mut intro = parts[0].trim().to_string();
+    let end = intro.chars().last();
+    match end {
+        Some(c) if c.is_alphanumeric() => intro.push(':'),
+        Some(',') | Some(';') => {
+            intro.pop();
+            intro.push(':');
+        }
+        _ => {}
+    }
+    let head = if intro.is_empty() { String::new() } else { format!("{intro}\n") };
+    Some(format!("{head}- {}{tail}", items.join("\n- ")))
 }
 
 /// "4 pm", "4 p.m.", "10:30 AM" -> "4pm", "10:30am" (the way people type times).
@@ -437,5 +541,38 @@ mod tests {
         assert_eq!(clean("He said, open quote, hi, close quote."), "He said, \"hi\".");
         assert_eq!(clean("Call me, open bracket, maybe, close bracket, tomorrow."), "Call me (maybe), tomorrow.");
         assert_eq!(clean("can you remove the last word of the title"), "Can you remove the last word of the title?");
+    }
+
+    // 1.7: "bullet point" lists (the same cases as Android's ListFormatTest.kt) and "delete that" said as its own
+    // sentence (Android's VoiceCommands).
+    #[test]
+    fn bullet_points_become_list_items() {
+        assert_eq!(bullet_list("Groceries bullet point eggs bullet point milk.").as_deref(), Some("Groceries:\n- Eggs\n- Milk"));
+        assert_eq!(bullet_list("Bullet point, eggs. Bullet point, milk.").as_deref(), Some("- Eggs\n- Milk"));
+        assert_eq!(
+            bullet_list("Here is the plan. Bullet point call Sam next bullet book the room.").as_deref(),
+            Some("Here is the plan.\n- Call Sam\n- Book the room")
+        );
+        assert_eq!(bullet_list("Groceries bullet point eggs bullet point.").as_deref(), Some("Groceries:\n- Eggs"));
+        assert_eq!(bullet_list("To do bullet point milk.\n\nThanks.").as_deref(), Some("To do:\n- Milk\n\nThanks."));
+    }
+
+    #[test]
+    fn bullet_point_in_prose_is_not_a_marker() {
+        assert_eq!(bullet_list("Bullet points."), None);
+        assert_eq!(bullet_list("Use bullet points here."), None);
+        assert_eq!(bullet_list("The second bullet point is wrong."), None);
+        assert_eq!(bullet_list("Fix the bullet point on slide two."), None);
+        assert_eq!(bullet_list("See you soon."), None);
+    }
+
+    #[test]
+    fn delete_that_removes_the_sentence_before() {
+        assert_eq!(clean("Book Friday. Scratch that. Book Saturday."), "Book Saturday.");
+        assert_eq!(clean("I am late. Okay, delete that."), "");
+        assert_eq!(clean("Delete that."), "");
+        assert_eq!(clean("Can you delete that file?"), "Can you delete that file?");
+        let o = Opts { voice_commands: false, ..Opts::default() };
+        assert_eq!(apply("Book Friday. Scratch that. Book Saturday.", &[], o), "Book Friday. Scratch that. Book Saturday.");
     }
 }
