@@ -76,8 +76,8 @@
             android:name="com.humming.keyboard.UpdateInstallReceiver"
             android:exported="false" />
 
-        <!-- Allow app to be profiled for benchmarking and baseline profile generation -->
-        <profileable android:shell="true"/>
+        <!-- Shell profiling only for the benchmark (and debug) build: profileableShell in build.gradle.kts -->
+        <profileable android:shell="${profileableShell}"/>
 
         <!-- IME service -->
         <service
