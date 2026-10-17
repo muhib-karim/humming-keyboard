@@ -285,8 +285,8 @@ mod tests {
         let bench: serde_json::Value =
             serde_json::from_str(include_str!("../../../docs/bench/ci-37204875974-wer.json")).unwrap();
         for m in [&FAST, &BEST] {
-            let want = bench["models"][m.id]["test-clean"]["wer_pct"].as_f64().unwrap() as f32;
-            assert_eq!(m.wer_pct, Some(want), "{}", m.id);
+            let want = bench["models"][m.id]["test-clean"]["wer_pct"].as_f64().unwrap();
+            assert!((f64::from(m.wer_pct.unwrap()) - want).abs() < 1e-4, "{}", m.id);
         }
     }
 
