@@ -50,3 +50,20 @@ for pair in sys.argv[1:]:
 ```
 
 Usage: `python3 contrast.py ffffff:c93a5b c93a5b:f6f6f8` prints each ratio.
+
+## Website (play/site), rebuilt in this pass
+
+- Direction (UI/UX Pro Max *App Store Style Landing*, adapted): real captures in device frames in the hero, feature rows
+  with screenshots instead of a card grid, an honest comparison table drawn from `COMPETITORS.md`, per-platform downloads,
+  FAQ. No reviews or ratings section: Humming has no verified store ratings to show.
+- No frameworks, no web fonts, no third-party requests; a Content-Security-Policy meta tag (`default-src 'self'`) on
+  every page. Dark and light from `prefers-color-scheme`, tokens as in `docs/BRAND.md`.
+- `scripts/check_site.py` (run by `pages.yml`): every local link, image and anchor resolves, tags balance, every image
+  has alt text and dimensions, nothing loads from another origin. Local result: 3 pages, 0 problems.
+- Impeccable `detect` on the assembled pages: one real finding fixed (footer column titles were 14 px `h2`s, flattening
+  the heading scale; now labelled `nav` lists). Remaining: `cramped-padding` on `.table-wrap`, a false positive (the
+  table's cells carry 12-16 px padding; the detector sees only the table flush with its wrapper).
+- Layout checked by arithmetic at 360 px: hero phones and feature phones size as percentages of their container; wide
+  tables scroll inside their own region. A rendered check at 360/768/1024/1440 px is pending (no browser on this machine).
+- Craft-floor ruling: the brief asks for system or self-hosted fonts, and no suitable font is installed to self-host, so
+  the site uses the platform UI font stack with weight and size carrying the hierarchy.

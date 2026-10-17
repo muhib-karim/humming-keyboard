@@ -3,100 +3,376 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Humming: private, offline voice typing</title>
-<meta name="description" content="A private keyboard with offline voice typing for Android, iPhone, Windows, macOS and Linux. In the default Offline mode your voice never leaves your device. Free, Apache-2.0.">
-<meta property="og:title" content="Humming: private, offline voice typing">
-<meta property="og:description" content="Offline dictation on every platform. No word caps. Free, Apache-2.0.">
-<meta property="og:image" content="https://muhib-karim.github.io/humming-keyboard/img/banner.png">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src 'self'; base-uri 'self'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Humming: private keyboard with offline voice typing</title>
+<meta name="description" content="Talk and it types, on your device. Humming is a free, open-source keyboard with offline voice typing for Android, plus iPhone, Windows, macOS and Linux apps. No account, no analytics, no word caps.">
+<link rel="canonical" href="https://muhib-karim.github.io/humming-keyboard/">
+<meta name="theme-color" content="#0f0f13" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#fbfbfc" media="(prefers-color-scheme: light)">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Humming">
+<meta property="og:title" content="Humming: private voice typing that works offline">
+<meta property="og:description" content="Offline voice typing on Android, iPhone, Windows, macOS and Linux. No account, no analytics, no word caps. Free and Apache-2.0.">
+<meta property="og:url" content="https://muhib-karim.github.io/humming-keyboard/">
+<meta property="og:image" content="https://muhib-karim.github.io/humming-keyboard/img/social-preview.png">
+<meta property="og:image:width" content="1280">
+<meta property="og:image:height" content="640">
+<meta property="og:image:alt" content="Humming: private voice typing that works offline, with Android and iPhone screenshots">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="img/icon.png">
-<style>
-:root{--bg:#0f0f13;--card:#18181f;--line:#2a2a33;--ink:#f2f2f6;--mute:#a3a3b2;--acc:#e5486b}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Inter,Roboto,sans-serif}
-a{color:var(--acc)}.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
-header{padding:22px 0;display:flex;flex-wrap:wrap;align-items:center;gap:12px}header img{width:36px;height:36px;border-radius:9px}header b{font-size:20px}
-header nav{margin-left:auto;display:flex;flex-wrap:wrap;gap:8px 18px}@media (max-width:640px){header nav{margin-left:0;width:100%;gap:6px 14px;font-size:15px}}header nav a{color:var(--mute);text-decoration:none}header nav a:hover{color:var(--ink)}
-.hero img{width:100%;border-radius:18px;border:1px solid var(--line)}
-.cta{display:flex;gap:12px;flex-wrap:wrap;margin:26px 0 8px}.btn{display:inline-block;padding:12px 20px;border-radius:999px;text-decoration:none;font-weight:600}
-.btn.p{background:var(--acc);color:#fff}.btn.s{border:1px solid var(--line);color:var(--ink)}
-h2{font-size:28px;margin:56px 0 14px}.lead{color:var(--mute);font-size:18px;max-width:760px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}.card h3{margin:0 0 6px;font-size:17px}.card p{margin:0;color:var(--mute)}
-.shots{display:flex;gap:14px;overflow-x:auto;padding-bottom:10px}.shots img{height:440px;border-radius:14px;border:1px solid var(--line)}
-.wide img{height:300px}
-table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{color:var(--mute);font-weight:600}
-.tw{overflow-x:auto;-webkit-overflow-scrolling:touch}.tw table{min-width:640px}
-td.y{color:#7ee2a8}.mute{color:var(--mute)}footer{margin:70px 0 40px;color:var(--mute);font-size:14px}
-</style>
+<meta name="twitter:title" content="Humming: private voice typing that works offline">
+<meta name="twitter:description" content="Offline voice typing on Android, iPhone, Windows, macOS and Linux. Free and Apache-2.0.">
+<meta name="twitter:image" content="https://muhib-karim.github.io/humming-keyboard/img/social-preview.png">
+<link rel="icon" href="favicon.ico" sizes="48x48">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<link rel="stylesheet" href="assets/site.css">
+<script src="assets/site.js" defer></script>
 </head>
 <body>
-<div class="wrap">
-<header><img src="img/icon.png" alt=""><b>Humming</b>
-<nav><a href="#download">Download</a><a href="#features">Features</a><a href="#screens">Screens</a><a href="#compare">Compare</a><a href="#bench">Benchmarks</a><a href="privacy.html">Privacy</a></nav></header>
+<a class="skip" href="#main">Skip to content</a>
 
-<section class="hero"><img src="img/banner.png" alt="Humming: private voice typing on your device (default Offline mode)">
-<div class="cta"><a class="btn p" href="#download">Download</a>
-<a class="btn s" href="https://github.com/muhib-karim/humming-keyboard">Source on GitHub (public from the 1.6.3 release)</a>
-<a class="btn s" href="https://github.com/muhib-karim/humming-keyboard/blob/main/docs/IOS_SIDELOAD.md">iPhone install guide</a></div>
-<p class="lead">Tap the mic and talk. The words are typed as you speak, for as long as you speak, even with the screen off. In the default Offline mode, speech recognition runs on your device, so dictation works in airplane mode and your voice never leaves it. (Android also has an Online mode, off by default, that uses the phone's own speech service instead.)</p></section>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="./" aria-label="Humming home"><img src="icon-192.png" alt="" width="32" height="32">Humming</a>
+    <nav class="nav" aria-label="Main">
+      <a href="#features">Features</a>
+      <a href="#privacy">Privacy</a>
+      <a href="#compare">Compare</a>
+      <a href="#faq">FAQ</a>
+      <a href="https://github.com/muhib-karim/humming-keyboard">GitHub</a>
+      <a class="btn btn-primary" href="#download">Download</a>
+    </nav>
+  </div>
+</header>
 
-<h2 id="download">Download</h2>
-<p>The current release, mirrored from the project's GitHub Release. Humming 1.6 and later update themselves, with two exceptions: the Windows, macOS and Linux AppImage apps install new versions on their own (signed, checked before install), but a Linux .deb install only tells you a new version is out, and a macOS install older than 1.6 needs the first 1.6 build installed by hand. The sideloaded Android app downloads updates and asks you to confirm; the Play Store version is updated by Play.</p>
-<ul id="dl-list"><li class="mute">Loading the current version…</li></ul>
-<p class="mute">Checksums: <a href="updates/SHA256SUMS.txt">SHA256SUMS.txt</a>. iPhone: see the <a href="https://github.com/muhib-karim/humming-keyboard/blob/main/docs/IOS_SIDELOAD.md">install guide</a> (no automatic updates on iOS).</p>
-<script>
-(async () => {
-  const ul = document.getElementById("dl-list");
-  try {
-    const [a, d] = await Promise.all([fetch("updates/android.json").then(r => r.json()), fetch("updates/latest.json").then(r => r.json())]);
-    const p = d.platforms, f = (k) => p[k].url.split("/").pop();
-    const rows = [["Android 8.0+", a.apk], ["Windows 10/11 (installer)", f("windows-x86_64-nsis")], ["Windows (MSI)", f("windows-x86_64-msi")],
-      ["Linux x86-64 (AppImage)", f("linux-x86_64-appimage")], ["macOS 11+ (Apple silicon and Intel)", f("darwin-aarch64-app").replace(".app.tar.gz", ".dmg")]];
-    ul.innerHTML = rows.map(([n, file]) => `<li>${n}: <a href="updates/${file}">${file}</a></li>`).join("") + `<li class="mute">Version ${d.version}</li>`;
-  } catch (e) { ul.innerHTML = '<li class="mute">The download list is not available right now.</li>'; }
-})();
-</script>
+<main id="main">
+<section class="hero" aria-labelledby="hero-title">
+  <div class="wrap">
+    <div>
+      <svg class="wave" viewBox="0 0 168 28" aria-hidden="true" fill="currentColor">
+        <rect x="0" y="11" width="4" height="6" rx="2"/><rect x="10" y="8" width="4" height="12" rx="2"/><rect x="20" y="3" width="4" height="22" rx="2"/>
+        <rect x="30" y="9" width="4" height="10" rx="2"/><rect x="40" y="0" width="4" height="28" rx="2"/><rect x="50" y="6" width="4" height="16" rx="2"/>
+        <rect x="60" y="10" width="4" height="8" rx="2"/><rect x="70" y="4" width="4" height="20" rx="2"/><rect x="80" y="8" width="4" height="12" rx="2"/>
+        <rect x="90" y="1" width="4" height="26" rx="2"/><rect x="100" y="7" width="4" height="14" rx="2"/><rect x="110" y="11" width="4" height="6" rx="2"/>
+        <rect x="120" y="5" width="4" height="18" rx="2"/><rect x="130" y="9" width="4" height="10" rx="2"/><rect x="140" y="3" width="4" height="22" rx="2"/>
+        <rect x="150" y="10" width="4" height="8" rx="2"/><rect x="160" y="12" width="4" height="4" rx="2"/>
+      </svg>
+      <h1 id="hero-title">Talk, and it types. <em>Your voice never leaves your device.</em></h1>
+      <p class="lead">Humming is a full keyboard with voice typing that runs on your phone or computer, not in someone else's cloud. Dictate for as long as you like, in airplane mode, with the screen off. Free, open source, no account.</p>
+      <div class="cta">
+        <a class="btn btn-primary" href="#download">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0-5-5m5 5 5-5M4 21h16"/></svg>
+          Download free
+        </a>
+        <a class="btn btn-ghost" href="#compare">How it compares</a>
+      </div>
+      <ul class="facts">
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>Works in airplane mode</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>No analytics, no ads</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>Android, iPhone, Windows, macOS, Linux</li>
+      </ul>
+    </div>
+    <div class="devices">
+      <figure class="phone phone-main">
+        <img src="img/android_dictation.gif" width="360" height="800" alt="Android: tapping the mic, speaking, and the words appearing in a chat message as an underlined draft">
+      </figure>
+      <figure class="phone phone-back">
+        <img src="img/ios_dictate_dark.png" width="603" height="1311" alt="iPhone app in dark mode with a dictated sentence and the Offline badge" loading="lazy">
+      </figure>
+    </div>
+  </div>
+</section>
 
-<h2 id="features">Why Humming</h2>
-<div class="grid">
-<div class="card"><h3>Offline on every platform</h3><p>NVIDIA Parakeet on Android and desktop, Apple's on-device recogniser on iPhone. No server fallback; Android's Online mode is opt-in.</p></div>
-<div class="card"><h3>No caps, no time limit</h3><p>Dictate for an hour on Android like it's ten seconds. iPhone has no time limit either, and the desktop app sets none by default (you can set one in Settings). No weekly word allowance, no account.</p></div>
-<div class="card"><h3>Clean text</h3><p>Clean mode drops um and uh and applies "3, no, 4pm" → "4pm". Accuracy mode also removes hedge fillers.</p></div>
-<div class="card"><h3>A real keyboard</h3><p>Prediction, glide typing, emoji, clipboard, themes and a floating keyboard on Android; a Humming keyboard on iPhone.</p></div>
-<div class="card"><h3>Custom words</h3><p>Names and terms spelled your way every time, on every platform.</p></div>
-<div class="card"><h3>Free, Apache-2.0</h3><p>The source code is licensed Apache-2.0 and is made public with the 1.6.3 release. The Android app has a unit-test suite and the repository a word-error-rate benchmark; hosted CI ran them until 5 October 2026 and has been paused since.</p></div>
+<div class="proof">
+  <div class="wrap">
+    <dl>
+      <div><dt>Offline by default</dt><dd>Speech recognition runs on the device: NVIDIA Parakeet on Android and desktop, Apple's on-device recogniser on iPhone.</dd></div>
+      <div><dt>2.78&nbsp;% word error rate</dt><dd>Fast model, LibriSpeech test-clean, first 200 clips (±0.5 points), measured in CI. <a href="#bench">Method</a></dd></div>
+      <div><dt>No length limit</dt><dd>An hour of dictation works like ten seconds. On desktop no cap is set unless you choose one.</dd></div>
+      <div><dt>Open source</dt><dd>Apache-2.0. The benchmark script and its raw output are in the repository.</dd></div>
+    </dl>
+  </div>
 </div>
 
-<h2 id="screens">See it</h2>
-<p class="mute">Real captures from earlier automated runs on the 1.3 and 1.4 builds: Android emulator, iOS simulator and the desktop interface.</p>
-<div class="shots">
-<img src="img/android_dictation.gif" alt="Android dictation"><img src="img/ios_walkthrough.gif" alt="iPhone dictation">
-<img src="img/android_keyboard_dark.png" alt="Keyboard dark"><img src="img/ios_dictate.png" alt="iPhone dictate">
-<img src="img/android_settings_voice.png" alt="Voice settings"><img src="img/ios_settings.png" alt="iPhone settings">
-<img src="img/android_themes.gif" alt="Themes"><img src="img/ios_keyboard.png" alt="iPhone keyboard">
-</div>
-<div class="shots wide"><img src="img/desktop_dictation.gif" alt="Desktop dictation"><img src="img/desktop_home_dark.png" alt="Desktop home"><img src="img/desktop_history.png" alt="Desktop history"><img src="img/desktop_settings.png" alt="Desktop settings"></div>
+<section id="features" aria-labelledby="features-title">
+  <div class="wrap">
+    <div class="section-head">
+      <h2 id="features-title">Everything a keyboard should do. Voice that stays yours.</h2>
+      <p>One app on each platform, the same speech models and the same clean-up rules everywhere.</p>
+    </div>
 
-<h2 id="compare">How it compares</h2>
-<div class="tw"><table>
-<tr><th></th><th>Humming</th><th>Wispr Flow</th><th>Typeless</th><th>Gboard Rambler</th></tr>
-<tr><td>Fully offline</td><td class="y">Yes, every platform</td><td>No</td><td>No</td><td>Limited</td></tr>
-<tr><td>Price</td><td class="y">Free, Apache-2.0 (source public from 1.6.3)</td><td>Free tier; Pro $12-15</td><td>Free tier; Pro $12-30</td><td>Free, Pixel 11 only</td></tr>
-<tr><td>Longest dictation</td><td class="y">No limit on Android and iPhone (desktop: none by default)</td><td>20 min desktop, 5 min Android</td><td>9 min</td><td>Not stated</td></tr>
-<tr><td>Platforms</td><td class="y">Android, iOS, Windows, macOS, Linux</td><td>Mac, Windows, iOS, Android</td><td>macOS, Windows, iOS, Android</td><td>Pixel 11</td></tr>
-</table></div>
-<p class="mute">Sources and the full table: <a href="https://github.com/muhib-karim/humming-keyboard#how-humming-compares">README</a>.</p>
+    <article class="feature">
+      <div>
+        <h3>Words land as you speak</h3>
+        <p>Tap the mic and talk. Your sentence appears in the text field as an underlined draft that corrects itself in place, then is typed once when you stop. It keeps listening with the screen off or in another app.</p>
+        <ul>
+          <li>Clean mode drops um and uh and applies self-corrections: "3, no, 4pm" becomes "4pm".</li>
+          <li>Spoken commands: "new line", "comma", "scratch that", and in 1.7 "colon", quotes, brackets and "delete last word".</li>
+          <li>Custom words, so names come out spelled your way.</li>
+        </ul>
+      </div>
+      <div class="feature-media">
+        <figure class="phone"><img src="img/android_dictation_listening.png" width="432" height="960" alt="Voice panel while listening: one round control and a running timer, no time limit" loading="lazy"></figure>
+        <figure class="phone"><img src="img/android_dictation_typed.png" width="432" height="960" alt="The dictated sentence typed into a chat" loading="lazy"></figure>
+      </div>
+    </article>
 
-<h2 id="bench">Benchmarks</h2>
-<div class="tw"><table>
-<tr><th>Model</th><th>WER test-clean (first 200 clips)</th><th>WER test-other (first 100 clips)</th><th>Median time to text</th></tr>
-<tr><td>Humming Fast (Parakeet 110M)</td><td>2.78 %</td><td>4.20 %</td><td>312 ms</td></tr>
-<tr><td>Humming Best (Parakeet 0.6B)</td><td>1.68 %</td><td>3.12 %</td><td>1314 ms</td></tr>
-<tr><td>Wispr Flow, Typeless, Gboard Rambler</td><td colspan="3" class="mute">No figures published on a public benchmark</td></tr>
-</table></div>
-<p class="mute">LibriSpeech, first 200 test-clean and 100 test-other clips (treat the WER as +/- 0.5 points). Measured by the repo's benchmark script in a CI run on 4 October 2026, with the shipped models on a 2-thread x86-64 desktop CPU; speed on a phone has not been benchmarked. The other products publish no figure on a public benchmark, so this is not a like-for-like comparison. Details: <a href="https://github.com/muhib-karim/humming-keyboard#benchmarks">README</a>.</p>
+    <article class="feature flip">
+      <div>
+        <h3>A full keyboard, not just a mic</h3>
+        <p>Built on FlorisBoard and tuned for everyday typing, with prediction that reads the whole sentence and runs on the phone.</p>
+        <ul>
+          <li>Word prediction and autocorrect in six languages, with an on-device neural next-word model for English.</li>
+          <li>Glide typing, emoji search, stickers, and optional GIF search.</li>
+          <li>Clipboard history: 100 items by default, nothing deleted automatically unless you ask.</li>
+          <li>Light, dark and AMOLED themes, your own photo, one-handed, floating and split layouts.</li>
+        </ul>
+      </div>
+      <div class="feature-media">
+        <figure class="phone"><img src="img/android_swipe.gif" width="360" height="800" alt="Glide typing a word across the keys" loading="lazy"></figure>
+        <figure class="phone"><img src="img/android_clipboard.png" width="432" height="960" alt="Clipboard history in a two-column grid with timestamps" loading="lazy"></figure>
+      </div>
+    </article>
 
-<footer>Humming is free software under the Apache License 2.0. Speech models: NVIDIA Parakeet (CC-BY-4.0) via sherpa-onnx. Keyboard base: FlorisBoard. <a href="privacy.html">Privacy policy</a>.</footer>
-</div>
+    <article class="feature">
+      <div>
+        <h3>Your computer, too</h3>
+        <p>Hold <code>Ctrl</code> + <code>Shift</code> + <code>Space</code> (<code>Cmd</code> on a Mac) in any app, talk, let go: the text is pasted where your cursor is. The same Parakeet models as Android, downloaded once and checked against a pinned SHA-256.</p>
+        <ul>
+          <li>Windows, macOS and Linux, from a tray or menu-bar app.</li>
+          <li>Searchable history on the computer, a personal dictionary, spoken lists as bullets.</li>
+          <li>Signed self-updates: the app refuses any file not signed with Humming's update key.</li>
+        </ul>
+      </div>
+      <div class="feature-media">
+        <picture class="shot-wide">
+          <source srcset="img/desktop_home.png" media="(prefers-color-scheme: light)">
+          <img src="img/desktop_home_dark.png" width="1100" height="760" alt="Humming desktop app: status, speech model and a Try it box" loading="lazy">
+        </picture>
+      </div>
+    </article>
+
+    <article class="feature flip">
+      <div>
+        <h3>And on iPhone</h3>
+        <p>The app records with Apple's speech recogniser with on-device recognition required: it refuses to run rather than fall back to a server. iOS keyboards can't use the microphone, so you dictate in the app and the Humming keyboard inserts the result in one tap.</p>
+        <ul>
+          <li>The same Clean mode, Accuracy mode and custom words as Android and desktop.</li>
+          <li>Distributed as an unsigned <code>.ipa</code> you sideload with your own Apple ID.</li>
+        </ul>
+      </div>
+      <div class="feature-media">
+        <figure class="phone"><img src="img/ios_dictate.png" width="603" height="1311" alt="iPhone app with clean dictated text and the Offline badge" loading="lazy"></figure>
+        <figure class="phone"><img src="img/ios_keyboard.png" width="603" height="1311" alt="Humming keyboard on iPhone with the insert strip" loading="lazy"></figure>
+      </div>
+    </article>
+
+    <article class="feature">
+      <div>
+        <h3>New in 1.7 <span class="tag">release candidate</span></h3>
+        <p>Three gaps closed after a teardown of Gboard, SwiftKey and the Bangla keyboards.</p>
+        <ul>
+          <li><strong>Bangla phonetic typing.</strong> Add Bengali with a QWERTY layout and type the way Avro users do: <span lang="bn-Latn">ami bangla likhi</span> becomes <span lang="bn">আমি বাংলা লিখি</span>, one word at a time, with the Latin word one tap away.</li>
+          <li><strong>Dictation that fits the sentence.</strong> Dictate into the middle of a line and Humming lowercases the first word, skips the stray space after a bracket and drops the final period when your sentence carries on.</li>
+          <li><strong>More spoken punctuation.</strong> Colon, semicolon, quotes, brackets, ellipsis and "delete last word", the same on Android, desktop and iPhone.</li>
+        </ul>
+        <p class="small">These ship in the 1.7.0 release candidate and are covered by unit tests that run in CI.</p>
+      </div>
+      <div class="feature-media">
+        <figure class="phone"><img src="img/android_keyboard_dark.png" width="432" height="960" alt="The Humming keyboard in its dark theme with the suggestion strip" loading="lazy"></figure>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section id="privacy" class="band" aria-labelledby="privacy-title">
+  <div class="wrap">
+    <div class="section-head">
+      <h2 id="privacy-title">Private by design, and checked in code</h2>
+      <p>No account, no analytics, no ads. The offline voice path has no network code, and a unit test fails the build if any file outside a short list uses a network API.</p>
+    </div>
+    <div class="privacy-grid">
+      <div>
+        <h3>Stays on your device</h3>
+        <ul class="list-check">
+          <li><strong>Your voice.</strong> In the default Offline mode, audio is recorded and transcribed on the device.</li>
+          <li><strong>What you type.</strong> Suggestions and corrections are computed on the phone; learned words never leave it.</li>
+          <li><strong>Clipboard and history.</strong> Kept on the device, and skipped entirely in incognito.</li>
+        </ul>
+      </div>
+      <div>
+        <h3>The only times it goes online</h3>
+        <ol class="list-net">
+          <li><strong>The one-time speech model download</strong>, checked against a pinned SHA-256.</li>
+          <li><strong>The update check</strong> of the sideloaded app (on by default, sends no personal data; switch it off in Settings).</li>
+          <li><strong>GIF search</strong>, off by default: only the words you type in its search box.</li>
+          <li><strong>AI clean-up with your own key</strong>, off by default: the finished text, never audio.</li>
+          <li><strong>Online mode</strong>, off by default: hands audio to the phone's own speech service.</li>
+        </ol>
+        <p class="small muted mt-5">Full details: <a href="privacy.html">privacy policy</a>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="compare" aria-labelledby="compare-title">
+  <div class="wrap">
+    <div class="section-head">
+      <h2 id="compare-title">Humming vs other keyboards</h2>
+      <p>Only publicly documented facts. Where a vendor publishes nothing, the cell says so.</p>
+    </div>
+    <div class="table-wrap" role="region" aria-labelledby="compare-title" tabindex="0">
+      <table>
+        <caption>Vendors' help pages, store listings and official repositories, checked 17 October 2026. Every source is listed in <a href="https://github.com/muhib-karim/humming-keyboard/blob/main/COMPETITORS.md">COMPETITORS.md</a>.</caption>
+        <thead>
+          <tr><th scope="col"><span class="sr-only">Feature</span></th><th scope="col" class="us">Humming</th><th scope="col">Gboard</th><th scope="col">Microsoft SwiftKey</th><th scope="col">Ridmik (Bangla)</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">Offline voice typing</th><td class="us"><span class="yes">Yes</span>, the default, every platform (English)</td><td>Pixel 6 or later, 6 languages</td><td>Not in the stable app; an on-device English mode is reported in a beta</td><td>No, uses Google's speech service online</td></tr>
+          <tr><th scope="row">Published accuracy</th><td class="us numbers">WER 2.78&nbsp;% (Fast), 1.68&nbsp;% (Best)</td><td>Not published</td><td>Not published</td><td>Not published</td></tr>
+          <tr><th scope="row">Telemetry</th><td class="us"><span class="yes">None</span></td><td>Usage statistics; federated learning on by default</td><td>Typing data opt-in; voice clips with opt-out</td><td>Play label: may collect personal info and device IDs</td></tr>
+          <tr><th scope="row">Voice time or word limits</th><td class="us"><span class="yes">None</span></td><td>Rambler: "usage limits", no numbers</td><td>None documented</td><td>None documented</td></tr>
+          <tr><th scope="row">Bangla phonetic typing</th><td class="us">Yes, Avro-style (1.7)</td><td>Own transliteration layout</td><td>Android only, own scheme</td><td><span class="yes">Yes</span>, Avro-style</td></tr>
+          <tr><th scope="row">Clipboard history</th><td class="us">100 items, nothing auto-deleted by default</td><td>Clips expire after 1 hour unless pinned</td><td>Clips expire after 1 hour unless pinned</td><td>Recent clips</td></tr>
+          <tr><th scope="row">Desktop app</th><td class="us"><span class="yes">Windows, macOS, Linux</span></td><td>No</td><td>No (left Windows in 2020)</td><td>No</td></tr>
+          <tr><th scope="row">iPhone</th><td class="us">Yes (sideload)</td><td>Listed; last updated May 2022</td><td>Yes</td><td>Yes</td></tr>
+          <tr><th scope="row">Price and ads</th><td class="us"><span class="yes">Free, no ads</span></td><td>Free</td><td>Free; ads on Android (Play listing)</td><td>Free; ads and in-app purchases on Android (Play listing)</td></tr>
+          <tr><th scope="row">Open source</th><td class="us"><span class="yes">Yes, Apache-2.0</span></td><td>No</td><td>No</td><td>No</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="small muted mt-4">Where Humming trails: offline voice is English only, and Gboard and SwiftKey support hundreds of typing languages and install from the app stores.</p>
+  </div>
+</section>
+
+<section id="bench" class="band" aria-labelledby="bench-title">
+  <div class="wrap">
+    <div class="section-head">
+      <h2 id="bench-title">Measured, with the script in the repo</h2>
+      <p>LibriSpeech, the standard read-English benchmark, with the exact models and decoder settings the apps ship. Lower is better.</p>
+    </div>
+    <div class="table-wrap" role="region" aria-labelledby="bench-title" tabindex="0">
+      <table class="numbers">
+        <caption>CI run 37204875974 on 4 October 2026, 2-thread x86-64 desktop CPU. First 200 test-clean and 100 test-other clips, so treat the WER as ±0.5 points. Phone speed has not been benchmarked. Raw output: <a href="https://github.com/muhib-karim/humming-keyboard/tree/main/docs/bench">docs/bench</a>.</caption>
+        <thead><tr><th scope="col">Model</th><th scope="col">WER test-clean</th><th scope="col">WER test-other</th><th scope="col">Median time to text</th><th scope="col">Download</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Fast (default), Parakeet TDT-CTC 110M</th><td>2.78&nbsp;%</td><td>4.20&nbsp;%</td><td>312&nbsp;ms</td><td>104&nbsp;MB</td></tr>
+          <tr><th scope="row">Best, Parakeet TDT 0.6B v2</th><td>1.68&nbsp;%</td><td>3.12&nbsp;%</td><td>1314&nbsp;ms</td><td>482&nbsp;MB</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="download" aria-labelledby="download-title">
+  <div class="wrap">
+    <div class="section-head">
+      <h2 id="download-title">Download</h2>
+      <p>Every file is on the <a href="https://github.com/muhib-karim/humming-keyboard/releases/latest">latest GitHub Release</a> with a <code>SHA256SUMS.txt</code>. <span id="dl-version"></span></p>
+    </div>
+    <div class="dl-grid">
+      <div class="dl" data-platform="android">
+        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/></svg>Android</h3>
+        <p>Android 8.0 or later. Open the APK, allow installs from your browser, then enable the keyboard in two steps.</p>
+        <span class="file" data-file></span>
+        <a class="btn btn-primary" href="https://github.com/muhib-karim/humming-keyboard/releases/latest" data-link>Download APK</a>
+      </div>
+      <div class="dl" data-platform="ios">
+        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M10 5h4"/></svg>iPhone and iPad</h3>
+        <p>iOS 16 or later. An unsigned <code>.ipa</code>: sideload it with your own free Apple ID.</p>
+        <a class="btn btn-ghost" href="https://github.com/muhib-karim/humming-keyboard/blob/main/docs/IOS_SIDELOAD.md">Sideload guide</a>
+      </div>
+      <div class="dl" data-platform="windows">
+        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg>Windows</h3>
+        <p>Windows 10 or 11, x64. Unsigned for now: in SmartScreen choose More info, then Run anyway.</p>
+        <span class="file" data-file></span>
+        <a class="btn btn-ghost" href="https://github.com/muhib-karim/humming-keyboard/releases/latest" data-link>Download installer</a>
+      </div>
+      <div class="dl" data-platform="macos">
+        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M2 20h20"/></svg>macOS</h3>
+        <p>macOS 11 or later, Apple silicon and Intel. First open: System Settings, Privacy &amp; Security, Open Anyway.</p>
+        <span class="file" data-file></span>
+        <a class="btn btn-ghost" href="https://github.com/muhib-karim/humming-keyboard/releases/latest" data-link>Download .dmg</a>
+      </div>
+      <div class="dl" data-platform="linux">
+        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 17l6-5-6-5M12 19h8"/></svg>Linux</h3>
+        <p>x86-64 AppImage (updates itself) or <code>.deb</code>. Auto-paste works on X11 and XWayland apps.</p>
+        <span class="file" data-file></span>
+        <a class="btn btn-ghost" href="https://github.com/muhib-karim/humming-keyboard/releases/latest" data-link>Download AppImage</a>
+      </div>
+    </div>
+    <div class="verify">
+      <strong>Check what you downloaded.</strong> Every release has <code>SHA256SUMS.txt</code>; the Android APK is signed with the release key whose SHA-256 certificate digest is shown below.
+      <pre>sha256sum -c SHA256SUMS.txt --ignore-missing
+apksigner verify --print-certs Humming-*.apk
+# Signer #1 certificate SHA-256 digest:
+# 8C:8B:68:BB:E6:3A:A4:2A:85:61:59:AA:A5:B0:C9:0C:D9:54:EE:F7:8A:98:0D:39:BC:B6:69:41:75:3E:1F:C6</pre>
+    </div>
+  </div>
+</section>
+
+<section id="faq" class="band" aria-labelledby="faq-title">
+  <div class="wrap">
+    <div class="section-head"><h2 id="faq-title">Questions</h2></div>
+    <div class="faq">
+      <details>
+        <summary>Does voice typing really work without the internet?</summary>
+        <div><p>Yes, in the default Offline mode. The first time you tap the mic on Android or open the desktop app, Humming downloads the speech model once (104 MB for the Fast model). After that, dictation needs no connection. On iPhone, Humming requires Apple's on-device recognition and refuses to run rather than use a server.</p></div>
+      </details>
+      <details>
+        <summary>Which languages can I dictate in?</summary>
+        <div><p>Offline voice typing is English today, on every platform. On Android, the optional Online mode uses your phone's own speech service and its languages, but then audio leaves the phone. Typing works in many layouts, with prediction in English, German, Spanish, French, Italian and Portuguese, and Bangla phonetic typing from 1.7.</p></div>
+      </details>
+      <details>
+        <summary>How do I type Bangla phonetically?</summary>
+        <div><p>In Settings, Languages &amp; layouts, add Bengali and choose the QWERTY layout. Type romanised Bangla; each word is suggested in Bangla script and space or punctuation types it. Capitals follow the Avro convention (T, D, N, R, Sh for the retroflex letters; I, U, O for long vowels). The fixed Bengali layout is still there if you prefer it.</p></div>
+      </details>
+      <details>
+        <summary>Why is the iPhone app a sideload?</summary>
+        <div><p>It is not on the App Store yet, so releases ship as an unsigned <code>.ipa</code>. You sign it with your own free Apple ID through Sideloadly, AltStore or Xcode and re-sign it every 7 days. The <a href="https://github.com/muhib-karim/humming-keyboard/blob/main/docs/IOS_SIDELOAD.md">sideload guide</a> walks through it.</p></div>
+      </details>
+      <details>
+        <summary>Why do Windows and macOS warn me on first launch?</summary>
+        <div><p>The desktop builds are not yet signed with a Microsoft or Apple developer certificate, so the system shows a one-time warning. Updates after that are signed with Humming's own update key and checked before they install.</p></div>
+      </details>
+      <details>
+        <summary>What does the update check send?</summary>
+        <div><p>It fetches a small public file to see whether a newer version exists. It sends no audio, no typed text and no identifiers; the hosting providers see your IP address, as with any download. You can turn automatic checks off in Settings, Updates. The Google Play version leaves updates to Play.</p></div>
+      </details>
+      <details>
+        <summary>Is it free? What's the catch?</summary>
+        <div><p>Free, with no ads, no account and no paid tier. The code is licensed Apache-2.0. The optional AI clean-up uses your own API key with the provider you choose, and is off by default.</p></div>
+      </details>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <div>
+      <a class="brand" href="./"><img src="icon-192.png" alt="" width="32" height="32">Humming</a>
+      <p class="mt-4">Free software under the Apache License 2.0. Speech models: NVIDIA Parakeet (CC-BY-4.0) via sherpa-onnx. Android keyboard built on FlorisBoard (Apache 2.0).</p>
+    </div>
+    <nav aria-label="Product">
+      <p class="foot-title">Product</p>
+      <ul>
+        <li><a href="#download">Download</a></li>
+        <li><a href="https://github.com/muhib-karim/humming-keyboard/blob/main/CHANGELOG.md">Changelog</a></li>
+        <li><a href="https://github.com/muhib-karim/humming-keyboard/blob/main/docs/USER_GUIDE.md">User guide</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Project">
+      <p class="foot-title">Project</p>
+      <ul>
+        <li><a href="privacy.html">Privacy policy</a></li>
+        <li><a href="https://github.com/muhib-karim/humming-keyboard">Source code</a></li>
+        <li><a href="https://github.com/muhib-karim/humming-keyboard/blob/main/SECURITY.md">Report a security issue</a></li>
+      </ul>
+    </nav>
+  </div>
+</footer>
 </body>
 </html>

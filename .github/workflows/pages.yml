@@ -1,15 +1,15 @@
 name: pages
 
-# Publishes the Humming website (play/site/: the home page and the privacy policy) to GitHub Pages, with the banner
-# and screenshots copied in from docs/. 1.6: also mirrors the LATEST GitHub Release's update files to /updates/
+# Publishes the Humming website (play/site/: home page, privacy policy, 404, sitemap) to GitHub Pages, with the
+# screenshots and social image copied in from docs/ by scripts/assemble_site.py and checked by scripts/check_site.py. 1.6: also mirrors the LATEST GitHub Release's update files to /updates/
 # (latest.json + the signed desktop update bundles, android.json + the APK, SHA256SUMS.txt). The apps read their
 # update feeds from here, so they never need a GitHub login. release.yml calls this after
 # each release, and every site deploy carries the mirror along, then checks the live feed's signatures.
 on:
   push:
     branches: ["main"]
-    paths: ["play/site/**", "docs/banner.png", "docs/screenshots/**", "landing/icon.png", ".github/workflows/pages.yml",
-            "scripts/verify_updater.py"]
+    paths: ["play/site/**", "docs/banner.png", "docs/social-preview.png", "docs/screenshots/**", "landing/icon.png",
+            ".github/workflows/pages.yml", "scripts/assemble_site.py", "scripts/check_site.py", "scripts/verify_updater.py"]
   workflow_call:
   workflow_dispatch:
 
@@ -31,15 +31,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Assemble the site
+        # play/site/ plus the screenshots it shows (copied from docs/), then a check that every local link, image and
+        # #anchor resolves, tags balance and nothing loads from another origin. The same two scripts run locally.
         run: |
-          mkdir -p _site/img
-          cp -R play/site/. _site/
-          cp docs/banner.png landing/icon.png _site/img/
-          for f in android_dictation.gif android_themes.gif android_keyboard_dark.png android_settings_voice.png \
-                   ios_walkthrough.gif ios_dictate.png ios_settings.png ios_keyboard.png \
-                   desktop_dictation.gif desktop_home_dark.png desktop_history.png desktop_settings.png; do
-            cp "docs/screenshots/$f" _site/img/
-          done
+          python3 scripts/assemble_site.py _site
+          python3 scripts/check_site.py _site
           ls -la _site _site/img
       - name: Mirror the latest release's update files to /updates/
         env:
