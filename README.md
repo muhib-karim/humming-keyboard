@@ -188,7 +188,8 @@ No account, no analytics, no ads, and no cloud speech engine of Humming's own. F
 - **Everything that uses the network:**
   1. the one-time speech model download from the sherpa-onnx GitHub release, checked against a pinned SHA-256 (Wi-Fi
      only if you choose);
-  2. the update check of the sideloaded APK and the desktop app (on by default; sends no audio, text or identifiers);
+  2. the update check of the sideloaded APK (off by default, opt in under Settings > Updates; Android always asks
+     before installing) and of the desktop app (on by default); neither sends audio, text or identifiers;
   3. GIF search (off by default, off in incognito unless allowed): only the words typed in its search box, to Openverse;
   4. AI clean-up with your own key (off by default, never in incognito): the dictated **text**, never audio;
   5. Online mode (off by default): hands **audio** to the phone's own speech service. Incognito does not switch it off.
