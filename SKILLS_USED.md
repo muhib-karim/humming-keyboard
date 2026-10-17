@@ -56,3 +56,25 @@ deletion patterns across Android, desktop and iOS. The diagnostics are not nativ
 - Fix 6 — Consume leading delete-word commands before matching a preceding word on all three platforms; skill: test-driven-development; reviewer: Codex GPT-6 Astra cross-model review. Repeated-command regressions written first; source-pattern Python diagnostic passes; native tests pending CI.
 - Fix 5 — End bullet and spoken-numbered lists at paragraph boundaries without swallowing intervening prose; skill: test-driven-development; reviewer: Codex GPT-6 Astra cross-model review. Parity regressions written first in Kotlin, Swift, desktop Rust and Rust core; Python list diagnostic went from 2 failures to 0; native tests pending CI.
 - Fix 2 — Retain unformatted iOS transcript state and apply cross-chunk sentence deletion before rendering lists; skill: test-driven-development; reviewer: Codex GPT-6 Astra cross-model review. Swift chunk regressions written first, with equivalent Kotlin/Rust transcript cases; Python diagnostic reproduces both old failures and passes 14 new-path checks; native tests pending CI.
+
+## v1.7.1 pass
+
+Branch `chore/v1.7.1-ponytail` from `main` at `e1bc3bb` (v1.7.0), 17 October 2026, PR #2. Every skill below was invoked
+with the Skill tool in the main session; no subagents. Nothing was built locally: the Kotlin and Rust changes are
+verified by CI on the PR, and `pages.yml` only runs on main and on a release, so its fix is verified at the next one.
+Full report: [docs/audit/PONYTAIL_AUDIT_v1.7.0.md](docs/audit/PONYTAIL_AUDIT_v1.7.0.md).
+
+| Skill | What it found | Commit that acted on it (evidence) |
+|---|---|---|
+| `ponytail-audit` (whole repo) | 10 findings: 5 fixed, 1 for the release owner, 4 deferred with reasons. The ranked report. | `7f64124` (report) |
+| `ponytail-audit` finding 1 | Android voice history wrote each dictation's audio (up to 300 s) that nothing could read or delete; retention pruning never ran; the 500-row cap orphaned `.pcm` files; Data safety and Settings promised a retention control that does not exist | `aea20b1` (no audio kept, `history_audio/` removed at app start, `HistoryAudioTest`; docs and Settings corrected) |
+| `ponytail-audit` finding 2 | The v1.7.0 release run is red: `deploy-pages` names a deployment after the commit SHA, main had already deployed `e1bc3bb`, so the release's update mirror was never published (release run 39053406679, job `pages / deploy`) | `aaf588c`, `ba16689` (same Pages API call with a per-run build version; live checks poll past the 600 s 404 cache) |
+| `ponytail-audit` finding 3 | The apps' feed host `humming-keyboard.pages.dev` still serves desktop 1.6.0 and Android 1.6.2, so no installed app is offered 1.7.0 | Owner action, no commit: mirror v1.7.0's `updates/` there (docs/RELEASING.md section 6) |
+| `ponytail-audit` finding 4 | A failed `startRecording()` left the Bluetooth call-audio route on | `89a1766` (end the route in the `catch`; Android-only APIs, no JVM test possible) |
+| `ponytail-audit` finding 5 | Android and desktop showed 3.7 % / 2.6 % WER (the bake-off's mixed column, outputs not in the repo); the site and README show the CI 2.78 % / 1.68 % | `b70e878` (CI figures, a test on each side that reads `docs/bench/ci-37204875974-wer.json`), `ce2d873` (tolerance) |
+| `ponytail-audit` findings 6-10 | Clipboard image not restored on desktop, `wer-bench` dispatch inputs in a shell line, a theoretical late-segment race, release hardening, a stale background file after restore | Deferred, one line of reasoning each in the report |
+| `ponytail-debt` | No `shortcut:` / `ponytail:` markers; no TODO/FIXME in Humming's own code. Clean ledger | `663d451` (section "Debt" of the report) |
+| `ponytail` (full) | Applied to every fix above: the smallest change that fully solves it, tests first where the code is JVM- or `cargo`-testable (`HistoryAudioTest`, `VoiceModelsTest.werMatchesTheCommittedBenchmark`, `models::tests::wer_matches_the_committed_benchmark`) | `aea20b1`, `89a1766`, `aaf588c`, `b70e878` |
+| `ponytail-review` (push 1) | Polling the Pages deployment by the POST response's `id` could break on a null id; one transient `gh api` error would fail the deploy | `ba16689` |
+| `ponytail-review` (push 2) | The Rust WER test compared an `f64 -> f32` cast by exact equality | `ce2d873` |
+| `ponytail` (README "paper") | Rewrite: problem, what it does, measured results from the v1.7.0 `wer-bench` run on four CI machines (Lite measured for the first time), vendor figures labelled as such, a mermaid architecture diagram, a one-command repro, v1.7.0 install links | `6e74835` (bench outputs committed), `6713c68` (README) |
