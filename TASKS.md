@@ -6,7 +6,8 @@ If a session ends early, the remaining work is in [HANDOFF.md](HANDOFF.md).
 
 ## 0. Setup
 - [x] TASKS.md and a CLAUDE.md "continue from TASKS.md / HANDOFF.md" rule
-- [ ] docs/ci/SKILLS_USED.md (skills actually invoked, and what for)
+- [ ] SKILLS_USED.md at the repo root (skills actually invoked, and evidence)
+- [x] docs/ci/CODEBASE_MAP.md (Understand-Anything method, by hand: core not built here)
 
 ## 1. COMPETITORS.md
 - [ ] Feature + UX teardown: Gboard, SwiftKey, Fleksy, Typewise, Ridmik Keyboard, Avro/Bijoy-style Bangla input vs Humming
