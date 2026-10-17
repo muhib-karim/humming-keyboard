@@ -162,11 +162,21 @@ object HummingVoice {
     val menu: StateFlow<Boolean> = _menu.asStateFlow()
     fun showMenu(on: Boolean) { _menu.value = on }
 
+    /**
+     * The field that has input focus now (package, field id, input type, name, hint and input generation), or null
+     * once input finished. Tracked by FlorisImeService on onStartInput/onFinishInput, never a stale EditorInfo.
+     */
+    private fun focusedTarget(): com.humming.keyboard.DictationOutput.Target? =
+        dev.patrickgold.florisboard.FlorisImeService.currentDictationTarget
+
     /** Keyboard became visible: make sure the speech model is there (one-time download) and warm the engine. */
     fun onStartInputView(ctx: Context) {
         val app = ctx.applicationContext
         appContext = app
-        // Back from screen-off or another app while still dictating: type what was said meanwhile, keep listening.
+        // Keyboard shown again while still dictating: keep listening and re-attach. The draft is replayed only in the
+        // same input session of the field where the dictation started. Back from screen-off or another app, Android
+        // starts a fresh input session (the input generation bumps), so nothing is replayed here and the final text
+        // goes to History instead (fails closed).
         if (recording()) output?.attach()
         _state.update { it.copy(clean = Prefs.cleanMode(app), offline = ModelStore.ready(app)) }
         ModelDownloader.removeListener(modelListener)
@@ -304,6 +314,7 @@ object HummingVoice {
         glue = com.humming.keyboard.DictationJoin.glue(before)
         val dictionary = Prefs.dictionary(app)
         val s = if (streaming) StreamingSession(app) { partial -> main.post { onPartial(partial) } } else null
+        val startedIn = focusedTarget()
         output = DictationOutput(
             object : DictationOutput.Field {
                 // Live words are the field's composing text (the underlined draft), replaced in place on every partial;
@@ -352,6 +363,9 @@ object HummingVoice {
             glue = glue,
             live = Prefs.liveTyping(app),
             adapt = { t -> com.humming.keyboard.DictationJoin.adapt(before, t, after, dictionary) },
+            // Bound to the field it started in: never replayed into another app or box (inOriginalField).
+            target = startedIn,
+            currentTarget = { focusedTarget() },
         )
         if (onlineMode) {
             val o = com.humming.keyboard.OnlineSession(app, onPartial = { p -> onOnlinePartial(app, p) },
