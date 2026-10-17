@@ -78,7 +78,19 @@ object Prefs {
      */
     fun accuracyMode(ctx: Context): Boolean = get(ctx).getBoolean(KEY_ACCURACY, false)
 
-    fun retention(ctx: Context): String = get(ctx).getString(KEY_RETENTION, HistoryRetention.DEFAULT) ?: HistoryRetention.DEFAULT
+    /**
+     * The history retention setting. New installs default to [HistoryRetention.DEFAULT] (30 days). An existing user
+     * who never chose a setting and already has saved dictations keeps the old "forever" behaviour, so an update never
+     * silently deletes their history; the choice is stored once and is theirs to change in Voice settings.
+     */
+    fun retention(ctx: Context): String {
+        val prefs = get(ctx)
+        prefs.getString(KEY_RETENTION, null)?.let { return it }
+        val history = java.io.File(ctx.filesDir, "history.json")
+        val chosen = if (history.isFile && history.length() > 2) HistoryRetention.FOREVER else HistoryRetention.DEFAULT
+        prefs.edit().putString(KEY_RETENTION, chosen).apply()
+        return chosen
+    }
 
     /** Download voice models on Wi-Fi only (default on). */
     fun wifiOnly(ctx: Context): Boolean = get(ctx).getBoolean(KEY_WIFI_ONLY, true)

@@ -257,6 +257,7 @@ private fun HistorySection() {
     val app = LocalContext.current.applicationContext
     var setting by remember { mutableStateOf(Prefs.retention(app)) }
     var deleted by remember { mutableStateOf(false) }
+    var confirmDelete by remember { mutableStateOf(false) }
     val pick: (String) -> Unit = { value ->
         setting = value
         Prefs.set(app, Prefs.KEY_RETENTION, value)
@@ -271,8 +272,25 @@ private fun HistorySection() {
             Text(label, fontSize = 15.sp)
         }
     }
-    OutlinedButton(onClick = { runCatching { HistoryStore(app).deleteAll() }; deleted = true }) {
+    OutlinedButton(onClick = { confirmDelete = true }, enabled = !deleted) {
         Text(if (deleted) "Dictation history deleted" else "Delete all dictation history")
+    }
+    if (confirmDelete) {
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { confirmDelete = false },
+            title = { Text("Delete all dictation history?") },
+            text = { Text("Every saved dictation (text and audio) on this phone is deleted. This can't be undone.") },
+            confirmButton = {
+                androidx.compose.material3.TextButton(onClick = {
+                    confirmDelete = false
+                    runCatching { HistoryStore(app).deleteAll() }
+                    deleted = true
+                }) { Text("Delete") }
+            },
+            dismissButton = {
+                androidx.compose.material3.TextButton(onClick = { confirmDelete = false }) { Text("Cancel") }
+            },
+        )
     }
 }
 
