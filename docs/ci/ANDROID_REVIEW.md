@@ -163,7 +163,7 @@ forbids local builds on this machine, so any upgrade can only be verified in CI.
 
 **Checked:** `AndroidManifest.xml:5-27` (permissions), `46-202` (components); `src/play/AndroidManifest.xml`;
 `kotlin/com/humming/keyboard/DictationService.kt`, `UpdateInstallReceiver.kt`, `PermissionActivity.kt`, `AppUpdate.kt:265-346`,
-`SecretStore.kt`; `res/xml/backup_rules.xml`, `res/xml-v31/backup_rules.xml`, `res/xml/file_paths.xml`.
+`SecretStore.kt`; `res/xml/backup_rules.xml`, `res/xml/data_extraction_rules.xml`, `res/xml/file_paths.xml`.
 
 - **No issue found: component exposure.** `PermissionActivity` (63), `DictationService` (71) and
   `UpdateInstallReceiver` (77) are all `exported="false"`. The IME and spell-checker services are exported but

@@ -22,7 +22,7 @@ the final answers.
 | 4 | GIF search | off | The **words typed into the sticker search box** (first 80 characters), plus the IP address, over HTTPS to Openverse (`api.openverse.org`, WordPress Foundation); the previews and the chosen GIF are then fetched from the image hosts in Openverse's results, which see the IP address. Not in incognito unless allowed separately. | `GifSearch.kt` (`allowed`, `queryUrl`); `AppPrefs.kt` (`humming__gif_search_enabled`, `humming__gif_search_in_incognito`, both off) |
 | 5 | Speech model download | when the user picks a model | No user data: a fixed public file from `github.com/k2-fsa/sherpa-onnx` releases, SHA-256 pinned. GitHub sees the IP address. Can be limited to Wi-Fi. | `ModelDownload.kt`, `VoiceModels.kt` |
 | 6 | APK update check | **not in the Play build** | None in the Play build: `BuildConfig.SELF_UPDATE = false` disables `AppUpdate.kt`, and `src/play/AndroidManifest.xml` removes `REQUEST_INSTALL_PACKAGES`. (The sideloaded APK reads `humming-keyboard.pages.dev/updates/android.json` and sends no personal data.) | `AppUpdate.kt` (`enabled`), `app/build.gradle.kts` (`hummingPlay`) |
-| 7 | Android device backup | only if the user has turned on Android backup | Android itself may copy the keyboard settings datastore, the `ime` files and the personal dictionary to the user's Google account. Google handles it; the developer cannot see it. The AI key (`SecretStore`) is not included. | `res/xml/backup_rules.xml`, `res/xml-v31/backup_rules.xml`, `AndroidManifest.xml` (`allowBackup="true"`) |
+| 7 | Android device backup | only if the user has turned on Android backup | Android itself may copy the keyboard settings datastore and the `ime` files to the user's Google account (the personal dictionary only in a local device-to-device transfer; dictation and clipboard history never). Google handles it; the developer cannot see it. The AI key (`SecretStore`) is not included. | `res/xml/backup_rules.xml`, `res/xml/data_extraction_rules.xml`, `AndroidManifest.xml` (`allowBackup="true"`) |
 
 Only `ModelDownload.kt`, `GifSearch.kt`, `LlmCleanup.kt` and `AppUpdate.kt` may use a network API (`NetworkAuditTest`).
 Online voice mode (path 2) uses no network API in Humming's code: the system speech service connects.
@@ -37,6 +37,11 @@ are also deleted once older than the retention the user picks (Forever, 1 month,
 `HistoryRetention`, pruned at app and keyboard start), and clipboard items are also removed when the size limit pushes
 out the oldest, or by auto-clean when the user turns it on. Data sent under paths 2 to 4 is kept by the speech service, the AI provider or Openverse under their own
 policies; Humming cannot see or delete it.
+
+**Upgrades.** New installs start with voice history kept for 1 month. Someone who already had voice history saved before
+retention existed keeps it: their setting starts at Forever, so nothing is deleted without their choice, and they can
+change it any time in Settings. Voice history is also capped at the 500 newest entries; older entries and their audio are
+deleted at the next prune.
 
 **Deletion.** Uninstalling the app, or clearing its storage in Android's app settings, deletes everything Humming
 stored on the device. Data held by the phone's speech service, Google Gemini, OpenAI, Groq or Openverse is deleted
@@ -110,6 +115,6 @@ Everything else: **not collected**.
 
 ### Notes
 
-- Android Auto Backup (`allowBackup=true`, rules in `res/xml/backup_rules.xml`: settings datastore, `ime` files, user dictionary) is Android's own backup to the user's Google account. Google's guidance does not count it as developer collection.
+- Android Auto Backup (`allowBackup=true`, rules in `res/xml/backup_rules.xml` and `res/xml/data_extraction_rules.xml`: settings datastore and `ime` files; the user dictionary only in device-to-device transfer) is Android's own backup to the user's Google account. Google's guidance does not count it as developer collection.
 - Speech model download: the app sends no user data; the request only fetches a public file.
 - Privacy policy URL: https://muhib-karim.github.io/humming-keyboard/privacy.html

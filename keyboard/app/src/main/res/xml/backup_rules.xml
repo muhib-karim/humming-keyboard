@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Backup rules for Android 11 and lower (android:fullBackupContent). Android 12+ uses
+    data_extraction_rules.xml instead. Only settings and installed extensions/themes are backed up.
+    Never backed up: dictation history (text and audio), clipboard history and learned words
+    (user dictionary); anything not included here is excluded.
+-->
 <full-backup-content>
     <include
         domain="root"
@@ -6,7 +12,4 @@
     <include
         domain="file"
         path="ime"/>
-    <include
-        domain="database"
-        path="floris_user_dictionary"/>
 </full-backup-content>

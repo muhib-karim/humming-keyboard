@@ -41,6 +41,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import com.humming.keyboard.HistoryRetention
+import com.humming.keyboard.HistoryStore
 import com.humming.keyboard.LlmCleanup
 import com.humming.keyboard.OnlineSession
 import com.humming.keyboard.SecretStore
@@ -174,6 +176,8 @@ fun VoiceScreen() = FlorisScreen {
             ToggleRow("Voice incognito", "Keep no voice history. The keyboard's incognito mode also turns this on, and keeps nothing in the clipboard.",
                 Prefs.KEY_INCOGNITO, Prefs.voiceIncognito(app))
             HorizontalDivider()
+            HistorySection()
+            HorizontalDivider()
             CustomWordsSection()
             HorizontalDivider()
             AiCleanupSection()
@@ -244,6 +248,49 @@ private fun ToggleRow(title: String, summary: String, key: String, initial: Bool
         }
         Spacer(Modifier.width(12.dp))
         Switch(checked = on, onCheckedChange = { on = it; Prefs.set(app, key, it) })
+    }
+}
+
+/** How long dictation history (text and audio) stays on this phone, and a way to delete all of it. */
+@Composable
+private fun HistorySection() {
+    val app = LocalContext.current.applicationContext
+    var setting by remember { mutableStateOf(Prefs.retention(app)) }
+    var deleted by remember { mutableStateOf(false) }
+    var confirmDelete by remember { mutableStateOf(false) }
+    val pick: (String) -> Unit = { value ->
+        setting = value
+        Prefs.set(app, Prefs.KEY_RETENTION, value)
+        runCatching { HistoryStore(app).prune() }
+    }
+    Text("Keep dictation history", fontWeight = FontWeight.SemiBold, fontSize = 15.sp, color = MaterialTheme.colorScheme.primary)
+    Text("Text and audio of past dictations, stored only on this phone. Older entries are deleted automatically.",
+        fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+    HistoryRetention.ALL.forEach { (value, label) ->
+        Row(Modifier.fillMaxWidth().clickable { pick(value) }, verticalAlignment = Alignment.CenterVertically) {
+            RadioButton(selected = setting == value, onClick = { pick(value) })
+            Text(label, fontSize = 15.sp)
+        }
+    }
+    OutlinedButton(onClick = { confirmDelete = true }, enabled = !deleted) {
+        Text(if (deleted) "Dictation history deleted" else "Delete all dictation history")
+    }
+    if (confirmDelete) {
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { confirmDelete = false },
+            title = { Text("Delete all dictation history?") },
+            text = { Text("Every saved dictation (text and audio) on this phone is deleted. This can't be undone.") },
+            confirmButton = {
+                androidx.compose.material3.TextButton(onClick = {
+                    confirmDelete = false
+                    runCatching { HistoryStore(app).deleteAll() }
+                    deleted = true
+                }) { Text("Delete") }
+            },
+            dismissButton = {
+                androidx.compose.material3.TextButton(onClick = { confirmDelete = false }) { Text("Cancel") }
+            },
+        )
     }
 }
 
