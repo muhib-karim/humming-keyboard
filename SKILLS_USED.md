@@ -66,7 +66,7 @@ Full report: [docs/audit/PONYTAIL_AUDIT_v1.7.0.md](docs/audit/PONYTAIL_AUDIT_v1.
 
 | Skill | What it found | Commit that acted on it (evidence) |
 |---|---|---|
-| `ponytail-audit` (whole repo) | 10 findings: 5 fixed, 1 for the release owner, 4 deferred with reasons. The ranked report. | `7f64124` (report) |
+| `ponytail-audit` (whole repo) | 10 findings: 4 fixed, 1 for the release owner, 5 deferred with reasons. The ranked report. | `7f64124` (report) |
 | `ponytail-audit` finding 1 | Android voice history wrote each dictation's audio (up to 300 s) that nothing could read or delete; retention pruning never ran; the 500-row cap orphaned `.pcm` files; Data safety and Settings promised a retention control that does not exist | `aea20b1` (no audio kept, `history_audio/` removed at app start, `HistoryAudioTest`; docs and Settings corrected) |
 | `ponytail-audit` finding 2 | The v1.7.0 release run is red: `deploy-pages` names a deployment after the commit SHA, main had already deployed `e1bc3bb`, so the release's update mirror was never published (release run 39053406679, job `pages / deploy`) | `aaf588c`, `ba16689` (same Pages API call with a per-run build version; live checks poll past the 600 s 404 cache) |
 | `ponytail-audit` finding 3 | The apps' feed host `humming-keyboard.pages.dev` still serves desktop 1.6.0 and Android 1.6.2, so no installed app is offered 1.7.0 | Owner action, no commit: mirror v1.7.0's `updates/` there (docs/RELEASING.md section 6) |
