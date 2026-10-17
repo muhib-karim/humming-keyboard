@@ -6,7 +6,7 @@ If a session ends early, the remaining work is in [HANDOFF.md](HANDOFF.md).
 
 ## 0. Setup
 - [x] TASKS.md and a CLAUDE.md "continue from TASKS.md / HANDOFF.md" rule
-- [ ] SKILLS_USED.md at the repo root (skills actually invoked, and evidence)
+- [x] SKILLS_USED.md at the repo root (skills actually invoked, and evidence)
 - [x] docs/ci/CODEBASE_MAP.md (Understand-Anything method, by hand: core not built here)
 
 ## 1. COMPETITORS.md
@@ -46,5 +46,5 @@ If a session ends early, the remaining work is in [HANDOFF.md](HANDOFF.md).
 - [x] docs/ci/REPO_METADATA.md (About 273 chars, website, 20 topics)
 
 ## Done checks
-- [ ] gitleaks clean, forbidden-strings scan clean
-- [ ] Final report
+- [x] gitleaks clean, forbidden-strings scan clean
+- [x] Final report (handoff items in HANDOFF.md)
