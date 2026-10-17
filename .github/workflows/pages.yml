@@ -60,18 +60,44 @@ jobs:
           fi
           ls -la
       - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+      - id: artifact
+        uses: actions/upload-pages-artifact@v3
         with:
           path: _site
       - id: deployment
-        uses: actions/deploy-pages@v4
+        name: Deploy to GitHub Pages
+        # The API call actions/deploy-pages@v4 makes, with one change: deploy-pages names the deployment after the commit
+        # SHA, and Pages answers a second deploy of the same SHA with the first one's success without publishing it. A
+        # release tag usually points at a commit main already deployed (v1.7.0 did), so its update mirror never went
+        # live. Adding the run id makes every deploy publish.
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ARTIFACT_ID: ${{ steps.artifact.outputs.artifact_id }}
+        run: |
+          set -euo pipefail
+          OIDC=$(curl -fsS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL" | jq -r .value)
+          ID=$(gh api -X POST "repos/$GITHUB_REPOSITORY/pages/deployments" -F artifact_id="$ARTIFACT_ID" \
+            -f pages_build_version="$GITHUB_SHA-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" -f oidc_token="$OIDC" --jq .id)
+          for i in $(seq 60); do
+            st=$(gh api "repos/$GITHUB_REPOSITORY/pages/deployments/$ID" --jq .status)
+            echo "deployment $ID: $st"
+            case "$st" in
+              succeed) break ;;
+              *fail*|*error*|*lost*|*cancel*) echo "::error::Pages deployment $st"; exit 1 ;;
+            esac
+            [ "$i" = 60 ] && { echo "::error::Pages deployment still $st after 10 minutes"; exit 1; }
+            sleep 10
+          done
+          echo "page_url=$(gh api "repos/$GITHUB_REPOSITORY/pages" --jq .html_url)" >> "$GITHUB_OUTPUT"
       - name: Check the live desktop update feed (signatures against the app's public key)
         if: hashFiles('_site/updates/latest.json') != ''
         run: |
           set -euo pipefail
           pip install -q pynacl
           BASE="${{ steps.deployment.outputs.page_url }}updates"
-          for i in 1 2 3 4 5 6; do curl -fsS -o /dev/null "$BASE/latest.json" && break; sleep 20; done
+          # Pages caches a 404 for its max-age (600 s): a poll that starts before the deploy is live needs over 10 min.
+          for i in $(seq 40); do curl -fs -o /dev/null "$BASE/latest.json" && break
+            [ "$i" = 40 ] && { echo "::error::$BASE/latest.json not served 13 minutes after the deploy"; exit 1; }; sleep 20; done
           python3 scripts/verify_updater.py --config desktop/src-tauri/tauri.conf.json --latest "$BASE/latest.json" --download \
             | tee -a "$GITHUB_STEP_SUMMARY"
       - name: Check the live Android update feed
@@ -79,5 +105,7 @@ jobs:
         run: |
           set -euo pipefail
           BASE="${{ steps.deployment.outputs.page_url }}updates"
-          for i in 1 2 3 4 5 6; do curl -fsS -o /dev/null "$BASE/android.json" && break; sleep 20; done
+          # Pages caches a 404 for its max-age (600 s): a poll that starts before the deploy is live needs over 10 min.
+          for i in $(seq 40); do curl -fs -o /dev/null "$BASE/android.json" && break
+            [ "$i" = 40 ] && { echo "::error::$BASE/android.json not served 13 minutes after the deploy"; exit 1; }; sleep 20; done
           curl -fsS "$BASE/android.json" | tee -a "$GITHUB_STEP_SUMMARY"

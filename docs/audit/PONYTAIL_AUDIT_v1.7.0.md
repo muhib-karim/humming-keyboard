@@ -30,19 +30,27 @@ the release workflows (one tag at a time) and the static update feed (many reade
    - **If we skip it:** a heavy dictation user carries gigabytes of private voice recordings they cannot see or
      remove, and the Play Data safety form is wrong.
 
-2. **The release's live update-feed check fails on every final release** (`.github/workflows/pages.yml:70-83`) —
-   **fixed**
-   - **What this is:** after deploying the website, the workflow downloads `/updates/latest.json` and
-     `/updates/android.json` from the live site and verifies the signatures.
-   - **Problem:** it polls 6 times, 20 s apart, starting 2 s after the deploy. The first poll gets a 404 before
-     the new files are live, and the Pages CDN keeps that 404 for its `cache-control: max-age=600` (the 404 was still
-     served with `x-cache: HIT`, `age=414` seven minutes later, also with a query string added). All later polls get
-     the cached 404, so the job fails. This is why the v1.7.0 release run is red
+2. **A release's website deploy publishes nothing when main already deployed the same commit**
+   (`.github/workflows/pages.yml:66-67`) — **fixed**
+   - **What this is:** after a final release, `release.yml` calls `pages.yml`, which mirrors the release's update
+     files into the site's `/updates/` folder, deploys it with `actions/deploy-pages@v4`, then reads the live feed
+     back and checks its signatures.
+   - **Problem:** `deploy-pages` names each deployment after the commit SHA (`buildVersion: process.env.GITHUB_SHA`
+     in its `src/internal/context.js`). The v1.7.0 tag points at `e1bc3bb`, which the push to main had deployed 16
+     minutes earlier, so Pages answered the release's deploy with that earlier deployment's "succeed" after 5 s and
+     never published the new files. Evidence: the site still had `last-modified: 17:21:37 GMT` (the main deploy),
+     and `/updates/SHA256SUMS.txt`, never requested before, came back `404` with `x-cache: MISS`. The live check then
+     failed, which is why the v1.7.0 release run is red
      ([run 39053406679](https://github.com/muhib-karim/humming-keyboard/actions/runs/39053406679), job
-     `pages / deploy`, `HTTP Error 404`) although the deploy itself reported success.
-   - **Fix:** poll for longer than the CDN's 10 minutes (40 × 20 s) and stop with a clear error if the file never
-     appears. Loop count only; nothing else changes.
-   - **If we skip it:** every release ends red, so a real feed failure looks the same as this false alarm.
+     `pages / deploy`, `HTTP Error 404`).
+   - **Fix:** make the same API call `deploy-pages` makes (`POST /repos/{repo}/pages/deployments` with the
+     artifact id and the job's OIDC token), with the run id added to `pages_build_version`, and wait for its status.
+     The live check also polls up to 13 minutes instead of 2, because Pages caches a 404 for `max-age=600`.
+   - **If we skip it:** every release cut from main's latest commit (the normal flow) leaves the website's update
+     mirror on the previous release and ends red.
+   - **Still red after the fix, correctly:** `verify_updater.py --download` fetches the bundle URLs inside
+     `latest.json`, which point at `humming-keyboard.pages.dev` (finding 3). Until that host serves 1.7.x files,
+     the desktop feed check fails. That is a true alarm, not this bug.
 
 3. **Installed apps are not offered 1.7.0** (feed host `humming-keyboard.pages.dev`, read by `AppUpdate.kt:96` and
    `tauri.conf.json` `plugins.updater.endpoints`) — **owner**
