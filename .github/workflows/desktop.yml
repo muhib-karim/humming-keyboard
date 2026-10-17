@@ -152,6 +152,24 @@ jobs:
       - name: npm ci
         working-directory: desktop
         run: npm ci
+      - name: Updater key available? (tagged releases require it; other builds go unsigned without it)
+        # With a public key in tauri.conf.json, Tauri refuses to build update bundles without the private key. Pull
+        # requests from forks get no secrets, so they build installers without update bundles instead of failing.
+        id: sign
+        shell: bash
+        working-directory: desktop
+        env:
+          KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+        run: |
+          if [ -n "$KEY" ]; then
+            echo "signed=true" >> "$GITHUB_OUTPUT"; echo "args=" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          if [[ "$GITHUB_REF" == refs/tags/* ]]; then
+            echo "::error::TAURI_SIGNING_PRIVATE_KEY is not set: a tagged release needs signed self-update bundles"; exit 1
+          fi
+          echo "::warning::no updater signing key in this run: building installers without self-update bundles"
+          echo '{"bundle":{"createUpdaterArtifacts":false}}' > src-tauri/tauri.unsigned.conf.json
+          echo "signed=false" >> "$GITHUB_OUTPUT"; echo "args=--config src-tauri/tauri.unsigned.conf.json" >> "$GITHUB_OUTPUT"
       - uses: tauri-apps/tauri-action@v0
         env:
           # Updater signing key (minisign). Signs the self-update bundles; the public half is in tauri.conf.json.
@@ -159,9 +177,11 @@ jobs:
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
         with:
           projectPath: desktop
-          args: ${{ matrix.args }}
+          args: ${{ matrix.args }} ${{ steps.sign.outputs.args }}
       - name: Collect installers and checksums
         shell: bash
+        env:
+          SIGNED: ${{ steps.sign.outputs.signed }}
         run: |
           mkdir -p out
           find desktop/src-tauri/target -path '*/release/bundle/*' -type f \
@@ -173,8 +193,8 @@ jobs:
           for f in Humming.app.tar.gz Humming.app.tar.gz.sig; do
             if [ -f "$f" ]; then mv "$f" "Humming_${V}_universal${f#Humming}"; fi
           done
-          # Every self-update bundle must have its signature.
-          for f in *.app.tar.gz *-setup.exe *.msi *.AppImage; do
+          # Every self-update bundle must have its signature (unsigned runs have no update bundles to check).
+          [ "$SIGNED" = "true" ] && for f in *.app.tar.gz *-setup.exe *.msi *.AppImage; do
             [ -f "$f" ] || continue
             [ -s "$f.sig" ] || { echo "::error::$f has no updater signature (.sig)"; exit 1; }
           done

@@ -1,5 +1,39 @@
 # Changelog
 
+## 1.7.0-rc1 (release candidate): Bangla phonetic typing, dictation that fits the sentence, a premium look
+- **Status**: release candidate, tagged `v1.7.0-rc1` and published as a GitHub pre-release; not mirrored to the update
+  feeds. Everything below is unit-tested in CI; it was not built on the development machine.
+- **Version**: one version everywhere: Android 1.7.0 (versionCode 1700), desktop and core 1.7.0, iOS 1.7.0 (build 1700).
+- **Bangla phonetic typing (Android)**: add Bengali with a QWERTY layout and type romanised Bangla the Avro / Ridmik way
+  (`ami bangla likhi` → আমি বাংলা লিখি). The Bangla word is the auto-commit suggestion (space or punctuation types it)
+  and the Latin word stays one tap away. Rule-based, written for Humming: reph, ra-, ya- and ba-phala, ং / ঙ, জ্ঞ, ক্ষ,
+  Avro capitals, Bangla digits (`BanglaPhonetic`, `BanglaPhoneticTest`).
+- **Dictation fits the sentence (Android)**: dictating into the middle of a line lowercases a common first word, adds
+  no space after an opening bracket, quote, `@` or `#`, and drops the final period when the text after the cursor
+  carries on; names, "I", acronyms and custom words keep their capitals (`DictationJoin`, `DictationJoinTest`).
+- **More spoken punctuation (Android, desktop, iOS)**: "colon", "semicolon", "open/close quote", "open/close bracket",
+  "ellipsis" / "dot dot dot", and "delete last word" / "scratch the last word". Commas a punctuating engine puts around
+  these commands are absorbed, and a line break before an opening quote or bracket is kept. Same rules and test
+  sentences in `TextCleanup.kt`, `text_cleanup.rs` and `TextCleanup.swift`.
+- **Accessibility**: the voice panel's Clean / Verbatim chip has a 48 dp touch target and is announced as a switch with
+  its state; the orb and cancel are announced as buttons; light-theme pill text and accent text now meet WCAG AA
+  (4.5:1) on Android, desktop (`--accent-strong`, `--accent-ink`, per-theme pill colours, focus ring, reduced motion)
+  and iOS (`Brand.accentStrong`, `Brand.accentText`). Tokens documented in `docs/BRAND.md`.
+- **Security**: the exported "copy image to clipboard" share target only opens other apps' `content://` URIs, never
+  `file://` or Humming's own providers (`SharedUriPolicy`, `SharedUriPolicyTest`).
+- **Performance**: the recording dot blinks in the draw phase instead of recomposing the voice panel every frame.
+- **Website**: rebuilt GitHub Pages home page with real captures, an honest comparison table, per-platform downloads,
+  APK verification, FAQ, social image, favicons, sitemap, robots.txt and a 404 page; no third-party requests.
+  `pages.yml` checks every link before deploying (`scripts/check_site.py`).
+- **Docs**: `COMPETITORS.md` (teardown of Gboard, SwiftKey, Fleksy, Typewise, Ridmik, Avro, Bijoy, OpenBangla with
+  sources and a ranked gap list), README rewrite, user guide for the new features, design tokens, design audit,
+  Android review, codebase map.
+- **Release plumbing**: `assemble_release.py` accepts `-rcN` tags, names files with the full version, reports every
+  platform and fails naming each missing file (with an explicit `RELEASE_ALLOW_MISSING` opt-out), and writes
+  `release.env`; dry-run tests in `scripts/test_assemble_release.py`. `release.yml` publishes one release with every
+  platform, marks `-rc` tags as pre-releases and only mirrors final releases. `desktop.yml` builds unsigned installers
+  instead of failing when the updater key is unavailable (fork pull requests), and still requires it for tags.
+
 ## 1.6.3 (release candidate): voice never types placeholder text, accurate README, reproducible WER bench
 - **Status**: release candidate on `main`; it becomes the 1.6.3 release when its GitHub Release is published.
 - **Version**: Android 1.6.3 (versionCode 1603). Desktop stays 1.6.0, iOS unchanged.

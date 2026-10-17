@@ -1,12 +1,14 @@
 name: release
 
-# One tagged release, end to end. Pushing an annotated tag vX.Y.Z builds every platform through the platform workflows
+# One tagged release, end to end. Pushing an annotated tag vX.Y.Z (or a release candidate vX.Y.Z-rcN, published as a
+# GitHub pre-release) builds every platform through the platform workflows
 # (signed Android APK + AAB, desktop installers with signed self-update bundles, unsigned iOS .ipa), then:
 #   - checks every updater signature against the public key in desktop/src-tauri/tauri.conf.json,
 #   - writes latest.json (desktop updater feed), android.json (Android update feed) and SHA256SUMS.txt,
-#   - creates the GitHub Release with all of it,
-#   - redeploys the website, which mirrors the latest release's update files to /updates/ (so the apps need no GitHub login,
-#     so the apps read their update feeds from the public Pages site), and checks the live feed end to end.
+#   - creates ONE GitHub Release with all of it (a missing platform stops it with a per-platform report),
+#   - for a final release, redeploys the website, which mirrors the latest final release's update files to /updates/
+#     (the apps read their update feeds from the public Pages site, so they need no GitHub login) and checks the live
+#     feed end to end. Pre-releases are never mirrored, so no installed app updates to a release candidate.
 on:
   push:
     tags: ["v*"]
@@ -32,35 +34,52 @@ jobs:
 
   publish:
     needs: [android, desktop, ios]
+    # Runs even when a platform build failed, so assemble_release.py can say exactly what is missing (and stop, unless
+    # the repository variable RELEASE_ALLOW_MISSING names that platform, e.g. "ios").
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    outputs:
+      prerelease: ${{ steps.assemble.outputs.PRERELEASE }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
           path: art
-      - name: Assemble the release (verify signatures, latest.json, android.json, SHA256SUMS.txt)
+      - name: Release script tests (dry run, fake artifacts)
+        run: python3 -m unittest scripts/test_assemble_release.py
+      - name: Assemble the release (every platform, verify signatures, latest.json, android.json, SHA256SUMS.txt)
+        id: assemble
+        env:
+          ALLOW_MISSING: ${{ vars.RELEASE_ALLOW_MISSING || '' }}
         run: |
           set -euo pipefail
           pip install -q pynacl
           V="${GITHUB_REF_NAME#v}"
-          python3 scripts/assemble_release.py art out "$V"
-          python3 scripts/verify_updater.py --config desktop/src-tauri/tauri.conf.json --latest out/latest.json --local-dir out
+          python3 scripts/assemble_release.py art out "$V" --allow-missing "$ALLOW_MISSING"
+          if [ -f out/latest.json ]; then
+            python3 scripts/verify_updater.py --config desktop/src-tauri/tauri.conf.json --latest out/latest.json --local-dir out
+          fi
           (cd out && sha256sum -c SHA256SUMS.txt)
-          { echo "### Humming $V release files"; echo '```'; ls -l out; cat out/SHA256SUMS.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
-      - name: Create the GitHub Release
+          { echo "### Humming $V release files"; cat release.env; echo '```'; ls -l out; cat out/SHA256SUMS.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+      - name: Create the GitHub Release (one release, every platform; "-rc" tags are pre-releases)
         env:
           GH_TOKEN: ${{ github.token }}
+          PRERELEASE: ${{ steps.assemble.outputs.PRERELEASE }}
         run: |
           set -euo pipefail
           V="${GITHUB_REF_NAME#v}"
+          if [ "$PRERELEASE" = "true" ]; then KIND=(--prerelease --latest=false); else KIND=(--latest); fi
           if gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1; then
             gh release upload "$GITHUB_REF_NAME" out/* --clobber
+            gh release edit "$GITHUB_REF_NAME" "${KIND[@]}" --notes-file NOTES.md
           else
-            gh release create "$GITHUB_REF_NAME" out/* --verify-tag --latest --title "Humming $V" --notes-file NOTES.md
+            gh release create "$GITHUB_REF_NAME" out/* --verify-tag "${KIND[@]}" --title "Humming $V" --notes-file NOTES.md
           fi
-          gh release view "$GITHUB_REF_NAME" --json assets --jq '.assets[].name'
+          gh release view "$GITHUB_REF_NAME" --json isPrerelease,assets --jq '"prerelease: \(.isPrerelease)", (.assets[].name)'
 
   pages:
+    # The website mirrors the latest final release's update files, so a pre-release has nothing to deploy.
     needs: publish
+    if: ${{ needs.publish.outputs.prerelease == 'false' }}
     uses: ./.github/workflows/pages.yml

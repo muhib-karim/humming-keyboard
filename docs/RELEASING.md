@@ -26,9 +26,15 @@ Each platform keeps its version in its own build file:
 Version codes follow the version: 1.4.0 is `1400`, 1.6.0 is `1600`, 1.6.3 is `1603`. The Android updater installs a
 release only if its `versionCode` is higher than the installed one, so the code must go up with every Android release.
 
-Platforms may be on different versions. At the time of writing Android is 1.6.3 on `main` (1.6.2 released), the
-desktop app is 1.6.0 and the iOS project is 1.6.0 (build 1600), with the last published iOS build being 1.5.0. Each
-CHANGELOG entry states which platform versions it covers.
+Since 1.7.0 every platform carries the same version: Android 1.7.0 (`1700`), desktop and core 1.7.0, iOS 1.7.0
+(build `1700`). Each CHANGELOG entry states which platform versions it covers.
+
+**Release candidates.** A candidate is tagged `vX.Y.Z-rcN` while the build files keep `X.Y.Z` (Windows MSI and the
+stores accept no `-rc` suffix). `assemble_release.py` strips the suffix when it compares versions, names the release
+files with the full version (`Humming-1.7.0-rc1.apk`), and `release.yml` publishes the candidate as a GitHub
+**pre-release** that is never marked latest and never mirrored to the update feed. Because a candidate's APK already
+carries the final `versionCode`, a second candidate or the final release must raise `projectVersionCode` (for example
+`1701`) so testers' phones can update to it.
 
 ## 2. Changelog
 
@@ -107,10 +113,18 @@ With GitHub Actions available, a release is one tag:
 
 1. Update the versions (section 1) and the changelog (section 2) on `main`, and make sure CI is green.
 2. Create and push an annotated tag: `git tag -a v<version> -m "Humming <version>"` then `git push origin v<version>`.
-3. `release.yml` runs `android-release.yml`, `desktop.yml` and `ios.yml`, then `assemble_release.py`, verifies the
-   feed and the checksums, and creates the GitHub Release `Humming <version>` (marked latest) with every file and the
-   changelog section as notes. If the release already exists, it uploads the files to it instead.
-4. `release.yml` then runs `pages.yml`, which redeploys the website and the `/updates/` mirror and checks the live feed.
+3. `release.yml` runs `android-release.yml`, `desktop.yml` and `ios.yml`, then the release-script tests and
+   `assemble_release.py`, verifies the feed and the checksums, and creates ONE GitHub Release `Humming <version>` with
+   every platform's files, the changelog section and a file table as notes: marked latest for `vX.Y.Z`, a pre-release
+   for `vX.Y.Z-rcN`. If the release already exists, it uploads the files to it instead.
+   - Every platform is required. If a build failed, the publish job still runs and stops with a per-platform report of
+     each missing file. To publish without a platform on purpose, set the repository variable
+     `RELEASE_ALLOW_MISSING` (for example `ios`), re-run the publish job, and clear the variable afterwards; the
+     release notes then say which platform is not included.
+4. For a final release, `release.yml` then runs `pages.yml`, which redeploys the website and the `/updates/` mirror
+   and checks the live feed. Pre-releases skip this step.
+
+Check the release script locally (no keys, fake artifacts): `python3 -m unittest scripts/test_assemble_release.py`.
 
 **Without GitHub Actions** (the case since 5 October 2026, and how 1.6.0 was built): build each platform on a
 machine that has the signing material, verify every update signature with `scripts/verify_updater.py` and every
