@@ -2,7 +2,7 @@
 
 Run 2026-10-17 on `main` at `e1bc3bb` (the v1.7.0 release commit) with the `ponytail-audit` skill, then the
 `ponytail-debt` skill (section "Debt"). Nothing was built locally (see [CLAUDE.md](../../CLAUDE.md)); every fix below is
-verified by GitHub Actions on the PR. Status column: **fixed** (commit in [SKILLS_USED.md](../../SKILLS_USED.md),
+verified by GitHub Actions on the PR. Line numbers refer to `e1bc3bb`. Status column: **fixed** (commit in [SKILLS_USED.md](../../SKILLS_USED.md),
 "v1.7.1 pass"), **owner** (needs access this repository does not give), **deferred** (one line of reasoning).
 
 **What this repo does:** Humming is an offline-first keyboard and dictation app: an Android keyboard (a FlorisBoard
@@ -52,7 +52,7 @@ the release workflows (one tag at a time) and the static update feed (many reade
      `latest.json`, which point at `humming-keyboard.pages.dev` (finding 3). Until that host serves 1.7.x files,
      the desktop feed check fails. That is a true alarm, not this bug.
 
-3. **Installed apps are not offered 1.7.0** (feed host `humming-keyboard.pages.dev`, read by `AppUpdate.kt:96` and
+3. **Installed apps are not offered 1.7.0** (feed host `humming-keyboard.pages.dev`, read by `AppUpdate.kt:92` and
    `tauri.conf.json` `plugins.updater.endpoints`) — **owner**
    - **What this is:** the Android app and the desktop app read their update feeds from Cloudflare Pages
      (`humming-keyboard.pages.dev/updates/`), not from the GitHub Pages site this repository deploys.
@@ -76,20 +76,33 @@ the release workflows (one tag at a time) and the static update feed (many reade
    - **Fix:** end the route in that `catch` (two lines).
    - **If we skip it:** after a mic error the headset sounds broken until the user dictates again or reconnects it.
 
+5. **The apps show a word error rate the repository cannot reproduce**
+   (`keyboard/.../VoiceModels.kt:49,65`, `desktop/src-tauri/src/models.rs:70,85`) — **fixed**
+   - **What this is:** Settings › Voice (Android) and the desktop model list show each model's word error rate
+     (WER: the share of words the recogniser gets wrong).
+   - **Problem:** both show 3.7 % (Fast) and 2.6 % (Best). Those are the "WER all" column of the README's bake-off,
+     a one-off run whose script and outputs are not in the repository; the desktop code even says the figure is the
+     README's test-clean benchmark, which is 2.78 % and 1.68 % (`docs/bench/ci-37204875974-wer.json`). The website
+     shows 2.78 %, so the app and the site disagree, against the rule in CLAUDE.md that every number comes from the
+     repository.
+   - **Fix:** use the committed CI figures and add a test on each side that reads that JSON file, so the app can no
+     longer drift from the benchmark.
+   - **If we skip it:** users see two different accuracy figures, one of them unverifiable.
+
 ## Nice to have (deferred)
 
-5. **Desktop clipboard restore loses a copied image** (`desktop/src-tauri/src/insert.rs:38`) — **deferred**: the
+6. **Desktop clipboard restore loses a copied image** (`desktop/src-tauri/src/insert.rs:39`) — **deferred**: the
    restore only ever promised text (`get_text`); restoring images needs `get_image`/`set_image` per platform and
    cannot be tested on CI runners without a display. Not a regression.
-6. **`wer-bench.yml` puts `workflow_dispatch` inputs straight into a shell line** (`wer-bench.yml:62`) —
+7. **`wer-bench.yml` puts `workflow_dispatch` inputs straight into a shell line** (`wer-bench.yml:63`) —
    **deferred**: only people with write access can dispatch it, and they can already edit the workflow; no secrets
    are in scope (`permissions: contents: read`).
-7. **Streaming session could reject a late segment** (`StreamingSession.kt:52-55`) — **deferred**: needs the
+8. **Streaming session could reject a late segment** (`StreamingSession.kt:50-53`) — **deferred**: needs the
    recorder's `read()` to block for more than the 1 s `join` in `WavRecorder.stop()`; the default Silero
    segmenter already ignores audio after `release()`. No observed crash.
-8. **Release hardening** (`release.yml`: `secrets: inherit`, actions pinned by tag, not SHA) — **deferred**:
+9. **Release hardening** (`release.yml`: `secrets: inherit`, actions pinned by tag, not SHA) — **deferred**:
    already in HANDOFF.md as an owner decision; no exploit path without write access.
-9. **Restoring a backup keeps the old keyboard background file** (`HummingBackup.kt:47`) — **deferred**: a few
+10. **Restoring a backup keeps the old keyboard background file** (`HummingBackup.kt:49`) — **deferred**: a few
    hundred KB of disk; the restored setting points at the restored file, so behaviour is right.
 
 Smaller items left out: 2 (Node 20 deprecation warnings on `actions/*@v4`, already forced to Node 24 by the runner;
@@ -114,4 +127,4 @@ No shortcut debt. Clean ledger.
 0 markers, 0 with no trigger. A wider scan for `TODO`/`FIXME`/`HACK`/`XXX` comments in Humming's own code (`core/`,
 `desktop/src`, `desktop/src-tauri/src`, `ios/`, `scripts/`, `.github/`, `keyboard/.../com/humming`) also found none.
 The FlorisBoard upstream code carries its own TODOs; they are upstream's and were not ledgered here. Deferred audit
-findings 5-9 above are this pass's only recorded debt.
+findings 6-10 above are this pass's only recorded debt.

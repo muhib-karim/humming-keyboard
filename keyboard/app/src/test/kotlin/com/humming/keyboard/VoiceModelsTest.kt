@@ -3,7 +3,12 @@ package com.humming.keyboard
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.double
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import org.junit.Test
+import java.io.File
 
 class VoiceModelsTest {
     @Test
@@ -34,5 +39,15 @@ class VoiceModelsTest {
         assertEquals(listOf("model.int8.onnx", "tokens.txt"), VoiceModels.FAST.files)
         assertEquals(4, VoiceModels.BEST.files.size)
         assertTrue(VoiceModels.BEST.werPct < VoiceModels.FAST.werPct)
+    }
+
+    /** The figure Settings › Voice shows is the committed CI benchmark (README "Benchmarks"), LibriSpeech test-clean. */
+    @Test
+    fun werMatchesTheCommittedBenchmark() {
+        val models = Json.parseToJsonElement(File("../../docs/bench/ci-37204875974-wer.json").readText())
+            .jsonObject.getValue("models").jsonObject
+        fun clean(id: String) = models.getValue(id).jsonObject.getValue("test-clean").jsonObject.getValue("wer_pct").jsonPrimitive.double
+        assertEquals(clean("fast"), VoiceModels.FAST.werPct, 0.0)
+        assertEquals(clean("best"), VoiceModels.BEST.werPct, 0.0)
     }
 }
