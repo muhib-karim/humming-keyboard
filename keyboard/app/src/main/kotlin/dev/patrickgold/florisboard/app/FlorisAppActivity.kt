@@ -51,6 +51,7 @@ import dev.patrickgold.florisboard.cacheManager
 import dev.patrickgold.florisboard.lib.FlorisLocale
 import dev.patrickgold.florisboard.lib.compose.LocalPreviewFieldController
 import dev.patrickgold.florisboard.lib.compose.PreviewKeyboardField
+import dev.patrickgold.florisboard.lib.io.ImportGate
 import dev.patrickgold.florisboard.lib.compose.rememberPreviewFieldController
 import dev.patrickgold.florisboard.lib.util.AppVersionUtils
 import dev.patrickgold.jetpref.datastore.model.observeAsState
@@ -211,11 +212,23 @@ class FlorisAppActivity : ComponentActivity() {
                     navController.handleDeepLink(intent)
                 } else {
                     val data = if (intent.action == Intent.ACTION_VIEW) {
-                        intent.data!!
+                        intent.data
                     } else {
-                        intent.clipData!!.getItemAt(0).uri
+                        intent.clipData?.takeIf { it.itemCount > 0 }?.getItemAt(0)?.uri
                     }
-                    val workspace = runCatching { cacheManager.readFromUriIntoCache(data) }.getOrNull()
+                    // This activity is exported: only copy content:// URIs from other apps with an
+                    // extension MIME type into the import cache.
+                    val allowed = data != null && ImportGate.isAllowed(
+                        scheme = data.scheme,
+                        authority = data.authority,
+                        mimeType = runCatching { contentResolver.getType(data) }.getOrNull(),
+                        ownPackageName = packageName,
+                    )
+                    val workspace = if (allowed) {
+                        runCatching { cacheManager.readFromUriIntoCache(data!!) }.getOrNull()
+                    } else {
+                        null
+                    }
                     navController.navigate(Routes.Ext.Import(ExtensionImportScreenType.EXT_ANY, workspace?.uuid))
                 }
             }
