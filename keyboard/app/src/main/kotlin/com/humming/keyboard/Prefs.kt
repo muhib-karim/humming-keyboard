@@ -10,6 +10,7 @@ object Prefs {
     const val KEY_RETENTION = "history_retention"
     const val KEY_CLEAN = "clean_mode"
     const val KEY_ACCURACY = "accuracy_mode"
+    const val KEY_FILLERS = "remove_fillers"
     const val KEY_WIFI_ONLY = "model_wifi_only"
     const val KEY_VOICE_MODEL = "voice_model"
     const val KEY_BT_MIC = "bluetooth_mic"
@@ -57,6 +58,13 @@ object Prefs {
      */
     fun dictionary(ctx: Context): List<String> =
         AppVocabulary.select((get(ctx).getString(KEY_DICTIONARY, "") ?: "").lines(), currentPackage)
+
+    /** Personal dictionary lines written "spoken -> written" (1.7): replacements applied before the clean-up. */
+    fun replacements(ctx: Context): List<Pair<String, String>> =
+        AppVocabulary.replacements((get(ctx).getString(KEY_DICTIONARY, "") ?: "").lines(), currentPackage)
+
+    /** Remove filler words (default on, 1.7): um, uh, er, hmm and ", you know,". Part of Clean mode. */
+    fun removeFillers(ctx: Context): Boolean = get(ctx).getBoolean(KEY_FILLERS, true)
 
     /**
      * Clean mode (default on): fillers (um, uh), stutters and self-corrections ("3, no wait, 4pm" -> "4pm")

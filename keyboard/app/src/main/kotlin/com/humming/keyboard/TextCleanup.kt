@@ -4,8 +4,9 @@ package com.humming.keyboard
  * Rule-based dictation cleanup that runs on every transcript (on-device and cloud), after the core's own cleanup.
  * Pure Kotlin, no Android types, so it is covered by JVM unit tests (TextCleanupTest).
  *
- * Order: drop non-speech/hallucinations → fillers → spoken punctuation and "delete last word" → leading discourse
- * markers → self-corrections ("3, no, 4pm" → "4pm") → repeated words → dictionary casing → capitals and final punctuation.
+ * Order: the user's replacements ("cube cuddle" → "kubectl") → drop non-speech/hallucinations → fillers → spoken
+ * punctuation and "delete last word" → leading discourse markers → self-corrections ("3, no, 4pm" → "4pm") → repeated
+ * words → dictionary casing → capitals and final punctuation → lists ([ListFormat]).
  */
 object TextCleanup {
     private const val W = "[\\p{L}\\p{N}_']"
@@ -85,29 +86,42 @@ object TextCleanup {
         "like and subscribe", "you",
     )
 
-    /** [strict] is accuracy mode: it never drops a "like" that carries meaning, only one set off by commas. */
-    fun apply(raw: String, dictionary: List<String> = emptyList(), strict: Boolean = false): String {
-        var t = NON_SPEECH.replace(raw, "")
+    /**
+     * [strict] is accuracy mode: it never drops a "like" that carries meaning, only one set off by commas.
+     * [fillers] (Settings › Voice › "Remove filler words", default on): off keeps um, uh and ", you know,"; accuracy
+     * mode's extra filler rules need it on. [replacements] are the user's "spoken -> written" pairs, applied first.
+     */
+    fun apply(
+        raw: String,
+        dictionary: List<String> = emptyList(),
+        strict: Boolean = false,
+        fillers: Boolean = true,
+        replacements: List<Pair<String, String>> = emptyList(),
+    ): String {
+        var t = NON_SPEECH.replace(replacePhrases(raw, replacements), "")
         if (isHallucination(t)) return ""
-        t = FILLER.replace(t, "")
-        if (strict) t = STRICT_FILLER.replace(t, "")
-        t = YOU_KNOW.replace(t, " ")
+        val strictOn = strict && fillers
+        if (fillers) {
+            t = FILLER.replace(t, "")
+            if (strictOn) t = STRICT_FILLER.replace(t, "")
+            t = YOU_KNOW.replace(t, " ")
+        }
         for ((re, rep) in SPOKEN) t = re.replace(t, Regex.escapeReplacement(rep))
         t = deleteLastWord(t)
-        if (strict) {
+        if (strictOn) {
             t = STRICT_PERIOD.replace(t, ".")
             t = STRICT_TRAILING.replace(t, "")
             t = STRICT_HEDGE.replace(t, " ")
             t = STRICT_LEADING.replace(t, "$1")
         }
         t = collapseSpaces(t)
-        t = LEADING.replace(t, "")
+        if (fillers) t = LEADING.replace(t, "")
         t = selfCorrect(t)
         t = removeRepeats(t)
         t = applyDictionary(t, dictionary)
         t = compactTimes(t)
-        if (strict) t = DOUBLED.replace(t, "$2")
-        return finish(t)
+        if (strictOn) t = DOUBLED.replace(t, "$2")
+        return ListFormat.apply(finish(t))
     }
 
     private val TIME_AMPM = Regex("(?<![\\p{L}\\p{N}])(\\d{1,2}(?::\\d{2})?)\\s?([AaPp])\\.?\\s?[Mm](?=[\\s,.;!?]|$)")
@@ -196,6 +210,19 @@ object TextCleanup {
             if (term.isEmpty()) continue
             val body = term.split(Regex("\\s+")).joinToString("\\s+") { Regex.escape(it) }
             t = Regex("(?<!$W)$body(?!$W)", RegexOption.IGNORE_CASE).replace(t) { term }
+        }
+        return t
+    }
+
+    /** The user's "spoken -> written" pairs: whole words, any case, any spacing; the written side is typed as is. */
+    fun replacePhrases(input: String, pairs: List<Pair<String, String>>): String {
+        var t = input
+        for ((spoken, written) in pairs) {
+            val from = spoken.trim()
+            val to = written.trim()
+            if (from.isEmpty() || to.isEmpty()) continue
+            val body = from.split(Regex("\\s+")).joinToString("\\s+") { Regex.escape(it) }
+            t = Regex("(?<!$W)$body(?!$W)", RegexOption.IGNORE_CASE).replace(t) { to }
         }
         return t
     }

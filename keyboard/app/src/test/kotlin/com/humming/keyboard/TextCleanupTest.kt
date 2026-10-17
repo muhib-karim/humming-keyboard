@@ -142,4 +142,27 @@ class TextCleanupTest {
         assertEquals("Call me (maybe), tomorrow.", clean("Call me, open bracket, maybe, close bracket, tomorrow."))
         assertEquals("Can you remove the last word of the title?", clean("can you remove the last word of the title"))
     }
+
+    // 1.7: personal dictionary replacements ("spoken -> written") and the filler switch.
+    @Test fun replacementsRunFirst() {
+        val r = listOf("cube cuddle" to "kubectl", "my sig" to "Best, Sam")
+        assertEquals("Run kubectl now.", TextCleanup.apply("run cube cuddle now", replacements = r))
+        assertEquals("Thanks. Best, Sam.", TextCleanup.apply("thanks. my sig", replacements = r))
+    }
+
+    @Test fun replacementIsWholeWord() {
+        val r = listOf("cat" to "dog")
+        assertEquals("Concatenate the cat files", TextCleanup.replacePhrases("Concatenate the cat files", emptyList()))
+        assertEquals("Concatenate the dog files", TextCleanup.replacePhrases("Concatenate the cat files", r))
+        assertEquals("kubectl  rocks", TextCleanup.replacePhrases("Cube\tCuddle  rocks", listOf("cube cuddle" to "kubectl")))
+    }
+
+    @Test fun fillerSwitchOffKeepsFillers() {
+        assertEquals("Um, I think we should ship it.", TextCleanup.apply("um, I think we should ship it", fillers = false))
+        assertEquals("So, you know, it works.", TextCleanup.apply("so, you know, it works", fillers = false))
+        assertEquals("I think we should ship it.", TextCleanup.apply("um, I think we should ship it"))
+    }
+
+    @Test fun strictNeedsFillersOn() =
+        assertEquals("It is, like, fine.", TextCleanup.apply("it is, like, fine", strict = true, fillers = false))
 }

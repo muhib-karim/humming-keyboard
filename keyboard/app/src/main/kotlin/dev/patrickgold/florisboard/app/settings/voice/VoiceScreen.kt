@@ -162,8 +162,11 @@ fun VoiceScreen() = FlorisScreen {
             ToggleRow("Live text while speaking", "Your words appear as an underlined draft while you speak and are corrected in place, " +
                 "then typed once when you stop. Off: nothing appears until you stop, then the whole text is typed at once.",
                 Prefs.KEY_LIVE_TYPING, Prefs.liveTyping(app))
-            ToggleRow("Clean up speech", "Removes um and uh, stutters and repeats, and applies corrections like \"3pm, no wait, 4pm\" → \"4pm\".",
+            ToggleRow("Clean up speech", "Removes stutters and repeats, applies corrections like \"3pm, no wait, 4pm\" → \"4pm\", " +
+                "and turns spoken lists into bullets.",
                 Prefs.KEY_CLEAN, Prefs.cleanMode(app))
+            ToggleRow("Remove filler words", "Drops um, uh, er and hmm, and \"you know\" between commas. Off keeps them.",
+                Prefs.KEY_FILLERS, Prefs.removeFillers(app))
             ToggleRow("Accuracy mode", "Stricter clean-up, still on this phone: also removes \"like\", \"basically\" and \"you know\" " +
                 "when they are set off by commas, and a spoken \"period\" at the end. For the most accurate recognition, pick the Best model above.",
                 Prefs.KEY_ACCURACY, Prefs.accuracyMode(app))
@@ -177,7 +180,8 @@ fun VoiceScreen() = FlorisScreen {
             HorizontalDivider()
             Text("Voice commands", fontWeight = FontWeight.SemiBold, fontSize = 15.sp, color = MaterialTheme.colorScheme.primary)
             Text(
-                "Say \"new line\" or \"new paragraph\" anywhere, and \"delete that\" to remove the sentence before it. " +
+                "Say \"new line\" or \"new paragraph\" anywhere, \"bullet point\" to start a list item, and \"delete that\" or " +
+                    "\"scratch that\" to remove the sentence before it. A list said as \"first, ... second, ...\" becomes bullets. " +
                     "With AI clean-up on, end with \"make it formal\", \"make it casual\", \"make it shorter\", " +
                     "\"bullet points\", \"fix the grammar\" or \"translate it to Spanish\".",
                 fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -278,7 +282,9 @@ private fun CustomWordsSection() {
     val app = LocalContext.current.applicationContext
     var words by remember { mutableStateOf(Prefs.dictionaryText(app)) }
     Text("Custom words", fontWeight = FontWeight.SemiBold, fontSize = 15.sp, color = MaterialTheme.colorScheme.primary)
-    Text("Names, jargon and brands Humming should always spell your way. One per line, e.g. \"Kubernetes\" or \"iPhone\". Add \" @app\" to use a word in one app only, e.g. \"kubectl @termux\".",
+    Text("Names, jargon and brands Humming should always spell your way. One per line, e.g. \"Kubernetes\" or \"iPhone\". " +
+        "To replace what you say, write \"spoken -> written\", e.g. \"cube cuddle -> kubectl\" or \"my sig -> Best, Sam\". " +
+        "Add \" @app\" to use a line in one app only, e.g. \"kubectl @termux\".",
         fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
     OutlinedTextField(
         value = words,
