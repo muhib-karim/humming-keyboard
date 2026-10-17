@@ -51,7 +51,18 @@ public enum TextCleanup {
         (re("\\s*\\bnew paragraph\\b\\s*"), "\n\n"),
         (re("\\s*\\bnew line\\b\\s*"), "\n"),
         (re("\\s*\\bcomma\\b"), ","),
+        // 1.7: the same additions as Android and desktop. "period" and "dash" stay out: too often meant as words.
+        (re("\\s*\\bsemicolon\\b"), ";"),
+        (re("\\s*\\bcolon\\b"), ":"),
+        (re("\\s*\\b(?:open|begin) quotes?\\b\\s*"), " \""),
+        (re("\\s*\\b(?:(?:close|end) quotes?|unquote)\\b"), "\""),
+        (re("\\s*\\bopen (?:bracket|paren|parenthesis)\\b\\s*"), " ("),
+        (re("\\s*\\bclose (?:bracket|paren|parenthesis)\\b"), ")"),
+        (re("\\s*\\b(?:ellipsis|dot dot dot)\\b"), "..."),
     ]
+    // "delete last word" / "scratch the last word" removes the word said before it (or just itself at the start).
+    private static let deleteWord = re("[\\p{L}\\p{N}'\u{2019}]+[,.!?]?\\s+(?:delete|scratch|remove) (?:the )?last word\\b[,.!?]?")
+    private static let deleteWordStart = re("^\\s*(?:delete|scratch|remove) (?:the )?last word\\b[,.!?]?\\s*")
 
     // Accuracy mode (strict): hedge words that are only filler when set off by commas, extra hesitation sounds,
     // a spoken "period" at the very end, and doubled punctuation.
@@ -83,6 +94,7 @@ public enum TextCleanup {
         if strict { t = sub(t, strictFiller, "") }
         t = sub(t, youKnow, " ")
         for (r, rep) in spoken { t = sub(t, r, NSRegularExpression.escapedTemplate(for: rep)) }
+        t = deleteLastWord(t)
         if strict {
             t = sub(t, strictPeriod, ".")
             t = sub(t, strictTrailing, "")
@@ -209,13 +221,25 @@ public enum TextCleanup {
         return t
     }
 
+    /// "I love cats delete last word dogs" → "I love dogs"; repeated commands remove one word each.
+    public static func deleteLastWord(_ input: String) -> String {
+        var t = input
+        for _ in 0..<5 {
+            let next = sub(sub(t, deleteWord, ""), deleteWordStart, "")
+            if next == t { break }
+            t = next
+        }
+        return t
+    }
+
     /// Spacing around punctuation, standalone "i", sentence capitals, and a final mark when one is missing.
     public static func finish(_ input: String) -> String {
         var t = collapseSpaces(input)
         t = sub(t, re("\\s+([,.?!;:])", false), "$1")
         t = sub(t, re("([,;:])(?=[^\\s\\d])", false), "$1 ")
         t = sub(t, re("(?<!\(W))i(?!\(W))", false), "I")
-        t = subFn(t, re("(^|[.?!]\\s+|\\n)(\\p{Ll})", false)) { g in g[1] + g[2].uppercased() }
+        // A sentence may open with a quote or bracket ("\"hello" → "\"Hello").
+        t = subFn(t, re("(^|[.?!]\\s+|\\n)([\"(]?)(\\p{Ll})", false)) { g in g[1] + g[2] + g[3].uppercased() }
         if let last = t.last, last.isLetter || last.isNumber || last == "'" || last == "\"" {
             let tNs = t as NSString
             let ends = re("[.?!]\\s+", false).matches(in: t, options: [], range: NSRange(location: 0, length: tNs.length))

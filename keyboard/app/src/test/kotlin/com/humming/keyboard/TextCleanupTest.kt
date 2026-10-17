@@ -108,4 +108,30 @@ class TextCleanupTest {
         assertEquals("", clean("um, uh"))
         assertTrue(TextCleanup.isHallucination("Thanks for watching!"))
     }
+
+    /** 1.7: more spoken punctuation, the same on desktop (text_cleanup.rs) and iOS (TextCleanup.swift). */
+    @Test fun spokenColonSemicolonQuotesBracketsEllipsis() {
+        assertEquals("Note: buy milk.", clean("note colon buy milk"))
+        assertEquals("First; second.", clean("first semicolon second"))
+        assertEquals("He said \"hi\".", clean("he said open quote hi close quote"))
+        assertEquals("\"Hello\".", clean("open quote hello end quote"))
+        assertEquals("Call me (maybe) tomorrow.", clean("call me open bracket maybe close bracket tomorrow"))
+        assertEquals("Wait...", clean("wait dot dot dot"))
+        assertEquals("Wait...", clean("wait ellipsis"))
+    }
+
+    @Test fun spokenPunctuationNeedsWholeWords() {
+        assertEquals("The colonel quotes semicolons.", clean("the colonel quotes semicolons"))
+    }
+
+    @Test fun deleteLastWord() {
+        assertEquals("I love dogs.", clean("I love cats delete last word dogs"))
+        assertEquals("I love dogs.", clean("I love big cats delete last word delete last word dogs"))
+        assertEquals("See you.", clean("see you soon. Scratch the last word."))
+    }
+
+    @Test fun deleteLastWordAlone() {
+        assertEquals("", clean("delete last word"))
+        assertEquals("Hello.", clean("delete last word hello"))
+    }
 }

@@ -105,4 +105,27 @@ final class TextCleanupTests: XCTestCase {
         XCTAssertEqual("It was, like, huge.", clean("it was, like, huge"))
         XCTAssertEqual("It was huge.", strict("it was, like, huge"))
     }
+
+    // 1.7: the same spoken punctuation and "delete last word" cases as Android's TextCleanupTest.kt.
+    func testSpokenColonSemicolonQuotesBracketsEllipsis() {
+        XCTAssertEqual("Note: buy milk.", clean("note colon buy milk"))
+        XCTAssertEqual("First; second.", clean("first semicolon second"))
+        XCTAssertEqual("He said \"hi\".", clean("he said open quote hi close quote"))
+        XCTAssertEqual("\"Hello\".", clean("open quote hello end quote"))
+        XCTAssertEqual("Call me (maybe) tomorrow.", clean("call me open bracket maybe close bracket tomorrow"))
+        XCTAssertEqual("Wait...", clean("wait dot dot dot"))
+        XCTAssertEqual("Wait...", clean("wait ellipsis"))
+    }
+
+    func testSpokenPunctuationNeedsWholeWords() {
+        XCTAssertEqual("The colonel quotes semicolons.", clean("the colonel quotes semicolons"))
+    }
+
+    func testDeleteLastWord() {
+        XCTAssertEqual("I love dogs.", clean("I love cats delete last word dogs"))
+        XCTAssertEqual("I love dogs.", clean("I love big cats delete last word delete last word dogs"))
+        XCTAssertEqual("See you.", clean("see you soon. Scratch the last word."))
+        XCTAssertEqual("", clean("delete last word"))
+        XCTAssertEqual("Hello.", clean("delete last word hello"))
+    }
 }

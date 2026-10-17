@@ -1,6 +1,6 @@
 //! Dictation cleanup: a line-for-line port of the Android keyboard's `TextCleanup.kt`, so a sentence dictated on
 //! the phone and on the desktop comes out the same. Order: drop non-speech/hallucinations -> fillers -> spoken
-//! punctuation -> leading discourse markers -> self-corrections ("3, no, 4pm" -> "4pm") -> repeated words ->
+//! punctuation and "delete last word" -> leading discourse markers -> self-corrections ("3, no, 4pm" -> "4pm") -> repeated words ->
 //! dictionary casing -> compact times -> capitals and final punctuation.
 //!
 //! Uses `fancy_regex` because the Kotlin patterns need look-around and back-references.
@@ -37,8 +37,21 @@ static SPOKEN: Lazy<Vec<(Regex, &'static str)>> = Lazy::new(|| {
         (re(r"(?i)\s*\bnew paragraph\b\s*"), "\n\n"),
         (re(r"(?i)\s*\bnew line\b\s*"), "\n"),
         (re(r"(?i)\s*\bcomma\b"), ","),
+        // 1.7: the same additions as Android and iOS. "period" and "dash" stay out: too often meant as words.
+        (re(r"(?i)\s*\bsemicolon\b"), ";"),
+        (re(r"(?i)\s*\bcolon\b"), ":"),
+        (re(r"(?i)\s*\b(?:open|begin) quotes?\b\s*"), " \""),
+        (re(r"(?i)\s*\b(?:(?:close|end) quotes?|unquote)\b"), "\""),
+        (re(r"(?i)\s*\bopen (?:bracket|paren|parenthesis)\b\s*"), " ("),
+        (re(r"(?i)\s*\bclose (?:bracket|paren|parenthesis)\b"), ")"),
+        (re(r"(?i)\s*\b(?:ellipsis|dot dot dot)\b"), "..."),
     ]
 });
+// "delete last word" / "scratch the last word" removes the word said before it (or just itself at the start).
+static DELETE_WORD: Lazy<Regex> =
+    Lazy::new(|| re(r"(?i)[\p{L}\p{N}'\x{2019}]+[,.!?]?\s+(?:delete|scratch|remove) (?:the )?last word\b[,.!?]?"));
+static DELETE_WORD_START: Lazy<Regex> =
+    Lazy::new(|| re(r"(?i)^\s*(?:delete|scratch|remove) (?:the )?last word\b[,.!?]?\s*"));
 // Accuracy mode (strict): hedge words that are only filler when set off by commas, extra hesitation sounds, a spoken
 // "period" at the very end, and doubled punctuation. Same rules as Android and iOS.
 static STRICT_FILLER: Lazy<Regex> = Lazy::new(|| re(&format!(r"(?i)(?<!{W})(?:ah+|eh+|mm+|mhm|hm+)(?!{W})[,.]?\s*")));
@@ -62,7 +75,8 @@ static TIME_AMPM: Lazy<Regex> =
 static SPACE_BEFORE_PUNCT: Lazy<Regex> = Lazy::new(|| re(r"\s+([,.?!;:])"));
 static SPACE_AFTER_PUNCT: Lazy<Regex> = Lazy::new(|| re(r"([,;:])(?=[^\s\d])"));
 static LONE_I: Lazy<Regex> = Lazy::new(|| re(&format!(r"(?<!{W})i(?!{W})")));
-static SENTENCE_START: Lazy<Regex> = Lazy::new(|| re(r"(^|[.?!]\s+|\n)(\p{Ll})"));
+// A sentence may open with a quote or bracket ("\"hello" -> "\"Hello").
+static SENTENCE_START: Lazy<Regex> = Lazy::new(|| re(r#"(^|[.?!]\s+|\n)(["(]?)(\p{Ll})"#));
 static SENTENCE_SPLIT: Lazy<Regex> = Lazy::new(|| re(r"(?<=[.?!])\s+"));
 
 const KEEP_REPEAT: &[&str] =
@@ -118,6 +132,7 @@ pub fn apply(raw: &str, dictionary: &[String], o: Opts) -> String {
         for (r, rep) in SPOKEN.iter() {
             t = replace_all(r, &t, rep);
         }
+        t = delete_last_word(&t);
     }
     if strict {
         t = replace_all(&STRICT_PERIOD, &t, ".");
@@ -272,13 +287,28 @@ pub fn apply_dictionary(input: &str, terms: &[String]) -> String {
     t
 }
 
+/// "I love cats delete last word dogs" -> "I love dogs"; repeated commands remove one word each.
+pub fn delete_last_word(input: &str) -> String {
+    let mut t = input.to_string();
+    for _ in 0..5 {
+        let next = replace_all(&DELETE_WORD_START, &replace_all(&DELETE_WORD, &t, ""), "");
+        if next == t {
+            break;
+        }
+        t = next;
+    }
+    t
+}
+
 /// Spacing around punctuation, standalone "i", sentence capitals, and a final mark when one is missing.
 pub fn finish(input: &str) -> String {
     let mut t = collapse_spaces(input);
     t = replace_all(&SPACE_BEFORE_PUNCT, &t, "${1}");
     t = replace_all(&SPACE_AFTER_PUNCT, &t, "${1} ");
     t = replace_all(&LONE_I, &t, "I");
-    t = SENTENCE_START.replace_all(&t, |c: &Captures| format!("{}{}", &c[1], c[2].to_uppercase())).into_owned();
+    t = SENTENCE_START
+        .replace_all(&t, |c: &Captures| format!("{}{}{}", &c[1], &c[2], c[3].to_uppercase()))
+        .into_owned();
     if let Some(last) = t.chars().last() {
         if last.is_alphanumeric() || last == '\'' || last == '"' {
             let start = SENTENCE_SPLIT.find_iter(&t).filter_map(|m| m.ok()).map(|m| m.end()).last().unwrap_or(0);
@@ -372,5 +402,29 @@ mod tests {
     fn verbatim_switches() {
         let o = Opts { remove_fillers: false, voice_commands: false, self_corrections: false, strict: false };
         assert_eq!(apply("um new line", &[], o), "Um new line.");
+    }
+
+    // 1.7: the same spoken punctuation and "delete last word" cases as Android's TextCleanupTest.kt.
+    #[test]
+    fn spoken_colon_semicolon_quotes_brackets_ellipsis() {
+        assert_eq!(clean("note colon buy milk"), "Note: buy milk.");
+        assert_eq!(clean("first semicolon second"), "First; second.");
+        assert_eq!(clean("he said open quote hi close quote"), "He said \"hi\".");
+        assert_eq!(clean("open quote hello end quote"), "\"Hello\".");
+        assert_eq!(clean("call me open bracket maybe close bracket tomorrow"), "Call me (maybe) tomorrow.");
+        assert_eq!(clean("wait dot dot dot"), "Wait...");
+        assert_eq!(clean("wait ellipsis"), "Wait...");
+        assert_eq!(clean("the colonel quotes semicolons"), "The colonel quotes semicolons.");
+    }
+
+    #[test]
+    fn delete_last_word() {
+        assert_eq!(clean("I love cats delete last word dogs"), "I love dogs.");
+        assert_eq!(clean("I love big cats delete last word delete last word dogs"), "I love dogs.");
+        assert_eq!(clean("see you soon. Scratch the last word."), "See you.");
+        assert_eq!(clean("delete last word"), "");
+        assert_eq!(clean("delete last word hello"), "Hello.");
+        let o = Opts { remove_fillers: false, voice_commands: false, self_corrections: false, strict: false };
+        assert_eq!(apply("cats delete last word", &[], o), "Cats delete last word.");
     }
 }
