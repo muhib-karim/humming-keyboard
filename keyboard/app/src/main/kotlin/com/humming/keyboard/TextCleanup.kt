@@ -42,19 +42,20 @@ object TextCleanup {
         // 1.7: the same additions on desktop and iOS. "period" and "dash" stay out: too often meant as words.
         Regex("\\s*\\bsemicolon\\b", RegexOption.IGNORE_CASE) to ";",
         Regex("\\s*\\bcolon\\b", RegexOption.IGNORE_CASE) to ":",
-        Regex("\\s*\\b(?:open|begin) quotes?\\b\\s*", RegexOption.IGNORE_CASE) to " \"",
-        Regex("\\s*\\b(?:(?:close|end) quotes?|unquote)\\b", RegexOption.IGNORE_CASE) to "\"",
-        Regex("\\s*\\bopen (?:bracket|paren|parenthesis)\\b\\s*", RegexOption.IGNORE_CASE) to " (",
-        Regex("\\s*\\bclose (?:bracket|paren|parenthesis)\\b", RegexOption.IGNORE_CASE) to ")",
+        // Openers and closers also take the commas a punctuating engine puts around them, and keep a preceding line break.
+        Regex("[ \\t]*\\b(?:open|begin) quotes?\\b[,.]?\\s*", RegexOption.IGNORE_CASE) to " \"",
+        Regex("[ \\t]*,?[ \\t]*\\b(?:(?:close|end) quotes?|unquote)\\b", RegexOption.IGNORE_CASE) to "\"",
+        Regex("[ \\t]*,?[ \\t]*\\bopen (?:bracket|paren|parenthesis)\\b[,.]?\\s*", RegexOption.IGNORE_CASE) to " (",
+        Regex("[ \\t]*,?[ \\t]*\\bclose (?:bracket|paren|parenthesis)\\b", RegexOption.IGNORE_CASE) to ")",
         Regex("\\s*\\b(?:ellipsis|dot dot dot)\\b", RegexOption.IGNORE_CASE) to "...",
     )
     // "delete last word" / "scratch the last word" removes the word said before it (or just itself at the start).
     private val DELETE_WORD = Regex(
-        "[\\p{L}\\p{N}'\u2019]+[,.!?]?\\s+(?:delete|scratch|remove) (?:the )?last word\\b[,.!?]?",
+        "[\\p{L}\\p{N}'\u2019]+[,.!?]?\\s+(?:delete|scratch) (?:the )?last word\\b[,.!?]?",
         RegexOption.IGNORE_CASE,
     )
     private val DELETE_WORD_START =
-        Regex("^\\s*(?:delete|scratch|remove) (?:the )?last word\\b[,.!?]?\\s*", RegexOption.IGNORE_CASE)
+        Regex("^\\s*(?:delete|scratch) (?:the )?last word\\b[,.!?]?\\s*", RegexOption.IGNORE_CASE)
     // Accuracy mode (strict): hedge words that are only filler when set off by commas, extra hesitation sounds,
     // a spoken "period" at the very end, and doubled punctuation. Same rules as desktop and iOS.
     private val STRICT_FILLER = Regex("(?<!$W)(?:ah+|eh+|mm+|mhm|hm+)(?!$W)[,.]?\\s*", RegexOption.IGNORE_CASE)
@@ -213,6 +214,7 @@ object TextCleanup {
     /** Spacing around punctuation, standalone "i", sentence capitals, and a final mark when one is missing. */
     fun finish(input: String): String {
         var t = collapseSpaces(input)
+        t = t.replace(Regex("\\n[ \\t]+"), "\n")
         t = t.replace(Regex("\\s+([,.?!;:])"), "$1")
         t = t.replace(Regex("([,;:])(?=[^\\s\\d])"), "$1 ")
         t = t.replace(Regex("(?<!$W)i(?!$W)"), "I")

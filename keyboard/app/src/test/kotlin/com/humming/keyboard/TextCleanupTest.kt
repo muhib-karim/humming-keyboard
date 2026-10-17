@@ -134,4 +134,12 @@ class TextCleanupTest {
         assertEquals("", clean("delete last word"))
         assertEquals("Hello.", clean("delete last word hello"))
     }
+
+    /** Review fixes: a line break before an opener survives; engine commas around the commands are absorbed. */
+    @Test fun openersKeepLineBreaksAndAbsorbEngineCommas() {
+        assertEquals("First line\n\"Hello\".", clean("first line new line open quote hello close quote"))
+        assertEquals("He said, \"hi\".", clean("He said, open quote, hi, close quote."))
+        assertEquals("Call me (maybe), tomorrow.", clean("Call me, open bracket, maybe, close bracket, tomorrow."))
+        assertEquals("Can you remove the last word of the title?", clean("can you remove the last word of the title"))
+    }
 }

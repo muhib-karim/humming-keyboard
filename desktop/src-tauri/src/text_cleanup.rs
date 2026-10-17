@@ -40,18 +40,19 @@ static SPOKEN: Lazy<Vec<(Regex, &'static str)>> = Lazy::new(|| {
         // 1.7: the same additions as Android and iOS. "period" and "dash" stay out: too often meant as words.
         (re(r"(?i)\s*\bsemicolon\b"), ";"),
         (re(r"(?i)\s*\bcolon\b"), ":"),
-        (re(r"(?i)\s*\b(?:open|begin) quotes?\b\s*"), " \""),
-        (re(r"(?i)\s*\b(?:(?:close|end) quotes?|unquote)\b"), "\""),
-        (re(r"(?i)\s*\bopen (?:bracket|paren|parenthesis)\b\s*"), " ("),
-        (re(r"(?i)\s*\bclose (?:bracket|paren|parenthesis)\b"), ")"),
+        // Openers and closers also take the commas a punctuating engine puts around them, and keep a preceding line break.
+        (re(r"(?i)[ \t]*\b(?:open|begin) quotes?\b[,.]?\s*"), " \""),
+        (re(r"(?i)[ \t]*,?[ \t]*\b(?:(?:close|end) quotes?|unquote)\b"), "\""),
+        (re(r"(?i)[ \t]*,?[ \t]*\bopen (?:bracket|paren|parenthesis)\b[,.]?\s*"), " ("),
+        (re(r"(?i)[ \t]*,?[ \t]*\bclose (?:bracket|paren|parenthesis)\b"), ")"),
         (re(r"(?i)\s*\b(?:ellipsis|dot dot dot)\b"), "..."),
     ]
 });
 // "delete last word" / "scratch the last word" removes the word said before it (or just itself at the start).
 static DELETE_WORD: Lazy<Regex> =
-    Lazy::new(|| re(r"(?i)[\p{L}\p{N}'\x{2019}]+[,.!?]?\s+(?:delete|scratch|remove) (?:the )?last word\b[,.!?]?"));
+    Lazy::new(|| re(r"(?i)[\p{L}\p{N}'\x{2019}]+[,.!?]?\s+(?:delete|scratch) (?:the )?last word\b[,.!?]?"));
 static DELETE_WORD_START: Lazy<Regex> =
-    Lazy::new(|| re(r"(?i)^\s*(?:delete|scratch|remove) (?:the )?last word\b[,.!?]?\s*"));
+    Lazy::new(|| re(r"(?i)^\s*(?:delete|scratch) (?:the )?last word\b[,.!?]?\s*"));
 // Accuracy mode (strict): hedge words that are only filler when set off by commas, extra hesitation sounds, a spoken
 // "period" at the very end, and doubled punctuation. Same rules as Android and iOS.
 static STRICT_FILLER: Lazy<Regex> = Lazy::new(|| re(&format!(r"(?i)(?<!{W})(?:ah+|eh+|mm+|mhm|hm+)(?!{W})[,.]?\s*")));
@@ -72,6 +73,7 @@ static NORM_STRIP: Lazy<Regex> = Lazy::new(|| re(r"[^\p{L}\p{N}\s]"));
 static DOUBLE_PAIR: Lazy<Regex> = Lazy::new(|| re(r"(?i)\b(\p{L}+ \p{L}+) \1\b"));
 static TIME_AMPM: Lazy<Regex> =
     Lazy::new(|| re(r"(?<![\p{L}\p{N}])(\d{1,2}(?::\d{2})?)\s?([AaPp])\.?\s?[Mm](?=[\s,.;!?]|$)"));
+static NEWLINE_INDENT: Lazy<Regex> = Lazy::new(|| re(r"\n[ \t]+"));
 static SPACE_BEFORE_PUNCT: Lazy<Regex> = Lazy::new(|| re(r"\s+([,.?!;:])"));
 static SPACE_AFTER_PUNCT: Lazy<Regex> = Lazy::new(|| re(r"([,;:])(?=[^\s\d])"));
 static LONE_I: Lazy<Regex> = Lazy::new(|| re(&format!(r"(?<!{W})i(?!{W})")));
@@ -303,6 +305,7 @@ pub fn delete_last_word(input: &str) -> String {
 /// Spacing around punctuation, standalone "i", sentence capitals, and a final mark when one is missing.
 pub fn finish(input: &str) -> String {
     let mut t = collapse_spaces(input);
+    t = replace_all(&NEWLINE_INDENT, &t, "\n");
     t = replace_all(&SPACE_BEFORE_PUNCT, &t, "${1}");
     t = replace_all(&SPACE_AFTER_PUNCT, &t, "${1} ");
     t = replace_all(&LONE_I, &t, "I");
@@ -426,5 +429,13 @@ mod tests {
         assert_eq!(clean("delete last word hello"), "Hello.");
         let o = Opts { remove_fillers: false, voice_commands: false, self_corrections: false, strict: false };
         assert_eq!(apply("cats delete last word", &[], o), "Cats delete last word.");
+    }
+
+    #[test]
+    fn openers_keep_line_breaks_and_absorb_engine_commas() {
+        assert_eq!(clean("first line new line open quote hello close quote"), "First line\n\"Hello\".");
+        assert_eq!(clean("He said, open quote, hi, close quote."), "He said, \"hi\".");
+        assert_eq!(clean("Call me, open bracket, maybe, close bracket, tomorrow."), "Call me (maybe), tomorrow.");
+        assert_eq!(clean("can you remove the last word of the title"), "Can you remove the last word of the title?");
     }
 }

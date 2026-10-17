@@ -20,7 +20,7 @@ object DictationJoin {
         "the", "a", "an", "and", "but", "or", "so", "then", "if", "when", "because", "as", "to", "for", "of", "in",
         "on", "at", "by", "with", "from", "about", "that", "this", "these", "those", "it", "its", "it's", "we", "you",
         "they", "he", "she", "them", "us", "our", "your", "their", "my", "me", "him", "her", "is", "are", "was",
-        "were", "be", "been", "will", "would", "can", "could", "should", "do", "does", "did", "have", "has", "had",
+        "were", "be", "been", "would", "can", "could", "should", "do", "does", "did", "have", "has", "had",
         "not", "no", "yes", "maybe", "also", "just", "please", "thanks", "there", "here", "what", "which", "who",
         "how", "why", "where", "all", "some", "any", "more", "very", "really", "let's", "we're", "you're", "they're",
     )

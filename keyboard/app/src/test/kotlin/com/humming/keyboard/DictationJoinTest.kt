@@ -26,7 +26,8 @@ class DictationJoinTest {
         assertEquals("I agree.", DictationJoin.adapt("Honestly", "I agree."))
         assertEquals("I'm in.", DictationJoin.adapt("Count me", "I'm in."))
         assertEquals("NASA called.", DictationJoin.adapt("Guess what", "NASA called."))
-        assertEquals("Will to call.", DictationJoin.adapt("ask", "Will to call.", dictionary = listOf("Will")))
+        assertEquals("Will called.", DictationJoin.adapt("guess who", "Will called.")) // a name, not the verb
+        assertEquals("Just Eat delivered.", DictationJoin.adapt("ordered from", "Just Eat delivered.", dictionary = listOf("Just")))
     }
 
     @Test fun dropsPeriodBeforeContinuation() {

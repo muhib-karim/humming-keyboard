@@ -54,15 +54,16 @@ public enum TextCleanup {
         // 1.7: the same additions as Android and desktop. "period" and "dash" stay out: too often meant as words.
         (re("\\s*\\bsemicolon\\b"), ";"),
         (re("\\s*\\bcolon\\b"), ":"),
-        (re("\\s*\\b(?:open|begin) quotes?\\b\\s*"), " \""),
-        (re("\\s*\\b(?:(?:close|end) quotes?|unquote)\\b"), "\""),
-        (re("\\s*\\bopen (?:bracket|paren|parenthesis)\\b\\s*"), " ("),
-        (re("\\s*\\bclose (?:bracket|paren|parenthesis)\\b"), ")"),
+        // Openers and closers also take the commas a punctuating engine puts around them, and keep a preceding line break.
+        (re("[ \\t]*\\b(?:open|begin) quotes?\\b[,.]?\\s*"), " \""),
+        (re("[ \\t]*,?[ \\t]*\\b(?:(?:close|end) quotes?|unquote)\\b"), "\""),
+        (re("[ \\t]*,?[ \\t]*\\bopen (?:bracket|paren|parenthesis)\\b[,.]?\\s*"), " ("),
+        (re("[ \\t]*,?[ \\t]*\\bclose (?:bracket|paren|parenthesis)\\b"), ")"),
         (re("\\s*\\b(?:ellipsis|dot dot dot)\\b"), "..."),
     ]
     // "delete last word" / "scratch the last word" removes the word said before it (or just itself at the start).
-    private static let deleteWord = re("[\\p{L}\\p{N}'\u{2019}]+[,.!?]?\\s+(?:delete|scratch|remove) (?:the )?last word\\b[,.!?]?")
-    private static let deleteWordStart = re("^\\s*(?:delete|scratch|remove) (?:the )?last word\\b[,.!?]?\\s*")
+    private static let deleteWord = re("[\\p{L}\\p{N}'\u{2019}]+[,.!?]?\\s+(?:delete|scratch) (?:the )?last word\\b[,.!?]?")
+    private static let deleteWordStart = re("^\\s*(?:delete|scratch) (?:the )?last word\\b[,.!?]?\\s*")
 
     // Accuracy mode (strict): hedge words that are only filler when set off by commas, extra hesitation sounds,
     // a spoken "period" at the very end, and doubled punctuation.
@@ -235,6 +236,7 @@ public enum TextCleanup {
     /// Spacing around punctuation, standalone "i", sentence capitals, and a final mark when one is missing.
     public static func finish(_ input: String) -> String {
         var t = collapseSpaces(input)
+        t = sub(t, re("\\n[ \\t]+", false), "\n")
         t = sub(t, re("\\s+([,.?!;:])", false), "$1")
         t = sub(t, re("([,;:])(?=[^\\s\\d])", false), "$1 ")
         t = sub(t, re("(?<!\(W))i(?!\(W))", false), "I")

@@ -128,4 +128,11 @@ final class TextCleanupTests: XCTestCase {
         XCTAssertEqual("", clean("delete last word"))
         XCTAssertEqual("Hello.", clean("delete last word hello"))
     }
+
+    func testOpenersKeepLineBreaksAndAbsorbEngineCommas() {
+        XCTAssertEqual("First line\n\"Hello\".", clean("first line new line open quote hello close quote"))
+        XCTAssertEqual("He said, \"hi\".", clean("He said, open quote, hi, close quote."))
+        XCTAssertEqual("Call me (maybe), tomorrow.", clean("Call me, open bracket, maybe, close bracket, tomorrow."))
+        XCTAssertEqual("Can you remove the last word of the title?", clean("can you remove the last word of the title"))
+    }
 }
