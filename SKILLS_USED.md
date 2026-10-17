@@ -42,3 +42,7 @@ was driven directly instead. **brand** and **canvas-design** were not invoked. T
 - A standalone `w` before a vowel writes ওআ (Avro writes ওয়া).
 - `text_cleanup.rs` uses `\x{2019}` inside a character class; a literal ’ would remove any doubt.
 - Review Focus item 1 is tested at the transliterate level, not through the suggestion provider.
+
+## Cross-model review fixes
+
+- Fix 1 — Gate Pages feed verification independently; skill: test-driven-development; reviewer: Codex GPT-6 Astra cross-model review. Python workflow regression tests: 2 failures before the fix, 11/11 passing after (local fixtures, no network).

@@ -6,7 +6,7 @@
 HUMMING_ROOT points the script at a fake repository (versions, changelog); HUMMING_RELEASE_DRY_RUN=1 skips the minisign
 check, which needs real signatures. Neither is ever set in CI's real assembly step.
 """
-import json, os, subprocess, sys, tempfile, unittest
+import json, os, re, subprocess, sys, tempfile, unittest
 
 SCRIPT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assemble_release.py")
 
@@ -136,6 +136,68 @@ class AssembleReleaseTest(unittest.TestCase):
         r = self.run_script("1.7.0-rc1")
         self.assertNotEqual(r.returncode, 0)
         self.assertIn("more than one", r.stdout)
+
+    def check_pages_feeds(self, feeds):
+        # Execute the workflow's verification bodies with network/package operations replaced by local fixtures.
+        workflow = os.path.join(os.path.dirname(SCRIPT), "../.github/workflows/pages.yml")
+        with open(workflow, encoding="utf-8") as fh:
+            steps = re.split(r"^      - ", fh.read(), flags=re.M)
+        for feed in feeds:
+            write(os.path.join(self.root, "_site/updates", feed), "{}")
+        log = os.path.join(self.root, "requests")
+        write(log, "")
+        env = dict(os.environ, GITHUB_STEP_SUMMARY=os.path.join(self.root, "summary"), REQUESTS=log)
+        stubs = r'''
+pip() { :; }
+sleep() { :; }
+curl() {
+  local url="${@: -1}" feed
+  feed="${url##*/}"
+  echo "$feed" >> "$REQUESTS"
+  test -f "_site/updates/$feed"
+}
+python3() {
+  test "$1" = scripts/verify_updater.py
+  echo "verified desktop signature" >> "$REQUESTS"
+  test -f _site/updates/latest.json
+}
+'''
+        for step in steps:
+            if "scripts/verify_updater.py --config" not in step and 'curl -fsS "$BASE/android.json"' not in step:
+                continue
+            gate = re.search(r"if: hashFiles\('([^']+)'\) != ''", step)
+            self.assertIsNotNone(gate, step)
+            if not os.path.isfile(os.path.join(self.root, gate[1])):
+                continue
+            body = step.split("        run: |\n", 1)[1]
+            body = "\n".join(line[10:] for line in body.splitlines())
+            body = body.replace("${{ steps.deployment.outputs.page_url }}", "https://example.invalid/")
+            r = subprocess.run(["bash", "-c", stubs + body], cwd=self.root, env=env,
+                               capture_output=True, text=True)
+            self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+        with open(log) as fh:
+            requests = fh.read().splitlines()
+        expected = set(feeds)
+        if "latest.json" in feeds:
+            expected.add("verified desktop signature")
+        self.assertEqual(set(requests), expected)
+
+    def test_pages_stable_release_without_android_verifies_desktop_only(self):
+        self.artifacts(skip=("android",))
+        r = self.run_script("1.7.0", "--allow-missing", "android")
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+        self.assertFalse(os.path.exists(os.path.join(self.out, "android.json")))
+        self.assertTrue(os.path.exists(os.path.join(self.out, "latest.json")))
+        self.check_pages_feeds(("latest.json",))
+
+    def test_pages_android_only_release_verifies_android(self):
+        self.check_pages_feeds(("android.json",))
+
+    def test_pages_verifies_both_available_feeds(self):
+        self.check_pages_feeds(("latest.json", "android.json"))
+
+    def test_pages_without_feeds_skips_verification(self):
+        self.check_pages_feeds(())
 
 
 if __name__ == "__main__":

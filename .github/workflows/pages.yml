@@ -65,7 +65,7 @@ jobs:
           path: _site
       - id: deployment
         uses: actions/deploy-pages@v4
-      - name: Check the live update feeds (signatures against the app's public key)
+      - name: Check the live desktop update feed (signatures against the app's public key)
         if: hashFiles('_site/updates/latest.json') != ''
         run: |
           set -euo pipefail
@@ -74,4 +74,10 @@ jobs:
           for i in 1 2 3 4 5 6; do curl -fsS -o /dev/null "$BASE/latest.json" && break; sleep 20; done
           python3 scripts/verify_updater.py --config desktop/src-tauri/tauri.conf.json --latest "$BASE/latest.json" --download \
             | tee -a "$GITHUB_STEP_SUMMARY"
+      - name: Check the live Android update feed
+        if: hashFiles('_site/updates/android.json') != ''
+        run: |
+          set -euo pipefail
+          BASE="${{ steps.deployment.outputs.page_url }}updates"
+          for i in 1 2 3 4 5 6; do curl -fsS -o /dev/null "$BASE/android.json" && break; sleep 20; done
           curl -fsS "$BASE/android.json" | tee -a "$GITHUB_STEP_SUMMARY"
