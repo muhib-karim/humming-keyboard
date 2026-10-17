@@ -33,6 +33,16 @@ class ListFormatTest {
     @Test fun textAfterAListFollowsIt() =
         assertEquals("To do:\n- Milk\n\nThanks.", ListFormat.apply("To do bullet point milk.\n\nThanks."))
 
+    @Test fun paragraphsEndListsBeforeLaterMarkers() {
+        assertEquals("- Eggs\n\nThanks.\n\n- Milk",
+            ListFormat.apply("Bullet point eggs.\n\nThanks.\n\nBullet point milk."))
+        assertEquals("- Eggs\n \t\nThanks.\n\n- Milk",
+            ListFormat.apply("Bullet point eggs.\n \t\nThanks.\n\nBullet point milk."))
+        assertEquals("- Eggs\n- Bread\n\nThanks.\n\n- Milk\n- Tea",
+            ListFormat.apply("First, eggs, second, bread.\n\nThanks.\n\nFirst, milk, second, tea."))
+        assertNull(ListFormat.spokenList("First, eggs.\n\nSecond, milk."))
+    }
+
     @Test fun spokenList() = assertEquals(
         "The list is:\n- Eggs\n- Milk\n- Bread",
         ListFormat.apply("The list is first, eggs, second, milk, third, bread."),

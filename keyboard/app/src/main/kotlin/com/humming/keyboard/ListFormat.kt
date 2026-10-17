@@ -10,6 +10,7 @@ package com.humming.keyboard
  * Same rules on desktop (`text_cleanup.rs`) and iOS (`ListFormat.swift`).
  */
 object ListFormat {
+    private val PARAGRAPH = Regex("\\r?\\n[ \\t\\r]*\\n")
     private val BULLET = Regex(
         "[ \\t]*[,;:]?[ \\t]*\\b(?:(?:next|new) bullet(?: point)?|bullet point)\\b[,.;:]?[ \\t]*",
         RegexOption.IGNORE_CASE,
@@ -28,6 +29,14 @@ object ListFormat {
 
     /** The text with "bullet point" items as "- " lines, or null when it has no (non-empty) item. */
     fun bullets(text: String): String? {
+        val paragraph = PARAGRAPH.find(text)
+        if (paragraph != null) {
+            val head = text.substring(0, paragraph.range.first)
+            val tail = text.substring(paragraph.range.last + 1)
+            val a = bullets(head)
+            val b = bullets(tail)
+            return if (a == null && b == null) null else (a ?: head) + paragraph.value + (b ?: tail)
+        }
         val parts = mutableListOf<String>()
         var from = 0
         for (m in BULLET.findAll(text)) {
@@ -63,6 +72,14 @@ object ListFormat {
 
     /** "The list is first, eggs, second, milk." → "The list is:\n- Eggs\n- Milk", or null when it is not a list. */
     fun spokenList(text: String): String? {
+        val paragraph = PARAGRAPH.find(text)
+        if (paragraph != null) {
+            val head = text.substring(0, paragraph.range.first)
+            val tail = text.substring(paragraph.range.last + 1)
+            val a = spokenList(head)
+            val b = spokenList(tail)
+            return if (a == null && b == null) null else (a ?: head) + paragraph.value + (b ?: tail)
+        }
         // A marker after "a", "the"... is prose ("give me a second").
         val marks = LIST_MARKER.findAll(text).filter { m ->
             text.substring(0, m.groups[1]!!.range.first).trim().split(Regex("\\s+")).last().lowercase() !in NOT_AFTER

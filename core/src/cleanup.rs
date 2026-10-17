@@ -314,6 +314,16 @@ fn restart_sentence(text: &str) -> String {
 /// "The list is first, eggs, second, milk, third, bread." -> "The list is:\n- Eggs\n- Milk\n- Bread".
 /// Needs an opening marker (first / number one) AND a second one, so a lone "first" in prose is left alone.
 pub fn format_spoken_list(text: &str) -> Option<String> {
+    static PARAGRAPH: Lazy<Regex> = Lazy::new(|| re(r"\r?\n[ \t\r]*\n"));
+    if let Some(m) = PARAGRAPH.find(text) {
+        let (head, tail) = (&text[..m.start()], &text[m.end()..]);
+        let (a, b) = (format_spoken_list(head), format_spoken_list(tail));
+        return if a.is_none() && b.is_none() {
+            None
+        } else {
+            Some(format!("{}{}{}", a.as_deref().unwrap_or(head), m.as_str(), b.as_deref().unwrap_or(tail)))
+        };
+    }
     // A marker after "a", "the"... is prose ("give me a second"), as in the Android and iOS ListFormat.
     const PROSE_BEFORE: &[&str] = &[
         "a", "an", "the", "this", "that", "these", "those", "each", "every", "another", "my", "your", "his", "her", "its",
@@ -657,5 +667,14 @@ mod tests {
     fn list_needs_two_markers_with_commas() {
         assert_eq!(c("first line new line second line"), "First line\nSecond line.");
         assert_eq!(c("first, we eat."), "First, we eat.");
+    }
+
+    #[test]
+    fn paragraphs_end_spoken_lists_before_later_markers() {
+        assert_eq!(
+            format_spoken_list("First, eggs, second, bread.\n\nThanks.\n\nFirst, milk, second, tea.").as_deref(),
+            Some("- Eggs\n- Bread\n\nThanks.\n\n- Milk\n- Tea")
+        );
+        assert_eq!(format_spoken_list("First, eggs.\n\nSecond, milk."), None);
     }
 }

@@ -34,6 +34,16 @@ final class ListFormatTests: XCTestCase {
         XCTAssertEqual("To do:\n- Milk\n\nThanks.", ListFormat.apply("To do bullet point milk.\n\nThanks."))
     }
 
+    func testParagraphsEndListsBeforeLaterMarkers() {
+        XCTAssertEqual("- Eggs\n\nThanks.\n\n- Milk",
+                       ListFormat.apply("Bullet point eggs.\n\nThanks.\n\nBullet point milk."))
+        XCTAssertEqual("- Eggs\n \t\nThanks.\n\n- Milk",
+                       ListFormat.apply("Bullet point eggs.\n \t\nThanks.\n\nBullet point milk."))
+        XCTAssertEqual("- Eggs\n- Bread\n\nThanks.\n\n- Milk\n- Tea",
+                       ListFormat.apply("First, eggs, second, bread.\n\nThanks.\n\nFirst, milk, second, tea."))
+        XCTAssertNil(ListFormat.spokenList("First, eggs.\n\nSecond, milk."))
+    }
+
     func testSpokenList() {
         XCTAssertEqual("The list is:\n- Eggs\n- Milk\n- Bread", ListFormat.apply("The list is first, eggs, second, milk, third, bread."))
         XCTAssertEqual("- Call Sam\n- Book the room", ListFormat.apply("Number one, call Sam, number two, book the room."))

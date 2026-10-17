@@ -216,6 +216,16 @@ fn capitalize(s: &str) -> String {
 /// "Groceries bullet point eggs bullet point milk." -> "Groceries:\n- Eggs\n- Milk"; None when there is no item.
 /// The last item ends at its line break and the rest of the text follows the list.
 pub fn bullet_list(text: &str) -> Option<String> {
+    static PARAGRAPH: Lazy<Regex> = Lazy::new(|| re(r"\r?\n[ \t\r]*\n"));
+    if let Some(m) = PARAGRAPH.find(text).ok().flatten() {
+        let (head, tail) = (&text[..m.start()], &text[m.end()..]);
+        let (a, b) = (bullet_list(head), bullet_list(tail));
+        return if a.is_none() && b.is_none() {
+            None
+        } else {
+            Some(format!("{}{}{}", a.as_deref().unwrap_or(head), m.as_str(), b.as_deref().unwrap_or(tail)))
+        };
+    }
     let mut parts: Vec<&str> = Vec::new();
     let mut from = 0;
     for m in BULLET.find_iter(text).filter_map(|m| m.ok()) {
@@ -592,6 +602,18 @@ mod tests {
         assert_eq!(bullet_list("The second bullet point is wrong."), None);
         assert_eq!(bullet_list("Fix the bullet point on slide two."), None);
         assert_eq!(bullet_list("See you soon."), None);
+    }
+
+    #[test]
+    fn paragraphs_end_lists_before_later_markers() {
+        assert_eq!(
+            bullet_list("Bullet point eggs.\n\nThanks.\n\nBullet point milk.").as_deref(),
+            Some("- Eggs\n\nThanks.\n\n- Milk")
+        );
+        assert_eq!(
+            bullet_list("Bullet point eggs.\n \t\nThanks.\n\nBullet point milk.").as_deref(),
+            Some("- Eggs\n \t\nThanks.\n\n- Milk")
+        );
     }
 
     #[test]

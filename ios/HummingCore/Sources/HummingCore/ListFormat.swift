@@ -8,6 +8,7 @@ import Foundation
 /// - A spoken list ("first, eggs, second, milk" / "number one, ..., number two, ...") becomes bullets too; it needs an
 ///   opener and a second marker, so a lone "first" in prose is left alone.
 public enum ListFormat {
+    private static let paragraph = try! NSRegularExpression(pattern: "\\r?\\n[ \\t\\r]*\\n")
     private static let bullet = try! NSRegularExpression(
         pattern: "[ \\t]*[,;:]?[ \\t]*\\b(?:(?:next|new) bullet(?: point)?|bullet point)\\b[,.;:]?[ \\t]*", options: [.caseInsensitive])
     private static let notAfter: Set<String> = [
@@ -24,6 +25,12 @@ public enum ListFormat {
     /// The text with "bullet point" items as "- " lines, or nil when it has no (non-empty) item.
     public static func bullets(_ text: String) -> String? {
         let ns = text as NSString
+        if let m = paragraph.firstMatch(in: text, range: NSRange(location: 0, length: ns.length)) {
+            let head = ns.substring(to: m.range.location)
+            let tail = ns.substring(from: NSMaxRange(m.range))
+            let a = bullets(head), b = bullets(tail)
+            return a == nil && b == nil ? nil : (a ?? head) + ns.substring(with: m.range) + (b ?? tail)
+        }
         var parts: [String] = []
         var from = 0
         for m in bullet.matches(in: text, options: [], range: NSRange(location: 0, length: ns.length)) {
@@ -68,6 +75,12 @@ public enum ListFormat {
     /// "The list is first, eggs, second, milk." → "The list is:\n- Eggs\n- Milk", or nil when it is not a list.
     public static func spokenList(_ text: String) -> String? {
         let ns = text as NSString
+        if let m = paragraph.firstMatch(in: text, range: NSRange(location: 0, length: ns.length)) {
+            let head = ns.substring(to: m.range.location)
+            let tail = ns.substring(from: NSMaxRange(m.range))
+            let a = spokenList(head), b = spokenList(tail)
+            return a == nil && b == nil ? nil : (a ?? head) + ns.substring(with: m.range) + (b ?? tail)
+        }
         // A marker after "a", "the"... is prose ("give me a second").
         let marks: [(start: Int, end: Int, word: String)] =
             listMarker.matches(in: text, options: [], range: NSRange(location: 0, length: ns.length)).filter { m in
