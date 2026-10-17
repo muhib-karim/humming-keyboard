@@ -174,7 +174,7 @@ spellings and phrase replacements, and has a clean-up tester.
 
 | Platform | How to update |
 |---|---|
-| Android (APK) | **Settings > Updates**. "Check for updates automatically" and "Download and install updates automatically" are on by default; Humming checks at most every 6 hours and downloads on Wi-Fi. It verifies the APK's SHA-256 and signing certificate, then Android asks you to confirm with one tap. The first time, allow Humming to install apps. **Check for updates** checks now. |
+| Android (APK) | **Settings > Updates**. "Check for updates automatically" and "Download and install updates automatically" are off by default; when you turn them on, Humming checks at most every 6 hours and downloads on Wi-Fi. It verifies the APK's SHA-256 and signing certificate, then Android always asks you to confirm with one tap. The first time, allow Humming to install apps. **Check for updates** checks now. |
 | Android (Google Play) | Play installs updates. |
 | Windows, Linux AppImage, macOS (from its first 1.6 build) | **Settings > Updates**. With **Automatically install updates** on (default), Humming installs signed updates and restarts, never in the middle of a dictation. Off: **Install now** appears when an update is available. |
 | Linux .deb | Humming tells you a new version is out; install the new `.deb` yourself, or use the AppImage for automatic updates. |

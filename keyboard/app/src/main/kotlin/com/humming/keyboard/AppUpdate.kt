@@ -8,10 +8,10 @@
  *     own), computes its SHA-256 and compares it with the line for that file in the release's SHA256SUMS.txt.
  *  3. Reads the downloaded APK's signing certificate and installs it only if it is Humming's release certificate
  *     (SHA-256 8C:8B:...:1F:C6, the same one CI checks) and the package name and versionCode are what the feed said.
- *  4. Hands the APK to Android's PackageInstaller. Android shows its own "Update this app?" confirmation for an app
- *     installed outside the Play Store; nothing here can or tries to skip that. On Android 12+ the session asks for
- *     USER_ACTION_NOT_REQUIRED, so once Humming has installed an update itself, Android may install the next ones
- *     without asking: Android decides, not Humming.
+ *  4. Hands the APK to Android's PackageInstaller. The session asks for USER_ACTION_REQUIRED (Android 12+), so
+ *     Android always shows its own "Update this app?" confirmation; no update is ever installed without the user's tap.
+ * The background check and the automatic download are OFF by default (opt in under Settings > Updates); "Check for
+ * updates" in Settings always works.
  * Builds made for Google Play (BuildConfig.SELF_UPDATE = false) never run any of this: Play updates them.
  */
 package com.humming.keyboard
@@ -44,6 +44,11 @@ import java.util.Locale
 
 /** Pure parts of the updater, unit-tested in AppUpdateTest (no Android, no network). */
 object UpdatePolicy {
+    /** Background update checks are opt-in. */
+    const val AUTO_CHECK_DEFAULT = false
+    /** Automatic downloads are opt-in. */
+    const val AUTO_DOWNLOAD_DEFAULT = false
+
     data class Release(val versionCode: Int, val versionName: String, val apk: String, val notes: String)
 
     /** Humming's release (upload) certificate, SHA-256, as published and checked by the android-release workflow. */
@@ -118,8 +123,8 @@ object AppUpdate {
 
     val enabled: Boolean get() = dev.patrickgold.florisboard.BuildConfig.SELF_UPDATE
 
-    fun autoCheck(ctx: Context): Boolean = Prefs.get(ctx).getBoolean(KEY_AUTO_CHECK, true)
-    fun autoDownload(ctx: Context): Boolean = Prefs.get(ctx).getBoolean(KEY_AUTO_DOWNLOAD, true)
+    fun autoCheck(ctx: Context): Boolean = Prefs.get(ctx).getBoolean(KEY_AUTO_CHECK, UpdatePolicy.AUTO_CHECK_DEFAULT)
+    fun autoDownload(ctx: Context): Boolean = Prefs.get(ctx).getBoolean(KEY_AUTO_DOWNLOAD, UpdatePolicy.AUTO_DOWNLOAD_DEFAULT)
 
     fun installedVersionCode(ctx: Context): Long = runCatching {
         val pi = ctx.packageManager.getPackageInfo(ctx.packageName, 0)
@@ -319,7 +324,8 @@ object AppUpdate {
         val installer = ctx.packageManager.packageInstaller
         val params = PackageInstaller.SessionParams(PackageInstaller.SessionParams.MODE_FULL_INSTALL)
         params.setAppPackageName(ctx.packageName)
-        if (Build.VERSION.SDK_INT >= 31) params.setRequireUserAction(PackageInstaller.SessionParams.USER_ACTION_NOT_REQUIRED)
+        // Always let Android ask the user to confirm the update.
+        if (Build.VERSION.SDK_INT >= 31) params.setRequireUserAction(PackageInstaller.SessionParams.USER_ACTION_REQUIRED)
         val id = installer.createSession(params)
         installer.openSession(id).use { session ->
             session.openWrite("base.apk", 0, apk.length()).use { out ->

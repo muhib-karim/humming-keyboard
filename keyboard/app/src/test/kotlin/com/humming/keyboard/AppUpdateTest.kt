@@ -72,4 +72,17 @@ class AppUpdateTest {
         assertFalse(UpdatePolicy.mayDownload(autoDownload = false, unmetered = true, userAsked = false))
         assertTrue(UpdatePolicy.mayDownload(autoDownload = false, unmetered = false, userAsked = true))
     }
+
+    @Test
+    fun backgroundCheckAndDownloadAreOptIn() {
+        assertFalse(UpdatePolicy.AUTO_CHECK_DEFAULT)
+        assertFalse(UpdatePolicy.AUTO_DOWNLOAD_DEFAULT)
+    }
+
+    @Test
+    fun installsAlwaysAskTheUser() {
+        val src = java.io.File("src/main/kotlin/com/humming/keyboard/AppUpdate.kt").readText()
+        assertFalse("never ask Android to skip the confirmation", src.contains("USER_ACTION_NOT_REQUIRED"))
+        assertTrue(src.contains("setRequireUserAction(PackageInstaller.SessionParams.USER_ACTION_REQUIRED)"))
+    }
 }

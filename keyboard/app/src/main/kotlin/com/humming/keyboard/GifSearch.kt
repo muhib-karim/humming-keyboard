@@ -12,8 +12,8 @@ import java.net.URL
 import java.net.URLEncoder
 
 /**
- * Online GIF search for the sticker panel: OFF by default, and the only network use besides the one-time voice
- * model download (NetworkAuditTest). It runs only when the user has turned it on in Settings > Stickers & GIFs
+ * Online GIF search for the sticker panel: OFF by default. It is one of the few files allowed to use the network
+ * (NetworkAuditTest: the voice model download, this search, AI clean-up and the APK update check). It runs only when the user has turned it on in Settings > Stickers & GIFs
  * (which shows what is sent where), never in incognito unless separately allowed, and only for the words typed
  * into the sticker search box. The source is Openverse (openverse.org, WordPress Foundation), a free search of
  * openly licensed media that needs no account or API key; results are limited to CC0, public-domain and CC BY
