@@ -10,7 +10,7 @@ class ManifestHardeningTest {
     fun releaseIsNotShellProfileable() {
         val manifest = File("src/main/AndroidManifest.xml").readText()
         assertFalse(manifest.contains("<profileable android:shell=\"true\""))
-        assertTrue(manifest.contains("android:shell=\"\${'$'}{profileableShell}\""))
+        assertTrue(manifest.contains("android:shell=\"\${profileableShell}\""))
         val gradle = File("build.gradle.kts").readText()
         assertTrue(gradle.contains("manifestPlaceholders[\"profileableShell\"] = \"false\""))
     }
