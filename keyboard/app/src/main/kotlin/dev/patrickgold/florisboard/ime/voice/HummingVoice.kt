@@ -511,7 +511,7 @@ object HummingVoice {
             }
             val ms = (System.nanoTime() - started) / 1_000_000
             result.getOrNull()?.let { (text, engine) ->
-                if (text.isNotBlank() && !incognito(app)) runCatching { HistoryStore(app).add(text, engine, ms, clip) }
+                if (text.isNotBlank() && !incognito(app)) runCatching { HistoryStore(app).add(text, engine, ms, clip.durationSeconds) }
             }
             main.post {
                 result.onSuccess { (text, engine) ->

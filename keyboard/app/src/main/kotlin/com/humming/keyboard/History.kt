@@ -42,12 +42,11 @@ data class HistoryEntry(
 )
 
 /**
- * Local-only dictation history: a small JSON file plus each dictation's audio (for Retry) in app-private storage.
- * Nothing here leaves the phone.
+ * Local-only dictation history: a small JSON file of the last 500 dictations' text in app-private storage. No audio
+ * is kept (1.7.1). Nothing here leaves the phone.
  */
 class HistoryStore(private val ctx: Context) {
     private val file = File(ctx.filesDir, "history.json")
-    private val audioDir = File(ctx.filesDir, "history_audio")
 
     @Synchronized
     fun all(): List<HistoryEntry> {
@@ -67,43 +66,13 @@ class HistoryStore(private val ctx: Context) {
     }
 
     @Synchronized
-    fun add(text: String, engine: String, ms: Long, clip: AudioClip): HistoryEntry? {
+    fun add(text: String, engine: String, ms: Long, audioSeconds: Double): HistoryEntry? {
         if (Prefs.retention(ctx) == HistoryRetention.NEVER) return null
         val now = System.currentTimeMillis()
-        val entry = HistoryEntry(now, now, text, engine, ms, clip.durationSeconds)
-        audioDir.mkdirs()
-        runCatching { audioFile(entry.id).writeBytes(clip.pcm16le) }
+        val entry = HistoryEntry(now, now, text, engine, ms, audioSeconds)
         save(all() + entry)
         return entry
     }
-
-    @Synchronized
-    fun update(id: Long, text: String, engine: String, ms: Long) {
-        save(all().map { if (it.id == id) it.copy(text = text, engine = engine, ms = ms) else it })
-    }
-
-    @Synchronized
-    fun delete(id: Long) {
-        audioFile(id).delete()
-        save(all().filter { it.id != id })
-    }
-
-    fun audio(id: Long): AudioClip? =
-        audioFile(id).takeIf { it.isFile }?.let { AudioClip(it.readBytes(), WavRecorder.SAMPLE_RATE) }
-
-    /** Applies the retention setting; called at app and keyboard start. */
-    @Synchronized
-    fun prune(nowMs: Long = System.currentTimeMillis()) {
-        val setting = Prefs.retention(ctx)
-        val entries = all()
-        val kept = entries.filter { HistoryRetention.keep(it.timeMs, nowMs, setting) }
-        if (kept.size != entries.size) {
-            entries.filterNot { e -> kept.any { it.id == e.id } }.forEach { audioFile(it.id).delete() }
-            save(kept)
-        }
-    }
-
-    private fun audioFile(id: Long) = File(audioDir, "$id.pcm")
 
     private fun save(entries: List<HistoryEntry>) {
         val arr = JSONArray()
@@ -116,5 +85,13 @@ class HistoryStore(private val ctx: Context) {
         val tmp = File(file.path + ".tmp")
         tmp.writeText(arr.toString())
         tmp.renameTo(file)
+    }
+
+    companion object {
+        /**
+         * Builds before 1.7.1 saved each dictation's audio in history_audio/, which nothing could play or delete and
+         * the 500-entry cap orphaned. Removed at app start. True when the folder is gone.
+         */
+        fun dropLegacyAudio(filesDir: File): Boolean = File(filesDir, "history_audio").let { !it.exists() || it.deleteRecursively() }
     }
 }

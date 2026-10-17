@@ -33,127 +33,151 @@ A private keyboard with offline voice typing for Android, plus iPhone, Windows, 
 <sub>Captures from earlier CI runs (Android emulator in airplane mode, iOS simulator, the desktop interface) playing a
 sample sentence, because CI machines have no microphone. Sample text is made up.</sub>
 
-## Highlights
+## The problem
 
-- **Offline by default, on every platform.** NVIDIA Parakeet on sherpa-onnx on Android and desktop; Apple's on-device
-  recogniser on iPhone, with on-device recognition required (it refuses to run rather than fall back to a server).
-- **No length limit, no word caps, no account.** An hour of dictation works like ten seconds; memory stays flat. On
-  desktop no cap is set unless you choose one.
-- **Words land as you speak.** An underlined draft corrects itself in place and is typed once when you stop. Dictation
-  keeps going with the screen off.
-- **Clean text.** Clean mode removes fillers and stutters and applies self-corrections ("3, no, 4pm" → "4pm");
-  Accuracy mode also removes hedge fillers. Lists by voice, "scratch that", custom words with spoken → written
-  replacements, spoken punctuation and voice commands on all platforms.
-- **A full keyboard on Android.** Prediction in six languages with an on-device neural model for English, glide typing,
-  emoji search, stickers, clipboard history, themes, one-handed, floating and split layouts. Built on FlorisBoard.
-- **Measured accuracy.** 2.78 % (Fast) and 1.68 % (Best) word error rate on LibriSpeech test-clean, with the script
-  and raw output in this repository ([Benchmarks](#benchmarks)).
-- **Private, and checked in code.** No analytics, no ads. A unit test fails the build if any file outside a short list
-  uses a network API ([Privacy](#privacy)).
+Voice typing is the fastest way to write on a phone, but the popular options make you choose. The dictation apps
+that clean up speech well, such as Wispr Flow and Aqua Voice, run in the cloud only, so your voice leaves the device,
+and their free tiers cap the words you may dictate. Gboard's offline voice typing needs a Pixel 6 or later. Gboard,
+SwiftKey and Apple publish no accuracy figure, and the dictation apps that do measure on their own test sets.
 
-### New in 1.7 (release candidate)
+## What Humming does
 
-From the teardowns of [keyboards](COMPETITORS.md#gap-list-ranked) and [dictation apps](COMPETITORS.md#dictation-gap-list-ranked):
+Humming types what you say, on the device, on Android, iPhone, Windows, macOS and Linux.
 
-- **Dictation like the dictation apps** (Android, desktop, iPhone): say "bullet point" to start a list item, or dictate
-  "first, ... second, ..." and get bullets; "scratch that" drops the sentence before it; a custom-words line
-  `spoken -> written` replaces what you say (`cube cuddle -> kubectl`, `my sig -> Best, Sam`); filler removal has its
-  own switch, on by default.
+- **Offline by default.** NVIDIA Parakeet models on sherpa-onnx (Android, desktop) and Apple's recogniser with
+  on-device recognition required (iPhone). Speech is never sent to a server unless you switch on an opt-in online
+  feature ([Privacy](#privacy)).
+- **Clean text, not a transcript.** Fillers, stutters and self-corrections are removed ("3, no, 4pm" becomes "4pm");
+  "bullet point" starts a list, "scratch that" drops the last sentence, and custom words can replace what the
+  recogniser heard (`cube cuddle -> kubectl`). The same rules run on all three platforms.
+- **No length limit, no word cap, no account.** Text appears as an underlined draft while you speak and is typed once
+  when you stop; dictation keeps going with the screen off.
+- **A full keyboard on Android**, built on FlorisBoard: prediction in six languages, glide typing, Bangla phonetic
+  typing, emoji search, clipboard history, themes, one-handed, floating and split layouts.
+- **Free and open source** under Apache-2.0, with no ads and no analytics.
 
-- **Bangla phonetic typing**: add Bengali with a QWERTY layout and type the way Avro and Ridmik users do
-  (`ami bangla likhi` → আমি বাংলা লিখি); space or punctuation types the Bangla word, the Latin word stays one tap away.
-- **Dictation that fits the sentence**: dictating into the middle of a line lowercases a common first word, skips the
-  space after an opening bracket or quote, and drops the final period when the sentence carries on.
-- **More spoken punctuation**: "colon", "semicolon", "open/close quote", "open/close bracket", "ellipsis" and
-  "delete last word", the same on Android, desktop and iPhone.
-- **Accessibility and security**: AA contrast tokens on every platform, a 48 dp Clean/Verbatim switch with TalkBack
-  roles, and the exported "copy to clipboard" share target no longer opens Humming's own files.
+What is new in each release: [CHANGELOG.md](CHANGELOG.md).
+
+## Benchmarks
+
+Word error rate (WER: the share of words the recogniser gets wrong; lower is better) on LibriSpeech, with the exact
+model files, SHA-256 pins and decoder settings the apps ship. Measured by
+[`wer-bench.yml`](.github/workflows/wer-bench.yml) on the v1.7.0 release commit `e1bc3bb`, run
+[39053406494](https://github.com/muhib-karim/humming-keyboard/actions/runs/39053406494), 17 October 2026, 2 CPU threads
+per machine. The sample is fixed (the first 200 test-clean and 100 test-other utterances by ID), so read WER as ±0.5
+points. Raw output for each machine: [`docs/bench/ci-39053406494-*`](docs/bench/).
+
+| Model (download) | WER test-clean | WER test-other | Median time to text, test-clean | Real-time factor |
+|---|---:|---:|---:|---:|
+| **Fast**, default: Parakeet TDT-CTC 110M int8 (104 MB) | 2.74 - 2.91 % | 4.07 - 4.26 % | 99 - 193 ms | 0.014 - 0.027 |
+| **Best**: Parakeet TDT 0.6B v2 int8 (482 MB) | 1.66 - 1.79 % | 3.06 - 3.25 % | 337 - 671 ms | 0.047 - 0.091 |
+| **Lite**, desktop only: Moonshine tiny int8 (30 MB) | 4.49 - 4.57 % | 11.78 - 12.03 % | 85 - 134 ms | 0.011 - 0.018 |
+
+Ranges span the four machines; per machine:
+
+| Machine (GitHub runner) | CPU | Fast clean / other | Best clean / other | Lite clean / other |
+|---|---|---:|---:|---:|
+| Linux x64 (`ubuntu-22.04`) | AMD EPYC 7763 | 2.74 / 4.20 % | 1.68 / 3.12 % | 4.49 / 12.03 % |
+| Linux arm64 (`ubuntu-24.04-arm`) | aarch64 | 2.91 / 4.07 % | 1.66 / 3.18 % | 4.53 / 11.78 % |
+| macOS (`macos-14`) | Apple M1 (virtual) | 2.76 / 4.26 % | 1.79 / 3.25 % | 4.57 / 11.97 % |
+| Windows x64 (`windows-2022`) | Intel Xeon Platinum 8573C | 2.87 / 4.07 % | 1.77 / 3.06 % | 4.51 / 11.97 % |
+
+The apps and the badge quote the earlier CI run
+[37204875974](https://github.com/muhib-karim/humming-keyboard/actions/runs/37204875974) (4 October 2026, AMD EPYC 9V74):
+Fast 2.78 %, Best 1.68 % on test-clean ([`docs/bench/ci-37204875974-wer.json`](docs/bench/ci-37204875974-wer.json)); a
+unit test on Android and desktop keeps them equal to that file. Speed is desktop-CPU speed: phone latency has not been
+benchmarked, so none is claimed.
+
+**Reproduce it** (one command, on your own fork's Actions; models and audio are downloaded and SHA-256 checked):
+
+```sh
+gh workflow run wer-bench.yml -f n_clean=200 -f n_other=100
+```
+
+Locally, with `pip install sherpa-onnx==1.13.8 jiwer soundfile` and the three model folders from the workflow's
+"Models" step in `m/`: `python keyboard/ci/fetch_librispeech_sample.py bench test-clean 200`, then
+`python keyboard/ci/wer_bench.py m bench/LibriSpeech wer.json 200 0`.
+
+**Published by vendors, not measured by us.** These use other test sets and are not comparable with the table above:
+Superwhisper S1-Voice 6.6 % WER on Superwhisper's own 8-set English benchmark
+([superwhisper.com/benchmarks](https://superwhisper.com/benchmarks)); Aqua Voice Avalon 1.5 5.55 %, test set not
+stated ([aquavoice.com/llms.txt](https://aquavoice.com/llms.txt)); Wispr Flow 8.7 % "raw", measured by Superwhisper, a
+competitor ([superwhisper.com/benchmarks/wispr-flow-raw](https://superwhisper.com/benchmarks/wispr-flow-raw)).
+Gboard, SwiftKey and Apple publish no WER. Sources checked 17 October 2026; all of them are in
+[COMPETITORS.md](COMPETITORS.md).
+
+## Architecture
+
+```mermaid
+flowchart LR
+    subgraph Device["On the device (no network)"]
+        Mic["Microphone, 16 kHz mono"] --> VAD["Silero VAD: cut at pauses"]
+        VAD --> ASR["Parakeet / Moonshine on sherpa-onnx<br/>(iPhone: Apple Speech, on-device only)"]
+        ASR --> Clean["Clean-up rules: fillers, self-corrections,<br/>lists, commands, custom words"]
+        Clean --> Join["Fit to the sentence around the cursor"]
+        Join --> Out["Draft while speaking, typed once on stop"]
+    end
+    Models[("sherpa-onnx GitHub release<br/>speech models, SHA-256 pinned")] -. "one-time download" .-> ASR
+    Feed[("Update feed<br/>signed desktop bundles, APK + SHA256SUMS")] -. "update check (APK, desktop)" .-> Device
+    Clean -. "opt-in: AI clean-up with your key (text only)" .-> LLM[("Gemini / OpenAI / Groq")]
+```
+
+| Directory | What it is |
+|---|---|
+| [`keyboard/`](keyboard/) | Android keyboard: a fork of FlorisBoard v0.5.2 (Kotlin, Jetpack Compose). Humming's code is in `com.humming.keyboard`; changes to upstream are listed in [`keyboard/NOTICE-HUMMING.md`](keyboard/NOTICE-HUMMING.md). |
+| [`desktop/`](desktop/) | Windows, macOS and Linux app (Tauri v2: Rust back end, TypeScript UI). |
+| [`ios/`](ios/) | iPhone and iPad app and keyboard extension (SwiftUI); clean-up rules in the `HummingCore` Swift package. |
+| [`core/`](core/) | Shared Rust crate (VAD, audio helpers, clean-up, spoken lists). |
+| [`play/`](play/) | Website (`play/site/`), privacy policy, Google Play listing material. |
+| [`scripts/`](scripts/) | Release assembly, update-signature verification, site checks (Python). |
+| [`docs/`](docs/) | User guide, architecture, benchmark outputs, audits, screenshots. |
+
+Module by module, the dictation pipeline, the update channel and CI: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md);
+a file-level map: [docs/ci/CODEBASE_MAP.md](docs/ci/CODEBASE_MAP.md).
 
 ## How Humming compares
 
 | | **Humming** | Gboard | Microsoft SwiftKey | Ridmik (Bangla) |
 |---|---|---|---|---|
 | Offline voice typing | **Yes**, default, every platform (English) | Pixel 6 or later, 6 languages | Not in the stable app; an on-device English mode is reported in a beta | No, uses Google's speech service |
-| Published accuracy | **WER 2.78 % / 1.68 %** | Not published | Not published | Not published |
+| Published accuracy | **WER 2.78 % / 1.68 %** (above) | Not published | Not published | Not published |
 | Telemetry | **None** | Usage statistics; federated learning on by default | Typing data opt-in; voice clips opt-out | Play label: may collect personal info and IDs |
-| Voice limits | **None** | Rambler: "usage limits", no numbers | None documented | None documented |
 | Desktop app | **Windows, macOS, Linux** | No | No | No |
 | Price / ads | **Free, no ads** | Free | Free; ads on Android | Free; ads and IAP on Android |
 | Open source | **Apache-2.0** | No | No | No |
 
-Public sources only, checked 17 October 2026; Fleksy, Typewise, Avro, Bijoy and OpenBangla, every source, and the
-ranked gap list are in **[COMPETITORS.md](COMPETITORS.md)**. Where Humming trails: offline voice is English only, and
-Gboard and SwiftKey support far more typing languages and install from the stores.
-
 | Dictation apps | **Humming** | Wispr Flow | Superwhisper | Aqua Voice | Apple Dictation |
 |---|---|---|---|---|---|
 | Works offline | **Yes**, default, every platform (English) | No, cloud only | Yes, local models | No, cloud only | On-device in many languages |
-| Fillers, lists, "scratch that", replacements | **All four** (1.7) | All four | Fillers, lists, replacements | Replacements | "Delete" / "undo" on iPhone (US English) |
+| Fillers, lists, "scratch that", replacements | **All four** | All four | Fillers, lists, replacements | Replacements | "Delete" / "undo" on iPhone (US English) |
 | Edit existing text by voice | No | Command Mode (Pro, desktop) | On selected text | Edit Mode | iPhone, US English |
 | Linux | **Yes** | No | "Coming soon" | No | No |
 | Price | **Free, no word cap** | Free 2,000 words/week; $15/month | Free with local models; $8.49/month | Free 1,000 words; $10/month | Free with the OS |
-| Open source | **Apache-2.0** | No | No | No | No |
 
-Published error rates come from different test sets and are not comparable (Superwhisper 6.6 % on its own 8-set
-benchmark, Aqua 5.55 % with the set not stated, Humming 2.78 % on LibriSpeech test-clean). Typeless, Willow, MacWhisper,
-Google and every source: **[COMPETITORS.md#dictation-apps](COMPETITORS.md#dictation-apps)**. Where Humming trails the
-dictation apps: no voice editing of text already in the field, no per-app tone, and offline dictation is English only.
-
-<details>
-<summary><strong>Against dictation apps: Wispr Flow, Typeless, Gboard Rambler</strong></summary>
-
-Checked on the vendors' own pages on 4 October 2026. Prices are per user per month.
-
-| | **Humming** | Wispr Flow | Typeless | Gboard Rambler |
-|---|---|---|---|---|
-| Works fully offline | **Yes**, every platform | No: "Transcription always occurs on the cloud" [1] | No: uses cloud LLM providers [2] | Limited: offline keeps basic clean-up and punctuation only [12] |
-| Where your voice goes | **Stays on the device** (opt-in Online mode on Android uses the phone's speech service) | Wispr's cloud [1] | Cloud, "zero data retention" [2] | Google; "never saved, stored, or shared" [12] |
-| Price | **Free**, Apache-2.0 | Free tier; Pro $12-15 [5] | Free tier; Pro $12 yearly / $30 monthly [6] | Free with Gboard |
-| Free-tier limit | **None** | 2,000 words/week desktop, 1,000/week mobile [5] | "Limited words" [6] | None stated |
-| Longest dictation | **No limit** on Android and iOS (desktop: none by default) | 20 min desktop [7], 5 min Android [8] | 9 min [9] | Not stated |
-| Platforms | **Android, iOS, Windows, macOS, Linux** | Mac, Windows, iOS, Android [5] | macOS, Windows, iOS, Android [6] | Pixel 11 phones only [12] |
-| Languages | English offline; Online mode: the phone's languages | 100+ [5][10] | 100+ [6] | A listed set of major languages [12] |
-| Published WER | **2.78 % / 1.68 %** (LibriSpeech, this repo) | Chart on Wispr's own data, no figures in text [13] | Not published | Not published |
-
-Other offline options: **FUTO Keyboard** (Android, "100% Offline, 100% Private" [16]; its Whisper models were measured
-against Parakeet in the bake-off below), **Handy** (desktop, MIT, Whisper or Parakeet [17]) and **Superwhisper**
-(states it "works offline"; paid Pro tier [18]).
-
-[1] https://wisprflow.ai/data-controls ·
-[2] https://www.typeless.com/data-controls ·
-[5] https://wisprflow.ai/pricing ·
-[6] https://www.typeless.com/pricing ·
-[7] https://docs.wisprflow.ai/articles/4841123325-longer-dictation-sessions-now-up-to-20-minutes ·
-[8] https://docs.wisprflow.ai/articles/6391241694-use-flow-hands-free ·
-[9] https://www.typeless.com/help/troubleshooting/dictation-limit ·
-[10] https://docs.wisprflow.ai/articles/6409258247-supported-languages ·
-[12] https://support.google.com/pixelphone/answer/17468539 ·
-[13] https://wisprflow.ai/canto ·
-[16] https://keyboard.futo.org/ ·
-[17] https://github.com/cjpais/Handy ·
-[18] https://superwhisper.com/
-</details>
+Public sources only, checked 17 October 2026; every source, Fleksy, Typewise, Avro, Bijoy, Typeless, Willow,
+MacWhisper and the ranked gap lists are in [COMPETITORS.md](COMPETITORS.md). **Where Humming trails:** offline voice is
+English only; it cannot yet edit text already in the field by voice or adapt tone per app; Gboard and SwiftKey type in
+far more languages and install from the stores, while Humming is sideloaded (the iPhone build must be re-signed every
+7 days).
 
 ## Install
 
-Every file is on the [GitHub Releases page](https://github.com/muhib-karim/humming-keyboard/releases) with a
-`SHA256SUMS.txt`. Release candidates (such as 1.7.0-rc1) are marked **pre-release** and are not "latest" until the
-final version is published; each release lists exactly which platforms it contains. Step-by-step help for every
-platform is in the [user guide](docs/USER_GUIDE.md).
+Current release: **[Humming 1.7.0](https://github.com/muhib-karim/humming-keyboard/releases/tag/v1.7.0)**, every file
+with a [`SHA256SUMS.txt`](https://github.com/muhib-karim/humming-keyboard/releases/download/v1.7.0/SHA256SUMS.txt). Step-by-step help: [user guide](docs/USER_GUIDE.md).
 
-| Platform | File | Install |
+| Platform | Download | Install |
 |---|---|---|
-| **Android** 8.0+ | `Humming-<version>.apk` | Open the APK, allow "install unknown apps" for your browser or file manager, install. Open Humming and follow the two steps (enable the keyboard, switch to it). The first mic tap downloads the Fast speech model once (104 MB). |
-| **iPhone / iPad** (iOS 16+) | `Humming_<version>_unsigned.ipa` | Sideload with your own free Apple ID (Sideloadly, AltStore or Xcode; re-sign every 7 days), then add the keyboard in Settings > General > Keyboard. Guide: [docs/IOS_SIDELOAD.md](docs/IOS_SIDELOAD.md). |
-| **Windows** 10/11 x64 | `Humming_<version>_x64-setup.exe` or `_x64_en-US.msi` | Run the installer. SmartScreen: **More info** > **Run anyway** (unsigned build). |
-| **macOS** 11+ (Apple silicon and Intel) | `Humming_<version>_universal.dmg` | Drag to Applications, open once, then **System Settings > Privacy & Security > Open Anyway**. Allow Microphone and Accessibility. |
-| **Linux** x86-64 | `Humming_<version>_amd64.AppImage` or `.deb` | `chmod +x` the AppImage and run it, or `sudo apt install ./Humming_<version>_amd64.deb`. Auto-paste works on X11 and in XWayland apps; on pure Wayland every dictation is kept in History, one click to copy. |
+| **Android** 8.0+ | [Humming-1.7.0.apk](https://github.com/muhib-karim/humming-keyboard/releases/download/v1.7.0/Humming-1.7.0.apk) | Open the APK, allow "install unknown apps" for your browser or file manager, install. Open Humming and follow the two steps (enable the keyboard, switch to it). The first mic tap downloads the Fast speech model once (104 MB). |
+| **iPhone / iPad** (iOS 16+) | [Humming_1.7.0_unsigned.ipa](https://github.com/muhib-karim/humming-keyboard/releases/download/v1.7.0/Humming_1.7.0_unsigned.ipa) | Sideload with your own free Apple ID (Sideloadly, AltStore or Xcode; re-sign every 7 days), then add the keyboard in Settings > General > Keyboard. Guide: [docs/IOS_SIDELOAD.md](docs/IOS_SIDELOAD.md). |
+| **Windows** 10/11 x64 | [setup.exe](https://github.com/muhib-karim/humming-keyboard/releases/download/v1.7.0/Humming_1.7.0_x64-setup.exe) or [.msi](https://github.com/muhib-karim/humming-keyboard/releases/download/v1.7.0/Humming_1.7.0_x64_en-US.msi) | Run the installer. SmartScreen: **More info** > **Run anyway** (unsigned build). |
+| **macOS** 11+ (Apple silicon and Intel) | [Humming_1.7.0_universal.dmg](https://github.com/muhib-karim/humming-keyboard/releases/download/v1.7.0/Humming_1.7.0_universal.dmg) | Drag to Applications, open once, then **System Settings > Privacy & Security > Open Anyway**. Allow Microphone and Accessibility. |
+| **Linux** x86-64 | [.AppImage](https://github.com/muhib-karim/humming-keyboard/releases/download/v1.7.0/Humming_1.7.0_amd64.AppImage) or [.deb](https://github.com/muhib-karim/humming-keyboard/releases/download/v1.7.0/Humming_1.7.0_amd64.deb) | `chmod +x` the AppImage and run it, or `sudo apt install ./Humming_1.7.0_amd64.deb`. Auto-paste works on X11 and in XWayland apps; on pure Wayland every dictation is kept in History, one click to copy. |
 
 ### Verify the Android APK
 
 ```sh
 sha256sum -c SHA256SUMS.txt --ignore-missing        # the APK's checksum matches the release
-apksigner verify --print-certs Humming-<version>.apk  # build-tools; check the signer below
+apksigner verify --print-certs Humming-1.7.0.apk    # build-tools; check the signer below
 # Signer #1 certificate SHA-256 digest:
 # 8c8b68bbe63aa42a856159aaa5b0c90cd954eef78a980d39bcb66941753e1fc6
 ```
@@ -195,98 +219,6 @@ No account, no analytics, no ads, and no cloud speech engine of Humming's own. F
 - **Android backup**: if Android's device backup is on, Android may copy Humming's settings and personal dictionary
   to your Google account; Humming itself sends nothing.
 - **iPhone**: Apple's recogniser with on-device recognition required; the iOS app has no network code.
-
-## Benchmarks
-
-Measured by CI (`.github/workflows/wer-bench.yml`, run
-[37204875974](https://github.com/muhib-karim/humming-keyboard/actions/runs/37204875974) on the 1.4.0 code,
-4 October 2026) on LibriSpeech with the exact models and decoder settings the apps ship, on a 2-thread x86-64 CPU
-(AMD EPYC 9V74). Lower is better. The run's output is committed:
-[`docs/bench/ci-37204875974-wer.json`](docs/bench/ci-37204875974-wer.json),
-[`bench.log`](docs/bench/ci-37204875974-bench.log).
-
-| Model | WER test-clean (200 clips) | WER test-other (100 clips) | Real-time factor | Median time to text | Model load |
-|---|---|---|---|---|---|
-| **Fast** (default): Parakeet TDT-CTC 110M int8, 104 MB | **2.78 %** | **4.20 %** | 0.043 (23x real time) | 312 ms clean · 217 ms other | 1.16 s |
-| **Best**: Parakeet TDT 0.6B v2 int8, 482 MB | **1.68 %** | **3.12 %** | 0.177 (6x real time) | 1314 ms clean · 937 ms other | 2.13 s |
-
-The sample is fixed (the first 200 test-clean and 100 test-other utterances by ID), so treat the WER as ±0.5 points.
-These are desktop-CPU figures; phone speed has not been benchmarked here, so no phone latency is claimed. The
-desktop-only Lite model (Moonshine tiny) is not in this benchmark. A re-run outside CI on 8 October 2026 (Fast,
-test-clean 200) gave 2.72 %, with every reference and hypothesis in [`docs/bench/`](docs/bench/).
-
-Run it yourself: `python keyboard/ci/fetch_librispeech_sample.py bench test-clean 200`, then
-`python keyboard/ci/wer_bench.py <models_dir> bench/LibriSpeech wer.json 200 0` (needs `sherpa-onnx==1.13.8 jiwer soundfile`).
-
-<details>
-<summary><strong>Why Parakeet: the bake-off</strong></summary>
-
-Same 73 clips for every engine (48 LibriSpeech test-clean, 25 test-other), desktop CPU, 2 threads.
-
-| Engine | WER clean | WER other | WER all | RTF | Download |
-|---|---:|---:|---:|---:|---:|
-| **Parakeet TDT 0.6B v2 int8 (Humming Best)** | 2.0% | 4.4% | **2.6%** | 0.092 | 482 MB |
-| **Parakeet TDT-CTC 110M int8 (Humming Fast)** | 2.6% | 6.6% | **3.7%** | **0.028** | 104 MB |
-| FUTO Whisper small.en ACFT q8 | 3.6% | 10.0% | 5.4% | 0.259 | ~260 MB |
-| Whisper base.en q8 (whisper.cpp) | 4.4% | 10.7% | 6.1% | 0.228 | 82 MB |
-| FUTO Whisper base.en ACFT q8 | 4.5% | 14.1% | 7.1% | 0.072 | 82 MB |
-| FUTO Whisper tiny.en ACFT q8 | 7.9% | 16.3% | 10.2% | 0.032 | 44 MB |
-
-A one-off development run whose script and raw outputs are not in this repository: treat it as indicative and use the
-CI table above for claims. With 73 clips, gaps under about half a point are noise.
-</details>
-
-## Screenshots
-
-| | | |
-|---|---|---|
-| ![All features together](docs/images/m6_all_together.png) | ![Prediction](docs/images/m6_completion.png) | ![Emoji search](docs/images/m6_emoji_search.png) |
-| Everything on together | "Sounds gre" → "gre" · **great** · grew | Emoji search `:heart` |
-| ![Floating keyboard](docs/images/m6_floating.png) | ![Clipboard grid](docs/screenshots/android_clipboard.png) | ![Dark voice panel](docs/screenshots/android_dark_voice.png) |
-| Floating keyboard | Clipboard history | Voice panel (dark) |
-
-<p>
-<img src="docs/screenshots/ios_dictate.png" width="200" alt="iPhone: clean text, offline badge">
-<img src="docs/screenshots/ios_keyboard.png" width="200" alt="iPhone keyboard">
-<img src="docs/screenshots/desktop_home_dark.png" width="420" alt="Desktop home, dark">
-</p>
-
-More: Android, iPhone and desktop captures in [`docs/screenshots/`](docs/screenshots/), the Gboard voice hand-off in
-the [user guide](docs/USER_GUIDE.md). Captures are from CI runs on the 1.3/1.4 builds.
-
-## Architecture
-
-| Directory | What it is |
-|---|---|
-| [`keyboard/`](keyboard/) | Android keyboard: a fork of FlorisBoard v0.5.2 (Kotlin, Jetpack Compose). Humming's code is in `com.humming.keyboard`; changes to upstream are listed in [`keyboard/NOTICE-HUMMING.md`](keyboard/NOTICE-HUMMING.md). |
-| [`desktop/`](desktop/) | Windows, macOS and Linux app (Tauri v2: Rust back end, TypeScript UI). |
-| [`ios/`](ios/) | iPhone and iPad app and keyboard extension (SwiftUI), clean-up rules as the `HummingCore` Swift package. |
-| [`core/`](core/) | Shared Rust crate (VAD, audio helpers, clean-up, spoken lists; optional whisper.cpp). |
-| [`play/`](play/) | Website (`play/site/`, GitHub Pages), privacy policy, Google Play listing material. |
-| [`scripts/`](scripts/) | Release assembly, update-signature verification, site assembly and checks (Python). |
-| [`docs/`](docs/) | Documentation, screenshots, benchmark outputs, audits. |
-
-```mermaid
-flowchart LR
-    Mic[Microphone<br/>16 kHz mono] --> VAD[Silero VAD<br/>cut at pauses]
-    VAD --> ASR[Parakeet on sherpa-onnx<br/>on-device]
-    ASR --> Clean[Clean-up rules<br/>Clean / Accuracy mode,<br/>custom words, voice commands, lists]
-    Clean --> Join[Fit to the sentence<br/>around the cursor]
-    Join --> Draft[Underlined draft<br/>while speaking]
-    Draft --> Commit[Final text<br/>committed once on stop]
-```
-
-Every module, the dictation pipeline step by step, the update channel and CI: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
-A file-level map: [docs/ci/CODEBASE_MAP.md](docs/ci/CODEBASE_MAP.md).
-
-| Area | Technology |
-|---|---|
-| Android | Kotlin, Jetpack Compose, FlorisBoard v0.5.2, sherpa-onnx 1.13.8, Silero VAD v4, min SDK 26, target SDK 36 |
-| Speech models | NVIDIA Parakeet TDT-CTC 110M int8 (Fast), Parakeet TDT 0.6B v2 int8 (Best); desktop also Moonshine tiny (Lite) |
-| Prediction | Dictionaries and next-word tables for six languages, an int8 word-level LSTM run by Humming's own Kotlin code |
-| Desktop | Tauri v2, Rust (sherpa-onnx, cpal, arboard, enigo, tauri-plugin-updater), TypeScript + Vite |
-| iOS | SwiftUI, Apple Speech with on-device recognition required, XcodeGen, Swift package `HummingCore` |
-| Release and CI | GitHub Actions, Python release scripts, GitHub Pages and Cloudflare Pages |
 
 ## Build from source
 

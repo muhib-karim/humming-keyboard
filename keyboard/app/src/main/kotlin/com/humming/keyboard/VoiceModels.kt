@@ -46,7 +46,7 @@ object VoiceModels {
         ramMb = 500,
         minRamMb = 2_500,
         kind = VoiceModel.Kind.NEMO_CTC,
-        werPct = 3.7,
+        werPct = 2.78,
     )
 
     val BEST = VoiceModel(
@@ -62,7 +62,7 @@ object VoiceModels {
         ramMb = 1_300,
         minRamMb = 5_500,
         kind = VoiceModel.Kind.NEMO_TRANSDUCER,
-        werPct = 2.6,
+        werPct = 1.68,
     )
 
     val all: List<VoiceModel> = listOf(FAST, BEST)

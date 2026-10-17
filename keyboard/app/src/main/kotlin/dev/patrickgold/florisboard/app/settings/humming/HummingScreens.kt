@@ -191,7 +191,7 @@ fun PrivacyScreen() = FlorisScreen {
         PreferenceGroup(title = "Voice") {
             Preference(
                 title = "Voice privacy",
-                summary = "Voice incognito, dictation history retention, model downloads",
+                summary = "Voice incognito, model downloads",
                 onClick = { navController.navigate(Routes.Settings.Voice) },
             )
         }

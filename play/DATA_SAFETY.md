@@ -30,12 +30,13 @@ Online voice mode (path 2) uses no network API in Humming's code: the system spe
 **Collected by the developer: nothing.** There is no Humming server, account, analytics, advertising or
 crash-reporting SDK. The crash screen shows the log on the device only and never sends it.
 
-**Retention.** The developer keeps nothing. On the device: voice history (user-set retention, `History.kt`), clipboard
+**Retention.** The developer keeps nothing. On the device: voice history (the text of the last 500 dictations, no audio since 1.7.1; off in voice incognito
+and keyboard incognito, `History.kt`), clipboard
 history (100 items by default, 10 to 500 or unlimited; off in incognito; age-based auto-clean is optional and off by default, `AppPrefs.kt`)
-and learned words stay until the user deletes them or uninstalls the app, with two exceptions: voice history entries
-are also deleted once older than the retention the user picks (Forever, 1 month, 1 week, 24 hours or Never save;
-`HistoryRetention`, pruned at app and keyboard start), and clipboard items are also removed when the size limit pushes
-out the oldest, or by auto-clean when the user turns it on. Data sent under paths 2 to 4 is kept by the speech service, the AI provider or Openverse under their own
+and learned words stay until the user deletes them or uninstalls the app, with two exceptions: voice history keeps only
+the newest 500 dictations, and clipboard items are also removed when the size limit pushes out the oldest, or by
+auto-clean when the user turns it on. Audio that builds before 1.7.1 kept with voice history is deleted when the app
+starts. Data sent under paths 2 to 4 is kept by the speech service, the AI provider or Openverse under their own
 policies; Humming cannot see or delete it.
 
 **Deletion.** Uninstalling the app, or clearing its storage in Android's app settings, deletes everything Humming

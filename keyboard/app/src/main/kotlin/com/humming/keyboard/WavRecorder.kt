@@ -118,6 +118,8 @@ class WavRecorder(
             rec.startRecording()
         } catch (e: IllegalStateException) {
             rec.release()
+            bt?.end()
+            bt = null
             return false
         }
         record = rec

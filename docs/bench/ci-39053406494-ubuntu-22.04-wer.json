@@ -1,0 +1,67 @@
+{
+  "device": "Linux x64 (GitHub runner)",
+  "os": "Linux 6.8.0-1064-azure",
+  "arch": "x86_64",
+  "cpu": "AMD EPYC 7763 64-Core Processor",
+  "threads": 2,
+  "sets": {
+    "test-clean": 200,
+    "test-other": 100
+  },
+  "models": {
+    "lite": {
+      "label": "Moonshine v2 tiny int8 (Lite, 30 MB)",
+      "load_s": 0.47,
+      "test-clean": {
+        "n": 200,
+        "wer_pct": 4.49,
+        "rtf": 0.0167,
+        "median_latency_ms": 127,
+        "mean_audio_s": 9.1
+      },
+      "test-other": {
+        "n": 100,
+        "wer_pct": 12.03,
+        "rtf": 0.0161,
+        "median_latency_ms": 82,
+        "mean_audio_s": 6.3
+      }
+    },
+    "fast": {
+      "label": "Parakeet TDT-CTC 110M int8 (Fast, default)",
+      "load_s": 0.93,
+      "test-clean": {
+        "n": 200,
+        "wer_pct": 2.74,
+        "rtf": 0.0243,
+        "median_latency_ms": 179,
+        "mean_audio_s": 9.1
+      },
+      "test-other": {
+        "n": 100,
+        "wer_pct": 4.2,
+        "rtf": 0.0243,
+        "median_latency_ms": 124,
+        "mean_audio_s": 6.3
+      }
+    },
+    "best": {
+      "label": "Parakeet TDT 0.6B v2 int8 (Best, optional)",
+      "load_s": 2.1,
+      "test-clean": {
+        "n": 200,
+        "wer_pct": 1.68,
+        "rtf": 0.0907,
+        "median_latency_ms": 671,
+        "mean_audio_s": 9.1
+      },
+      "test-other": {
+        "n": 100,
+        "wer_pct": 3.12,
+        "rtf": 0.0918,
+        "median_latency_ms": 482,
+        "mean_audio_s": 6.3
+      }
+    }
+  }
+}

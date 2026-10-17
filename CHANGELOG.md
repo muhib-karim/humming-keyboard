@@ -1,5 +1,30 @@
 # Changelog
 
+## 1.7.1 (unreleased)
+- **Status**: fixes from the post-release ponytail audit ([docs/audit/PONYTAIL_AUDIT_v1.7.0.md](docs/audit/PONYTAIL_AUDIT_v1.7.0.md)).
+  Not tagged; versions are still 1.7.0 until the release owner bumps them. Verified by CI on the pull request, except
+  the website workflow, which runs only on main and on a release.
+- **Voice history keeps no audio (Android, privacy)**: each dictation's recording (up to 300 s) was saved next to its
+  text, but nothing in the app could play or delete it, retention pruning never ran, and the 500-entry cap left old
+  recordings behind. Humming now keeps only the text of the last 500 dictations (off in incognito) and deletes the
+  saved recordings when the app starts (`History.kt`, `HistoryAudioTest`). The Data safety notes, Settings › Privacy and
+  the settings search no longer mention a retention control that does not exist.
+- **Bluetooth headset (Android)**: if the microphone failed to start, the phone stayed in call-audio mode; the route is
+  now released (`WavRecorder.kt`).
+- **Accuracy figure in the apps (Android, desktop)**: the model lists showed 3.7 % / 2.6 % word error rate from an
+  older bake-off whose outputs are not in this repository; they now show the CI benchmark the README and site use,
+  2.78 % (Fast) and 1.68 % (Best) on LibriSpeech test-clean, and a test on each platform keeps them equal to
+  `docs/bench/ci-37204875974-wer.json`.
+- **Release workflow**: the website deploy now publishes the release's update mirror even when main already deployed
+  the same commit (the v1.7.0 run deployed nothing and ended red), and the live feed checks wait out the 10-minute 404
+  cache (`pages.yml`).
+- **Known, owner action**: the apps read their update feeds from `humming-keyboard.pages.dev`, which still served
+  desktop 1.6.0 and Android 1.6.2 on 17 October 2026, so 1.7.0 is not yet offered in-app; the 1.7.0 entry's "mirrored"
+  status was not true at the time of writing.
+- **Docs**: README rewritten as a short paper (problem, measured results with sources, architecture diagram, one-command
+  benchmark repro, 1.7.0 downloads); the v1.7.0 `wer-bench` outputs from four CI machines are in `docs/bench/`
+  (run 39053406494), including the first measurement of the desktop Lite model.
+
 ## 1.7.0: Bangla phonetic typing, dictation lists and replacements, a premium look
 - **Status**: final release, tagged `v1.7.0` and published as the latest GitHub release; its update files are mirrored to
   the website's update feeds. Everything below is unit-tested in CI; it was not built on the development machine.

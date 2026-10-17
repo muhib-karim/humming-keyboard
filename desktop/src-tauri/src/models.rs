@@ -67,7 +67,7 @@ pub const FAST: VoiceModel = VoiceModel {
     disk_bytes: 131_662_124,
     ram_mb: 500,
     kind: Kind::NemoCtc,
-    wer_pct: Some(3.7),
+    wer_pct: Some(2.78),
 };
 
 pub const BEST: VoiceModel = VoiceModel {
@@ -82,7 +82,7 @@ pub const BEST: VoiceModel = VoiceModel {
     disk_bytes: 661_190_513,
     ram_mb: 1300,
     kind: Kind::NemoTransducer,
-    wer_pct: Some(2.6),
+    wer_pct: Some(1.68),
 };
 
 pub const CATALOG: &[VoiceModel] = &[LITE, FAST, BEST];
@@ -278,6 +278,16 @@ mod tests {
         assert_eq!(find("lite").unwrap().wer_pct, None);
         assert!(find("fast").unwrap().wer_pct.is_some());
         assert!(find("best").unwrap().wer_pct.is_some());
+    }
+
+    #[test]
+    fn wer_matches_the_committed_benchmark() {
+        let bench: serde_json::Value =
+            serde_json::from_str(include_str!("../../../docs/bench/ci-37204875974-wer.json")).unwrap();
+        for m in [&FAST, &BEST] {
+            let want = bench["models"][m.id]["test-clean"]["wer_pct"].as_f64().unwrap();
+            assert!((f64::from(m.wer_pct.unwrap()) - want).abs() < 1e-4, "{}", m.id);
+        }
     }
 
     #[test]

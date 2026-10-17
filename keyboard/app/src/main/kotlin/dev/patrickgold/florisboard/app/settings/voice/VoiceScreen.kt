@@ -222,7 +222,7 @@ private fun ModelRow(m: VoiceModel, selected: Boolean, fits: Boolean, onDisk: Bo
                         color = if (onDisk) Ok else MaterialTheme.colorScheme.onSurfaceVariant)
                 }
                 Text(m.blurb, fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                Text("${m.werPct}% word errors in our test · ~${m.ramMb} MB RAM while dictating" +
+                Text("${m.werPct}% word errors (LibriSpeech test-clean) · ~${m.ramMb} MB RAM while dictating" +
                     if (!fits) " · needs more RAM than this phone has" else "", fontSize = 12.sp,
                     color = if (fits) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.error)
             }
