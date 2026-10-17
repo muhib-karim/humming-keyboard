@@ -137,6 +137,13 @@ final class TextCleanupTests: XCTestCase {
         XCTAssertEqual("", clean("আমার আমি delete last word delete last word"))
     }
 
+    func testDeleteLastWordIncludesApostrophes() {
+        XCTAssertEqual("Keep.", clean("Keep don't delete last word"))
+        XCTAssertEqual("Keep.", clean("Keep don’t delete last word"))
+        XCTAssertEqual("Keep.", clean("Keep don’t. Scratch the last word."))
+        XCTAssertEqual("", clean("আমি’ও delete last word"))
+    }
+
     func testRepeatedDeleteCommandsAtStartDoNotOverlap() {
         XCTAssertEqual("Hello.", clean("delete last word delete last word hello"))
         XCTAssertEqual("Hello.", clean("scratch the last word delete last word scratch last word hello"))

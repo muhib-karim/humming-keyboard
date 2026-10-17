@@ -38,6 +38,25 @@ class DictationJoinTest {
         assertEquals("The end.", DictationJoin.adapt("", "The end.", after = ". More"))
     }
 
+    @Test fun dropsPeriodInsideClosingMarksBeforeContinuation() {
+        for (closing in listOf("\"", "'", "”", "’", ")", "]", "}", "»", "\")")) {
+            assertEquals("the plan works$closing",
+                DictationJoin.adapt("I said", "The plan works.$closing", after = " today"))
+            assertEquals("the plan works$closing ",
+                DictationJoin.adapt("I said", "The plan works.$closing", after = "today"))
+        }
+        assertEquals("\"আমি\"", DictationJoin.adapt("", "\"আমি.\"", after = " যাব"))
+    }
+
+    @Test fun closingMarksKeepOtherPunctuationAndSentenceEnd() {
+        for (text in listOf("\"Ready?\"", "(Go!)", "\"Wait...\"", "(Wait..)", "\"Hello\"")) {
+            assertEquals(text, DictationJoin.adapt("", text, after = " today"))
+        }
+        for (after in listOf("", " ", ". More")) {
+            assertEquals("\"The end.\"", DictationJoin.adapt("", "\"The end.\"", after = after))
+        }
+    }
+
     @Test fun glueOnlyWhereAWordWouldTouch() {
         assertEquals("", DictationJoin.glue(""))
         assertEquals("", DictationJoin.glue("a "))

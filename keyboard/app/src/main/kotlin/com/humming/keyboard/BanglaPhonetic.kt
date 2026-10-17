@@ -18,7 +18,7 @@ package com.humming.keyboard
 object BanglaPhonetic {
     private const val HASANTA = "্"
 
-    private class Consonant(val text: String, val joins: Boolean = true)
+    private class Consonant(val text: String)
     private class Vowel(val full: String, val sign: String)
 
     private val CONSONANTS: Map<String, Consonant> = mapOf(
@@ -117,13 +117,16 @@ object BanglaPhonetic {
                 i += 2
                 continue
             }
-            // "y" and "w" after a consonant are its ya-phala / ba-phala; elsewhere "য়" and "ও".
+            // "y" and "w" after a consonant are its ya-phala / ba-phala; elsewhere "য়" and "ও" ("ওয়" before a vowel).
             if (c == 'y' || c == 'w') {
                 if (joinable) {
                     out.append(HASANTA).append(if (c == 'y') "য" else "ব")
                     afterConsonant = true; joinable = false
                 } else if (c == 'y') {
                     out.append("য়")
+                    afterConsonant = true; joinable = false
+                } else if (s.getOrNull(i + 1)?.let { it in VOWEL_LETTERS } == true) {
+                    out.append("ওয়")
                     afterConsonant = true; joinable = false
                 } else {
                     out.append("ও")
@@ -145,7 +148,7 @@ object BanglaPhonetic {
                     val k = CONSONANTS[key] ?: continue
                     if (joinable) out.append(HASANTA)
                     out.append(k.text)
-                    afterConsonant = true; joinable = k.joins
+                    afterConsonant = true; joinable = true
                     matched = true
                 }
                 wordStart = false

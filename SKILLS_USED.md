@@ -35,13 +35,18 @@ JVM); the mirrors live outside the repository, and their rule tables were checke
 was driven directly instead. **brand** and **canvas-design** were not invoked. The brand rules already in
 `docs/BRAND.md` were extended by hand, and the banner-design skill covered the social image.
 
-## Deferred review minors
+## Review minors closed (were deferred)
 
-- The final period is kept inside closing marks (`."`, `.)`) before text that continues the sentence.
-- `BanglaPhonetic.Consonant.joins` is never false (a dead parameter).
-- A standalone `w` before a vowel writes ওআ (Avro writes ওয়া).
-- `text_cleanup.rs` uses `\x{2019}` inside a character class; a literal ’ would remove any doubt.
-- Review Focus item 1 is tested at the transliterate level, not through the suggestion provider.
+- Drop a final period inside closing marks before sentence continuation, preserving the marks and other punctuation; tests added: `DictationJoinTest.dropsPeriodInsideClosingMarksBeforeContinuation` and `closingMarksKeepOtherPunctuationAndSentenceEnd`; skill: test-driven-development; reviewer: Claude Code code-review-and-quality subagent; implemented by Codex GPT-6 Astra.
+- Remove the always-true `BanglaPhonetic.Consonant.joins` parameter without changing joining behavior; test added: `BanglaPhoneticTest.joiningResetsAfterVowelsSeparatorsAndPhalas`; skill: test-driven-development; reviewer: Claude Code code-review-and-quality subagent; implemented by Codex GPT-6 Astra.
+- Use Avro's ওয় plus vowel sign for standalone `w` before a vowel (`wa` → ওয়া), preserving standalone ও and ba-phala; test added: `BanglaPhoneticTest.standaloneWBeforeAVowelUsesAvroGlide`; skill: test-driven-development; reviewer: Claude Code code-review-and-quality subagent; implemented by Codex GPT-6 Astra.
+- Replace `\x{2019}` with literal ’ in the desktop deletion regex; tests added: `TextCleanupTest.deleteLastWordIncludesApostrophes`, Rust `delete_last_word_includes_apostrophes`, and Swift `testDeleteLastWordIncludesApostrophes`; skill: test-driven-development; reviewer: Claude Code code-review-and-quality subagent; implemented by Codex GPT-6 Astra.
+- Cover Review Focus item 1 through the real `LatinLanguageProvider.suggest`, with a lazy context constructor dependency for JVM tests; tests added: `BanglaPhoneticTest.providerOffersBanglaForAutoCommitAndKeepsLatinAlternative` and `providerRejectsMixedBanglaDigitsAndNonLetters`, covering composing text and current-word fallback; skill: test-driven-development; reviewer: Claude Code code-review-and-quality subagent; implemented by Codex GPT-6 Astra.
+
+Tests were written before each corresponding code edit. Native Kotlin/Rust/Swift tests, including the provider test,
+are **pending CI** (local builds forbidden). Source-derived Python diagnostics reproduced 7 old phonetic failures and
+19 old closing-mark failures; the updated logic passes 45 phonetic, 32 joining and 4 apostrophe cases, with identical
+deletion patterns across Android, desktop and iOS. The diagnostics are not native test runs.
 
 ## Cross-model review fixes
 

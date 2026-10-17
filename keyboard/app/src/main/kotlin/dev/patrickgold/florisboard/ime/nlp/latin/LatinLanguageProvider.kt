@@ -44,7 +44,9 @@ import java.util.Locale
  * autocorrect and on-device learning per language ([UserModel], never uploaded). Other languages get no suggestions
  * rather than English ones.
  */
-class LatinLanguageProvider(context: Context) : SpellingProvider, SuggestionProvider {
+class LatinLanguageProvider internal constructor(context: Lazy<Context>) : SpellingProvider, SuggestionProvider {
+    constructor(context: Context) : this(context.appContext())
+
     companion object {
         // Default user ID used for all subtypes, unless otherwise specified.
         // See `ime/core/Subtype.kt` Line 210 and 211 for the default usage
@@ -52,7 +54,7 @@ class LatinLanguageProvider(context: Context) : SpellingProvider, SuggestionProv
         private const val GLIDE_WORDS = 40_000
     }
 
-    private val appContext by context.appContext()
+    private val appContext by context
     private val prefs by FlorisPreferenceStore
 
     override val providerId = ProviderId

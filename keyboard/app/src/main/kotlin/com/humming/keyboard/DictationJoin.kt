@@ -14,6 +14,7 @@ package com.humming.keyboard
  */
 object DictationJoin {
     private const val OPENERS = "([{“‘«@#/"
+    private const val CLOSERS = ")]}”’»\"'"
 
     /** Words that are only capitalised because they start a sentence. Anything else (a name) keeps its capital. */
     private val COMMON = setOf(
@@ -43,8 +44,9 @@ object DictationJoin {
         val continuing = prev != null && (prev.isLetterOrDigit() || prev in ",;:")
         if (continuing) t = lowercaseFirstWord(t, dictionary)
         val next = after.trimStart().firstOrNull()
-        if (next != null && next.isLetterOrDigit() && t.endsWith(".") && !t.endsWith("..")) {
-            t = t.dropLast(1)
+        val sentence = t.trimEnd { it in CLOSERS }
+        if (next != null && next.isLetterOrDigit() && sentence.endsWith(".") && !sentence.endsWith("..")) {
+            t = sentence.dropLast(1) + t.substring(sentence.length)
             if (after.first().isLetterOrDigit()) t += " "
         }
         return t

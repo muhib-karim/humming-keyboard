@@ -143,6 +143,13 @@ class TextCleanupTest {
         assertEquals("", clean("আমার আমি delete last word delete last word"))
     }
 
+    @Test fun deleteLastWordIncludesApostrophes() {
+        assertEquals("Keep.", clean("Keep don't delete last word"))
+        assertEquals("Keep.", clean("Keep don’t delete last word"))
+        assertEquals("Keep.", clean("Keep don’t. Scratch the last word."))
+        assertEquals("", clean("আমি’ও delete last word"))
+    }
+
     @Test fun repeatedDeleteCommandsAtStartDoNotOverlap() {
         assertEquals("Hello.", clean("delete last word delete last word hello"))
         assertEquals("Hello.", clean("scratch the last word delete last word scratch last word hello"))

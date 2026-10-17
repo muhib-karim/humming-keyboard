@@ -51,7 +51,7 @@ static SPOKEN: Lazy<Vec<(Regex, &'static str)>> = Lazy::new(|| {
 });
 // "delete last word" / "scratch the last word" removes the word said before it (or just itself at the start).
 static DELETE_WORD: Lazy<Regex> =
-    Lazy::new(|| re(r"(?i)(?<![\p{L}\p{M}\p{N}'\x{2019}])[\p{L}\p{M}\p{N}'\x{2019}]+[,.!?]?\s+(?:delete|scratch) (?:the )?last word\b[,.!?]?"));
+    Lazy::new(|| re(r"(?i)(?<![\p{L}\p{M}\p{N}'’])[\p{L}\p{M}\p{N}'’]+[,.!?]?\s+(?:delete|scratch) (?:the )?last word\b[,.!?]?"));
 static DELETE_WORD_START: Lazy<Regex> =
     Lazy::new(|| re(r"(?i)^\s*(?:(?:delete|scratch) (?:the )?last word\b[,.!?]?\s*)+"));
 // Accuracy mode (strict): hedge words that are only filler when set off by commas, extra hesitation sounds, a spoken
@@ -558,6 +558,14 @@ mod tests {
         assert_eq!(clean("Keep cafe\u{0301} delete last word"), "Keep.");
         assert_eq!(clean("Keep আমার. Scratch the last word."), "Keep.");
         assert_eq!(clean("আমার আমি delete last word delete last word"), "");
+    }
+
+    #[test]
+    fn delete_last_word_includes_apostrophes() {
+        assert_eq!(clean("Keep don't delete last word"), "Keep.");
+        assert_eq!(clean("Keep don’t delete last word"), "Keep.");
+        assert_eq!(clean("Keep don’t. Scratch the last word."), "Keep.");
+        assert_eq!(clean("আমি’ও delete last word"), "");
     }
 
     #[test]
