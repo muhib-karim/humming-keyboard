@@ -38,12 +38,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -593,16 +595,15 @@ fun HummingMicButton(isNight: Boolean, modifier: Modifier = Modifier, size: Dp =
     val interaction = remember { MutableInteractionSource() }
     val pressed by interaction.collectIsPressedAsState()
     val scale by animateFloatAsState(if (pressed) 0.88f else 1f, spring(dampingRatio = 0.45f, stiffness = 600f), label = "micPress")
+    // 1.7: the touch target fills the Smartbar's height and is at least 48dp wide; the visible circle keeps the size
+    // the user picked (Settings > Smartbar). Same 50dp footprint as before (6 + 38 + 6).
     Box(
         modifier = modifier
-            .padding(horizontal = 6.dp)
-            .size(size)
-            .scale(scale)
-            .shadow(elevation = 6.dp, shape = CircleShape, ambientColor = p.accentStart, spotColor = p.accentStart)
-            .clip(CircleShape)
-            .background(p.accentBrush)
+            .padding(horizontal = 1.dp)
+            .fillMaxHeight()
+            .widthIn(min = 48.dp)
             .combinedClickable(
-                interactionSource = interaction, indication = null,
+                interactionSource = interaction, indication = null, role = Role.Button, onLongClickLabel = "More voice options",
                 onClick = {
                     haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                     HummingVoice.toggle(context)
@@ -617,7 +618,17 @@ fun HummingMicButton(isNight: Boolean, modifier: Modifier = Modifier, size: Dp =
             .semantics { contentDescription = "Dictate with Humming. Long-press for more voice options" },
         contentAlignment = Alignment.Center,
     ) {
-        Icon(Icons.Rounded.Mic, contentDescription = null, tint = p.onAccent, modifier = Modifier.size(size * 0.56f))
+        Box(
+            modifier = Modifier
+                .size(size)
+                .graphicsLayer { scaleX = scale; scaleY = scale } // press spring in the draw phase, no recomposition
+                .shadow(elevation = 6.dp, shape = CircleShape, ambientColor = p.accentStart, spotColor = p.accentStart)
+                .clip(CircleShape)
+                .background(p.accentBrush),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(Icons.Rounded.Mic, contentDescription = null, tint = p.onAccent, modifier = Modifier.size(size * 0.56f))
+        }
     }
 }
 

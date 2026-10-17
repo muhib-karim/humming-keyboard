@@ -33,7 +33,9 @@ If a session ends early, the remaining work is in [HANDOFF.md](HANDOFF.md).
 
 ## 3. App UI polish
 - [x] Android: voice panel a11y (48dp Clean chip, roles/state), AA contrast tokens, rec-dot recomposition fix, exported-activity URI fix; Android skills review in docs/ci/ANDROID_REVIEW.md
-- [ ] Android: Smartbar mic 48dp target and candidate-strip restyle (needs device screenshots; handed off)
+- [x] Android: Smartbar mic touch target 48 dp wide and the full Smartbar height (visible circle unchanged, same 50 dp
+      footprint), button role and long-press label, press spring read in the draw phase (session 2)
+- [ ] Android: candidate-strip restyle (needs device screenshots; handed off)
 - [x] iOS / desktop: token parity (desktop CSS tokens, focus, reduced motion; iOS Brand accentStrong/accentText)
 - [x] docs/BRAND.md design tokens section; docs/ci/DESIGN_AUDIT.md
 
