@@ -11,6 +11,11 @@ class VoiceCommandsTest {
         assertNull(r.instruction)
     }
 
+    @Test fun decimalsDoNotEndASentence() {
+        assertEquals("", VoiceCommands.apply("It costs 3.50. Delete that.").text)
+        assertEquals("It costs 3.50. Fine.", VoiceCommands.apply("It costs 3.50. Fine.").text)
+    }
+
     @Test fun scratchThatAtTheStartRemovesNothingElse() {
         assertEquals("Hello.", VoiceCommands.apply("Scratch that. Hello.").text)
     }

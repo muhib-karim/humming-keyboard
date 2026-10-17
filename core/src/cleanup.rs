@@ -314,8 +314,28 @@ fn restart_sentence(text: &str) -> String {
 /// "The list is first, eggs, second, milk, third, bread." -> "The list is:\n- Eggs\n- Milk\n- Bread".
 /// Needs an opening marker (first / number one) AND a second one, so a lone "first" in prose is left alone.
 pub fn format_spoken_list(text: &str) -> Option<String> {
+    static PARAGRAPH: Lazy<Regex> = Lazy::new(|| re(r"\r?\n[ \t\r]*\n"));
+    if let Some(m) = PARAGRAPH.find(text) {
+        let (head, tail) = (&text[..m.start()], &text[m.end()..]);
+        let (a, b) = (format_spoken_list(head), format_spoken_list(tail));
+        return if a.is_none() && b.is_none() {
+            None
+        } else {
+            Some(format!("{}{}{}", a.as_deref().unwrap_or(head), m.as_str(), b.as_deref().unwrap_or(tail)))
+        };
+    }
+    // A marker after "a", "the"... is prose ("give me a second"), as in the Android and iOS ListFormat.
+    const PROSE_BEFORE: &[&str] = &[
+        "a", "an", "the", "this", "that", "these", "those", "each", "every", "another", "my", "your", "his", "her", "its",
+        "our", "their", "which", "what", "no", "any", "some", "first", "second", "third", "last", "one",
+    ];
     let marks: Vec<(usize, usize, String)> = LIST_MARKER
         .captures_iter(text)
+        .filter(|c| {
+            let start = c.get(1).expect("group").start();
+            let prev = text[..start].split_whitespace().last().unwrap_or("").to_lowercase();
+            !PROSE_BEFORE.contains(&prev.as_str())
+        })
         .map(|c| {
             let m = c.get(1).expect("group");
             let whole_end = c.get(0).expect("match").end();
@@ -387,8 +407,8 @@ fn phrase_regex(phrase: &str) -> Option<Regex> {
     if p.is_empty() {
         return None;
     }
-    let starts_word = p.chars().next().map(|c| c.is_alphanumeric() || c == '_').unwrap_or(false);
-    let ends_word = p.chars().last().map(|c| c.is_alphanumeric() || c == '_').unwrap_or(false);
+    let starts_word = re(r"^\w").is_match(p);
+    let ends_word = re(r"\w$").is_match(p);
     let body = regex::escape(p).replace("\\ ", r"\s+").replace(' ', r"\s+");
     let pat = format!(
         "(?i){}{}{}",
@@ -550,6 +570,19 @@ mod tests {
         assert_eq!(dictionary_prompt(&[]), None);
     }
 
+    #[test]
+    fn replacements_do_not_split_combining_marks() {
+        for (input, spoken, expected) in [
+            ("রাম রামি", "রাম", "X রামি"),
+            ("cafe cafe\u{0301}", "cafe", "X cafe\u{0301}"),
+            ("cafe\u{0301} cafe\u{0301}s", "cafe\u{0301}", "X cafe\u{0301}s"),
+            ("a\u{0301}cat cat", "cat", "a\u{0301}cat X"),
+        ] {
+            let pairs = [DictionaryEntry { spoken: spoken.into(), written: "X".into() }];
+            assert_eq!(apply_dictionary(input, &pairs), expected);
+        }
+    }
+
     /// The P0 acceptance lines from the parity spec, verbatim (what the rule layer must do offline).
     #[test]
     fn p0_acceptance_rules() {
@@ -621,8 +654,27 @@ mod tests {
     }
 
     #[test]
+    fn a_second_in_prose_is_not_a_list() {
+        // "a second" is a moment, not a list marker (review fix, same rule as Android's and iOS's ListFormat).
+        assert_eq!(format_spoken_list("First, give me a second, then we can go."), None);
+        assert_eq!(
+            format_spoken_list("The list is first, eggs, second, milk.").as_deref(),
+            Some("The list is:\n- Eggs\n- Milk")
+        );
+    }
+
+    #[test]
     fn list_needs_two_markers_with_commas() {
         assert_eq!(c("first line new line second line"), "First line\nSecond line.");
         assert_eq!(c("first, we eat."), "First, we eat.");
+    }
+
+    #[test]
+    fn paragraphs_end_spoken_lists_before_later_markers() {
+        assert_eq!(
+            format_spoken_list("First, eggs, second, bread.\n\nThanks.\n\nFirst, milk, second, tea.").as_deref(),
+            Some("- Eggs\n- Bread\n\nThanks.\n\n- Milk\n- Tea")
+        );
+        assert_eq!(format_spoken_list("First, eggs.\n\nSecond, milk."), None);
     }
 }

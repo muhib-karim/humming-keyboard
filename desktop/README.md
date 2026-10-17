@@ -39,7 +39,7 @@ the Linux .deb only reports a new version).
 | Best: Parakeet TDT 0.6B v2 int8 | 482 MB | 2.6 % | ~1.3 GB |
 
 The bake-off's script and raw outputs are not in the repository (see the main README's
-[bake-off section](../README.md#why-parakeet-the-bake-off)). The committed CI benchmark (the first 200 LibriSpeech test-clean
+[bake-off, under Benchmarks](../README.md#benchmarks)). The committed CI benchmark (the first 200 LibriSpeech test-clean
 clips, 4 October 2026) measured 2.78 % for Fast and 1.68 % for Best (treat as +/- 0.5 points): [Benchmarks](../README.md#benchmarks).
 Lite is in neither run, so its word error rate is not measured and the app shows "not measured" for it.
 

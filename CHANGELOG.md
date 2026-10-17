@@ -1,5 +1,52 @@
 # Changelog
 
+## 1.7.0: Bangla phonetic typing, dictation lists and replacements, a premium look
+- **Status**: final release, tagged `v1.7.0` and published as the latest GitHub release; its update files are mirrored to
+  the website's update feeds. Everything below is unit-tested in CI; it was not built on the development machine.
+- **Version**: one version everywhere: Android 1.7.0 (versionCode 1700), desktop and core 1.7.0, iOS 1.7.0 (build 1700).
+- **Bangla phonetic typing (Android)**: add Bengali with a QWERTY layout and type romanised Bangla the Avro / Ridmik way
+  (`ami bangla likhi` → আমি বাংলা লিখি). The Bangla word is the auto-commit suggestion (space or punctuation types it)
+  and the Latin word stays one tap away. Rule-based, written for Humming: reph, ra-, ya- and ba-phala, ং / ঙ, জ্ঞ, ক্ষ,
+  Avro capitals, Bangla digits (`BanglaPhonetic`, `BanglaPhoneticTest`).
+- **Dictation fits the sentence (Android)**: dictating into the middle of a line lowercases a common first word, adds
+  no space after an opening bracket, quote, `@` or `#`, and drops the final period when the text after the cursor
+  carries on; names, "I", acronyms and custom words keep their capitals (`DictationJoin`, `DictationJoinTest`).
+- **Dictation lists (Android, desktop, iOS)**: say "bullet point" (or "next bullet") to start a list item:
+  "groceries bullet point eggs bullet point milk" → "Groceries:" with "- Eggs" and "- Milk" on their own lines. A
+  spoken "first, ... second, ..." or "number one, ... number two, ..." list becomes bullets too (desktop had this;
+  Android and iOS now match). "the second bullet point" in a sentence stays prose (`ListFormat.kt`, `ListFormat.swift`,
+  `text_cleanup::bullet_list`; `ListFormatTest`, `ListFormatTests`).
+- **Replacements in custom words (Android, iOS)**: a custom-words line written `spoken -> written` (or `→`) replaces
+  what the recogniser heard ("cube cuddle -> kubectl", "my sig -> Best, Sam"), whole words, any case; Android's
+  ` @app` tags work on these lines too. Desktop already had spoken → written entries.
+- **Remove filler words switch (Android, iOS)**: um, uh, er, hmm and ", you know," are still removed by default; the
+  new switch keeps them. Desktop already had it.
+- **"Scratch that" / "delete that" as its own sentence (desktop, iOS)**: removes the sentence before it, as on
+  Android ("Book Friday. Scratch that. Book Saturday." → "Book Saturday.").
+- **More spoken punctuation (Android, desktop, iOS)**: "colon", "semicolon", "open/close quote", "open/close bracket",
+  "ellipsis" / "dot dot dot", and "delete last word" / "scratch the last word". Commas a punctuating engine puts around
+  these commands are absorbed, and a line break before an opening quote or bracket is kept. Same rules and test
+  sentences in `TextCleanup.kt`, `text_cleanup.rs` and `TextCleanup.swift`.
+- **Accessibility**: the voice panel's Clean / Verbatim chip has a 48 dp touch target and is announced as a switch with
+  its state; the orb and cancel are announced as buttons; light-theme pill text and accent text now meet WCAG AA
+  (4.5:1) on Android, desktop (`--accent-strong`, `--accent-ink`, per-theme pill colours, focus ring, reduced motion)
+  and iOS (`Brand.accentStrong`, `Brand.accentText`). Tokens documented in `docs/BRAND.md`.
+- **Security**: the exported "copy image to clipboard" share target only opens other apps' `content://` URIs, never
+  `file://` or Humming's own providers (`SharedUriPolicy`, `SharedUriPolicyTest`).
+- **Performance**: the recording dot blinks in the draw phase instead of recomposing the voice panel every frame.
+- **Website**: rebuilt GitHub Pages home page with real captures, an honest comparison table, per-platform downloads,
+  APK verification, FAQ, social image, favicons, sitemap, robots.txt and a 404 page; no third-party requests.
+  `pages.yml` checks every link before deploying (`scripts/check_site.py`).
+- **Docs**: `COMPETITORS.md` (teardown of Gboard, SwiftKey, Fleksy, Typewise, Ridmik, Avro, Bijoy, OpenBangla, and
+  of the dictation apps Wispr Flow, Typeless, Superwhisper, Aqua Voice, Willow, MacWhisper and Apple / Google dictation,
+  with sources and ranked gap lists), README rewrite, user guide for the new features, design tokens, design audit,
+  Android review, codebase map.
+- **Release plumbing**: `assemble_release.py` accepts `-rcN` tags, names files with the full version, reports every
+  platform and fails naming each missing file (with an explicit `RELEASE_ALLOW_MISSING` opt-out), and writes
+  `release.env`; dry-run tests in `scripts/test_assemble_release.py`. `release.yml` publishes one release with every
+  platform, marks `-rc` tags as pre-releases and only mirrors final releases. `desktop.yml` builds unsigned installers
+  instead of failing when the updater key is unavailable (fork pull requests), and still requires it for tags.
+
 ## 1.6.3 (release candidate): voice never types placeholder text, accurate README, reproducible WER bench
 - **Status**: release candidate on `main`; it becomes the 1.6.3 release when its GitHub Release is published.
 - **Version**: Android 1.6.3 (versionCode 1603). Desktop stays 1.6.0, iOS unchanged.

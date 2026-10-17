@@ -114,7 +114,9 @@ class FlorisCopyToClipboardActivity : ComponentActivity() {
                 intent.getParcelableExtra(Intent.EXTRA_STREAM)
             }
 
-        if (uri == null) {
+        // Humming: this activity is exported, so only open other apps' content:// URIs, never file:// or our own
+        // providers (SharedUriPolicy).
+        if (uri == null || !com.humming.keyboard.SharedUriPolicy.acceptable(uri.scheme, uri.authority, packageName)) {
             error = CopyToClipboardError.TYPE_NOT_SUPPORTED_ERROR
             return
         }

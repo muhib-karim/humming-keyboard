@@ -105,4 +105,129 @@ final class TextCleanupTests: XCTestCase {
         XCTAssertEqual("It was, like, huge.", clean("it was, like, huge"))
         XCTAssertEqual("It was huge.", strict("it was, like, huge"))
     }
+
+    // 1.7: the same spoken punctuation and "delete last word" cases as Android's TextCleanupTest.kt.
+    func testSpokenColonSemicolonQuotesBracketsEllipsis() {
+        XCTAssertEqual("Note: buy milk.", clean("note colon buy milk"))
+        XCTAssertEqual("First; second.", clean("first semicolon second"))
+        XCTAssertEqual("He said \"hi\".", clean("he said open quote hi close quote"))
+        XCTAssertEqual("\"Hello\".", clean("open quote hello end quote"))
+        XCTAssertEqual("Call me (maybe) tomorrow.", clean("call me open bracket maybe close bracket tomorrow"))
+        XCTAssertEqual("Wait...", clean("wait dot dot dot"))
+        XCTAssertEqual("Wait...", clean("wait ellipsis"))
+    }
+
+    func testSpokenPunctuationNeedsWholeWords() {
+        XCTAssertEqual("The colonel quotes semicolons.", clean("the colonel quotes semicolons"))
+    }
+
+    func testDeleteLastWord() {
+        XCTAssertEqual("I love dogs.", clean("I love cats delete last word dogs"))
+        XCTAssertEqual("I love dogs.", clean("I love big cats delete last word delete last word dogs"))
+        XCTAssertEqual("See you.", clean("see you soon. Scratch the last word."))
+        XCTAssertEqual("", clean("delete last word"))
+        XCTAssertEqual("Hello.", clean("delete last word hello"))
+    }
+
+    func testDeleteLastWordIncludesCombiningMarks() {
+        XCTAssertEqual("", clean("আমার delete last word"))
+        XCTAssertEqual("", clean("আমি delete last word"))
+        XCTAssertEqual("Keep.", clean("Keep cafe\u{0301} delete last word"))
+        XCTAssertEqual("Keep.", clean("Keep আমার. Scratch the last word."))
+        XCTAssertEqual("", clean("আমার আমি delete last word delete last word"))
+    }
+
+    func testDeleteLastWordIncludesApostrophes() {
+        XCTAssertEqual("Keep.", clean("Keep don't delete last word"))
+        XCTAssertEqual("Keep.", clean("Keep don’t delete last word"))
+        XCTAssertEqual("Keep.", clean("Keep don’t. Scratch the last word."))
+        XCTAssertEqual("", clean("আমি’ও delete last word"))
+    }
+
+    func testRepeatedDeleteCommandsAtStartDoNotOverlap() {
+        XCTAssertEqual("Hello.", clean("delete last word delete last word hello"))
+        XCTAssertEqual("Hello.", clean("scratch the last word delete last word scratch last word hello"))
+        XCTAssertEqual("", clean("delete last word delete last word"))
+    }
+
+    func testOpenersKeepLineBreaksAndAbsorbEngineCommas() {
+        XCTAssertEqual("First line\n\"Hello\".", clean("first line new line open quote hello close quote"))
+        XCTAssertEqual("He said, \"hi\".", clean("He said, open quote, hi, close quote."))
+        XCTAssertEqual("Call me (maybe), tomorrow.", clean("Call me, open bracket, maybe, close bracket, tomorrow."))
+        XCTAssertEqual("Can you remove the last word of the title?", clean("can you remove the last word of the title"))
+    }
+
+    // 1.7: replacements ("spoken -> written"), the filler switch and "delete that" (Android parity).
+    func testReplacementsRunFirst() {
+        let r = [("cube cuddle", "kubectl"), ("my sig", "Best, Sam")]
+        XCTAssertEqual("Run kubectl now.", TextCleanup.apply("run cube cuddle now", replacements: r))
+        XCTAssertEqual("Thanks. Best, Sam.", TextCleanup.apply("thanks. my sig", replacements: r))
+    }
+
+    func testReplacementIsWholeWord() {
+        XCTAssertEqual("Concatenate the dog files", TextCleanup.replacePhrases("Concatenate the cat files", [("cat", "dog")]))
+        XCTAssertEqual("kubectl  rocks", TextCleanup.replacePhrases("Cube\tCuddle  rocks", [("cube cuddle", "kubectl")]))
+    }
+
+    func testReplacementsDoNotSplitCombiningMarks() {
+        XCTAssertEqual("X রামি", TextCleanup.replacePhrases("রাম রামি", [("রাম", "X")]))
+        XCTAssertEqual("X cafe\u{0301}", TextCleanup.replacePhrases("cafe cafe\u{0301}", [("cafe", "X")]))
+        XCTAssertEqual("X cafe\u{0301}s", TextCleanup.replacePhrases("cafe\u{0301} cafe\u{0301}s", [("cafe\u{0301}", "X")]))
+        XCTAssertEqual("a\u{0301}cat X", TextCleanup.replacePhrases("a\u{0301}cat cat", [("cat", "X")]))
+    }
+
+    func testVocabularyLines() {
+        let v = TextCleanup.vocabulary(["GitHub", "cube cuddle -> kubectl", "hum ing → Humming", "-> x", "y ->"])
+        XCTAssertEqual(["GitHub", "kubectl", "Humming"], v.terms)
+        XCTAssertEqual(["cube cuddle", "hum ing"], v.replacements.map { $0.0 })
+        XCTAssertEqual(["kubectl", "Humming"], v.replacements.map { $0.1 })
+    }
+
+    func testFillerSwitchOffKeepsFillers() {
+        XCTAssertEqual("Um, I think we should ship it.", TextCleanup.apply("um, I think we should ship it", fillers: false))
+        XCTAssertEqual("So, you know, it works.", TextCleanup.apply("so, you know, it works", fillers: false))
+        XCTAssertEqual("It is, like, fine.", TextCleanup.apply("it is, like, fine", strict: true, fillers: false))
+        XCTAssertEqual("I think we should ship it.", clean("um, I think we should ship it"))
+    }
+
+    func testDeleteThatRemovesTheSentenceBefore() {
+        XCTAssertEqual("Book Saturday.", clean("Book Friday. Scratch that. Book Saturday."))
+        XCTAssertEqual("", clean("I am late. Okay, delete that."))
+        XCTAssertEqual("Can you delete that file?", clean("Can you delete that file?"))
+    }
+
+    func testDecimalsDoNotEndASentence() {
+        XCTAssertEqual("", clean("It costs 3.50. Delete that."))
+        XCTAssertEqual("It costs 3.50. Fine.", clean("It costs 3.50. Fine."))
+    }
+
+    func testDeleteCommandChunk() {
+        // The iPhone app cleans each recogniser chunk; a chunk that is only "scratch that" removes the last sentence.
+        XCTAssertTrue(TextCleanup.isDeleteCommand(" Scratch that. "))
+        XCTAssertTrue(TextCleanup.isDeleteCommand("okay, delete that"))
+        XCTAssertFalse(TextCleanup.isDeleteCommand("Delete that file."))
+        XCTAssertEqual("Book Saturday.", TextCleanup.retractSentences("Book Saturday. Book Friday. Delete that."))
+    }
+
+    func testDeleteThatAcrossChunksKeepsFollowingText() {
+        var transcript = ""
+        XCTAssertEqual("Book Friday.", TextCleanup.appendChunk("Book Friday.", to: &transcript))
+        XCTAssertEqual("Book Saturday.", TextCleanup.appendChunk("Delete that. Book Saturday.", to: &transcript))
+        XCTAssertEqual("", TextCleanup.appendChunk("Delete that.", to: &transcript))
+        XCTAssertEqual("Book Sunday.", TextCleanup.appendChunk("Book Sunday.", to: &transcript))
+    }
+
+    func testDeleteThatAcrossChunksInVerbatimMode() {
+        var transcript = ""
+        XCTAssertEqual("Book Friday.", TextCleanup.appendChunk("Book Friday.", to: &transcript, clean: false))
+        XCTAssertEqual("Book Saturday.", TextCleanup.appendChunk("Delete that. Book Saturday.", to: &transcript, clean: false))
+    }
+
+    func testChunkCleanupKeepsSettingsAndDoesNotRepeatReplacements() {
+        var transcript = ""
+        let pairs = [("cat", "dog"), ("fox", "cat")]
+        XCTAssertEqual("Cat.", TextCleanup.appendChunk("fox", to: &transcript, replacements: pairs))
+        XCTAssertEqual("Cat. Um, hello.", TextCleanup.appendChunk("um, hello", to: &transcript, fillers: false, replacements: pairs))
+        XCTAssertEqual("Cat. Um, hello.", TextCleanup.appendChunk("Thank you for watching!", to: &transcript))
+    }
 }

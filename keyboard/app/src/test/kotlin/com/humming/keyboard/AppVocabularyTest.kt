@@ -20,4 +20,20 @@ class AppVocabularyTest {
         assertEquals(AppVocabulary.Line("Kubernetes", listOf("slack", "termux")), AppVocabulary.parse(" Kubernetes @Slack, termux "))
         assertEquals(AppVocabulary.Line("me@example.com", emptyList()), AppVocabulary.parse("me@example.com"))
     }
+
+    // 1.7: "spoken -> written" replacements (also "→"), with the same " @app" tags.
+    @Test fun parsesReplacements() {
+        assertEquals(AppVocabulary.Line("kubectl", listOf("termux"), "cube cuddle"), AppVocabulary.parse("cube cuddle -> kubectl @termux"))
+        assertEquals(AppVocabulary.Line("Humming", emptyList(), "hum ing"), AppVocabulary.parse("hum ing → Humming"))
+        assertEquals(null, AppVocabulary.parse("-> kubectl"))
+        assertEquals(null, AppVocabulary.parse("cube cuddle ->"))
+    }
+
+    @Test fun replacementsApplyOnlyInTheirApps() {
+        val l = listOf("GitHub", "cube cuddle -> kubectl @termux", "my sig -> Best, Sam")
+        assertEquals(listOf("my sig" to "Best, Sam"), AppVocabulary.replacements(l, "com.android.chrome"))
+        assertEquals(listOf("cube cuddle" to "kubectl", "my sig" to "Best, Sam"), AppVocabulary.replacements(l, "com.termux"))
+        // The written side is also a casing term.
+        assertEquals(listOf("GitHub", "kubectl", "Best, Sam"), AppVocabulary.select(l, "com.termux"))
+    }
 }

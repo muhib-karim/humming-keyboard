@@ -10,7 +10,7 @@ The FlorisBoard community is international, as such we require all contributions
 
 ### Translations
 
-To make FlorisBoard accessible in as many languages as possible, the platform [Crowdin](https://crowdin.florisboard.org) is used to crowdsource and manage translations.  The list of languages in Crowdin covers a good range of languages, but feel free to email [florisboard@patrickgold.dev](mailto:florisboard@patrickgold.dev) to request a new language.
+To make FlorisBoard accessible in as many languages as possible, the platform [Crowdin](https://crowdin.florisboard.org) is used to crowdsource and manage translations.  The list of languages in Crowdin covers a good range of languages, but open an issue at https://github.com/muhib-karim/humming-keyboard/issues to request a new language for Humming.
 
 > [!IMPORTANT]
 > This is the only source of translations - **PRs that add/update translations are not accepted.**

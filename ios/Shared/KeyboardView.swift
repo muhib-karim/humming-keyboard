@@ -53,7 +53,7 @@ struct KeyboardView: View {
                     .font(.footnote.weight(.semibold))
                     .foregroundColor(.white)
                     .padding(.horizontal, 12).padding(.vertical, 7)
-                    .background(Capsule().fill(Brand.accent))
+                    .background(Capsule().fill(Brand.accentStrong))
                 }
                 .accessibilityLabel("Insert your latest dictation")
             } else {

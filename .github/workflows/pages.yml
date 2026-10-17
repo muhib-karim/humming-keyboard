@@ -1,15 +1,15 @@
 name: pages
 
-# Publishes the Humming website (play/site/: the home page and the privacy policy) to GitHub Pages, with the banner
-# and screenshots copied in from docs/. 1.6: also mirrors the LATEST GitHub Release's update files to /updates/
+# Publishes the Humming website (play/site/: home page, privacy policy, 404, sitemap) to GitHub Pages, with the
+# screenshots and social image copied in from docs/ by scripts/assemble_site.py and checked by scripts/check_site.py. 1.6: also mirrors the LATEST GitHub Release's update files to /updates/
 # (latest.json + the signed desktop update bundles, android.json + the APK, SHA256SUMS.txt). The apps read their
 # update feeds from here, so they never need a GitHub login. release.yml calls this after
 # each release, and every site deploy carries the mirror along, then checks the live feed's signatures.
 on:
   push:
     branches: ["main"]
-    paths: ["play/site/**", "docs/banner.png", "docs/screenshots/**", "landing/icon.png", ".github/workflows/pages.yml",
-            "scripts/verify_updater.py"]
+    paths: ["play/site/**", "docs/banner.png", "docs/social-preview.png", "docs/screenshots/**", "landing/icon.png",
+            ".github/workflows/pages.yml", "scripts/assemble_site.py", "scripts/check_site.py", "scripts/verify_updater.py"]
   workflow_call:
   workflow_dispatch:
 
@@ -31,15 +31,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Assemble the site
+        # play/site/ plus the screenshots it shows (copied from docs/), then a check that every local link, image and
+        # #anchor resolves, tags balance and nothing loads from another origin. The same two scripts run locally.
         run: |
-          mkdir -p _site/img
-          cp -R play/site/. _site/
-          cp docs/banner.png landing/icon.png _site/img/
-          for f in android_dictation.gif android_themes.gif android_keyboard_dark.png android_settings_voice.png \
-                   ios_walkthrough.gif ios_dictate.png ios_settings.png ios_keyboard.png \
-                   desktop_dictation.gif desktop_home_dark.png desktop_history.png desktop_settings.png; do
-            cp "docs/screenshots/$f" _site/img/
-          done
+          python3 scripts/assemble_site.py _site
+          python3 scripts/check_site.py _site
           ls -la _site _site/img
       - name: Mirror the latest release's update files to /updates/
         env:
@@ -55,7 +51,8 @@ jobs:
             -p latest.json -p android.json -p SHA256SUMS.txt -p 'Humming-*.apk' \
             -p '*.app.tar.gz' -p '*.app.tar.gz.sig' -p '*-setup.exe' -p '*-setup.exe.sig' \
             -p '*.msi' -p '*.msi.sig' -p '*.AppImage' -p '*.AppImage.sig' -p '*.dmg' || true
-          if [ -f latest.json ]; then
+          # Each feed is mirrored on its own: a release without a desktop build still updates Android, and vice versa.
+          if [ -f latest.json ] || [ -f android.json ]; then
             sha256sum -c --ignore-missing SHA256SUMS.txt
           else
             echo "the latest release has no update feed (released before 1.6): nothing mirrored"
@@ -68,7 +65,7 @@ jobs:
           path: _site
       - id: deployment
         uses: actions/deploy-pages@v4
-      - name: Check the live update feeds (signatures against the app's public key)
+      - name: Check the live desktop update feed (signatures against the app's public key)
         if: hashFiles('_site/updates/latest.json') != ''
         run: |
           set -euo pipefail
@@ -77,4 +74,10 @@ jobs:
           for i in 1 2 3 4 5 6; do curl -fsS -o /dev/null "$BASE/latest.json" && break; sleep 20; done
           python3 scripts/verify_updater.py --config desktop/src-tauri/tauri.conf.json --latest "$BASE/latest.json" --download \
             | tee -a "$GITHUB_STEP_SUMMARY"
+      - name: Check the live Android update feed
+        if: hashFiles('_site/updates/android.json') != ''
+        run: |
+          set -euo pipefail
+          BASE="${{ steps.deployment.outputs.page_url }}updates"
+          for i in 1 2 3 4 5 6; do curl -fsS -o /dev/null "$BASE/android.json" && break; sleep 20; done
           curl -fsS "$BASE/android.json" | tee -a "$GITHUB_STEP_SUMMARY"

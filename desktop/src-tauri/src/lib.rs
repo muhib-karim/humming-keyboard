@@ -154,7 +154,7 @@ fn load_engine(app: &AppHandle) {
 }
 
 /// The text Humming inserts: the user's phrase replacements, the Android cleanup rules (with the user's switches;
-/// verbatim mode keeps every word), then spoken lists as bullets.
+/// verbatim mode keeps every word), then "bullet point" items or spoken lists as bullets.
 pub fn finalize_text(raw: &str, s: &Settings) -> String {
     finalize_text_for(raw, s, None)
 }
@@ -177,7 +177,11 @@ pub fn finalize_text_for(raw: &str, s: &Settings, app: Option<&str>) -> String {
         text_cleanup::Opts { remove_fillers: false, voice_commands: s.voice_commands, self_corrections: false, strict: false }
     };
     let mut text = text_cleanup::apply(&replaced, &terms, opts);
-    if s.clean_mode && s.format_lists {
+    // "bullet point" items (1.7) first; otherwise a spoken "first, ... second, ..." list. Verbatim mode keeps the words.
+    let bullets = if s.clean_mode && s.voice_commands { text_cleanup::bullet_list(&text) } else { None };
+    if let Some(list) = bullets {
+        text = list;
+    } else if s.clean_mode && s.format_lists {
         if let Some(list) = humming_core::cleanup::format_spoken_list(&text) {
             text = list;
         }
@@ -696,5 +700,21 @@ mod tests {
         let s = Settings { trailing_space: false, ..Settings::default() };
         let out = finalize_text("the list is first, eggs, second, milk, third, bread", &s);
         assert!(out.contains("- Eggs") || out.contains("- eggs"), "{out}");
+    }
+
+    #[test]
+    fn bullet_points_become_a_list() {
+        let s = Settings { trailing_space: false, ..Settings::default() };
+        assert_eq!(finalize_text("groceries bullet point eggs bullet point milk", &s), "Groceries:\n- Eggs\n- Milk");
+        let off = Settings { voice_commands: false, ..s.clone() };
+        assert_eq!(finalize_text("groceries bullet point eggs", &off), "Groceries bullet point eggs.");
+        // Verbatim mode keeps the words, as on Android and iPhone.
+        let verbatim = Settings { clean_mode: false, ..s.clone() };
+        assert!(!finalize_text("groceries bullet point eggs bullet point milk", &verbatim).contains("\n- "));
+        // "delete that" runs before the list pass.
+        assert_eq!(
+            finalize_text("Groceries bullet point eggs. Bullet point milk. Delete that. Bullet point bread.", &s),
+            "Groceries:\n- Eggs\n- Bread"
+        );
     }
 }

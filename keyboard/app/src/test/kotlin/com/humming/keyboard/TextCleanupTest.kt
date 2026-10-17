@@ -108,4 +108,96 @@ class TextCleanupTest {
         assertEquals("", clean("um, uh"))
         assertTrue(TextCleanup.isHallucination("Thanks for watching!"))
     }
+
+    /** 1.7: more spoken punctuation, the same on desktop (text_cleanup.rs) and iOS (TextCleanup.swift). */
+    @Test fun spokenColonSemicolonQuotesBracketsEllipsis() {
+        assertEquals("Note: buy milk.", clean("note colon buy milk"))
+        assertEquals("First; second.", clean("first semicolon second"))
+        assertEquals("He said \"hi\".", clean("he said open quote hi close quote"))
+        assertEquals("\"Hello\".", clean("open quote hello end quote"))
+        assertEquals("Call me (maybe) tomorrow.", clean("call me open bracket maybe close bracket tomorrow"))
+        assertEquals("Wait...", clean("wait dot dot dot"))
+        assertEquals("Wait...", clean("wait ellipsis"))
+    }
+
+    @Test fun spokenPunctuationNeedsWholeWords() {
+        assertEquals("The colonel quotes semicolons.", clean("the colonel quotes semicolons"))
+    }
+
+    @Test fun deleteLastWord() {
+        assertEquals("I love dogs.", clean("I love cats delete last word dogs"))
+        assertEquals("I love dogs.", clean("I love big cats delete last word delete last word dogs"))
+        assertEquals("See you.", clean("see you soon. Scratch the last word."))
+    }
+
+    @Test fun deleteLastWordAlone() {
+        assertEquals("", clean("delete last word"))
+        assertEquals("Hello.", clean("delete last word hello"))
+    }
+
+    @Test fun deleteLastWordIncludesCombiningMarks() {
+        assertEquals("", clean("আমার delete last word"))
+        assertEquals("", clean("আমি delete last word"))
+        assertEquals("Keep.", clean("Keep cafe\u0301 delete last word"))
+        assertEquals("Keep.", clean("Keep আমার. Scratch the last word."))
+        assertEquals("", clean("আমার আমি delete last word delete last word"))
+    }
+
+    @Test fun deleteLastWordIncludesApostrophes() {
+        assertEquals("Keep.", clean("Keep don't delete last word"))
+        assertEquals("Keep.", clean("Keep don’t delete last word"))
+        assertEquals("Keep.", clean("Keep don’t. Scratch the last word."))
+        assertEquals("", clean("আমি’ও delete last word"))
+    }
+
+    @Test fun repeatedDeleteCommandsAtStartDoNotOverlap() {
+        assertEquals("Hello.", clean("delete last word delete last word hello"))
+        assertEquals("Hello.", clean("scratch the last word delete last word scratch last word hello"))
+        assertEquals("", clean("delete last word delete last word"))
+    }
+
+    @Test fun deleteThatKeepsFollowingTextAndEditsListsBeforeFormatting() {
+        assertEquals("Book Saturday.", clean("Book Friday. Delete that. Book Saturday."))
+        assertEquals("Groceries:\n- Eggs\n- Bread",
+            clean("Groceries bullet point eggs. Bullet point milk. Delete that. Bullet point bread."))
+        assertEquals("Groceries:\n- Eggs", clean("Groceries bullet point eggs. Bullet point milk. Delete that."))
+    }
+
+    /** Review fixes: a line break before an opener survives; engine commas around the commands are absorbed. */
+    @Test fun openersKeepLineBreaksAndAbsorbEngineCommas() {
+        assertEquals("First line\n\"Hello\".", clean("first line new line open quote hello close quote"))
+        assertEquals("He said, \"hi\".", clean("He said, open quote, hi, close quote."))
+        assertEquals("Call me (maybe), tomorrow.", clean("Call me, open bracket, maybe, close bracket, tomorrow."))
+        assertEquals("Can you remove the last word of the title?", clean("can you remove the last word of the title"))
+    }
+
+    // 1.7: personal dictionary replacements ("spoken -> written") and the filler switch.
+    @Test fun replacementsRunFirst() {
+        val r = listOf("cube cuddle" to "kubectl", "my sig" to "Best, Sam")
+        assertEquals("Run kubectl now.", TextCleanup.apply("run cube cuddle now", replacements = r))
+        assertEquals("Thanks. Best, Sam.", TextCleanup.apply("thanks. my sig", replacements = r))
+    }
+
+    @Test fun replacementIsWholeWord() {
+        val r = listOf("cat" to "dog")
+        assertEquals("Concatenate the cat files", TextCleanup.replacePhrases("Concatenate the cat files", emptyList()))
+        assertEquals("Concatenate the dog files", TextCleanup.replacePhrases("Concatenate the cat files", r))
+        assertEquals("kubectl  rocks", TextCleanup.replacePhrases("Cube\tCuddle  rocks", listOf("cube cuddle" to "kubectl")))
+    }
+
+    @Test fun replacementsDoNotSplitCombiningMarks() {
+        assertEquals("X রামি", TextCleanup.replacePhrases("রাম রামি", listOf("রাম" to "X")))
+        assertEquals("X cafe\u0301", TextCleanup.replacePhrases("cafe cafe\u0301", listOf("cafe" to "X")))
+        assertEquals("X cafe\u0301s", TextCleanup.replacePhrases("cafe\u0301 cafe\u0301s", listOf("cafe\u0301" to "X")))
+        assertEquals("a\u0301cat X", TextCleanup.replacePhrases("a\u0301cat cat", listOf("cat" to "X")))
+    }
+
+    @Test fun fillerSwitchOffKeepsFillers() {
+        assertEquals("Um, I think we should ship it.", TextCleanup.apply("um, I think we should ship it", fillers = false))
+        assertEquals("So, you know, it works.", TextCleanup.apply("so, you know, it works", fillers = false))
+        assertEquals("I think we should ship it.", TextCleanup.apply("um, I think we should ship it"))
+    }
+
+    @Test fun strictNeedsFillersOn() =
+        assertEquals("It is, like, fine.", TextCleanup.apply("it is, like, fine", strict = true, fillers = false))
 }

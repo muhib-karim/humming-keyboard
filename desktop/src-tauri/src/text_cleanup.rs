@@ -1,14 +1,15 @@
 //! Dictation cleanup: a line-for-line port of the Android keyboard's `TextCleanup.kt`, so a sentence dictated on
 //! the phone and on the desktop comes out the same. Order: drop non-speech/hallucinations -> fillers -> spoken
-//! punctuation -> leading discourse markers -> self-corrections ("3, no, 4pm" -> "4pm") -> repeated words ->
-//! dictionary casing -> compact times -> capitals and final punctuation.
+//! punctuation and "delete last word" -> leading discourse markers -> self-corrections ("3, no, 4pm" -> "4pm") -> repeated words ->
+//! dictionary casing -> compact times -> capitals and final punctuation -> "delete that" said as its own sentence
+//! (Android's `VoiceCommands.kt`). `bullet_list` (1.7) is Android's `ListFormat.bullets`, run by `finalize_text`.
 //!
 //! Uses `fancy_regex` because the Kotlin patterns need look-around and back-references.
 
 use fancy_regex::{Captures, Regex};
 use once_cell::sync::Lazy;
 
-const W: &str = r"[\p{L}\p{N}_']";
+const W: &str = r"[\p{L}\p{M}\p{N}_']";
 const UNIT: &str = r"(?:[ap]\.?\s?m\.?|o'?clock|%|percent|dollars?|bucks|minutes?|mins?|hours?|days?|weeks?|k|kg|km|miles?)";
 
 fn re(p: &str) -> Regex {
@@ -37,8 +38,22 @@ static SPOKEN: Lazy<Vec<(Regex, &'static str)>> = Lazy::new(|| {
         (re(r"(?i)\s*\bnew paragraph\b\s*"), "\n\n"),
         (re(r"(?i)\s*\bnew line\b\s*"), "\n"),
         (re(r"(?i)\s*\bcomma\b"), ","),
+        // 1.7: the same additions as Android and iOS. "period" and "dash" stay out: too often meant as words.
+        (re(r"(?i)\s*\bsemicolon\b"), ";"),
+        (re(r"(?i)\s*\bcolon\b"), ":"),
+        // Openers and closers also take the commas a punctuating engine puts around them, and keep a preceding line break.
+        (re(r"(?i)[ \t]*\b(?:open|begin) quotes?\b[,.]?\s*"), " \""),
+        (re(r"(?i)[ \t]*,?[ \t]*\b(?:(?:close|end) quotes?|unquote)\b"), "\""),
+        (re(r"(?i)[ \t]*,?[ \t]*\bopen (?:bracket|paren|parenthesis)\b[,.]?\s*"), " ("),
+        (re(r"(?i)[ \t]*,?[ \t]*\bclose (?:bracket|paren|parenthesis)\b"), ")"),
+        (re(r"(?i)\s*\b(?:ellipsis|dot dot dot)\b"), "..."),
     ]
 });
+// "delete last word" / "scratch the last word" removes the word said before it (or just itself at the start).
+static DELETE_WORD: Lazy<Regex> =
+    Lazy::new(|| re(r"(?i)(?<![\p{L}\p{M}\p{N}'’])[\p{L}\p{M}\p{N}'’]+[,.!?]?\s+(?:delete|scratch) (?:the )?last word\b[,.!?]?"));
+static DELETE_WORD_START: Lazy<Regex> =
+    Lazy::new(|| re(r"(?i)^\s*(?:(?:delete|scratch) (?:the )?last word\b[,.!?]?\s*)+"));
 // Accuracy mode (strict): hedge words that are only filler when set off by commas, extra hesitation sounds, a spoken
 // "period" at the very end, and doubled punctuation. Same rules as Android and iOS.
 static STRICT_FILLER: Lazy<Regex> = Lazy::new(|| re(&format!(r"(?i)(?<!{W})(?:ah+|eh+|mm+|mhm|hm+)(?!{W})[,.]?\s*")));
@@ -59,10 +74,24 @@ static NORM_STRIP: Lazy<Regex> = Lazy::new(|| re(r"[^\p{L}\p{N}\s]"));
 static DOUBLE_PAIR: Lazy<Regex> = Lazy::new(|| re(r"(?i)\b(\p{L}+ \p{L}+) \1\b"));
 static TIME_AMPM: Lazy<Regex> =
     Lazy::new(|| re(r"(?<![\p{L}\p{N}])(\d{1,2}(?::\d{2})?)\s?([AaPp])\.?\s?[Mm](?=[\s,.;!?]|$)"));
+// 1.7: "bullet point" starts a list item; "delete that" said as its own sentence removes the sentence before it.
+static BULLET: Lazy<Regex> =
+    Lazy::new(|| re(r"(?i)[ \t]*[,;:]?[ \t]*\b(?:(?:next|new) bullet(?: point)?|bullet point)\b[,.;:]?[ \t]*"));
+/// A marker after one of these words is the thing itself ("the second bullet point"), not a command.
+const NOT_AFTER: &[&str] = &[
+    "a", "an", "the", "this", "that", "these", "those", "each", "every", "another", "my", "your", "his", "her", "its", "our",
+    "their", "which", "what", "no", "any", "some", "first", "second", "third", "last", "one",
+];
+static DELETE_SENTENCE: Lazy<Regex> =
+    Lazy::new(|| re(r"(?i)^(?:ok(?:ay)?,? )?(?:delete|scratch|undo|remove) (?:that|the last sentence)$"));
+// A mark only ends a sentence before a space or the end, so "3.50" stays one sentence.
+static SENTENCE: Lazy<Regex> = Lazy::new(|| re(r"(?:[^.!?]|[.!?](?!\s|$))+(?:[.!?]+(?=\s|$)|$)"));
+static NEWLINE_INDENT: Lazy<Regex> = Lazy::new(|| re(r"\n[ \t]+"));
 static SPACE_BEFORE_PUNCT: Lazy<Regex> = Lazy::new(|| re(r"\s+([,.?!;:])"));
 static SPACE_AFTER_PUNCT: Lazy<Regex> = Lazy::new(|| re(r"([,;:])(?=[^\s\d])"));
 static LONE_I: Lazy<Regex> = Lazy::new(|| re(&format!(r"(?<!{W})i(?!{W})")));
-static SENTENCE_START: Lazy<Regex> = Lazy::new(|| re(r"(^|[.?!]\s+|\n)(\p{Ll})"));
+// A sentence may open with a quote or bracket ("\"hello" -> "\"Hello").
+static SENTENCE_START: Lazy<Regex> = Lazy::new(|| re(r#"(^|[.?!]\s+|\n)(["(]?)(\p{Ll})"#));
 static SENTENCE_SPLIT: Lazy<Regex> = Lazy::new(|| re(r"(?<=[.?!])\s+"));
 
 const KEEP_REPEAT: &[&str] =
@@ -118,6 +147,7 @@ pub fn apply(raw: &str, dictionary: &[String], o: Opts) -> String {
         for (r, rep) in SPOKEN.iter() {
             t = replace_all(r, &t, rep);
         }
+        t = delete_last_word(&t);
     }
     if strict {
         t = replace_all(&STRICT_PERIOD, &t, ".");
@@ -138,7 +168,114 @@ pub fn apply(raw: &str, dictionary: &[String], o: Opts) -> String {
     if strict {
         t = replace_all(&DOUBLED, &t, "$2");
     }
-    finish(&t)
+    let out = finish(&t);
+    if o.voice_commands {
+        retract_sentences(&out)
+    } else {
+        out
+    }
+}
+
+/// "Book Friday. Scratch that. Book Saturday." -> "Book Saturday." The command must be the whole sentence
+/// ("delete that", "scratch that", "undo that", "remove that", "delete the last sentence", optionally after "okay,").
+pub fn retract_sentences(text: &str) -> String {
+    let mut out: Vec<&str> = Vec::new();
+    let mut changed = false;
+    for m in SENTENCE.find_iter(text).filter_map(|m| m.ok()) {
+        let s = m.as_str();
+        if s.trim().is_empty() {
+            continue;
+        }
+        let bare = s.trim().trim_end_matches(|c: char| ".!?,".contains(c)).trim();
+        if DELETE_SENTENCE.is_match(bare).unwrap_or(false) {
+            out.pop();
+            changed = true;
+        } else {
+            out.push(s);
+        }
+    }
+    if changed {
+        out.concat().trim().to_string()
+    } else {
+        text.to_string()
+    }
+}
+
+fn trim_item(s: &str) -> String {
+    s.trim().trim_end_matches(|c: char| ",.;:".contains(c)).trim().to_string()
+}
+
+fn capitalize(s: &str) -> String {
+    let mut c = s.chars();
+    match c.next() {
+        Some(f) => f.to_uppercase().collect::<String>() + c.as_str(),
+        None => String::new(),
+    }
+}
+
+/// "Groceries bullet point eggs bullet point milk." -> "Groceries:\n- Eggs\n- Milk"; None when there is no item.
+/// The last item ends at its line break and the rest of the text follows the list.
+pub fn bullet_list(text: &str) -> Option<String> {
+    static PARAGRAPH: Lazy<Regex> = Lazy::new(|| re(r"\r?\n[ \t\r]*\n"));
+    if let Some(m) = PARAGRAPH.find(text).ok().flatten() {
+        let (head, tail) = (&text[..m.start()], &text[m.end()..]);
+        let (a, b) = (bullet_list(head), bullet_list(tail));
+        return if a.is_none() && b.is_none() {
+            None
+        } else {
+            Some(format!("{}{}{}", a.as_deref().unwrap_or(head), m.as_str(), b.as_deref().unwrap_or(tail)))
+        };
+    }
+    let mut parts: Vec<&str> = Vec::new();
+    let mut from = 0;
+    for m in BULLET.find_iter(text).filter_map(|m| m.ok()) {
+        let prev = text[..m.start()].split_whitespace().last().unwrap_or("");
+        if NOT_AFTER.contains(&prev.to_lowercase().as_str()) {
+            continue;
+        }
+        parts.push(&text[from..m.start()]);
+        from = m.end();
+    }
+    parts.push(&text[from..]);
+    if parts.len() < 2 {
+        return None;
+    }
+    let last = parts.len() - 1;
+    let mut items: Vec<String> = Vec::new();
+    let mut tail = String::new();
+    for (i, p) in parts.iter().enumerate().skip(1) {
+        let mut item = p.to_string();
+        if let Some(nl) = p.find('\n') {
+            if i == last {
+                tail = p[nl..].to_string();
+                item = p[..nl].to_string();
+            } else {
+                item = p.split_whitespace().collect::<Vec<_>>().join(" ");
+            }
+        }
+        let mut item = trim_item(&item);
+        if let Some(head) = item.strip_suffix(" and") {
+            item = trim_item(head);
+        }
+        if !item.is_empty() {
+            items.push(capitalize(&item));
+        }
+    }
+    if items.is_empty() {
+        return None;
+    }
+    let mut intro = parts[0].trim().to_string();
+    let end = intro.chars().last();
+    match end {
+        Some(c) if c.is_alphanumeric() => intro.push(':'),
+        Some(',') | Some(';') => {
+            intro.pop();
+            intro.push(':');
+        }
+        _ => {}
+    }
+    let head = if intro.is_empty() { String::new() } else { format!("{intro}\n") };
+    Some(format!("{head}- {}{tail}", items.join("\n- ")))
 }
 
 /// "4 pm", "4 p.m.", "10:30 AM" -> "4pm", "10:30am" (the way people type times).
@@ -272,13 +409,29 @@ pub fn apply_dictionary(input: &str, terms: &[String]) -> String {
     t
 }
 
+/// "I love cats delete last word dogs" -> "I love dogs"; repeated commands remove one word each.
+pub fn delete_last_word(input: &str) -> String {
+    let mut t = input.to_string();
+    for _ in 0..5 {
+        let next = replace_all(&DELETE_WORD, &replace_all(&DELETE_WORD_START, &t, ""), "");
+        if next == t {
+            break;
+        }
+        t = next;
+    }
+    t
+}
+
 /// Spacing around punctuation, standalone "i", sentence capitals, and a final mark when one is missing.
 pub fn finish(input: &str) -> String {
     let mut t = collapse_spaces(input);
+    t = replace_all(&NEWLINE_INDENT, &t, "\n");
     t = replace_all(&SPACE_BEFORE_PUNCT, &t, "${1}");
     t = replace_all(&SPACE_AFTER_PUNCT, &t, "${1} ");
     t = replace_all(&LONE_I, &t, "I");
-    t = SENTENCE_START.replace_all(&t, |c: &Captures| format!("{}{}", &c[1], c[2].to_uppercase())).into_owned();
+    t = SENTENCE_START
+        .replace_all(&t, |c: &Captures| format!("{}{}{}", &c[1], &c[2], c[3].to_uppercase()))
+        .into_owned();
     if let Some(last) = t.chars().last() {
         if last.is_alphanumeric() || last == '\'' || last == '"' {
             let start = SENTENCE_SPLIT.find_iter(&t).filter_map(|m| m.ok()).map(|m| m.end()).last().unwrap_or(0);
@@ -372,5 +525,141 @@ mod tests {
     fn verbatim_switches() {
         let o = Opts { remove_fillers: false, voice_commands: false, self_corrections: false, strict: false };
         assert_eq!(apply("um new line", &[], o), "Um new line.");
+    }
+
+    // 1.7: the same spoken punctuation and "delete last word" cases as Android's TextCleanupTest.kt.
+    #[test]
+    fn spoken_colon_semicolon_quotes_brackets_ellipsis() {
+        assert_eq!(clean("note colon buy milk"), "Note: buy milk.");
+        assert_eq!(clean("first semicolon second"), "First; second.");
+        assert_eq!(clean("he said open quote hi close quote"), "He said \"hi\".");
+        assert_eq!(clean("open quote hello end quote"), "\"Hello\".");
+        assert_eq!(clean("call me open bracket maybe close bracket tomorrow"), "Call me (maybe) tomorrow.");
+        assert_eq!(clean("wait dot dot dot"), "Wait...");
+        assert_eq!(clean("wait ellipsis"), "Wait...");
+        assert_eq!(clean("the colonel quotes semicolons"), "The colonel quotes semicolons.");
+    }
+
+    #[test]
+    fn delete_last_word() {
+        assert_eq!(clean("I love cats delete last word dogs"), "I love dogs.");
+        assert_eq!(clean("I love big cats delete last word delete last word dogs"), "I love dogs.");
+        assert_eq!(clean("see you soon. Scratch the last word."), "See you.");
+        assert_eq!(clean("delete last word"), "");
+        assert_eq!(clean("delete last word hello"), "Hello.");
+        let o = Opts { remove_fillers: false, voice_commands: false, self_corrections: false, strict: false };
+        assert_eq!(apply("cats delete last word", &[], o), "Cats delete last word.");
+    }
+
+    #[test]
+    fn delete_last_word_includes_combining_marks() {
+        assert_eq!(clean("আমার delete last word"), "");
+        assert_eq!(clean("আমি delete last word"), "");
+        assert_eq!(clean("Keep cafe\u{0301} delete last word"), "Keep.");
+        assert_eq!(clean("Keep আমার. Scratch the last word."), "Keep.");
+        assert_eq!(clean("আমার আমি delete last word delete last word"), "");
+    }
+
+    #[test]
+    fn delete_last_word_includes_apostrophes() {
+        assert_eq!(clean("Keep don't delete last word"), "Keep.");
+        assert_eq!(clean("Keep don’t delete last word"), "Keep.");
+        assert_eq!(clean("Keep don’t. Scratch the last word."), "Keep.");
+        assert_eq!(clean("আমি’ও delete last word"), "");
+    }
+
+    #[test]
+    fn repeated_delete_commands_at_start_do_not_overlap() {
+        assert_eq!(clean("delete last word delete last word hello"), "Hello.");
+        assert_eq!(clean("scratch the last word delete last word scratch last word hello"), "Hello.");
+        assert_eq!(clean("delete last word delete last word"), "");
+    }
+
+    #[test]
+    fn dictionary_does_not_split_combining_marks() {
+        assert_eq!(apply_dictionary("cafe cafe\u{0301}", &["CAFE".into()]), "CAFE cafe\u{0301}");
+        assert_eq!(apply_dictionary("a\u{0301}cat cat", &["CAT".into()]), "a\u{0301}cat CAT");
+    }
+
+    #[test]
+    fn openers_keep_line_breaks_and_absorb_engine_commas() {
+        assert_eq!(clean("first line new line open quote hello close quote"), "First line\n\"Hello\".");
+        assert_eq!(clean("He said, open quote, hi, close quote."), "He said, \"hi\".");
+        assert_eq!(clean("Call me, open bracket, maybe, close bracket, tomorrow."), "Call me (maybe), tomorrow.");
+        assert_eq!(clean("can you remove the last word of the title"), "Can you remove the last word of the title?");
+    }
+
+    // 1.7: "bullet point" lists (the same cases as Android's ListFormatTest.kt) and "delete that" said as its own
+    // sentence (Android's VoiceCommands).
+    #[test]
+    fn bullet_points_become_list_items() {
+        assert_eq!(bullet_list("Groceries bullet point eggs bullet point milk.").as_deref(), Some("Groceries:\n- Eggs\n- Milk"));
+        assert_eq!(bullet_list("Bullet point, eggs. Bullet point, milk.").as_deref(), Some("- Eggs\n- Milk"));
+        assert_eq!(
+            bullet_list("Here is the plan. Bullet point call Sam next bullet book the room.").as_deref(),
+            Some("Here is the plan.\n- Call Sam\n- Book the room")
+        );
+        assert_eq!(bullet_list("Groceries bullet point eggs bullet point.").as_deref(), Some("Groceries:\n- Eggs"));
+        assert_eq!(bullet_list("To do bullet point milk.\n\nThanks.").as_deref(), Some("To do:\n- Milk\n\nThanks."));
+    }
+
+    #[test]
+    fn bullet_point_in_prose_is_not_a_marker() {
+        assert_eq!(bullet_list("Bullet points."), None);
+        assert_eq!(bullet_list("Use bullet points here."), None);
+        assert_eq!(bullet_list("The second bullet point is wrong."), None);
+        assert_eq!(bullet_list("Fix the bullet point on slide two."), None);
+        assert_eq!(bullet_list("See you soon."), None);
+    }
+
+    #[test]
+    fn paragraphs_end_lists_before_later_markers() {
+        assert_eq!(
+            bullet_list("Bullet point eggs.\n\nThanks.\n\nBullet point milk.").as_deref(),
+            Some("- Eggs\n\nThanks.\n\n- Milk")
+        );
+        assert_eq!(
+            bullet_list("Bullet point eggs.\n \t\nThanks.\n\nBullet point milk.").as_deref(),
+            Some("- Eggs\n \t\nThanks.\n\n- Milk")
+        );
+    }
+
+    #[test]
+    fn delete_that_removes_the_sentence_before() {
+        assert_eq!(clean("Book Friday. Scratch that. Book Saturday."), "Book Saturday.");
+        assert_eq!(clean("I am late. Okay, delete that."), "");
+        assert_eq!(clean("Delete that."), "");
+        assert_eq!(clean("Can you delete that file?"), "Can you delete that file?");
+        let o = Opts { voice_commands: false, ..Opts::default() };
+        assert_eq!(apply("Book Friday. Scratch that. Book Saturday.", &[], o), "Book Friday. Scratch that. Book Saturday.");
+    }
+
+    #[test]
+    fn delete_that_keeps_following_text_and_edits_lists_before_formatting() {
+        assert_eq!(clean("Book Friday. Delete that. Book Saturday."), "Book Saturday.");
+        assert_eq!(
+            bullet_list(&clean("Groceries bullet point eggs. Bullet point milk. Delete that. Bullet point bread.")).as_deref(),
+            Some("Groceries:\n- Eggs\n- Bread")
+        );
+        assert_eq!(
+            bullet_list(&clean("Groceries bullet point eggs. Bullet point milk. Delete that.")).as_deref(),
+            Some("Groceries:\n- Eggs")
+        );
+    }
+
+    // Review fixes, the same cases as Android's ListFormatTest / VoiceCommandsTest.
+    #[test]
+    fn bullet_review_fixes() {
+        assert_eq!(bullet_list("Groceries bullet point eggs new bullet point milk.").as_deref(), Some("Groceries:\n- Eggs\n- Milk"));
+        assert_eq!(bullet_list("Her bullet point was wrong."), None);
+        assert_eq!(bullet_list("Which bullet point is it?"), None);
+        assert_eq!(bullet_list("The next bullet point is wrong."), None);
+        assert_eq!(bullet_list("Groceries bullet point eggs and next bullet milk.").as_deref(), Some("Groceries:\n- Eggs\n- Milk"));
+    }
+
+    #[test]
+    fn decimals_do_not_end_a_sentence() {
+        assert_eq!(clean("It costs 3.50. Delete that."), "");
+        assert_eq!(clean("It costs 3.50. Fine."), "It costs 3.50. Fine.");
     }
 }

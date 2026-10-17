@@ -38,12 +38,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -75,11 +77,14 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
@@ -293,7 +298,11 @@ object HummingVoice {
         }
         val editor by app.editorInstance()
         val before = editor.activeContent.textBeforeSelection
-        glue = if (before.isNotEmpty() && !before.last().isWhitespace()) " " else ""
+        val after = editor.activeContent.textAfterSelection
+        // The dictation fits the sentence it lands in: no space after "(", lowercase when continuing a sentence, no
+        // final period when the text after the cursor carries on (DictationJoin).
+        glue = com.humming.keyboard.DictationJoin.glue(before)
+        val dictionary = Prefs.dictionary(app)
         val s = if (streaming) StreamingSession(app) { partial -> main.post { onPartial(partial) } } else null
         output = DictationOutput(
             object : DictationOutput.Field {
@@ -342,6 +351,7 @@ object HummingVoice {
             { p -> _state.update { it.copy(transcript = p) } },
             glue = glue,
             live = Prefs.liveTyping(app),
+            adapt = { t -> com.humming.keyboard.DictationJoin.adapt(before, t, after, dictionary) },
         )
         if (onlineMode) {
             val o = com.humming.keyboard.OnlineSession(app, onPartial = { p -> onOnlinePartial(app, p) },
@@ -388,8 +398,12 @@ object HummingVoice {
     /** Online mode: the same on-device clean-up, personal dictionary and spoken commands as offline. */
     private fun cleanOnline(app: Context, raw: String): com.humming.keyboard.VoiceCommands.Result {
         val dict = Prefs.dictionary(app)
-        val t = if (Prefs.cleanMode(app)) com.humming.keyboard.TextCleanup.apply(raw, dict, Prefs.accuracyMode(app))
-        else com.humming.keyboard.TextCleanup.applyDictionary(raw, dict)
+        val pairs = Prefs.replacements(app)
+        val t = if (Prefs.cleanMode(app)) {
+            com.humming.keyboard.TextCleanup.apply(raw, dict, Prefs.accuracyMode(app), Prefs.removeFillers(app), pairs)
+        } else {
+            com.humming.keyboard.TextCleanup.applyDictionary(com.humming.keyboard.TextCleanup.replacePhrases(raw, pairs), dict)
+        }
         return com.humming.keyboard.VoiceCommands.apply(t)
     }
 
@@ -552,14 +566,17 @@ data class HummingPalette(
     val onAccent: Color,
     val rec: Color,
     val ok: Color = Color(0xFF1E9E5A),
+    /** Accent for small text and icons on accent-tinted surfaces: meets 4.5:1 there (docs/BRAND.md tokens). */
+    val accentText: Color = accentStart,
 ) {
     val accentBrush: Brush get() = Brush.linearGradient(listOf(accentStart, accentEnd))
 
     companion object {
         val Light = HummingPalette(
             background = Color(0xFFEEF0F5), surface = Color(0xFFFFFFFF), onBackground = Color(0xFF11131A),
-            secondary = Color(0xFF626879), accentStart = Color(0xFFE5486B), accentEnd = Color(0xFFCA349C),
-            onAccent = Color.White, rec = Color(0xFFFF3B5C),
+            // 1.7 contrast pass: secondary and ok darkened so 12-13sp pill text meets 4.5:1 on its tinted pill.
+            secondary = Color(0xFF545A6A), accentStart = Color(0xFFE5486B), accentEnd = Color(0xFFCA349C),
+            onAccent = Color.White, rec = Color(0xFFFF3B5C), ok = Color(0xFF136B3D), accentText = Color(0xFFB03050),
         )
         val Dark = HummingPalette(
             background = Color(0xFF121418), surface = Color(0xFF24272E), onBackground = Color(0xFFF3F4F8),
@@ -578,16 +595,15 @@ fun HummingMicButton(isNight: Boolean, modifier: Modifier = Modifier, size: Dp =
     val interaction = remember { MutableInteractionSource() }
     val pressed by interaction.collectIsPressedAsState()
     val scale by animateFloatAsState(if (pressed) 0.88f else 1f, spring(dampingRatio = 0.45f, stiffness = 600f), label = "micPress")
+    // 1.7: the touch target fills the Smartbar's height and is at least 48dp wide; the visible circle keeps the size
+    // the user picked (Settings > Smartbar). Same 50dp footprint as before (6 + 38 + 6).
     Box(
         modifier = modifier
-            .padding(horizontal = 6.dp)
-            .size(size)
-            .scale(scale)
-            .shadow(elevation = 6.dp, shape = CircleShape, ambientColor = p.accentStart, spotColor = p.accentStart)
-            .clip(CircleShape)
-            .background(p.accentBrush)
+            .padding(horizontal = 1.dp)
+            .fillMaxHeight()
+            .widthIn(min = 48.dp)
             .combinedClickable(
-                interactionSource = interaction, indication = null,
+                interactionSource = interaction, indication = null, role = Role.Button, onLongClickLabel = "More voice options",
                 onClick = {
                     haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                     HummingVoice.toggle(context)
@@ -602,7 +618,17 @@ fun HummingMicButton(isNight: Boolean, modifier: Modifier = Modifier, size: Dp =
             .semantics { contentDescription = "Dictate with Humming. Long-press for more voice options" },
         contentAlignment = Alignment.Center,
     ) {
-        Icon(Icons.Rounded.Mic, contentDescription = null, tint = p.onAccent, modifier = Modifier.size(size * 0.56f))
+        Box(
+            modifier = Modifier
+                .size(size)
+                .graphicsLayer { scaleX = scale; scaleY = scale } // press spring in the draw phase, no recomposition
+                .shadow(elevation = 6.dp, shape = CircleShape, ambientColor = p.accentStart, spotColor = p.accentStart)
+                .clip(CircleShape)
+                .background(p.accentBrush),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(Icons.Rounded.Mic, contentDescription = null, tint = p.onAccent, modifier = Modifier.size(size * 0.56f))
+        }
     }
 }
 
@@ -630,23 +656,34 @@ fun VoiceInputLayout(isNight: Boolean, height: Dp, modifier: Modifier = Modifier
             .padding(horizontal = 14.dp, vertical = 10.dp),
     ) {
         // Top row: Clean mode chip, status + timer.
-        Row(modifier = Modifier.fillMaxWidth().height(36.dp), verticalAlignment = Alignment.CenterVertically) {
+        // 1.7: 48dp tall so the Clean chip's touch target meets the 48dp minimum; the visible pill stays compact.
+        Row(modifier = Modifier.fillMaxWidth().height(48.dp), verticalAlignment = Alignment.CenterVertically) {
             val chipShape = RoundedCornerShape(50)
-            Row(
+            Box(
                 modifier = Modifier
-                    .clip(chipShape)
-                    .then(if (st.clean) Modifier.background(p.accentStart.copy(alpha = 0.14f)) else Modifier.border(1.dp, p.secondary.copy(alpha = 0.5f), chipShape))
-                    .clickable {
+                    .height(48.dp)
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() }, indication = null,
+                        role = Role.Switch, onClickLabel = if (st.clean) "Switch to verbatim" else "Switch to clean",
+                    ) {
                         haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                         HummingVoice.toggleClean(context)
                     }
-                    .padding(horizontal = 12.dp, vertical = 6.dp),
-                verticalAlignment = Alignment.CenterVertically,
+                    .semantics { stateDescription = if (st.clean) "Clean mode on" else "Clean mode off, verbatim" },
+                contentAlignment = Alignment.CenterStart,
             ) {
-                Icon(Icons.Rounded.AutoAwesome, null, tint = if (st.clean) p.accentStart else p.secondary, modifier = Modifier.size(16.dp))
-                Spacer(Modifier.width(6.dp))
-                Text(if (st.clean) "Clean" else "Verbatim", color = if (st.clean) p.accentStart else p.secondary,
-                    fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
+                Row(
+                    modifier = Modifier
+                        .clip(chipShape)
+                        .then(if (st.clean) Modifier.background(p.accentStart.copy(alpha = 0.14f)) else Modifier.border(1.dp, p.secondary.copy(alpha = 0.5f), chipShape))
+                        .padding(horizontal = 12.dp, vertical = 6.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Icon(Icons.Rounded.AutoAwesome, null, tint = if (st.clean) p.accentText else p.secondary, modifier = Modifier.size(16.dp))
+                    Spacer(Modifier.width(6.dp))
+                    Text(if (st.clean) "Clean" else "Verbatim", color = if (st.clean) p.accentText else p.secondary,
+                        fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
+                }
             }
             // Humming M5: where the words go. "Offline" = the model is on the phone, no network is used.
             if (st.offline) {
@@ -663,7 +700,8 @@ fun VoiceInputLayout(isNight: Boolean, height: Dp, modifier: Modifier = Modifier
             if (listening) {
                 val blink = rememberInfiniteTransition(label = "rec")
                 val a by blink.animateFloat(1f, 0.25f, infiniteRepeatable(tween(700), RepeatMode.Reverse), label = "recDot")
-                Box(Modifier.size(8.dp).clip(CircleShape).background(p.rec.copy(alpha = a)))
+                // Alpha is read in the layer (draw phase), so the blink does not recompose the panel every frame.
+                Box(Modifier.size(8.dp).graphicsLayer { alpha = a }.clip(CircleShape).background(p.rec))
                 Spacer(Modifier.width(8.dp))
             }
             Text(
@@ -762,7 +800,7 @@ private fun RoundAction(p: HummingPalette, onClick: () -> Unit, content: @Compos
             .shadow(1.dp, CircleShape)
             .clip(CircleShape)
             .background(p.surface)
-            .clickable(interactionSource = interaction, indication = null, onClick = onClick),
+            .clickable(interactionSource = interaction, indication = null, role = Role.Button, onClick = onClick),
         contentAlignment = Alignment.Center,
     ) { content() }
 }
@@ -777,7 +815,8 @@ private fun MicOrb(p: HummingPalette, st: VoiceState, onClick: () -> Unit) {
     val breath by inf.animateFloat(0f, 1f, infiniteRepeatable(tween(1600, easing = FastOutSlowInEasing), RepeatMode.Reverse), label = "breath")
     val spin by inf.animateFloat(0f, 360f, infiniteRepeatable(tween(1000, easing = LinearEasing)), label = "spin")
     val levels = st.levels
-    Box(modifier = Modifier.size(124.dp).clickable(indication = null, interactionSource = remember { MutableInteractionSource() }, onClick = onClick),
+    Box(modifier = Modifier.size(124.dp).clickable(indication = null, interactionSource = remember { MutableInteractionSource() },
+            role = Role.Button, onClick = onClick),
         contentAlignment = Alignment.Center) {
         Canvas(modifier = Modifier.fillMaxSize()) {
             val c = Offset(size.width / 2f, size.height / 2f)

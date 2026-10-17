@@ -1,0 +1,105 @@
+import XCTest
+@testable import HummingCore
+
+/// 1.7: the same cases as Android's ListFormatTest.kt and desktop's `bullet_list` tests (parity).
+final class ListFormatTests: XCTestCase {
+    func testBulletsAfterAnIntroWord() {
+        XCTAssertEqual("Groceries:\n- Eggs\n- Milk", ListFormat.apply("Groceries bullet point eggs bullet point milk."))
+    }
+
+    func testBulletsWithEnginePunctuation() {
+        XCTAssertEqual("- Eggs\n- Milk", ListFormat.apply("Bullet point, eggs. Bullet point, milk."))
+    }
+
+    func testIntroSentenceKeepsItsMark() {
+        XCTAssertEqual("Here is the plan.\n- Call Sam\n- Book the room",
+                       ListFormat.apply("Here is the plan. Bullet point call Sam next bullet book the room."))
+    }
+
+    func testPluralBulletPointsIsNotAMarker() {
+        XCTAssertNil(ListFormat.bullets("Bullet points."))
+        XCTAssertEqual("Use bullet points here.", ListFormat.apply("Use bullet points here."))
+    }
+
+    func testBulletPointInProseIsNotAMarker() {
+        XCTAssertNil(ListFormat.bullets("The second bullet point is wrong."))
+        XCTAssertEqual("Fix the bullet point on slide two.", ListFormat.apply("Fix the bullet point on slide two."))
+    }
+
+    func testEmptyBulletIsDropped() {
+        XCTAssertEqual("Groceries:\n- Eggs", ListFormat.apply("Groceries bullet point eggs bullet point."))
+    }
+
+    func testTextAfterAListFollowsIt() {
+        XCTAssertEqual("To do:\n- Milk\n\nThanks.", ListFormat.apply("To do bullet point milk.\n\nThanks."))
+    }
+
+    func testParagraphsEndListsBeforeLaterMarkers() {
+        XCTAssertEqual("- Eggs\n\nThanks.\n\n- Milk",
+                       ListFormat.apply("Bullet point eggs.\n\nThanks.\n\nBullet point milk."))
+        XCTAssertEqual("- Eggs\n \t\nThanks.\n\n- Milk",
+                       ListFormat.apply("Bullet point eggs.\n \t\nThanks.\n\nBullet point milk."))
+        XCTAssertEqual("- Eggs\n- Bread\n\nThanks.\n\n- Milk\n- Tea",
+                       ListFormat.apply("First, eggs, second, bread.\n\nThanks.\n\nFirst, milk, second, tea."))
+        XCTAssertNil(ListFormat.spokenList("First, eggs.\n\nSecond, milk."))
+    }
+
+    func testSpokenList() {
+        XCTAssertEqual("The list is:\n- Eggs\n- Milk\n- Bread", ListFormat.apply("The list is first, eggs, second, milk, third, bread."))
+        XCTAssertEqual("- Call Sam\n- Book the room", ListFormat.apply("Number one, call Sam, number two, book the room."))
+    }
+
+    func testLoneFirstIsNotAList() {
+        XCTAssertNil(ListFormat.spokenList("First, we eat. Then we talk."))
+        XCTAssertEqual("First, we eat. Then we talk.", ListFormat.apply("First, we eat. Then we talk."))
+    }
+
+    func testPlainTextIsUnchanged() {
+        XCTAssertEqual("See you soon.", ListFormat.apply("See you soon."))
+    }
+
+    func testCleanupFormatsLists() {
+        XCTAssertEqual("Groceries:\n- Eggs\n- Milk", TextCleanup.apply("groceries bullet point eggs bullet point milk"))
+        XCTAssertEqual("The list is:\n- Eggs\n- Milk", TextCleanup.apply("the list is first, eggs, second, milk"))
+    }
+
+    // Review fixes, the same cases as Android's ListFormatTest.
+    func testNewBulletPointIsOneMarker() {
+        XCTAssertEqual("Groceries:\n- Eggs\n- Milk", ListFormat.apply("Groceries bullet point eggs new bullet point milk."))
+    }
+
+    func testMoreProseWordsAreNotMarkers() {
+        XCTAssertNil(ListFormat.bullets("Her bullet point was wrong."))
+        XCTAssertNil(ListFormat.bullets("Which bullet point is it?"))
+        XCTAssertNil(ListFormat.bullets("The next bullet point is wrong."))
+    }
+
+    func testTrailingAndIsDropped() {
+        XCTAssertEqual("Groceries:\n- Eggs\n- Milk", ListFormat.apply("Groceries bullet point eggs and next bullet milk."))
+    }
+
+    func testASecondInProseIsNotAList() {
+        XCTAssertNil(ListFormat.spokenList("First, give me a second, then we can go."))
+    }
+
+    func testDeleteThatRunsBeforeTheList() {
+        XCTAssertEqual("Groceries:\n- Eggs\n- Bread",
+                       TextCleanup.apply("Groceries bullet point eggs. Bullet point milk. Delete that. Bullet point bread."))
+    }
+
+    func testDeleteThatAcrossChunksRunsBeforeListFormatting() {
+        var transcript = ""
+        XCTAssertEqual("Groceries:\n- Eggs\n- Milk",
+                       TextCleanup.appendChunk("Groceries bullet point eggs. Bullet point milk.", to: &transcript))
+        XCTAssertEqual("Groceries:\n- Eggs\n- Bread",
+                       TextCleanup.appendChunk("Delete that. Bullet point bread.", to: &transcript))
+        XCTAssertEqual("Groceries:\n- Eggs", TextCleanup.appendChunk("Delete that.", to: &transcript))
+        XCTAssertEqual("", TextCleanup.appendChunk("Delete that.", to: &transcript))
+    }
+
+    func testChunkAfterListKeepsItsOwnLine() {
+        var transcript = ""
+        XCTAssertEqual("- Eggs\n- Milk", TextCleanup.appendChunk("Bullet point eggs. Bullet point milk.", to: &transcript))
+        XCTAssertEqual("- Eggs\n- Milk\nThanks.", TextCleanup.appendChunk("Thanks.", to: &transcript))
+    }
+}

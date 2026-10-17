@@ -118,6 +118,11 @@ flowchart LR
     Feed --> And[Android APK<br/>SHA-256 + signing certificate check]
 ```
 
+An interactive, source-linked version of the 1.7 release pipeline (tag → platform builds → `assemble_release.py` →
+one GitHub release or pre-release → update mirror for final releases → in-app updaters) is in
+[release-pipeline.html](release-pipeline.html) (Archify; open the file in a browser; each box links to the workflow or
+script lines it summarises). Release candidates (`vX.Y.Z-rcN`) become GitHub pre-releases and are never mirrored.
+
 - **Feeds.** `latest.json` (Tauri updater format, one signed entry per desktop platform) and `android.json`
   (`versionCode`, `versionName`, APK name, SHA-256, notes) are written by `scripts/assemble_release.py` with
   `SHA256SUMS.txt` over every release file.

@@ -15,19 +15,21 @@ struct SettingsView: View {
             Form {
                 Section {
                     Toggle("Clean mode", isOn: $settings.cleanMode)
-                    Toggle("Accuracy mode", isOn: $settings.accuracyMode)
+                    Toggle("Remove filler words", isOn: $settings.removeFillers)
                         .disabled(!settings.cleanMode)
+                    Toggle("Accuracy mode", isOn: $settings.accuracyMode)
+                        .disabled(!settings.cleanMode || !settings.removeFillers)
                 } header: {
                     Text("Voice")
                 } footer: {
-                    Text("Clean mode removes um and uh, stutters and self-corrections (\"3, no, 4pm\" becomes \"4pm\"). Accuracy mode also removes hedge fillers like \"like\", \"basically\" and \"you know\" when they are set off by commas, and a spoken \"period\" at the end. Punctuation comes from the on-device recogniser.")
+                    Text("Clean mode removes stutters and self-corrections (\"3, no, 4pm\" becomes \"4pm\") and turns \"bullet point\" and \"first, ... second, ...\" into lists; say \"scratch that\" to drop the sentence before. Remove filler words drops um, uh and \"you know\" between commas. Accuracy mode also removes hedge fillers like \"like\", \"basically\" and \"you know\" when they are set off by commas, and a spoken \"period\" at the end. Punctuation comes from the on-device recogniser.")
                 }
 
                 Section {
                     ForEach(settings.customWords, id: \.self) { Text($0) }
                         .onDelete { settings.customWords.remove(atOffsets: $0) }
                     HStack {
-                        TextField("Add a name or word", text: $newWord)
+                        TextField("Add a word, or spoken -> written", text: $newWord)
                             .textInputAutocapitalization(.never)
                             .onSubmit(add)
                         Button("Add", action: add).disabled(newWord.trimmingCharacters(in: .whitespaces).isEmpty)
@@ -35,7 +37,7 @@ struct SettingsView: View {
                 } header: {
                     Text("Custom words")
                 } footer: {
-                    Text("Spelled your way every time, and passed to the recogniser as hints.")
+                    Text("Spelled your way every time, and passed to the recogniser as hints. To replace what you say, add \"spoken -> written\", e.g. \"cube cuddle -> kubectl\".")
                 }
 
                 Section("Privacy") {

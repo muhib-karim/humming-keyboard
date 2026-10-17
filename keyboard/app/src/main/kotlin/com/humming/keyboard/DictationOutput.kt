@@ -15,7 +15,7 @@ package com.humming.keyboard
  * comes back when the keyboard returns. The final text is committed only into a field the keyboard is attached to;
  * otherwise the caller keeps it in History.
  *
- * Invariants (DictationOutputTest): at most one commit per dictation, the committed text is exactly glue + final text,
+ * Invariants (DictationOutputTest): at most one commit per dictation, the committed text is exactly glue + adapt(final text),
  * and no draft is ever left in the field after the dictation ends.
  * Pure Kotlin (no Android types).
  */
@@ -26,6 +26,8 @@ class DictationOutput(
     private val glue: String = "",
     /** Show the words in the field while talking (default). False = nothing until the one commit on stop. */
     private val live: Boolean = true,
+    /** Fits the text to the sentence around the cursor (DictationJoin.adapt); applied to the draft and the commit. */
+    private val adapt: (String) -> String = { it },
 ) {
     interface Field {
         /** Shows [text] as the composing draft, replacing the previous draft in place. False when there is no field. */
@@ -59,7 +61,7 @@ class DictationOutput(
         private set
 
     private fun showDraft(text: String) {
-        val d = if (text.isEmpty()) "" else glue + text
+        val d = if (text.isEmpty()) "" else glue + adapt(text)
         if (d == draft) return
         if (d.isEmpty()) { clearDraft(); return }
         if (field.setComposing(d)) { draft = d; draftUpdates++ }
@@ -111,7 +113,7 @@ class DictationOutput(
             return false
         }
         val hadDraft = draft.isNotEmpty()
-        val ok = field.commitFinal(glue + text, replacesDraft = hadDraft)
+        val ok = field.commitFinal(glue + adapt(text), replacesDraft = hadDraft)
         draft = ""
         if (ok) commits++
         return ok

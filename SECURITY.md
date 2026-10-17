@@ -4,7 +4,7 @@
 
 Security fixes go into the latest release of each platform. Older versions are not patched. The sideloaded Android
 APK and the Windows, Linux AppImage and macOS desktop apps update themselves (see the README's
-[Updates](README.md#updates-16) section), with these exceptions: a Linux `.deb` install only says that a new version is
+[Updates](README.md#updates) section), with these exceptions: a Linux `.deb` install only says that a new version is
 out, a macOS install older than 1.6 needs the first 1.6 build installed by hand, the Google Play version is updated
 by Play, and the iOS build is updated by sideloading the new `.ipa`.
 

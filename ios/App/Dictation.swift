@@ -14,6 +14,9 @@ final class Dictation: ObservableObject {
     @Published var committed = ""
     @Published var partial = ""
 
+    // Keep list markers and sentence punctuation until commands from later chunks have been applied.
+    private var transcript = ""
+
     weak var settings: AppSettings?
 
     private let engine = AVAudioEngine()
@@ -32,6 +35,7 @@ final class Dictation: ObservableObject {
     func clear() {
         committed = ""
         partial = ""
+        transcript = ""
         SharedStore.latestDictation = ""
     }
 
@@ -89,7 +93,8 @@ final class Dictation: ObservableObject {
         req.shouldReportPartialResults = true
         req.requiresOnDeviceRecognition = true
         req.addsPunctuation = true
-        if let words = settings?.customWords, !words.isEmpty { req.contextualStrings = words }
+        // Hints are the written forms only ("cube cuddle -> kubectl" hints "kubectl").
+        if let lines = settings?.customWords, !lines.isEmpty { req.contextualStrings = TextCleanup.vocabulary(lines).terms }
         lock.lock()
         request = req
         lock.unlock()
@@ -137,13 +142,10 @@ final class Dictation: ObservableObject {
 
     private func commit(_ raw: String) {
         partial = ""
-        let words = settings?.customWords ?? []
-        let clean = settings?.cleanMode ?? true
-        let text = clean
-            ? TextCleanup.apply(raw, dictionary: words, strict: settings?.accuracyMode ?? false)
-            : TextCleanup.applyDictionary(raw, terms: words)
-        guard !text.isEmpty else { return }
-        committed += (committed.isEmpty ? "" : " ") + text
+        let vocab = TextCleanup.vocabulary(settings?.customWords ?? [])
+        committed = TextCleanup.appendChunk(raw, to: &transcript, clean: settings?.cleanMode ?? true,
+                                            dictionary: vocab.terms, strict: settings?.accuracyMode ?? false,
+                                            fillers: settings?.removeFillers ?? true, replacements: vocab.replacements)
         SharedStore.latestDictation = committed
     }
 
@@ -151,6 +153,7 @@ final class Dictation: ObservableObject {
 
     func demo(committed: String, partial: String, listening: Bool = false) {
         self.committed = committed
+        transcript = committed
         self.partial = partial
         phase = listening ? .listening : .idle
     }
@@ -160,6 +163,7 @@ final class Dictation: ObservableObject {
         let spoken = "um so I was like thinking we could meet at 3 no 4pm on Friday".split(separator: " ").map(String.init)
         var i = 0
         committed = ""
+        transcript = ""
         partial = ""
         phase = .idle
         demoTimer?.invalidate()
