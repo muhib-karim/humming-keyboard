@@ -102,6 +102,7 @@ section { padding: var(--s8) 0; }
 @media (min-width: 960px) { section { padding: var(--s9) 0; } }
 .section-head { max-width: 46rem; margin-bottom: var(--s7); }
 .section-head p { margin-top: var(--s4); font-size: 1.125rem; color: var(--muted); }
+.section-next { margin-top: var(--s9); }
 .band { background: var(--surface); border-block: 1px solid var(--line); }
 
 /* proof line */

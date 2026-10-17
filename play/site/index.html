@@ -108,9 +108,9 @@
         <h3>Words land as you speak</h3>
         <p>Tap the mic and talk. Your sentence appears in the text field as an underlined draft that corrects itself in place, then is typed once when you stop. It keeps listening with the screen off or in another app.</p>
         <ul>
-          <li>Clean mode drops um and uh and applies self-corrections: "3, no, 4pm" becomes "4pm".</li>
-          <li>Spoken commands: "new line", "comma", "scratch that", and in 1.7 "colon", quotes, brackets and "delete last word".</li>
-          <li>Custom words, so names come out spelled your way.</li>
+          <li>Clean mode drops um and uh (there is a switch to keep them) and applies self-corrections: "3, no, 4pm" becomes "4pm".</li>
+          <li>Spoken commands: "new line", "comma", "scratch that", "bullet point", and in 1.7 "colon", quotes, brackets and "delete last word".</li>
+          <li>Custom words, so names come out spelled your way, and replacements: say "my sig", get your signature.</li>
         </ul>
       </div>
       <div class="feature-media">
@@ -172,10 +172,11 @@
     <article class="feature">
       <div>
         <h3>New in 1.7 <span class="tag">release candidate</span></h3>
-        <p>Three gaps closed after a teardown of Gboard, SwiftKey and the Bangla keyboards.</p>
+        <p>Gaps closed after a teardown of Gboard, SwiftKey, the Bangla keyboards and the dictation apps.</p>
         <ul>
           <li><strong>Bangla phonetic typing.</strong> Add Bengali with a QWERTY layout and type the way Avro users do: <span lang="bn-Latn">ami bangla likhi</span> becomes <span lang="bn">আমি বাংলা লিখি</span>, one word at a time, with the Latin word one tap away.</li>
           <li><strong>Dictation that fits the sentence.</strong> Dictate into the middle of a line and Humming lowercases the first word, skips the stray space after a bracket and drops the final period when your sentence carries on.</li>
+          <li><strong>Dictation like the dictation apps.</strong> Say "bullet point" for a list item, "scratch that" to drop the last sentence, and write "spoken -&gt; written" in custom words to turn a phrase into anything. Filler removal now has its own switch. On Android, desktop and iPhone.</li>
           <li><strong>More spoken punctuation.</strong> Colon, semicolon, quotes, brackets, ellipsis and "delete last word", the same on Android, desktop and iPhone.</li>
         </ul>
         <p class="small">These ship in the 1.7.0 release candidate and are covered by unit tests that run in CI.</p>
@@ -244,6 +245,33 @@
       </table>
     </div>
     <p class="small muted mt-4">Where Humming trails: offline voice is English only, and Gboard and SwiftKey support hundreds of typing languages and install from the app stores.</p>
+
+    <div class="section-head section-next">
+      <h2 id="compare-dictation-title">Humming vs dictation apps</h2>
+      <p>The dictation apps clean up what you say. So does Humming, on the device, on five platforms, for free.</p>
+    </div>
+    <div class="table-wrap" role="region" aria-labelledby="compare-dictation-title" tabindex="0">
+      <table>
+        <caption>Vendors' own pages, checked 17 October 2026; sources in <a href="https://github.com/muhib-karim/humming-keyboard/blob/main/COMPETITORS.md#dictation-apps">COMPETITORS.md</a>. Error rates come from different test sets and are not comparable with each other.</caption>
+        <thead>
+          <tr><th scope="col"><span class="sr-only">Feature</span></th><th scope="col" class="us">Humming</th><th scope="col">Wispr Flow</th><th scope="col">Superwhisper</th><th scope="col">Aqua Voice</th><th scope="col">Apple Dictation</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">Works offline</th><td class="us"><span class="yes">Yes</span>, the default, every platform (English)</td><td>No, cloud only</td><td>Yes, with local models</td><td>No, cloud only</td><td>On the device in many languages</td></tr>
+          <tr><th scope="row">Published accuracy</th><td class="us numbers">WER 2.78&nbsp;% (Fast), LibriSpeech test-clean</td><td>Charts only; 8.7&nbsp;% measured by Superwhisper</td><td>6.6&nbsp;% WER, its own 8-set benchmark</td><td>5.55&nbsp;% WER, test set not stated</td><td>Not published</td></tr>
+          <tr><th scope="row">Filler words removed</th><td class="us"><span class="yes">Yes</span>, with a switch</td><td>Yes, three levels</td><td>Yes (Message mode)</td><td>Not documented</td><td>Not documented</td></tr>
+          <tr><th scope="row">Lists by voice</th><td class="us"><span class="yes">Yes</span>, "bullet point" and "first, second"</td><td>Yes</td><td>Yes (Note mode)</td><td>Through custom instructions</td><td>Not documented</td></tr>
+          <tr><th scope="row">"Scratch that"</th><td class="us"><span class="yes">Yes</span>, every platform</td><td>Yes (Backtrack)</td><td>Not documented</td><td>Not documented</td><td>"Delete" and "undo" on iPhone, US English</td></tr>
+          <tr><th scope="row">Spoken → written replacements</th><td class="us"><span class="yes">Yes</span>, every platform</td><td>Yes, and snippets</td><td>Yes</td><td>Yes</td><td>None documented for dictation</td></tr>
+          <tr><th scope="row">Edit existing text by voice</th><td class="us">No</td><td>Command Mode (Pro, desktop)</td><td>On selected text</td><td>Edit Mode</td><td>iPhone, US English</td></tr>
+          <tr><th scope="row">Platforms</th><td class="us"><span class="yes">Android, iPhone, Windows, macOS, Linux</span></td><td>Mac, Windows, iOS, Android</td><td>macOS, Windows, iOS, Android</td><td>macOS, Windows, iOS, Android</td><td>iPhone, iPad, Mac</td></tr>
+          <tr><th scope="row">Bangla dictation</th><td class="us">No (Bangla typing only)</td><td>Unverified</td><td>Not named</td><td>Yes, online</td><td>Not listed</td></tr>
+          <tr><th scope="row">Price</th><td class="us"><span class="yes">Free, no word cap</span></td><td>Free 2,000 words a week; Pro $15 a month</td><td>Free with local models; Pro $8.49 a month</td><td>Free 1,000 words; Pro $10 a month</td><td>Free with the OS</td></tr>
+          <tr><th scope="row">Open source</th><td class="us"><span class="yes">Yes, Apache-2.0</span></td><td>No</td><td>No</td><td>No</td><td>No</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="small muted mt-4">Where Humming trails: no voice editing of text already in the field, no per-app tone, and offline dictation is English only. Typeless, Willow, MacWhisper and Google are in <a href="https://github.com/muhib-karim/humming-keyboard/blob/main/COMPETITORS.md#dictation-apps">COMPETITORS.md</a>.</p>
   </div>
 </section>
 
