@@ -10,13 +10,14 @@ If a session ends early, the remaining work is in [HANDOFF.md](HANDOFF.md).
 - [x] docs/ci/CODEBASE_MAP.md (Understand-Anything method, by hand: core not built here)
 
 ## 1. COMPETITORS.md
-- [ ] Feature + UX teardown: Gboard, SwiftKey, Fleksy, Typewise, Ridmik Keyboard, Avro/Bijoy-style Bangla input vs Humming
-- [ ] Gap list ranked by user impact x feasibility, marking what this pass implements
+- [x] Feature + UX teardown: Gboard, SwiftKey, Fleksy, Typewise, Ridmik Keyboard, Avro/Bijoy-style Bangla input vs Humming
+- [x] Gap list ranked by user impact x feasibility, marking what this pass implements
 
 ## 2. Gaps implemented in source (with unit tests)
-- [ ] Gap A
-- [ ] Gap B
-- [ ] Gap C
+- [x] Gap A: Bangla phonetic typing (`BanglaPhonetic`, wired in `LatinLanguageProvider`), BanglaPhoneticTest (CI)
+- [x] Gap B: dictation fits the sentence around the cursor (`DictationJoin`), DictationJoinTest (CI)
+- [x] Gap C: colon/semicolon/quotes/brackets/ellipsis + "delete last word" on Android, desktop, iOS (CI)
+- [ ] Whole-branch code review of gaps A-C (fresh reviewer) and fixes
 
 ## 3. App UI polish
 - [ ] Android: design tokens, key/candidate bar, voice button + listening state, a11y (48dp, content descriptions, AA)
