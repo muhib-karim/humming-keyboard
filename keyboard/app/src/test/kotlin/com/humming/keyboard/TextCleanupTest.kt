@@ -135,6 +135,20 @@ class TextCleanupTest {
         assertEquals("Hello.", clean("delete last word hello"))
     }
 
+    @Test fun deleteLastWordIncludesCombiningMarks() {
+        assertEquals("", clean("আমার delete last word"))
+        assertEquals("", clean("আমি delete last word"))
+        assertEquals("Keep.", clean("Keep cafe\u0301 delete last word"))
+        assertEquals("Keep.", clean("Keep আমার. Scratch the last word."))
+        assertEquals("", clean("আমার আমি delete last word delete last word"))
+    }
+
+    @Test fun repeatedDeleteCommandsAtStartDoNotOverlap() {
+        assertEquals("Hello.", clean("delete last word delete last word hello"))
+        assertEquals("Hello.", clean("scratch the last word delete last word scratch last word hello"))
+        assertEquals("", clean("delete last word delete last word"))
+    }
+
     /** Review fixes: a line break before an opener survives; engine commas around the commands are absorbed. */
     @Test fun openersKeepLineBreaksAndAbsorbEngineCommas() {
         assertEquals("First line\n\"Hello\".", clean("first line new line open quote hello close quote"))
@@ -155,6 +169,13 @@ class TextCleanupTest {
         assertEquals("Concatenate the cat files", TextCleanup.replacePhrases("Concatenate the cat files", emptyList()))
         assertEquals("Concatenate the dog files", TextCleanup.replacePhrases("Concatenate the cat files", r))
         assertEquals("kubectl  rocks", TextCleanup.replacePhrases("Cube\tCuddle  rocks", listOf("cube cuddle" to "kubectl")))
+    }
+
+    @Test fun replacementsDoNotSplitCombiningMarks() {
+        assertEquals("X রামি", TextCleanup.replacePhrases("রাম রামি", listOf("রাম" to "X")))
+        assertEquals("X cafe\u0301", TextCleanup.replacePhrases("cafe cafe\u0301", listOf("cafe" to "X")))
+        assertEquals("X cafe\u0301s", TextCleanup.replacePhrases("cafe\u0301 cafe\u0301s", listOf("cafe\u0301" to "X")))
+        assertEquals("a\u0301cat X", TextCleanup.replacePhrases("a\u0301cat cat", listOf("cat" to "X")))
     }
 
     @Test fun fillerSwitchOffKeepsFillers() {

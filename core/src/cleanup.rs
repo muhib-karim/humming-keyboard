@@ -397,8 +397,8 @@ fn phrase_regex(phrase: &str) -> Option<Regex> {
     if p.is_empty() {
         return None;
     }
-    let starts_word = p.chars().next().map(|c| c.is_alphanumeric() || c == '_').unwrap_or(false);
-    let ends_word = p.chars().last().map(|c| c.is_alphanumeric() || c == '_').unwrap_or(false);
+    let starts_word = re(r"^\w").is_match(p);
+    let ends_word = re(r"\w$").is_match(p);
     let body = regex::escape(p).replace("\\ ", r"\s+").replace(' ', r"\s+");
     let pat = format!(
         "(?i){}{}{}",
@@ -558,6 +558,19 @@ mod tests {
         let d = vec![DictionaryEntry { spoken: "".into(), written: "Omar".into() }];
         assert_eq!(dictionary_prompt(&d).as_deref(), Some("Vocabulary: Omar."));
         assert_eq!(dictionary_prompt(&[]), None);
+    }
+
+    #[test]
+    fn replacements_do_not_split_combining_marks() {
+        for (input, spoken, expected) in [
+            ("রাম রামি", "রাম", "X রামি"),
+            ("cafe cafe\u{0301}", "cafe", "X cafe\u{0301}"),
+            ("cafe\u{0301} cafe\u{0301}s", "cafe\u{0301}", "X cafe\u{0301}s"),
+            ("a\u{0301}cat cat", "cat", "a\u{0301}cat X"),
+        ] {
+            let pairs = [DictionaryEntry { spoken: spoken.into(), written: "X".into() }];
+            assert_eq!(apply_dictionary(input, &pairs), expected);
+        }
     }
 
     /// The P0 acceptance lines from the parity spec, verbatim (what the rule layer must do offline).

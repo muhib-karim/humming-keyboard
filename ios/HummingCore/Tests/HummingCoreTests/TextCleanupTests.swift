@@ -129,6 +129,20 @@ final class TextCleanupTests: XCTestCase {
         XCTAssertEqual("Hello.", clean("delete last word hello"))
     }
 
+    func testDeleteLastWordIncludesCombiningMarks() {
+        XCTAssertEqual("", clean("আমার delete last word"))
+        XCTAssertEqual("", clean("আমি delete last word"))
+        XCTAssertEqual("Keep.", clean("Keep cafe\u{0301} delete last word"))
+        XCTAssertEqual("Keep.", clean("Keep আমার. Scratch the last word."))
+        XCTAssertEqual("", clean("আমার আমি delete last word delete last word"))
+    }
+
+    func testRepeatedDeleteCommandsAtStartDoNotOverlap() {
+        XCTAssertEqual("Hello.", clean("delete last word delete last word hello"))
+        XCTAssertEqual("Hello.", clean("scratch the last word delete last word scratch last word hello"))
+        XCTAssertEqual("", clean("delete last word delete last word"))
+    }
+
     func testOpenersKeepLineBreaksAndAbsorbEngineCommas() {
         XCTAssertEqual("First line\n\"Hello\".", clean("first line new line open quote hello close quote"))
         XCTAssertEqual("He said, \"hi\".", clean("He said, open quote, hi, close quote."))
@@ -146,6 +160,13 @@ final class TextCleanupTests: XCTestCase {
     func testReplacementIsWholeWord() {
         XCTAssertEqual("Concatenate the dog files", TextCleanup.replacePhrases("Concatenate the cat files", [("cat", "dog")]))
         XCTAssertEqual("kubectl  rocks", TextCleanup.replacePhrases("Cube\tCuddle  rocks", [("cube cuddle", "kubectl")]))
+    }
+
+    func testReplacementsDoNotSplitCombiningMarks() {
+        XCTAssertEqual("X রামি", TextCleanup.replacePhrases("রাম রামি", [("রাম", "X")]))
+        XCTAssertEqual("X cafe\u{0301}", TextCleanup.replacePhrases("cafe cafe\u{0301}", [("cafe", "X")]))
+        XCTAssertEqual("X cafe\u{0301}s", TextCleanup.replacePhrases("cafe\u{0301} cafe\u{0301}s", [("cafe\u{0301}", "X")]))
+        XCTAssertEqual("a\u{0301}cat X", TextCleanup.replacePhrases("a\u{0301}cat cat", [("cat", "X")]))
     }
 
     func testVocabularyLines() {

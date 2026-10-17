@@ -8,7 +8,7 @@ import Foundation
 /// repeated words → dictionary casing → capitals and final punctuation → "delete that" said as its own sentence
 /// (Android's `VoiceCommands`) → lists (`ListFormat`).
 public enum TextCleanup {
-    private static let W = "[\\p{L}\\p{N}_']"
+    private static let W = "[\\p{L}\\p{M}\\p{N}_']"
 
     private static func re(_ pattern: String, _ ci: Bool = true) -> NSRegularExpression {
         // Patterns are compile-time constants covered by the unit tests.
@@ -63,8 +63,8 @@ public enum TextCleanup {
         (re("\\s*\\b(?:ellipsis|dot dot dot)\\b"), "..."),
     ]
     // "delete last word" / "scratch the last word" removes the word said before it (or just itself at the start).
-    private static let deleteWord = re("[\\p{L}\\p{N}'\u{2019}]+[,.!?]?\\s+(?:delete|scratch) (?:the )?last word\\b[,.!?]?")
-    private static let deleteWordStart = re("^\\s*(?:delete|scratch) (?:the )?last word\\b[,.!?]?\\s*")
+    private static let deleteWord = re("(?<![\\p{L}\\p{M}\\p{N}'\u{2019}])[\\p{L}\\p{M}\\p{N}'\u{2019}]+[,.!?]?\\s+(?:delete|scratch) (?:the )?last word\\b[,.!?]?")
+    private static let deleteWordStart = re("^\\s*(?:(?:delete|scratch) (?:the )?last word\\b[,.!?]?\\s*)+")
 
     // Accuracy mode (strict): hedge words that are only filler when set off by commas, extra hesitation sounds,
     // a spoken "period" at the very end, and doubled punctuation.
@@ -305,7 +305,7 @@ public enum TextCleanup {
     public static func deleteLastWord(_ input: String) -> String {
         var t = input
         for _ in 0..<5 {
-            let next = sub(sub(t, deleteWord, ""), deleteWordStart, "")
+            let next = sub(sub(t, deleteWordStart, ""), deleteWord, "")
             if next == t { break }
             t = next
         }

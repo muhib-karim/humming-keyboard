@@ -46,3 +46,6 @@ was driven directly instead. **brand** and **canvas-design** were not invoked. T
 ## Cross-model review fixes
 
 - Fix 1 — Gate Pages feed verification independently; skill: test-driven-development; reviewer: Codex GPT-6 Astra cross-model review. Python workflow regression tests: 2 failures before the fix, 11/11 passing after (local fixtures, no network).
+- Fix 3 — Delete whole Unicode words, including combining marks, on Android, desktop and iOS; skill: test-driven-development; reviewer: Codex GPT-6 Astra cross-model review. Native regressions written first; source-pattern Python diagnostic reproduced the failures and now passes; native tests pending CI (builds forbidden).
+- Fix 4 — Keep combining marks inside replacement boundaries, including Rust core phrases ending in a mark; skill: test-driven-development; reviewer: Codex GPT-6 Astra cross-model review. Bangla and decomposed-Unicode regressions written first; native tests pending CI.
+- Fix 6 — Consume leading delete-word commands before matching a preceding word on all three platforms; skill: test-driven-development; reviewer: Codex GPT-6 Astra cross-model review. Repeated-command regressions written first; source-pattern Python diagnostic passes; native tests pending CI.

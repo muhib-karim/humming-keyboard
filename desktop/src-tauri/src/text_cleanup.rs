@@ -9,7 +9,7 @@
 use fancy_regex::{Captures, Regex};
 use once_cell::sync::Lazy;
 
-const W: &str = r"[\p{L}\p{N}_']";
+const W: &str = r"[\p{L}\p{M}\p{N}_']";
 const UNIT: &str = r"(?:[ap]\.?\s?m\.?|o'?clock|%|percent|dollars?|bucks|minutes?|mins?|hours?|days?|weeks?|k|kg|km|miles?)";
 
 fn re(p: &str) -> Regex {
@@ -51,9 +51,9 @@ static SPOKEN: Lazy<Vec<(Regex, &'static str)>> = Lazy::new(|| {
 });
 // "delete last word" / "scratch the last word" removes the word said before it (or just itself at the start).
 static DELETE_WORD: Lazy<Regex> =
-    Lazy::new(|| re(r"(?i)[\p{L}\p{N}'\x{2019}]+[,.!?]?\s+(?:delete|scratch) (?:the )?last word\b[,.!?]?"));
+    Lazy::new(|| re(r"(?i)(?<![\p{L}\p{M}\p{N}'\x{2019}])[\p{L}\p{M}\p{N}'\x{2019}]+[,.!?]?\s+(?:delete|scratch) (?:the )?last word\b[,.!?]?"));
 static DELETE_WORD_START: Lazy<Regex> =
-    Lazy::new(|| re(r"(?i)^\s*(?:delete|scratch) (?:the )?last word\b[,.!?]?\s*"));
+    Lazy::new(|| re(r"(?i)^\s*(?:(?:delete|scratch) (?:the )?last word\b[,.!?]?\s*)+"));
 // Accuracy mode (strict): hedge words that are only filler when set off by commas, extra hesitation sounds, a spoken
 // "period" at the very end, and doubled punctuation. Same rules as Android and iOS.
 static STRICT_FILLER: Lazy<Regex> = Lazy::new(|| re(&format!(r"(?i)(?<!{W})(?:ah+|eh+|mm+|mhm|hm+)(?!{W})[,.]?\s*")));
@@ -403,7 +403,7 @@ pub fn apply_dictionary(input: &str, terms: &[String]) -> String {
 pub fn delete_last_word(input: &str) -> String {
     let mut t = input.to_string();
     for _ in 0..5 {
-        let next = replace_all(&DELETE_WORD_START, &replace_all(&DELETE_WORD, &t, ""), "");
+        let next = replace_all(&DELETE_WORD, &replace_all(&DELETE_WORD_START, &t, ""), "");
         if next == t {
             break;
         }
@@ -539,6 +539,28 @@ mod tests {
         assert_eq!(clean("delete last word hello"), "Hello.");
         let o = Opts { remove_fillers: false, voice_commands: false, self_corrections: false, strict: false };
         assert_eq!(apply("cats delete last word", &[], o), "Cats delete last word.");
+    }
+
+    #[test]
+    fn delete_last_word_includes_combining_marks() {
+        assert_eq!(clean("আমার delete last word"), "");
+        assert_eq!(clean("আমি delete last word"), "");
+        assert_eq!(clean("Keep cafe\u{0301} delete last word"), "Keep.");
+        assert_eq!(clean("Keep আমার. Scratch the last word."), "Keep.");
+        assert_eq!(clean("আমার আমি delete last word delete last word"), "");
+    }
+
+    #[test]
+    fn repeated_delete_commands_at_start_do_not_overlap() {
+        assert_eq!(clean("delete last word delete last word hello"), "Hello.");
+        assert_eq!(clean("scratch the last word delete last word scratch last word hello"), "Hello.");
+        assert_eq!(clean("delete last word delete last word"), "");
+    }
+
+    #[test]
+    fn dictionary_does_not_split_combining_marks() {
+        assert_eq!(apply_dictionary("cafe cafe\u{0301}", &["CAFE".into()]), "CAFE cafe\u{0301}");
+        assert_eq!(apply_dictionary("a\u{0301}cat cat", &["CAT".into()]), "a\u{0301}cat CAT");
     }
 
     #[test]

@@ -10,7 +10,7 @@ package com.humming.keyboard
  * ([ListFormat]).
  */
 object TextCleanup {
-    private const val W = "[\\p{L}\\p{N}_']"
+    private const val W = "[\\p{L}\\p{M}\\p{N}_']"
 
     private val NON_SPEECH = Regex(
         "\\[[^\\]]*]|\\((?:[^)]*(?:music|applause|silence|blank|inaudible|laugh)[^)]*)\\)|\\*[^*]+\\*",
@@ -53,11 +53,11 @@ object TextCleanup {
     )
     // "delete last word" / "scratch the last word" removes the word said before it (or just itself at the start).
     private val DELETE_WORD = Regex(
-        "[\\p{L}\\p{N}'\u2019]+[,.!?]?\\s+(?:delete|scratch) (?:the )?last word\\b[,.!?]?",
+        "(?<![\\p{L}\\p{M}\\p{N}'\u2019])[\\p{L}\\p{M}\\p{N}'\u2019]+[,.!?]?\\s+(?:delete|scratch) (?:the )?last word\\b[,.!?]?",
         RegexOption.IGNORE_CASE,
     )
     private val DELETE_WORD_START =
-        Regex("^\\s*(?:delete|scratch) (?:the )?last word\\b[,.!?]?\\s*", RegexOption.IGNORE_CASE)
+        Regex("^\\s*(?:(?:delete|scratch) (?:the )?last word\\b[,.!?]?\\s*)+", RegexOption.IGNORE_CASE)
     // Accuracy mode (strict): hedge words that are only filler when set off by commas, extra hesitation sounds,
     // a spoken "period" at the very end, and doubled punctuation. Same rules as desktop and iOS.
     private val STRICT_FILLER = Regex("(?<!$W)(?:ah+|eh+|mm+|mhm|hm+)(?!$W)[,.]?\\s*", RegexOption.IGNORE_CASE)
@@ -232,7 +232,7 @@ object TextCleanup {
     fun deleteLastWord(input: String): String {
         var t = input
         repeat(5) {
-            val next = DELETE_WORD_START.replace(DELETE_WORD.replace(t, ""), "")
+            val next = DELETE_WORD.replace(DELETE_WORD_START.replace(t, ""), "")
             if (next == t) return t
             t = next
         }
