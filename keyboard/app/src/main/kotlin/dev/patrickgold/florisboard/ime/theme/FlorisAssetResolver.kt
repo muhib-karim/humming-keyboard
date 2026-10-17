@@ -31,7 +31,7 @@ class FlorisAssetResolver(val context: Context, val themeInfo: ThemeManager.Them
         val basePath = baseDir.canonicalPath
         val canonicalFile = baseDir.subFile(uri.path).canonicalFile
         val canonicalPath = canonicalFile.path
-        check(canonicalPath.startsWith(basePath)) {
+        check(canonicalPath.startsWith(basePath + java.io.File.separator)) {
             "Calculated path '$canonicalPath' does not start with base path '$basePath'"
         }
         check(canonicalFile.exists()) {

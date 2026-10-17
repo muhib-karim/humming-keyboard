@@ -104,6 +104,8 @@ android {
 
     defaultConfig {
         applicationId = "com.humming.keyboard" // Humming (upstream: dev.patrickgold.florisboard)
+        // <profileable android:shell> is only true for the benchmark build (and debug); release ships false.
+        manifestPlaceholders["profileableShell"] = "false"
         minSdk = projectMinSdk.toInt()
         targetSdk = projectTargetSdk.toInt()
         versionCode = projectVersionCode.toInt()
@@ -166,6 +168,7 @@ android {
 
             isDebuggable = true
             isJniDebuggable = false
+            manifestPlaceholders["profileableShell"] = "true"
 
             // Humming: app icon and name
             resValue("mipmap", "floris_app_icon", "@mipmap/ic_humming")
@@ -194,6 +197,7 @@ android {
             initWith(getByName("release"))
             signingConfig = signingConfigs.getByName("debug")
             matchingFallbacks += listOf("release")
+            manifestPlaceholders["profileableShell"] = "true" // macrobenchmark / baseline profiles need it
         }
     }
 

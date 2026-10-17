@@ -212,7 +212,8 @@ object AppUpdate {
     private fun fetch(url: String, maxBytes: Int): ByteArray {
         val c = open(url)
         try {
-            val bytes = c.inputStream.use { it.readBytes() }
+            // Read at most maxBytes + 1 so an oversized response is rejected without buffering all of it.
+            val bytes = c.inputStream.use { BoundedRead.read(it, maxBytes) }
             if (bytes.size > maxBytes) throw IOException("update feed too large")
             return bytes
         } finally {
