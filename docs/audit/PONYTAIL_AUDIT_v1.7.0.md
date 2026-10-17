@@ -95,3 +95,15 @@ Smaller items left out: 2 (Node 20 deprecation warnings on `actions/*@v4`, alrea
 Humming hooks; `core/` (the shared Rust library, covered by its own tests and earlier audits); the prediction
 engine (`predict/`); the Compose UI files beyond the voice panel's state machine; the site HTML. Nothing was run
 locally: no Gradle, cargo or Swift.
+
+## Debt
+
+`ponytail-debt` scan, 2026-10-17, `main` at `e1bc3bb`:
+`git grep --no-index --exclude-standard -nE '(#|//|/[*]|<!--) ?(shortcut|ponytail):'` over the whole tree.
+
+No shortcut debt. Clean ledger.
+
+0 markers, 0 with no trigger. A wider scan for `TODO`/`FIXME`/`HACK`/`XXX` comments in Humming's own code (`core/`,
+`desktop/src`, `desktop/src-tauri/src`, `ios/`, `scripts/`, `.github/`, `keyboard/.../com/humming`) also found none.
+The FlorisBoard upstream code carries its own TODOs; they are upstream's and were not ledgered here. Deferred audit
+findings 5-9 above are this pass's only recorded debt.
