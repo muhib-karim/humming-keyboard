@@ -314,8 +314,18 @@ fn restart_sentence(text: &str) -> String {
 /// "The list is first, eggs, second, milk, third, bread." -> "The list is:\n- Eggs\n- Milk\n- Bread".
 /// Needs an opening marker (first / number one) AND a second one, so a lone "first" in prose is left alone.
 pub fn format_spoken_list(text: &str) -> Option<String> {
+    // A marker after "a", "the"... is prose ("give me a second"), as in the Android and iOS ListFormat.
+    const PROSE_BEFORE: &[&str] = &[
+        "a", "an", "the", "this", "that", "these", "those", "each", "every", "another", "my", "your", "his", "her", "its",
+        "our", "their", "which", "what", "no", "any", "some", "first", "second", "third", "last", "one",
+    ];
     let marks: Vec<(usize, usize, String)> = LIST_MARKER
         .captures_iter(text)
+        .filter(|c| {
+            let start = c.get(1).expect("group").start();
+            let prev = text[..start].split_whitespace().last().unwrap_or("").to_lowercase();
+            !PROSE_BEFORE.contains(&prev.as_str())
+        })
         .map(|c| {
             let m = c.get(1).expect("group");
             let whole_end = c.get(0).expect("match").end();
@@ -618,6 +628,16 @@ mod tests {
         }
         println!("CLEAN_SET exact {}/{}", exact, set.len());
         assert!(exact >= 16, "clean set exact {}/20", exact);
+    }
+
+    #[test]
+    fn a_second_in_prose_is_not_a_list() {
+        // "a second" is a moment, not a list marker (review fix, same rule as Android's and iOS's ListFormat).
+        assert_eq!(format_spoken_list("First, give me a second, then we can go."), None);
+        assert_eq!(
+            format_spoken_list("The list is first, eggs, second, milk.").as_deref(),
+            Some("The list is:\n- Eggs\n- Milk")
+        );
     }
 
     #[test]

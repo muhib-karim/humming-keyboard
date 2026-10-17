@@ -76,13 +76,16 @@ static TIME_AMPM: Lazy<Regex> =
     Lazy::new(|| re(r"(?<![\p{L}\p{N}])(\d{1,2}(?::\d{2})?)\s?([AaPp])\.?\s?[Mm](?=[\s,.;!?]|$)"));
 // 1.7: "bullet point" starts a list item; "delete that" said as its own sentence removes the sentence before it.
 static BULLET: Lazy<Regex> =
-    Lazy::new(|| re(r"(?i)[ \t]*[,;:]?[ \t]*\b(?:bullet point|next bullet|new bullet)\b[,.;:]?[ \t]*"));
+    Lazy::new(|| re(r"(?i)[ \t]*[,;:]?[ \t]*\b(?:(?:next|new) bullet(?: point)?|bullet point)\b[,.;:]?[ \t]*"));
 /// A marker after one of these words is the thing itself ("the second bullet point"), not a command.
-const NOT_AFTER: &[&str] =
-    &["a", "an", "the", "this", "that", "each", "every", "another", "my", "your", "our", "first", "second", "third", "last", "one"];
+const NOT_AFTER: &[&str] = &[
+    "a", "an", "the", "this", "that", "these", "those", "each", "every", "another", "my", "your", "his", "her", "its", "our",
+    "their", "which", "what", "no", "any", "some", "first", "second", "third", "last", "one",
+];
 static DELETE_SENTENCE: Lazy<Regex> =
     Lazy::new(|| re(r"(?i)^(?:ok(?:ay)?,? )?(?:delete|scratch|undo|remove) (?:that|the last sentence)$"));
-static SENTENCE: Lazy<Regex> = Lazy::new(|| re(r"[^.!?]+(?:[.!?]+|$)"));
+// A mark only ends a sentence before a space or the end, so "3.50" stays one sentence.
+static SENTENCE: Lazy<Regex> = Lazy::new(|| re(r"(?:[^.!?]|[.!?](?!\s|$))+(?:[.!?]+(?=\s|$)|$)"));
 static NEWLINE_INDENT: Lazy<Regex> = Lazy::new(|| re(r"\n[ \t]+"));
 static SPACE_BEFORE_PUNCT: Lazy<Regex> = Lazy::new(|| re(r"\s+([,.?!;:])"));
 static SPACE_AFTER_PUNCT: Lazy<Regex> = Lazy::new(|| re(r"([,;:])(?=[^\s\d])"));
@@ -240,7 +243,10 @@ pub fn bullet_list(text: &str) -> Option<String> {
                 item = p.split_whitespace().collect::<Vec<_>>().join(" ");
             }
         }
-        let item = trim_item(&item);
+        let mut item = trim_item(&item);
+        if let Some(head) = item.strip_suffix(" and") {
+            item = trim_item(head);
+        }
         if !item.is_empty() {
             items.push(capitalize(&item));
         }
@@ -574,5 +580,21 @@ mod tests {
         assert_eq!(clean("Can you delete that file?"), "Can you delete that file?");
         let o = Opts { voice_commands: false, ..Opts::default() };
         assert_eq!(apply("Book Friday. Scratch that. Book Saturday.", &[], o), "Book Friday. Scratch that. Book Saturday.");
+    }
+
+    // Review fixes, the same cases as Android's ListFormatTest / VoiceCommandsTest.
+    #[test]
+    fn bullet_review_fixes() {
+        assert_eq!(bullet_list("Groceries bullet point eggs new bullet point milk.").as_deref(), Some("Groceries:\n- Eggs\n- Milk"));
+        assert_eq!(bullet_list("Her bullet point was wrong."), None);
+        assert_eq!(bullet_list("Which bullet point is it?"), None);
+        assert_eq!(bullet_list("The next bullet point is wrong."), None);
+        assert_eq!(bullet_list("Groceries bullet point eggs and next bullet milk.").as_deref(), Some("Groceries:\n- Eggs\n- Milk"));
+    }
+
+    #[test]
+    fn decimals_do_not_end_a_sentence() {
+        assert_eq!(clean("It costs 3.50. Delete that."), "");
+        assert_eq!(clean("It costs 3.50. Fine."), "It costs 3.50. Fine.");
     }
 }

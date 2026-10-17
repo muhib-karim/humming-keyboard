@@ -52,4 +52,28 @@ final class ListFormatTests: XCTestCase {
         XCTAssertEqual("Groceries:\n- Eggs\n- Milk", TextCleanup.apply("groceries bullet point eggs bullet point milk"))
         XCTAssertEqual("The list is:\n- Eggs\n- Milk", TextCleanup.apply("the list is first, eggs, second, milk"))
     }
+
+    // Review fixes, the same cases as Android's ListFormatTest.
+    func testNewBulletPointIsOneMarker() {
+        XCTAssertEqual("Groceries:\n- Eggs\n- Milk", ListFormat.apply("Groceries bullet point eggs new bullet point milk."))
+    }
+
+    func testMoreProseWordsAreNotMarkers() {
+        XCTAssertNil(ListFormat.bullets("Her bullet point was wrong."))
+        XCTAssertNil(ListFormat.bullets("Which bullet point is it?"))
+        XCTAssertNil(ListFormat.bullets("The next bullet point is wrong."))
+    }
+
+    func testTrailingAndIsDropped() {
+        XCTAssertEqual("Groceries:\n- Eggs\n- Milk", ListFormat.apply("Groceries bullet point eggs and next bullet milk."))
+    }
+
+    func testASecondInProseIsNotAList() {
+        XCTAssertNil(ListFormat.spokenList("First, give me a second, then we can go."))
+    }
+
+    func testDeleteThatRunsBeforeTheList() {
+        XCTAssertEqual("Groceries:\n- Eggs\n- Bread",
+                       TextCleanup.apply("Groceries bullet point eggs. Bullet point milk. Delete that. Bullet point bread."))
+    }
 }

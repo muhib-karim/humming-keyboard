@@ -138,14 +138,25 @@ final class Dictation: ObservableObject {
 
     private func commit(_ raw: String) {
         partial = ""
+        // Each recogniser chunk is cleaned on its own, so a chunk that is only "scratch that" / "delete that" removes
+        // the last sentence already committed.
+        if TextCleanup.isDeleteCommand(raw) {
+            committed = TextCleanup.retractSentences(committed + " Delete that.")
+            SharedStore.latestDictation = committed
+            return
+        }
         let vocab = TextCleanup.vocabulary(settings?.customWords ?? [])
         let clean = settings?.cleanMode ?? true
         let text = clean
             ? TextCleanup.apply(raw, dictionary: vocab.terms, strict: settings?.accuracyMode ?? false,
                                 fillers: settings?.removeFillers ?? true, replacements: vocab.replacements)
-            : TextCleanup.applyDictionary(TextCleanup.replacePhrases(raw, vocab.replacements), terms: vocab.terms)
+            : TextCleanup.retractSentences(
+                TextCleanup.applyDictionary(TextCleanup.replacePhrases(raw, vocab.replacements), terms: vocab.terms))
         guard !text.isEmpty else { return }
-        committed += (committed.isEmpty ? "" : " ") + text
+        // A list item, or the text after one, starts on its own line.
+        let lastLine = committed.components(separatedBy: "\n").last ?? ""
+        let separator = committed.isEmpty ? "" : (text.hasPrefix("- ") || lastLine.hasPrefix("- ") ? "\n" : " ")
+        committed += separator + text
         SharedStore.latestDictation = committed
     }
 

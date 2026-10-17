@@ -65,3 +65,20 @@ parity and two missing behaviours. Close them with deterministic, on-device rule
 Tests first on each platform (Kotlin JVM tests, Rust `#[test]`, Swift XCTest), pending CI because nothing builds here.
 Locally: a single-file Java mirror of the new pure functions (same `java.util.regex` engine as Kotlin on the JVM),
 RED before GREEN, kept outside the repository.
+
+## Review changes (fresh reviewer, 17 October 2026)
+
+- Markers are "bullet point", "next bullet (point)", "new bullet (point)"; a marker after a determiner or possessive
+  ("the", "her", "which", "no"...) is prose, and the same rule now guards spoken lists ("give me a second"), in core
+  too. A trailing "and" is dropped from an item.
+- "delete that" runs **before** the list pass on every platform, so the command never lands inside an item.
+- A sentence ends only at a mark followed by a space or the end ("3.50" is one sentence), on all three platforms
+  (this also fixes Android's `VoiceCommands`).
+- Desktop formats "bullet point" lists only in Clean mode, like Android and iOS.
+- iPhone: a recogniser chunk that is only "scratch that" removes the last committed sentence; a list chunk, or the text
+  after one, starts on its own line; verbatim mode also honours "delete that".
+- Builder's call, kept: an earlier item that contains a line break is joined into one line; only the last item's line
+  break ends the list.
+- Deferred: Android's "Remove filler words" and "Accuracy mode" switches are not greyed out when they have no effect
+  (iOS greys them out); a list dictated with no intro after a word on the same line starts on that line.
+

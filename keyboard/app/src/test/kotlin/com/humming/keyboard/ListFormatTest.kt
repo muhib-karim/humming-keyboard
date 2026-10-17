@@ -52,4 +52,26 @@ class ListFormatTest {
         assertEquals("Groceries:\n- Eggs\n- Milk", TextCleanup.apply("groceries bullet point eggs bullet point milk"))
         assertEquals("The list is:\n- Eggs\n- Milk", TextCleanup.apply("the list is first, eggs, second, milk"))
     }
+
+    // Review fixes (1.7): "new/next bullet point", more prose words, a trailing "and", "a second" in prose,
+    // and "delete that" before the list pass.
+    @Test fun newBulletPointIsOneMarker() =
+        assertEquals("Groceries:\n- Eggs\n- Milk", ListFormat.apply("Groceries bullet point eggs new bullet point milk."))
+
+    @Test fun moreProseWordsAreNotMarkers() {
+        assertNull(ListFormat.bullets("Her bullet point was wrong."))
+        assertNull(ListFormat.bullets("Which bullet point is it?"))
+        assertNull(ListFormat.bullets("The next bullet point is wrong."))
+    }
+
+    @Test fun trailingAndIsDropped() =
+        assertEquals("Groceries:\n- Eggs\n- Milk", ListFormat.apply("Groceries bullet point eggs and next bullet milk."))
+
+    @Test fun aSecondInProseIsNotAList() =
+        assertNull(ListFormat.spokenList("First, give me a second, then we can go."))
+
+    @Test fun deleteThatRunsBeforeTheList() = assertEquals(
+        "Groceries:\n- Eggs\n- Bread",
+        TextCleanup.apply("Groceries bullet point eggs. Bullet point milk. Delete that. Bullet point bread."),
+    )
 }

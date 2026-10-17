@@ -167,4 +167,17 @@ final class TextCleanupTests: XCTestCase {
         XCTAssertEqual("", clean("I am late. Okay, delete that."))
         XCTAssertEqual("Can you delete that file?", clean("Can you delete that file?"))
     }
+
+    func testDecimalsDoNotEndASentence() {
+        XCTAssertEqual("", clean("It costs 3.50. Delete that."))
+        XCTAssertEqual("It costs 3.50. Fine.", clean("It costs 3.50. Fine."))
+    }
+
+    func testDeleteCommandChunk() {
+        // The iPhone app cleans each recogniser chunk; a chunk that is only "scratch that" removes the last sentence.
+        XCTAssertTrue(TextCleanup.isDeleteCommand(" Scratch that. "))
+        XCTAssertTrue(TextCleanup.isDeleteCommand("okay, delete that"))
+        XCTAssertFalse(TextCleanup.isDeleteCommand("Delete that file."))
+        XCTAssertEqual("Book Saturday.", TextCleanup.retractSentences("Book Saturday. Book Friday. Delete that."))
+    }
 }

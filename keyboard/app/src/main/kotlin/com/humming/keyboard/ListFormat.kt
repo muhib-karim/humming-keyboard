@@ -3,7 +3,7 @@ package com.humming.keyboard
 /**
  * Humming 1.7: lists in dictation (pure Kotlin: ListFormatTest). Runs on the finished text, after TextCleanup.finish.
  *
- * - "bullet point" / "next bullet" / "new bullet" starts an item: "Groceries bullet point eggs bullet point milk" →
+ * - "bullet point" / "next bullet (point)" / "new bullet (point)" starts an item: "Groceries bullet point eggs bullet point milk" →
  *   "Groceries:\n- Eggs\n- Milk". A marker after "the", "a", "second"... is the thing itself and stays prose.
  * - A spoken list ("first, eggs, second, milk" / "number one, ..., number two, ...") becomes bullets too; it needs an
  *   opener and a second marker, so a lone "first" in prose is left alone. Same rules as core's `format_spoken_list`.
@@ -11,12 +11,12 @@ package com.humming.keyboard
  */
 object ListFormat {
     private val BULLET = Regex(
-        "[ \\t]*[,;:]?[ \\t]*\\b(?:bullet point|next bullet|new bullet)\\b[,.;:]?[ \\t]*",
+        "[ \\t]*[,;:]?[ \\t]*\\b(?:(?:next|new) bullet(?: point)?|bullet point)\\b[,.;:]?[ \\t]*",
         RegexOption.IGNORE_CASE,
     )
     private val NOT_AFTER = setOf(
-        "a", "an", "the", "this", "that", "each", "every", "another", "my", "your", "our", "first", "second", "third",
-        "last", "one",
+        "a", "an", "the", "this", "that", "these", "those", "each", "every", "another", "my", "your", "his", "her", "its",
+        "our", "their", "which", "what", "no", "any", "some", "first", "second", "third", "last", "one",
     )
     private val LIST_MARKER = Regex(
         "(?:^|[\\s,.;:])((?:and\\s+)?(?:first(?:ly)?|second(?:ly)?|third(?:ly)?|fourth(?:ly)?|fifth(?:ly)?|finally|lastly|" +
@@ -47,7 +47,8 @@ object ListFormat {
                 // The last item ends at its line break and the rest follows the list; earlier items are one line.
                 if (i == parts.size - 1) { tail = p.substring(nl); p = p.substring(0, nl) } else p = p.replace(Regex("\\s+"), " ")
             }
-            val item = trimItem(p)
+            var item = trimItem(p)
+            if (item.endsWith(" and")) item = trimItem(item.dropLast(4))
             if (item.isNotEmpty()) items.add(capitalize(item))
         }
         if (items.isEmpty()) return null
@@ -62,7 +63,10 @@ object ListFormat {
 
     /** "The list is first, eggs, second, milk." → "The list is:\n- Eggs\n- Milk", or null when it is not a list. */
     fun spokenList(text: String): String? {
-        val marks = LIST_MARKER.findAll(text).map { m ->
+        // A marker after "a", "the"... is prose ("give me a second").
+        val marks = LIST_MARKER.findAll(text).filter { m ->
+            text.substring(0, m.groups[1]!!.range.first).trim().split(Regex("\\s+")).last().lowercase() !in NOT_AFTER
+        }.map { m ->
             Triple(m.groups[1]!!.range.first, m.range.last + 1, m.groupValues[1].lowercase())
         }.toList()
         val opener = marks.indexOfFirst {

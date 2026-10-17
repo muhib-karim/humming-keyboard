@@ -5,8 +5,8 @@ import Foundation
 ///
 /// Order: the user's replacements ("cube cuddle" → "kubectl") → drop non-speech/hallucinations → fillers → spoken
 /// punctuation → (accuracy mode: hedge fillers) → leading discourse markers → self-corrections ("3, no, 4pm" → "4pm") →
-/// repeated words → dictionary casing → capitals and final punctuation → lists (`ListFormat`) → "delete that" said as
-/// its own sentence (Android's `VoiceCommands`).
+/// repeated words → dictionary casing → capitals and final punctuation → "delete that" said as its own sentence
+/// (Android's `VoiceCommands`) → lists (`ListFormat`).
 public enum TextCleanup {
     private static let W = "[\\p{L}\\p{N}_']"
 
@@ -116,7 +116,7 @@ public enum TextCleanup {
         t = applyDictionary(t, terms: dictionary)
         t = compactTimes(t)
         if strictOn { t = sub(t, doubled, "$2") }
-        return retractSentences(ListFormat.apply(finish(t)))
+        return ListFormat.apply(retractSentences(finish(t)))
     }
 
     private static let arrow = re("\\s*(?:->|→)\\s*", false)
@@ -157,7 +157,17 @@ public enum TextCleanup {
     }
 
     private static let deleteSentence = re("^(?:ok(?:ay)?,? )?(?:delete|scratch|undo|remove) (?:that|the last sentence)$")
-    private static let sentence = re("[^.!?]+(?:[.!?]+|$)", false)
+    // A mark only ends a sentence before a space or the end, so "3.50" stays one sentence.
+    private static let sentence = re("(?:[^.!?]|[.!?](?!\\s|$))+(?:[.!?]+(?=\\s|$)|$)", false)
+
+    /// True when the whole of `raw` is a "delete that" command (the iPhone app cleans each recogniser chunk on its own).
+    public static func isDeleteCommand(_ raw: String) -> Bool {
+        var b = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+        while let c = b.last, ".!?,".contains(c) { b.removeLast() }
+        b = b.trimmingCharacters(in: .whitespacesAndNewlines)
+        let bn = b as NSString
+        return !b.isEmpty && deleteSentence.firstMatch(in: b, options: [], range: NSRange(location: 0, length: bn.length)) != nil
+    }
 
     /// "Book Friday. Scratch that. Book Saturday." → "Book Saturday." The command must be the whole sentence.
     public static func retractSentences(_ text: String) -> String {

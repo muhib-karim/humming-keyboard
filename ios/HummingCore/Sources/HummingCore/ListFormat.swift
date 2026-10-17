@@ -3,16 +3,16 @@ import Foundation
 /// 1.7: lists in dictation, the Swift port of Android's `ListFormat.kt` (desktop: `text_cleanup::bullet_list` and core's
 /// `format_spoken_list`). Runs on the finished text, after `TextCleanup.finish`. Covered by `ListFormatTests`.
 ///
-/// - "bullet point" / "next bullet" / "new bullet" starts an item: "Groceries bullet point eggs bullet point milk" →
+/// - "bullet point" / "next bullet (point)" / "new bullet (point)" starts an item: "Groceries bullet point eggs bullet point milk" →
 ///   "Groceries:\n- Eggs\n- Milk". A marker after "the", "a", "second"... is the thing itself and stays prose.
 /// - A spoken list ("first, eggs, second, milk" / "number one, ..., number two, ...") becomes bullets too; it needs an
 ///   opener and a second marker, so a lone "first" in prose is left alone.
 public enum ListFormat {
     private static let bullet = try! NSRegularExpression(
-        pattern: "[ \\t]*[,;:]?[ \\t]*\\b(?:bullet point|next bullet|new bullet)\\b[,.;:]?[ \\t]*", options: [.caseInsensitive])
+        pattern: "[ \\t]*[,;:]?[ \\t]*\\b(?:(?:next|new) bullet(?: point)?|bullet point)\\b[,.;:]?[ \\t]*", options: [.caseInsensitive])
     private static let notAfter: Set<String> = [
-        "a", "an", "the", "this", "that", "each", "every", "another", "my", "your", "our", "first", "second", "third",
-        "last", "one",
+        "a", "an", "the", "this", "that", "these", "those", "each", "every", "another", "my", "your", "his", "her", "its",
+        "our", "their", "which", "what", "no", "any", "some", "first", "second", "third", "last", "one",
     ]
     private static let listMarker = try! NSRegularExpression(
         pattern: "(?:^|[\\s,.;:])((?:and\\s+)?(?:first(?:ly)?|second(?:ly)?|third(?:ly)?|fourth(?:ly)?|fifth(?:ly)?|finally|lastly|"
@@ -48,7 +48,8 @@ public enum ListFormat {
                     p = p.split(whereSeparator: { $0.isWhitespace }).joined(separator: " ")
                 }
             }
-            let item = trimItem(p)
+            var item = trimItem(p)
+            if item.hasSuffix(" and") { item = trimItem(String(item.dropLast(4))) }
             if !item.isEmpty { items.append(capitalize(item)) }
         }
         if items.isEmpty { return nil }
@@ -67,8 +68,13 @@ public enum ListFormat {
     /// "The list is first, eggs, second, milk." → "The list is:\n- Eggs\n- Milk", or nil when it is not a list.
     public static func spokenList(_ text: String) -> String? {
         let ns = text as NSString
+        // A marker after "a", "the"... is prose ("give me a second").
         let marks: [(start: Int, end: Int, word: String)] =
-            listMarker.matches(in: text, options: [], range: NSRange(location: 0, length: ns.length)).map {
+            listMarker.matches(in: text, options: [], range: NSRange(location: 0, length: ns.length)).filter { m in
+                let before = ns.substring(to: m.range(at: 1).location)
+                let prev = before.split(whereSeparator: { $0.isWhitespace }).last.map(String.init) ?? ""
+                return !notAfter.contains(prev.lowercased())
+            }.map {
                 (m: NSTextCheckingResult) -> (start: Int, end: Int, word: String) in
                 let g = m.range(at: 1)
                 return (start: g.location, end: m.range.location + m.range.length, word: ns.substring(with: g).lowercased())

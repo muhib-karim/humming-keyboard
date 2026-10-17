@@ -6,7 +6,8 @@ package com.humming.keyboard
  *
  * Order: the user's replacements ("cube cuddle" → "kubectl") → drop non-speech/hallucinations → fillers → spoken
  * punctuation and "delete last word" → leading discourse markers → self-corrections ("3, no, 4pm" → "4pm") → repeated
- * words → dictionary casing → capitals and final punctuation → lists ([ListFormat]).
+ * words → dictionary casing → capitals and final punctuation → "delete that" ([VoiceCommands.retract]) → lists
+ * ([ListFormat]).
  */
 object TextCleanup {
     private const val W = "[\\p{L}\\p{N}_']"
@@ -121,7 +122,7 @@ object TextCleanup {
         t = applyDictionary(t, dictionary)
         t = compactTimes(t)
         if (strictOn) t = DOUBLED.replace(t, "$2")
-        return ListFormat.apply(finish(t))
+        return ListFormat.apply(VoiceCommands.retract(finish(t)))
     }
 
     private val TIME_AMPM = Regex("(?<![\\p{L}\\p{N}])(\\d{1,2}(?::\\d{2})?)\\s?([AaPp])\\.?\\s?[Mm](?=[\\s,.;!?]|$)")

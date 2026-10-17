@@ -177,8 +177,8 @@ pub fn finalize_text_for(raw: &str, s: &Settings, app: Option<&str>) -> String {
         text_cleanup::Opts { remove_fillers: false, voice_commands: s.voice_commands, self_corrections: false, strict: false }
     };
     let mut text = text_cleanup::apply(&replaced, &terms, opts);
-    // "bullet point" items (1.7) first; otherwise a spoken "first, ... second, ..." list.
-    let bullets = if s.voice_commands { text_cleanup::bullet_list(&text) } else { None };
+    // "bullet point" items (1.7) first; otherwise a spoken "first, ... second, ..." list. Verbatim mode keeps the words.
+    let bullets = if s.clean_mode && s.voice_commands { text_cleanup::bullet_list(&text) } else { None };
     if let Some(list) = bullets {
         text = list;
     } else if s.clean_mode && s.format_lists {
@@ -708,5 +708,13 @@ mod tests {
         assert_eq!(finalize_text("groceries bullet point eggs bullet point milk", &s), "Groceries:\n- Eggs\n- Milk");
         let off = Settings { voice_commands: false, ..s.clone() };
         assert_eq!(finalize_text("groceries bullet point eggs", &off), "Groceries bullet point eggs.");
+        // Verbatim mode keeps the words, as on Android and iPhone.
+        let verbatim = Settings { clean_mode: false, ..s.clone() };
+        assert!(!finalize_text("groceries bullet point eggs bullet point milk", &verbatim).contains("\n- "));
+        // "delete that" runs before the list pass.
+        assert_eq!(
+            finalize_text("Groceries bullet point eggs. Bullet point milk. Delete that. Bullet point bread.", &s),
+            "Groceries:\n- Eggs\n- Bread"
+        );
     }
 }
