@@ -32,7 +32,7 @@ If a session ends early, the remaining work is in [HANDOFF.md](HANDOFF.md).
 - [x] Links resolve to files that exist (scripts/check_site.py: 3 pages, 0 problems)
 
 ## 5. README.md
-- [ ] Premium rewrite: banner, badges, hero, highlights, comparison summary, install per platform, privacy, build, contributing, license
+- [x] Premium rewrite: banner, badges, hero, highlights, comparison summary, install per platform, privacy, build, contributing, license (all md links and anchors checked)
 
 ## 6. Release plumbing v1.7.0-rc1
 - [ ] Versions: Android 1.7.0 (versionCode up), iOS 1.7.0 (build up), desktop tauri.conf/Cargo/package.json, core
