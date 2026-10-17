@@ -173,7 +173,10 @@ object HummingVoice {
     fun onStartInputView(ctx: Context) {
         val app = ctx.applicationContext
         appContext = app
-        // Back from screen-off or another app while still dictating: type what was said meanwhile, keep listening.
+        // Keyboard shown again while still dictating: keep listening and re-attach. The draft is replayed only in the
+        // same input session of the field where the dictation started. Back from screen-off or another app, Android
+        // starts a fresh input session (the input generation bumps), so nothing is replayed here and the final text
+        // goes to History instead (fails closed).
         if (recording()) output?.attach()
         _state.update { it.copy(clean = Prefs.cleanMode(app), offline = ModelStore.ready(app)) }
         ModelDownloader.removeListener(modelListener)
