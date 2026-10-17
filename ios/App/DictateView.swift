@@ -65,7 +65,7 @@ struct DictateView: View {
         switch dictation.phase {
         case .listening:
             Label("Listening, on this iPhone. Tap to stop.", systemImage: "waveform")
-                .font(.subheadline).foregroundColor(Brand.accent)
+                .font(.subheadline).foregroundColor(Brand.accentText)
         case .unavailable(let why):
             Text(why).font(.footnote).foregroundColor(.orange).multilineTextAlignment(.center)
         case .idle:
@@ -83,7 +83,7 @@ struct Chip: View {
             .font(.caption.weight(.semibold))
             .padding(.horizontal, 10).padding(.vertical, 5)
             .background(Capsule().fill(Brand.accent.opacity(0.15)))
-            .foregroundColor(Brand.accent)
+            .foregroundColor(Brand.accentText)
     }
 }
 

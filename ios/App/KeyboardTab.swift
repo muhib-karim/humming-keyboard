@@ -46,7 +46,7 @@ struct Step: View {
             Text("\(n)")
                 .font(.caption.bold()).foregroundColor(.white)
                 .frame(width: 22, height: 22)
-                .background(Circle().fill(Brand.accent))
+                .background(Circle().fill(Brand.accentStrong))
             Text(text).font(.subheadline)
         }
     }
