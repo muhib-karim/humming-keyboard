@@ -124,7 +124,7 @@ abstract class FlorisPreferenceModel : PreferenceModel() {
         }
         val historyAutoCleanOldEnabled = boolean(
             key = "clipboard__history_auto_clean_old_enabled",
-            default = false,
+            default = true, // Humming: clipboard history expires (after historyAutoCleanOldAfter)
         )
         val historyAutoCleanOldAfter = int(
             key = "clipboard__history_auto_clean_old_after",
@@ -132,7 +132,7 @@ abstract class FlorisPreferenceModel : PreferenceModel() {
         )
         val historyAutoCleanSensitiveEnabled = boolean(
             key = "clipboard__history_auto_clean_sensitive_enabled",
-            default = false,
+            default = true, // Humming: sensitive clips (passwords, codes) expire quickly
         )
         val historyAutoCleanSensitiveAfter = int(
             key = "clipboard__history_auto_clean_sensitive_after",

@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Backup and transfer rules for Android 12+ (android:dataExtractionRules).
+    Cloud backup: settings and installed extensions/themes only. Dictation history (text and audio),
+    clipboard history and learned words (user dictionary) never leave the phone through a cloud backup.
+    Device-to-device transfer (local, started by the user) also carries the learned words.
+    Anything not included here is excluded.
+-->
 <data-extraction-rules>
     <cloud-backup>
         <include
@@ -7,9 +14,6 @@
         <include
             domain="file"
             path="ime"/>
-        <include
-            domain="database"
-            path="floris_user_dictionary"/>
     </cloud-backup>
     <device-transfer>
         <include

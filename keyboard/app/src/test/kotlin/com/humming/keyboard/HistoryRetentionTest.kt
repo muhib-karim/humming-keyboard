@@ -1,5 +1,6 @@
 package com.humming.keyboard
 
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -25,4 +26,12 @@ class HistoryRetentionTest {
     }
 
     @Test fun neverKeepsNothing() = assertFalse(HistoryRetention.keep(now, now, HistoryRetention.NEVER))
+
+    @Test
+    fun defaultIsThirtyDays() {
+        assertEquals(HistoryRetention.MONTH, HistoryRetention.DEFAULT)
+        val t = now
+        assertFalse(HistoryRetention.keep(t - 31 * 24 * hour, t, HistoryRetention.DEFAULT))
+        assertTrue(HistoryRetention.keep(t - 29 * 24 * hour, t, HistoryRetention.DEFAULT))
+    }
 }

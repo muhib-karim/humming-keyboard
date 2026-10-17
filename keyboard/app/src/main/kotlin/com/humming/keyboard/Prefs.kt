@@ -78,7 +78,7 @@ object Prefs {
      */
     fun accuracyMode(ctx: Context): Boolean = get(ctx).getBoolean(KEY_ACCURACY, false)
 
-    fun retention(ctx: Context): String = get(ctx).getString(KEY_RETENTION, HistoryRetention.FOREVER) ?: HistoryRetention.FOREVER
+    fun retention(ctx: Context): String = get(ctx).getString(KEY_RETENTION, HistoryRetention.DEFAULT) ?: HistoryRetention.DEFAULT
 
     /** Download voice models on Wi-Fi only (default on). */
     fun wifiOnly(ctx: Context): Boolean = get(ctx).getBoolean(KEY_WIFI_ONLY, true)
