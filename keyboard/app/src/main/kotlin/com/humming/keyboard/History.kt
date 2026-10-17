@@ -109,6 +109,7 @@ class HistoryStore(private val ctx: Context) {
             val setting = Prefs.retention(ctx)
             val entries = all()
             val kept = entries.filter { HistoryRetention.keep(it.timeMs, nowMs, setting) }
+                .sortedByDescending { it.timeMs }.take(500)
             if (kept.size != entries.size) save(kept)
             // Audio of entries that are gone (expired, deleted, or past the 500-entry cap) is removed too.
             val keptIds = kept.map { "${it.id}.pcm" }.toSet()

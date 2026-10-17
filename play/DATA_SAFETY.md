@@ -38,6 +38,11 @@ are also deleted once older than the retention the user picks (Forever, 1 month,
 out the oldest, or by auto-clean when the user turns it on. Data sent under paths 2 to 4 is kept by the speech service, the AI provider or Openverse under their own
 policies; Humming cannot see or delete it.
 
+**Upgrades.** New installs start with voice history kept for 1 month. Someone who already had voice history saved before
+retention existed keeps it: their setting starts at Forever, so nothing is deleted without their choice, and they can
+change it any time in Settings. Voice history is also capped at the 500 newest entries; older entries and their audio are
+deleted at the next prune.
+
 **Deletion.** Uninstalling the app, or clearing its storage in Android's app settings, deletes everything Humming
 stored on the device. Data held by the phone's speech service, Google Gemini, OpenAI, Groq or Openverse is deleted
 through those providers' own policies and tools. Android backup copies are managed in the user's Google account.
