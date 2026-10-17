@@ -17,6 +17,7 @@
 package dev.patrickgold.florisboard.ime.nlp.latin
 
 import android.content.Context
+import com.humming.keyboard.BanglaPhonetic
 import com.humming.keyboard.predict.PredictionEngine
 import com.humming.keyboard.predict.Predictor
 import com.humming.keyboard.predict.StripOrder
@@ -110,6 +111,17 @@ class LatinLanguageProvider(context: Context) : SpellingProvider, SuggestionProv
         allowPossiblyOffensive: Boolean,
         isPrivateSession: Boolean,
     ): List<SuggestionCandidate> {
+        // Bangla phonetic: on a Bengali subtype with a Latin layout, the Bangla spelling of the typed word is the
+        // auto-commit suggestion (space or punctuation types it) and the Latin word stays one tap away.
+        if (subtype.primaryLocale.language == "bn") {
+            val typed = content.composingText.ifBlank { content.currentWordText }
+            if (!BanglaPhonetic.isPhoneticInput(typed)) return emptyList()
+            return listOf(
+                WordSuggestionCandidate(BanglaPhonetic.transliterate(typed), confidence = 0.9,
+                    isEligibleForAutoCommit = true, isEligibleForUserRemoval = false, sourceProvider = this),
+                LiteralWordCandidate(typed, sourceProvider = this),
+            )
+        }
         // A language without a bundled dictionary gets no suggestions rather than English ones.
         val p = predictor(subtype) ?: return emptyList()
         val word = content.composingText.ifBlank { content.currentWordText }
