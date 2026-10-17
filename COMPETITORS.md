@@ -8,13 +8,17 @@ taken from Play search snippets are marked *(Play snippet)*.
 
 Compared: **Gboard** (Google), **Microsoft SwiftKey**, **Fleksy**, **Typewise**, **Ridmik Keyboard** (the most-used
 Bangla keyboard), and for Bangla input on computers **Avro Keyboard** (phonetic), **Bijoy** (fixed layout) and
-**OpenBangla Keyboard** (Linux, Avro-compatible).
+**OpenBangla Keyboard** (Linux, Avro-compatible). A second part compares voice-dictation apps: **Wispr Flow**,
+**Typeless**, **Superwhisper**, **Aqua Voice**, **Willow**, **MacWhisper**, and Apple's and Google's built-in
+dictation.
 
 - [Summary table](#summary-table)
 - [Column by column](#column-by-column)
 - [Bangla input in detail](#bangla-input-in-detail)
 - [UX teardown](#ux-teardown)
 - [Gap list (ranked)](#gap-list-ranked)
+- [Dictation apps](#dictation-apps)
+- [Dictation gap list (ranked)](#dictation-gap-list-ranked)
 - [Sources](#sources)
 
 ## Summary table
@@ -100,7 +104,7 @@ choices (gap 5).
 | Start dictating | Tap mic; on Pixel offline, elsewhere online | Tap mic; Google or multimodal | Tap mic, needs internet | Tap mic; first use downloads the 104 MB model once, then offline |
 | While talking | Live words | Live words | Live words | Underlined draft that corrects itself in place; keeps listening with the screen off |
 | Dictating into the middle of a sentence | unverified | unverified | unverified | **New:** lowercases a common first word, no stray space after "(", drops the final period when the sentence carries on [H9] |
-| Spoken punctuation | unverified [yes; no list in the sources above] | unverified | unverified | comma, full stop, question/exclamation mark, new line/paragraph, **new:** colon, semicolon, quotes, brackets, ellipsis [H9] |
+| Spoken punctuation | unverified [yes; no list in the sources above] | unverified | unverified | comma, full stop, question/exclamation mark, new line/paragraph, **new:** colon, semicolon, quotes, brackets, ellipsis, "bullet point" lists [H9] |
 | Fix a mistake by voice | "Fix it" edits go to Google servers [2] | unverified | unverified | "scratch that", **new:** "delete last word"; AI rewrite only with your own key [H9] |
 | Privacy prompt | Settings in Google account | Opt-in screens | None | Nothing to opt out of; network uses listed in Settings > Privacy |
 
@@ -121,6 +125,68 @@ new paid services). ✅ = implemented in this pass (1.7.0-rc1, unit tests run in
 | 8 | Store distribution (Play, App Store, signed desktop installers) | Everyone except Avro/OpenBangla | 5 | 1 | 5 | Open: owner accounts and certificates |
 | 9 | Full iOS keyboard (prediction, glide) | Gboard, SwiftKey, Ridmik | 3 | 2 | 6 | Open |
 | 10 | Cloud clipboard / cross-device sync | SwiftKey [21] | 2 | 1 | 2 | Won't do: conflicts with no-account, no-cloud privacy |
+
+## Dictation apps
+
+Checked on **17 October 2026** against the vendors' own pages (sources [D1]-[D73] below). Rules as above, plus:
+**accuracy only where a number is published**, with who measured it; a slogan without a method is quoted as a
+"vendor claim". Word error rates measured on different test sets are **not comparable** with each other: Humming's
+figure is LibriSpeech test-clean (read speech, the easier end), Superwhisper's and Aqua's are averages over harder,
+mixed sets.
+
+### Accuracy, speed, privacy, platforms, price
+
+| App | Published accuracy | Latency | Offline / privacy | Platforms | Price (per month) | Open source |
+|---|---|---|---|---|---|---|
+| **Humming** | **WER 2.78 % (Fast) / 1.68 % (Best)**, LibriSpeech test-clean, first 200 clips, CI run with raw output committed [H1] | Median 312 ms (Fast) / 1314 ms (Best) from clip to text, desktop CPU, 2 threads [H1]; Android shows a live draft while you talk | **Offline by default on every platform**; no account, no analytics [H2] | Android, iPhone (sideload), Windows, macOS, Linux | **Free, no ads, no word cap** | **Yes**, Apache-2.0 [H8] |
+| Wispr Flow | No figure in text (charts only) [D16]; 8.7 % WER "raw" measured by Superwhisper, a competitor, over 8 English sets [D18] | Not published; 1.28 s median measured by Superwhisper [D18] | Cloud only [D3]; audio deleted after transcription unless cloud storage is on [D3]; usage statistics collected "regardless of your data controls" [D4]; SOC 2 Type II, HIPAA BAA [D1] | Mac, Windows, iOS, Android 13+; "no native Linux" [D1][D8][D14] | Free 2,000 words/week desktop, 1,000 mobile; Pro $15 ($12 yearly) [D1] | No |
+| Typeless | Not published [D20] | Not published ("instantly") [D19] | Cloud, "zero data retention policy" [D21]; no offline mode documented | macOS, Windows, **Linux**, iOS, Android [D22] | Free "limited words" (number not stated); Pro $30 ($12 yearly) [D20] | No |
+| Superwhisper | **6.6 % WER** (S1-Voice, cloud), vendor benchmark over 8 English sets [D38][D40]; local Cohere model 8.4 % [D33] | 0.41 s median, end of speech to text (vendor) [D39]; streaming on Pro with some models [D37] | **Offline with local models** [D30]; cloud under zero-data-retention terms [D35] | macOS, Windows, iOS, Android; Linux "coming soon" [D41] | Free unlimited with local models; Pro $8.49, $84.99/year or $249.99 once [D31] | No |
+| Aqua Voice | 6.24 % average WER on the Hugging Face Open ASR Leaderboard (Oct 2025, Aqua's recap, not re-checked); 5.55 % for Avalon 1.5, test set not stated [D45] | Under 50 ms to start, ~450 ms after you stop (vendor) [D45] | Cloud ("needs an internet connection") [D47]; Privacy Mode off by default [D45][D46] | macOS, Windows, iOS, Android (Oct 2026); no Linux [D45][D47] | Free 1,000 words; Pro $10 ($8 yearly) [D44] | No |
+| Willow | Vendor claim: "3x more accurate than built-in dictation", no method [D48] | Vendor claim: "as little as 200ms" [D48] | Conflicting: homepage offers an offline mode [D48], help centre says cloud models [D51] | Mac, Windows, iPhone; Android "coming soon" [D56] | Free (weaker model); Pro $15 ($12 yearly) [D49] | No |
+| MacWhisper | Not published [D57] | Not published | **Local models**, optional cloud AI with your own keys [D57] | macOS; iPhone/iPad as "Whisper Transcription" [D59] | Free; Pro €64 once [D57] | No (built on open models) |
+| Apple Dictation | Not published | Not published | On-device "in many languages" [D60]; server transcripts may be kept up to two years if used [D65] | iPhone, iPad, Mac | Free with the OS | No |
+| Google (Gboard voice, Pixel, Rambler) | Not published | Not published | Pixel 6+ advanced voice typing on-device [D68]; Rambler needs internet for full features [D69] | Android, iOS (Gboard), web (Docs) | Free; Rambler has unpublished usage limits [D69] | No |
+
+### Clean-up, commands, dictionary, languages
+
+| App | Fillers removed | Lists | Voice commands | Personal dictionary / replacements / snippets | Languages, Bangla |
+|---|---|---|---|---|---|
+| **Humming 1.7** | **Yes**, switch, on by default ✅ | **Yes**: "bullet point", "first, ... second, ..." ✅ | "new line", "new paragraph", spoken punctuation, "scratch that" / "delete that" ✅, "delete last word", self-corrections ("3, no, 4pm"); no editing of text already in the field | Custom words (casing, recogniser hints on iPhone) and **"spoken -> written" replacements** ✅, per app on Android and desktop | Offline dictation: English. Bangla: phonetic **typing** (Android); Android's opt-in Online mode uses the phone's speech service, Bangla there unverified |
+| Wispr Flow | Yes, three levels [D9] | Yes ("one… two…") [D6] | New line / paragraph, Backtrack ("scratch that") [D6]; Command Mode on selected text, Pro, desktop [D5] | Dictionary with auto-learn, misspelling fixes, snippets on every plan [D10][D11] | "100+"; Bengali unverified [D7] |
+| Typeless | Yes [D19] | Yes [D19] | Speak-to-edit on selected text [D24]; "new line" / "scratch that" not documented | Dictionary, auto-add, CSV import; replacements not documented [D25] | "100+"; no list, Bengali unverified [D19] |
+| Superwhisper | Yes, Message mode [D34] | Yes, Note mode [D34] | Commands on selected text (Super mode) [D34]; "new line" / "scratch that" not documented | Vocabulary hints and **replacements**, e.g. "my work email" → address [D32] | "100+"; Bengali not named, expected via Whisper models [D33][D42] |
+| Aqua Voice | Not documented | Via custom instructions | Edit Mode on selected text; "undo that" not supported [D45] | Dictionary and replacements ("my calendar link" → URL) [D44][D45] | 49, **Bengali listed** [D45] |
+| Willow | Yes [D48] | Yes ("Bullet, …") [D50] | New line / paragraph, spoken lists [D50]; "scratch that" not documented | Terms and voice "shortcuts" [D53] | "100+"; Bengali unverified [D52] |
+| MacWhisper | Yes [D57] | Not documented | Not documented | Not documented | "100"; Bengali not named, expected via Whisper [D42][D57] |
+| Apple Dictation | Not documented | Not documented | New line / paragraph, caps; on iPhone in US English: "change … to …", "select", "delete", "undo" [D61] | None for dictation documented [D65] | 63 language/region entries; **Bangla not listed** [D64] |
+| Google | Rambler only [D69] | Not documented | New line / paragraph [D67]; Pixel: "delete last word", "clear", "undo", detailed edits [D68]; Docs: "select", "delete" [D72] | Unverified | Bengali in Gboard voice typing (2017 post) [D70] and Docs [D72]; not in Pixel advanced voice typing [D68] |
+
+**Where Humming leads:** the only app here that is free with no word cap, open source, and offline by default on
+Android, iPhone, Windows, macOS **and** Linux (Typeless is the only other one with a Linux app, and it is cloud-only).
+It publishes a reproducible accuracy figure with the raw output. With 1.7 it has the shared core of the dictation apps:
+filler removal with a switch, lists, "scratch that", and spoken → written replacements that double as snippets.
+**Where it trails:** no voice editing of text already in the field and no per-app tone (both need an AI model or OS
+accessibility hooks); offline dictation is English only, while Aqua and Google list Bengali (online).
+
+## Dictation gap list (ranked)
+
+Ranked like the keyboard gaps (user impact × feasibility, 1-5 each). ✅ = implemented in 1.7.0-rc1 with unit tests that
+run in CI (Kotlin `ListFormatTest`, `TextCleanupTest`, `AppVocabularyTest`; Rust `text_cleanup.rs` and `lib.rs`;
+Swift `ListFormatTests`, `TextCleanupTests`).
+
+| # | Gap | Who has it | Impact | Feasibility | Score | Status |
+|---|---|---|---:|---:|---:|---|
+| D1 | Spoken → written replacements (and snippets) on every platform | Wispr, Superwhisper, Aqua, Willow | 5 | 5 | 25 | ✅ Android and iPhone (`spoken -> written` lines); desktop had them since 1.5 |
+| D2 | Smart lists ("bullet point", "first, ... second, ...") | Wispr, Typeless, Superwhisper, Willow | 4 | 5 | 20 | ✅ Android, desktop, iPhone (`ListFormat`, `bullet_list`) |
+| D3 | "Scratch that" / "delete that" as its own sentence on every platform | Wispr, Typeless, Willow | 4 | 5 | 20 | ✅ desktop and iPhone; Android had it |
+| D4 | A switch for filler-word removal (default on) | Wispr (clean-up levels) | 3 | 5 | 15 | ✅ Android and iPhone; desktop had it |
+| D5 | Voice editing of text already in the field ("change X to Y", "select", "delete X") | Apple (US English), Pixel, Docs; AI edit modes in Wispr, Typeless, Superwhisper, Aqua | 4 | 2 | 8 | Open: needs `InputConnection` editing on Android and accessibility APIs on desktop |
+| D6 | Per-app tone and style | Wispr, Typeless, Superwhisper, Aqua, Willow, MacWhisper | 3 | 2 | 6 | Open: needs a language model; Android's own-key AI clean-up covers "make it formal" |
+| D7 | Dictionary that learns from your corrections | Wispr (desktop), Typeless | 3 | 2 | 6 | Open |
+| D8 | Offline dictation in Bangla and more languages | Aqua (cloud, Bengali listed), Superwhisper / MacWhisper via Whisper (untested) | 5 | 1 | 5 | Open (keyboard gap 7) |
+| D9 | Whisper / quiet-speech mode | Typeless | 2 | 2 | 4 | Open |
+| D10 | Team-shared dictionary | Wispr, Aqua, Willow | 1 | 2 | 2 | Won't do: needs accounts and a server |
 
 ## Sources
 
@@ -176,3 +242,105 @@ Competitors (all checked 17 October 2026):
 38. Bijoy Ekushe software page: https://bijoyekushe.net.bd/index.php?action=software
 39. Ryans, Bijoy price list: https://www.ryans.com/category/bangla-typing-application-bijoy
 40. GitHub, OpenBangla Keyboard: https://github.com/OpenBangla/OpenBangla-Keyboard
+
+
+Dictation apps (all checked 17 October 2026; [D18] is a competitor's measurement, [D73] a press snippet):
+
+Wispr Flow:
+
+- [D1] https://wisprflow.ai/pricing
+- [D2] https://wisprflow.ai/
+- [D3] https://wisprflow.ai/privacy
+- [D4] https://wisprflow.ai/data-controls
+- [D5] https://docs.wisprflow.ai/articles/4816967992-how-to-use-command-mode
+- [D6] https://docs.wisprflow.ai/articles/5373093536-how-do-i-use-smart-formatting-and-backtrack
+- [D7] https://docs.wisprflow.ai/articles/3191899797-use-flow-with-multiple-languages
+- [D8] https://docs.wisprflow.ai/articles/6478598909-using-flow-with-linux-wsl-and-terminal-applications
+- [D9] https://docs.wisprflow.ai/articles/4283510616-auto-cleanup-control-how-much-flow-edits-your-dictation-beta
+- [D10] https://docs.wisprflow.ai/articles/5784437944-create-and-use-snippets
+- [D11] https://docs.wisprflow.ai/articles/4052411709-teach-flow-your-words-with-the-dictionary
+- [D12] https://docs.wisprflow.ai/articles/2368263928-how-to-setup-flow-styles
+- [D13] https://wisprflow.ai/india
+- [D14] https://wisprflow.ai/android
+- [D15] https://wisprflow.ai/lab
+- [D16] https://wisprflow.ai/canto
+- [D17] https://wisprflow.ai/whats-new (redirect target of roadmap.wisprflow.ai/changelog/...)
+- [D18] https://superwhisper.com/benchmarks/wispr-flow-raw (competitor's measurement)
+
+Typeless:
+
+- [D19] https://www.typeless.com/
+- [D20] https://www.typeless.com/pricing
+- [D21] https://www.typeless.com/privacy
+- [D22] https://www.typeless.com/downloads
+- [D23] https://www.typeless.com/help/billing
+- [D24] https://www.typeless.com/help/quickstart/speak-to-edit
+- [D25] https://www.typeless.com/help/quickstart/history-and-dictionary
+- [D26] https://www.typeless.com/help/quickstart/personalization
+- [D27] https://www.typeless.com/help/quickstart/dictate
+- [D28] https://apps.apple.com/us/app/typeless-ai-voice-keyboard/id6749257650
+- [D29] https://www.typeless.com/help/faqs
+
+Superwhisper:
+
+- [D30] https://superwhisper.com/
+- [D31] https://superwhisper.com/docs/billing/plans
+- [D32] https://superwhisper.com/docs/get-started/interface-vocabulary
+- [D33] https://superwhisper.com/docs/models/voice
+- [D34] https://superwhisper.com/docs/modes/built-in
+- [D35] https://superwhisper.com/docs/security/sensitive-data
+- [D36] https://superwhisper.com/docs/security/compliance
+- [D37] https://superwhisper.com/docs/common-issues/realtime
+- [D38] https://superwhisper.com/benchmarks
+- [D39] https://superwhisper.com/benchmarks/superwhisper-s1-voice
+- [D40] https://superwhisper.com/docs/models/benchmarks
+- [D41] https://superwhisper.com/docs (and https://superwhisper.com/docs/llms.txt)
+- [D42] https://github.com/openai/whisper/blob/main/whisper/tokenizer.py (Whisper language table; `"bn": "bengali"`)
+
+Aqua Voice:
+
+- [D43] https://aquavoice.com/
+- [D44] https://aquavoice.com/pricing
+- [D45] https://aquavoice.com/llms.txt (vendor's machine-readable overview, "as of October 2026")
+- [D46] https://aquavoice.com/privacy (privacy policy, effective 29 Jul 2026)
+- [D47] https://aquavoice.com/info/faq
+
+Willow:
+
+- [D48] https://willowvoice.com/
+- [D49] https://willowvoice.com/pricing
+- [D50] https://help.willowvoice.com/en/articles/13183983-voice-commands-and-automatic-formatting-guide
+- [D51] https://help.willowvoice.com/en/articles/12854269-how-willow-protects-your-data-and-privacy
+- [D52] https://help.willowvoice.com/en/articles/10878926-how-do-i-dictate-in-another-language
+- [D53] https://help.willowvoice.com/en/articles/13183918-using-personal-dictionary-and-shortcuts
+- [D54] https://help.willowvoice.com/en/articles/13668493-compliance-certifications-and-security-standards
+- [D55] https://willowvoice.com/blog/best-offline-speech-to-text-tools (vendor blog; byline 21 Apr 2026, metadata 16 Oct 2026)
+- [D56] https://willowvoice.com/download
+
+MacWhisper:
+
+- [D57] https://macwhisper.com/
+- [D58] https://goodsnooze.gumroad.com/l/macwhisper (page body did not render for my fetcher; content taken from a search-result snippet)
+- [D59] https://apps.apple.com/us/app/whisper-transcription/id1668083311
+
+Apple:
+
+- [D60] https://support.apple.com/guide/iphone/dictate-text-iph2c0651d2/ios
+- [D61] https://support.apple.com/guide/iphone/commands-for-dictating-text-iph3bf19d7b9/ios
+- [D62] https://support.apple.com/guide/mac-help/use-dictation-mh40584/mac
+- [D63] https://support.apple.com/guide/mac-help/commands-for-dictating-text-mh40695/mac
+- [D64] https://www.apple.com/ios/feature-availability/ (iOS/iPadOS 27; only the first ~100k characters were read, which covered all the Dictation sections)
+- [D65] https://www.apple.com/legal/privacy/data/en/ask-siri-dictation/
+- [D66] https://9to5mac.com/2025/08/15/aqua-voice-shows-just-how-good-mac-dictation-could-be-if-apple-just-tried/ (not fetched; cited as reported by Aqua [45])
+
+Google:
+
+- [D67] https://support.google.com/gboard/answer/2781851?hl=en (Android)
+- [D68] https://support.google.com/gboard/answer/11197787?hl=en (advanced voice typing, Pixel)
+- [D69] https://support.google.com/gboard/answer/17468539?hl=en (Rambler)
+- [D70] https://blog.google/products-and-platforms/products/search/type-less-talk-more/ (14 Aug 2017)
+- [D71] https://support.google.com/gboard/answer/2781851?hl=en&co=GENIE.Platform%3DiOS
+- [D72] https://support.google.com/docs/answer/4492226?hl=en (Google Docs voice typing)
+- [D73] https://techcrunch.com/2026/05/12/google-adds-gemini-powered-dictation-to-gboard-which-could-be-bad-news-for-dictation-startups/ (named press; search-result snippet only, not fetched)
+
+Pages that could not be fetched: superwhisper.com/pricing (404), typeless.com/download (404; /downloads works), willowvoice.com/privacy (404), goodsnooze.com (DNS failure).
