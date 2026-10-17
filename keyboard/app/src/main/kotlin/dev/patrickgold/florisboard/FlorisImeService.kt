@@ -161,6 +161,11 @@ class FlorisImeService : LifecycleInputMethodService() {
         private val InlineSuggestionUiSmallestSize = Size(0, 0)
         private val InlineSuggestionUiBiggestSize = Size(Int.MAX_VALUE, Int.MAX_VALUE)
 
+        /** The editor the keyboard is currently attached to (package name and field id), or null. */
+        fun currentEditorInfo(): EditorInfo? {
+            return FlorisImeServiceReference.get()?.currentInputEditorInfo
+        }
+
         fun currentInputConnection(): InputConnection? {
             return FlorisImeServiceReference.get()?.currentInputConnection
         }

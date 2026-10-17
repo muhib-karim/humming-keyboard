@@ -204,4 +204,83 @@ class DictationOutputTest {
         assertEquals(listOf(" the plan works."), field.committed)
         assertEquals("I told him the plan works.", field.text)
     }
+
+    // --- binding to the field the dictation started in ---
+
+    private val notes = DictationOutput.Target("com.example.notes", 7)
+    private val bank = DictationOutput.Target("com.example.bank", 3)
+
+    @Test
+    fun aDraftIsNotReplayedIntoAnotherAppsField() {
+        val field = FakeField()
+        var focused: DictationOutput.Target? = notes
+        val out = DictationOutput(field, {}, target = notes, currentTarget = { focused })
+        out.onPartial("my secret plan")
+        assertEquals("my secret plan", field.text)
+        out.detach()
+        assertEquals("", field.text)
+        focused = bank
+        out.attach()
+        assertFalse(out.attached)
+        out.onPartial("my secret plan and more")
+        assertEquals("", field.text)
+        out.onStop()
+        assertFalse(out.onFinal("my secret plan and more"))
+        assertEquals("", field.text)
+        assertEquals(0, out.commits)
+    }
+
+    @Test
+    fun backInTheOriginalFieldTheDraftResumes() {
+        val field = FakeField()
+        var focused: DictationOutput.Target? = notes
+        val out = DictationOutput(field, {}, target = notes, currentTarget = { focused })
+        out.onPartial("hello")
+        out.detach()
+        focused = bank
+        out.attach()
+        assertFalse(out.attached)
+        focused = notes
+        out.attach()
+        assertTrue(out.attached)
+        assertEquals("hello", field.text)
+        out.onStop()
+        assertTrue(out.onFinal("hello there"))
+        assertEquals("hello there", field.text)
+    }
+
+    @Test
+    fun focusMovingBetweenStopAndFinalKeepsTheTextOutOfTheNewField() {
+        val field = FakeField()
+        var focused: DictationOutput.Target? = notes
+        val out = DictationOutput(field, {}, target = notes, currentTarget = { focused })
+        out.onPartial("draft")
+        out.onStop()
+        focused = bank
+        assertFalse(out.onFinal("draft final"))
+        assertEquals(0, out.commits)
+        assertEquals("", out.draft)
+    }
+
+    @Test
+    fun noFocusedFieldCountsAsADifferentField() {
+        val field = FakeField()
+        var focused: DictationOutput.Target? = notes
+        val out = DictationOutput(field, {}, target = notes, currentTarget = { focused })
+        focused = null
+        assertFalse(out.inOriginalField())
+        out.onStop()
+        assertFalse(out.onFinal("text"))
+    }
+
+    @Test
+    fun withoutATargetBehaviourIsUnchanged() {
+        val field = FakeField()
+        val out = DictationOutput(field, {})
+        assertTrue(out.inOriginalField())
+        out.onPartial("plain")
+        out.onStop()
+        assertTrue(out.onFinal("plain"))
+        assertEquals("plain", field.text)
+    }
 }

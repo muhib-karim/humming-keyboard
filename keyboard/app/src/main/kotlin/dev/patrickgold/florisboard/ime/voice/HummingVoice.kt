@@ -162,6 +162,12 @@ object HummingVoice {
     val menu: StateFlow<Boolean> = _menu.asStateFlow()
     fun showMenu(on: Boolean) { _menu.value = on }
 
+    /** Package and field id of the editor that has input focus now, or null when the keyboard has none. */
+    private fun focusedTarget(): com.humming.keyboard.DictationOutput.Target? {
+        val info = dev.patrickgold.florisboard.FlorisImeService.currentEditorInfo() ?: return null
+        return com.humming.keyboard.DictationOutput.Target(info.packageName, info.fieldId)
+    }
+
     /** Keyboard became visible: make sure the speech model is there (one-time download) and warm the engine. */
     fun onStartInputView(ctx: Context) {
         val app = ctx.applicationContext
@@ -304,6 +310,7 @@ object HummingVoice {
         glue = com.humming.keyboard.DictationJoin.glue(before)
         val dictionary = Prefs.dictionary(app)
         val s = if (streaming) StreamingSession(app) { partial -> main.post { onPartial(partial) } } else null
+        val startedIn = focusedTarget()
         output = DictationOutput(
             object : DictationOutput.Field {
                 // Live words are the field's composing text (the underlined draft), replaced in place on every partial;
@@ -352,6 +359,9 @@ object HummingVoice {
             glue = glue,
             live = Prefs.liveTyping(app),
             adapt = { t -> com.humming.keyboard.DictationJoin.adapt(before, t, after, dictionary) },
+            // Bound to the field it started in: never replayed into another app or box (inOriginalField).
+            target = startedIn,
+            currentTarget = { focusedTarget() },
         )
         if (onlineMode) {
             val o = com.humming.keyboard.OnlineSession(app, onPartial = { p -> onOnlinePartial(app, p) },

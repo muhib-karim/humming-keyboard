@@ -28,7 +28,19 @@ class DictationOutput(
     private val live: Boolean = true,
     /** Fits the text to the sentence around the cursor (DictationJoin.adapt); applied to the draft and the commit. */
     private val adapt: (String) -> String = { it },
+    /** The field this dictation started in. Null = unknown: no binding (the words go wherever the cursor is). */
+    private val target: Target? = null,
+    /** The field that has input focus right now (package and field id of the current editor). */
+    private val currentTarget: () -> Target? = { target },
 ) {
+    /** Identifies a text field: the app that owns it and the field id it reported. */
+    data class Target(val packageName: String?, val fieldId: Int)
+
+    /**
+     * True while the focused field is the one this dictation started in. The draft and the final text only ever go
+     * there; in any other field (another app, another box) they are held back and the caller keeps them in History.
+     */
+    fun inOriginalField(): Boolean = target == null || currentTarget() == target
     interface Field {
         /** Shows [text] as the composing draft, replacing the previous draft in place. False when there is no field. */
         fun setComposing(text: String): Boolean
@@ -67,6 +79,11 @@ class DictationOutput(
         if (field.setComposing(d)) { draft = d; draftUpdates++ }
     }
 
+    /** Forgets the draft without touching the focused field (it is not ours: the draft was in another field). */
+    private fun abandonDraft() {
+        draft = ""
+    }
+
     private fun clearDraft() {
         if (draft.isEmpty()) return
         field.clearComposing()
@@ -79,7 +96,7 @@ class DictationOutput(
         if (!live) return
         lastPreview = text
         preview(text)
-        if (attached) showDraft(text)
+        if (attached && inOriginalField()) showDraft(text)
     }
 
     /** Keyboard hidden mid-dictation (screen off, app switch): keep listening, take the draft out of the field. */
@@ -90,6 +107,9 @@ class DictationOutput(
 
     /** Keyboard back: show the latest words again as the draft. */
     fun attach() {
+        // Focus moved to a different field (or app) while the keyboard was hidden: stay detached so nothing spoken for
+        // the first field is replayed into this one. Coming back to the original field attaches again.
+        if (!inOriginalField()) { abandonDraft(); attached = false; return }
         attached = true
         if (state == State.LISTENING && live) showDraft(lastPreview)
     }
@@ -108,6 +128,10 @@ class DictationOutput(
         state = State.DONE
         preview("")
         lastPreview = ""
+        if (!inOriginalField()) {
+            abandonDraft()
+            return false
+        }
         if (text.isBlank() || !toField || !attached) {
             clearDraft()
             return false
