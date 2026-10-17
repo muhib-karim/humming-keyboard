@@ -15,10 +15,25 @@ built locally (see CLAUDE.md), so every Kotlin, Rust and Swift change is **unver
 3. Repository About, website and topics: `docs/ci/REPO_METADATA.md`; upload `docs/social-preview.png` as the social
    preview.
 
+## Session 2 (Task A: dictation apps)
+
+Done: `COMPETITORS.md` "Dictation apps" (73 sources) and a ranked dictation gap list; D1-D4 implemented on Android,
+desktop and iPhone (lists, `spoken -> written` replacements, filler switch, "scratch that" everywhere), reviewed and
+fixed; site, README, CHANGELOG, user guide and About text updated; Smartbar mic tap target widened. New tests to watch in
+CI: Kotlin `ListFormatTest`, new cases in `TextCleanupTest`, `AppVocabularyTest`, `VoiceCommandsTest`; Rust
+`text_cleanup.rs` (`bullet_points_*`, `delete_that_*`, `bullet_review_fixes`, `decimals_do_not_end_a_sentence`),
+`lib.rs` `bullet_points_become_a_list`, core `a_second_in_prose_is_not_a_list`; Swift `ListFormatTests`, new
+`TextCleanupTests` cases.
+
 ## Open items (next pass)
 
-- Smartbar mic button is 38 dp by default (a user setting); a 48 dp target and a candidate-strip restyle need device
-  screenshots (TASKS.md section 3, still open).
+- Dictation gaps D5-D9 (COMPETITORS.md): voice editing of text already in the field, per-app tone, a dictionary that
+  learns from corrections, offline Bangla dictation, whisper mode.
+- Android: grey out "Remove filler words" when Clean mode is off and "Accuracy mode" when fillers are off (iOS does);
+  a list dictated with no intro right after a word starts on that word's line.
+
+- Candidate-strip restyle needs device screenshots (TASKS.md section 3). The Smartbar mic's tap target is now 48 dp
+  wide and the bar's full height (the bar itself is shorter than 48 dp).
 - Release hardening the review suggested but this pass did not do: pass named secrets instead of `secrets: inherit`,
   pin third-party actions to commit SHAs, consider a `release` environment with required reviewers.
 - The apps read their update feeds from humming-keyboard.pages.dev (Cloudflare Pages), while `pages.yml` deploys GitHub

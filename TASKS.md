@@ -20,7 +20,7 @@ If a session ends early, the remaining work is in [HANDOFF.md](HANDOFF.md).
 - [x] Whole-branch code review of gaps A-C (fresh reviewer) and fixes (2 Important + 2 re-graded minors fixed, 5 minors deferred)
 
 ## 2A. Task A (owner, 2:30 AM): dictation apps
-- [ ] COMPETITORS.md "Dictation apps" section: Wispr Flow, Typeless, Superwhisper, Aqua Voice, Willow, MacWhisper,
+- [x] COMPETITORS.md "Dictation apps" section: Wispr Flow, Typeless, Superwhisper, Aqua Voice, Willow, MacWhisper,
       Apple / Google dictation (accuracy only with published numbers, latency, offline/privacy, cleanup, commands,
       dictionary, languages incl. Bangla, platforms, pricing) and a ranked dictation gap list
 - [x] Spec + plan: `docs/superpowers/specs/2026-10-17-dictation-gaps-design.md`, `docs/superpowers/plans/2026-10-17-dictation-gaps.md`
@@ -28,8 +28,10 @@ If a session ends early, the remaining work is in [HANDOFF.md](HANDOFF.md).
       TextCleanupTest, AppVocabularyTest; Java mirror 45/45; Kotlin pending CI)
 - [x] Desktop: "bullet point" lists, "delete that" as its own sentence (Rust tests pending CI)
 - [x] iOS: lists, replacements, filler switch, "delete that" (XCTest pending CI)
-- [ ] Fresh code review of the three commits, fixes
-- [ ] Implemented gaps marked ✅ in COMPETITORS.md, homepage comparison, README, CHANGELOG (CHANGELOG done), user guide
+- [x] Fresh code review of the three commits (0 Critical, 4 Important, 6 Minor); all Important and Minors 5-7, 9 fixed
+      test-first in `1c86e6e` (mirror 59/59); 8 and 10 recorded in the spec
+- [x] Implemented gaps marked ✅ in COMPETITORS.md, homepage comparison (new "vs dictation apps" table), README,
+      CHANGELOG, user guide, REPO_METADATA About text
 
 ## 3. App UI polish
 - [x] Android: voice panel a11y (48dp Clean chip, roles/state), AA contrast tokens, rec-dot recomposition fix, exported-activity URI fix; Android skills review in docs/ci/ANDROID_REVIEW.md
@@ -60,5 +62,5 @@ If a session ends early, the remaining work is in [HANDOFF.md](HANDOFF.md).
 - [x] docs/ci/REPO_METADATA.md (About 273 chars, website, 20 topics)
 
 ## Done checks
-- [x] gitleaks clean, forbidden-strings scan clean
+- [x] gitleaks clean, forbidden-strings scan clean (re-run in session 2: no leaks; 0 forbidden strings added)
 - [x] Final report (handoff items in HANDOFF.md)
