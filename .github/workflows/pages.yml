@@ -76,11 +76,12 @@ jobs:
         run: |
           set -euo pipefail
           OIDC=$(curl -fsS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL" | jq -r .value)
-          ID=$(gh api -X POST "repos/$GITHUB_REPOSITORY/pages/deployments" -F artifact_id="$ARTIFACT_ID" \
-            -f pages_build_version="$GITHUB_SHA-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" -f oidc_token="$OIDC" --jq .id)
+          V="$GITHUB_SHA-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          gh api -X POST "repos/$GITHUB_REPOSITORY/pages/deployments" -F artifact_id="$ARTIFACT_ID" \
+            -f pages_build_version="$V" -f oidc_token="$OIDC" > /dev/null
           for i in $(seq 60); do
-            st=$(gh api "repos/$GITHUB_REPOSITORY/pages/deployments/$ID" --jq .status)
-            echo "deployment $ID: $st"
+            st=$(gh api "repos/$GITHUB_REPOSITORY/pages/deployments/$V" --jq .status || true)
+            echo "deployment $V: $st"
             case "$st" in
               succeed) break ;;
               *fail*|*error*|*lost*|*cancel*) echo "::error::Pages deployment $st"; exit 1 ;;
