@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.7.0-rc1 (release candidate): Bangla phonetic typing, dictation that fits the sentence, a premium look
+## 1.7.0-rc1 (release candidate): Bangla phonetic typing, dictation lists and replacements, a premium look
 - **Status**: release candidate, tagged `v1.7.0-rc1` and published as a GitHub pre-release; not mirrored to the update
   feeds. Everything below is unit-tested in CI; it was not built on the development machine.
 - **Version**: one version everywhere: Android 1.7.0 (versionCode 1700), desktop and core 1.7.0, iOS 1.7.0 (build 1700).
@@ -11,6 +11,18 @@
 - **Dictation fits the sentence (Android)**: dictating into the middle of a line lowercases a common first word, adds
   no space after an opening bracket, quote, `@` or `#`, and drops the final period when the text after the cursor
   carries on; names, "I", acronyms and custom words keep their capitals (`DictationJoin`, `DictationJoinTest`).
+- **Dictation lists (Android, desktop, iOS)**: say "bullet point" (or "next bullet") to start a list item:
+  "groceries bullet point eggs bullet point milk" → "Groceries:" with "- Eggs" and "- Milk" on their own lines. A
+  spoken "first, ... second, ..." or "number one, ... number two, ..." list becomes bullets too (desktop had this;
+  Android and iOS now match). "the second bullet point" in a sentence stays prose (`ListFormat.kt`, `ListFormat.swift`,
+  `text_cleanup::bullet_list`; `ListFormatTest`, `ListFormatTests`).
+- **Replacements in custom words (Android, iOS)**: a custom-words line written `spoken -> written` (or `→`) replaces
+  what the recogniser heard ("cube cuddle -> kubectl", "my sig -> Best, Sam"), whole words, any case; Android's
+  ` @app` tags work on these lines too. Desktop already had spoken → written entries.
+- **Remove filler words switch (Android, iOS)**: um, uh, er, hmm and ", you know," are still removed by default; the
+  new switch keeps them. Desktop already had it.
+- **"Scratch that" / "delete that" as its own sentence (desktop, iOS)**: removes the sentence before it, as on
+  Android ("Book Friday. Scratch that. Book Saturday." → "Book Saturday.").
 - **More spoken punctuation (Android, desktop, iOS)**: "colon", "semicolon", "open/close quote", "open/close bracket",
   "ellipsis" / "dot dot dot", and "delete last word" / "scratch the last word". Commas a punctuating engine puts around
   these commands are absorbed, and a line break before an opening quote or bracket is kept. Same rules and test
@@ -25,8 +37,9 @@
 - **Website**: rebuilt GitHub Pages home page with real captures, an honest comparison table, per-platform downloads,
   APK verification, FAQ, social image, favicons, sitemap, robots.txt and a 404 page; no third-party requests.
   `pages.yml` checks every link before deploying (`scripts/check_site.py`).
-- **Docs**: `COMPETITORS.md` (teardown of Gboard, SwiftKey, Fleksy, Typewise, Ridmik, Avro, Bijoy, OpenBangla with
-  sources and a ranked gap list), README rewrite, user guide for the new features, design tokens, design audit,
+- **Docs**: `COMPETITORS.md` (teardown of Gboard, SwiftKey, Fleksy, Typewise, Ridmik, Avro, Bijoy, OpenBangla, and
+  of the dictation apps Wispr Flow, Typeless, Superwhisper, Aqua Voice, Willow, MacWhisper and Apple / Google dictation,
+  with sources and ranked gap lists), README rewrite, user guide for the new features, design tokens, design audit,
   Android review, codebase map.
 - **Release plumbing**: `assemble_release.py` accepts `-rcN` tags, names files with the full version, reports every
   platform and fails naming each missing file (with an explicit `RELEASE_ALLOW_MISSING` opt-out), and writes

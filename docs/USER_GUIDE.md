@@ -74,8 +74,11 @@ dialogs itself, so a small screen opens for it) and then downloads the Fast spee
 There is no length limit. While you dictate, a "Humming is listening" notification keeps the microphone running
 even if you turn the screen off or switch apps; you can tap **Stop** there too.
 
-**Voice commands** (always on-device):
+**Voice commands** (always on-device; the same on Android, desktop and iPhone from 1.7):
 - "scratch that", "delete that" or "undo that", said as its own sentence, removes the sentence before it.
+- "bullet point" (or "next bullet") starts a list item (1.7): "groceries bullet point eggs bullet point milk" types
+  "Groceries:" and then "- Eggs" and "- Milk" on their own lines. A list said as "first, ... second, ..." or
+  "number one, ... number two, ..." becomes bullets too. "The second bullet point" inside a sentence stays as words.
 - "new line" and "new paragraph".
 - Spoken punctuation: "comma", "full stop", "question mark", "exclamation mark", and from 1.7 "colon", "semicolon",
   "open quote" / "close quote", "open bracket" / "close bracket", "ellipsis" (or "dot dot dot").
@@ -87,7 +90,8 @@ space is added after an opening bracket or quote, and the final period is droppe
 carries on. Names, "I" and your custom words keep their capitals.
 
 **Clean mode** (on by default) removes fillers ("um", "uh") and stutters and applies self-corrections: "ten, no,
-fifteen minutes" becomes "15 minutes". **Accuracy mode** (off by default) is stricter: it also removes hedge
+fifteen minutes" becomes "15 minutes". **Remove filler words** (1.7, on by default, inside Clean mode) can be turned off
+to keep "um", "uh" and "you know". **Accuracy mode** (off by default) is stricter: it also removes hedge
 fillers such as "like", "basically" or "you know" when they are set off by commas, and never removes a "like" that
 carries meaning ("I like it" stays).
 
@@ -119,11 +123,12 @@ copy and delete.
 | Download on Wi-Fi only | The model download waits for Wi-Fi. |
 | Live text while speaking | On (default): an underlined draft while you talk. Off: nothing appears until you stop. |
 | Clean up speech | Clean mode, described above. On by default. |
+| Remove filler words | Drops um, uh, er, hmm and "you know" between commas (1.7). On by default. |
 | Accuracy mode | Stricter clean-up on top of Clean mode. Off by default. |
 | Bluetooth headset mic | Records from a connected Bluetooth headset. |
 | Voice incognito | Keeps no voice history. The keyboard's incognito mode turns this on too. |
 | Speech engine | **Offline (recommended)**: runs on the phone and works in airplane mode. **Online**: uses the phone's own speech service (usually Google), which sends audio off the phone, also in incognito. |
-| Custom words | Names, jargon and brands Humming should always spell your way, one per line. |
+| Custom words | Names, jargon and brands Humming should always spell your way, one per line. A line written `spoken -> written` replaces what you say (1.7): `cube cuddle -> kubectl`, `my sig -> Best, Sam`. Add ` @app` to use a line in one app only. |
 | AI clean-up (optional, your own key) | After you stop, the finished text (never audio) is sent to Gemini, OpenAI or Groq with your own API key. Off by default, never in incognito; the key is stored encrypted on the phone. |
 
 ### Android: other settings

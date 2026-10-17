@@ -19,6 +19,18 @@ If a session ends early, the remaining work is in [HANDOFF.md](HANDOFF.md).
 - [x] Gap C: colon/semicolon/quotes/brackets/ellipsis + "delete last word" on Android, desktop, iOS (CI)
 - [x] Whole-branch code review of gaps A-C (fresh reviewer) and fixes (2 Important + 2 re-graded minors fixed, 5 minors deferred)
 
+## 2A. Task A (owner, 2:30 AM): dictation apps
+- [ ] COMPETITORS.md "Dictation apps" section: Wispr Flow, Typeless, Superwhisper, Aqua Voice, Willow, MacWhisper,
+      Apple / Google dictation (accuracy only with published numbers, latency, offline/privacy, cleanup, commands,
+      dictionary, languages incl. Bangla, platforms, pricing) and a ranked dictation gap list
+- [x] Spec + plan: `docs/superpowers/specs/2026-10-17-dictation-gaps-design.md`, `docs/superpowers/plans/2026-10-17-dictation-gaps.md`
+- [x] Android: lists ("bullet point", spoken "first, second"), "spoken -> written" replacements, filler switch (ListFormatTest,
+      TextCleanupTest, AppVocabularyTest; Java mirror 45/45; Kotlin pending CI)
+- [x] Desktop: "bullet point" lists, "delete that" as its own sentence (Rust tests pending CI)
+- [x] iOS: lists, replacements, filler switch, "delete that" (XCTest pending CI)
+- [ ] Fresh code review of the three commits, fixes
+- [ ] Implemented gaps marked ✅ in COMPETITORS.md, homepage comparison, README, CHANGELOG (CHANGELOG done), user guide
+
 ## 3. App UI polish
 - [x] Android: voice panel a11y (48dp Clean chip, roles/state), AA contrast tokens, rec-dot recomposition fix, exported-activity URI fix; Android skills review in docs/ci/ANDROID_REVIEW.md
 - [ ] Android: Smartbar mic 48dp target and candidate-strip restyle (needs device screenshots; handed off)
