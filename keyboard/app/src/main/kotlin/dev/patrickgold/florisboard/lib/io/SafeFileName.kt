@@ -25,7 +25,8 @@ import java.util.UUID
  * resolved file stays inside the directory it was meant for.
  */
 object SafeFileName {
-    const val MAX_LENGTH = 120
+    /** In UTF-16 chars; 80 keeps even all-CJK or emoji names well under the 255-byte ext4/f2fs limit. */
+    const val MAX_LENGTH = 80
     private const val FALLBACK_PREFIX = "import-"
     private val RESERVED = setOf(':', '*', '?', '"', '<', '>', '|')
 
@@ -34,6 +35,12 @@ object SafeFileName {
      * leading dots stripped (so `.`, `..` and hidden names cannot appear). Falls back to a random
      * name when nothing usable is left.
      */
+    /** First [n] chars of [s], one fewer if the cut would split a surrogate pair. */
+    private fun takeWhole(s: String, n: Int): String {
+        val t = s.take(n)
+        return if (t.isNotEmpty() && t.last().isHighSurrogate()) t.dropLast(1) else t
+    }
+
     fun sanitize(raw: String?, fallback: () -> String = { FALLBACK_PREFIX + UUID.randomUUID() }): String {
         if (raw == null) return fallback()
         var name = raw.substringAfterLast('/').substringAfterLast('\\')
@@ -42,9 +49,9 @@ object SafeFileName {
         if (name.length > MAX_LENGTH) {
             val ext = name.substringAfterLast('.', "")
             name = if (ext.isNotEmpty() && ext.length < 16) {
-                name.take(MAX_LENGTH - ext.length - 1) + "." + ext
+                takeWhole(name, MAX_LENGTH - ext.length - 1) + "." + ext
             } else {
-                name.take(MAX_LENGTH)
+                takeWhole(name, MAX_LENGTH)
             }
         }
         return name.ifBlank { fallback() }

@@ -221,7 +221,7 @@ class FlorisAppActivity : ComponentActivity() {
                     val allowed = data != null && ImportGate.isAllowed(
                         scheme = data.scheme,
                         authority = data.authority,
-                        mimeType = runCatching { contentResolver.getType(data) }.getOrNull(),
+                        mimeType = runCatching { contentResolver.getType(data) }.getOrNull() ?: intent.type,
                         ownPackageName = packageName,
                     )
                     val workspace = if (allowed) {

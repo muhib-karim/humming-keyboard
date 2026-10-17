@@ -48,6 +48,13 @@ class SafeFileNameTest {
     }
 
     @Test
+    fun neverSplitsASurrogatePair() {
+        val out = SafeFileName.sanitize("\uD83D\uDE00".repeat(100), fixed)
+        assertTrue(out.length <= SafeFileName.MAX_LENGTH)
+        assertTrue(!out.last().isHighSurrogate())
+    }
+
+    @Test
     fun capsLengthAndKeepsExtension() {
         val out = SafeFileName.sanitize("a".repeat(500) + ".zip", fixed)
         assertEquals(SafeFileName.MAX_LENGTH, out.length)

@@ -25,6 +25,8 @@ object ImportGate {
     val ALLOWED_MIME_TYPES = setOf(
         "application/vnd.florisboard.extension+zip",
         "application/zip",
+        "application/x-zip-compressed", // Windows-origin zips, some messengers
+        "application/x-zip",
         "application/octet-stream",
     )
 
