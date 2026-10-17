@@ -35,15 +35,15 @@ If a session ends early, the remaining work is in [HANDOFF.md](HANDOFF.md).
 - [x] Premium rewrite: banner, badges, hero, highlights, comparison summary, install per platform, privacy, build, contributing, license (all md links and anchors checked)
 
 ## 6. Release plumbing v1.7.0-rc1
-- [ ] Versions: Android 1.7.0 (versionCode up), iOS 1.7.0 (build up), desktop tauri.conf/Cargo/package.json, core
-- [ ] CHANGELOG "1.7.0-rc1"
-- [ ] assemble_release.py: -rc tags, per-platform report, loud failures (with a local dry-run test)
-- [ ] release.yml: one (pre)release with every platform, rc => prerelease
-- [ ] desktop.yml reviewed for fragile steps
-- [ ] All workflow YAML parses
+- [x] Versions: Android 1.7.0 (versionCode 1700), iOS 1.7.0 (build 1700), desktop tauri.conf/Cargo(+lock)/package.json(+lock), core 1.7.0
+- [x] CHANGELOG "1.7.0-rc1"
+- [x] assemble_release.py: -rc tags, per-platform report, loud failures (scripts/test_assemble_release.py: 7/7 OK locally)
+- [x] release.yml: one (pre)release with every platform, rc => prerelease, mirror only for final releases
+- [x] desktop.yml reviewed for fragile steps (no failure log in docs/ci; keyless builds no longer fail; tags still require the key)
+- [x] All workflow YAML parses (8/8, every run block passes bash -n)
 
 ## 7. Repo metadata
-- [ ] docs/ci/REPO_METADATA.md (About <= 350 chars, website, 12-20 topics)
+- [x] docs/ci/REPO_METADATA.md (About 273 chars, website, 20 topics)
 
 ## Done checks
 - [ ] gitleaks clean, forbidden-strings scan clean
