@@ -166,6 +166,19 @@ class FlorisImeService : LifecycleInputMethodService() {
             return FlorisImeServiceReference.get()?.currentInputEditorInfo
         }
 
+        /** Bumped on every fresh (non-restarting) onStartInput: a new field, or the same field focused again. */
+        @Volatile
+        var inputGeneration = 0L
+            private set
+
+        /**
+         * The field that has input focus now, or null once input finished. Unlike currentInputEditorInfo (which the
+         * framework does not clear in doFinishInput) this goes null when focus leaves every editor.
+         */
+        @Volatile
+        var currentDictationTarget: com.humming.keyboard.DictationOutput.Target? = null
+            private set
+
         fun currentInputConnection(): InputConnection? {
             return FlorisImeServiceReference.get()?.currentInputConnection
         }
@@ -409,6 +422,12 @@ class FlorisImeService : LifecycleInputMethodService() {
         flogInfo { "restarting=$restarting info=${info?.debugSummarize()}" }
         super.onStartInput(info, restarting)
         com.humming.keyboard.Prefs.currentPackage = info?.packageName // per-app custom words (Humming 1.5)
+        if (!restarting) inputGeneration++
+        currentDictationTarget = info?.let {
+            com.humming.keyboard.DictationOutput.Target(
+                it.packageName, it.fieldId, it.inputType, it.fieldName, it.hintText?.toString(), inputGeneration,
+            )
+        }
         if (info == null) return
         val editorInfo = FlorisEditorInfo.wrap(info)
         editorInstance.handleStartInput(editorInfo)
@@ -469,6 +488,7 @@ class FlorisImeService : LifecycleInputMethodService() {
     override fun onFinishInput() {
         flogInfo { "(no args)" }
         super.onFinishInput()
+        currentDictationTarget = null
         editorInstance.handleFinishInput()
         NlpInlineAutofill.clearInlineSuggestions()
     }

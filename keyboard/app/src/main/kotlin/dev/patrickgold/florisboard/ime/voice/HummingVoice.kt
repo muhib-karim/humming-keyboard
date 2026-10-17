@@ -162,11 +162,12 @@ object HummingVoice {
     val menu: StateFlow<Boolean> = _menu.asStateFlow()
     fun showMenu(on: Boolean) { _menu.value = on }
 
-    /** Package and field id of the editor that has input focus now, or null when the keyboard has none. */
-    private fun focusedTarget(): com.humming.keyboard.DictationOutput.Target? {
-        val info = dev.patrickgold.florisboard.FlorisImeService.currentEditorInfo() ?: return null
-        return com.humming.keyboard.DictationOutput.Target(info.packageName, info.fieldId)
-    }
+    /**
+     * The field that has input focus now (package, field id, input type, name, hint and input generation), or null
+     * once input finished. Tracked by FlorisImeService on onStartInput/onFinishInput, never a stale EditorInfo.
+     */
+    private fun focusedTarget(): com.humming.keyboard.DictationOutput.Target? =
+        dev.patrickgold.florisboard.FlorisImeService.currentDictationTarget
 
     /** Keyboard became visible: make sure the speech model is there (one-time download) and warm the engine. */
     fun onStartInputView(ctx: Context) {

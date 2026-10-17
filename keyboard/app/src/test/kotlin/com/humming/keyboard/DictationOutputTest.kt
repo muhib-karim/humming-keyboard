@@ -283,4 +283,22 @@ class DictationOutputTest {
         assertTrue(out.onFinal("plain"))
         assertEquals("plain", field.text)
     }
+
+    @Test
+    fun sameHostViewButANewInputGenerationIsADifferentField() {
+        // WebView/Compose fields share one host view id; a fresh onStartInput bumps the generation.
+        val field = FakeField()
+        val first = DictationOutput.Target("com.example.web", 1, inputType = 1, generation = 1)
+        var focused: DictationOutput.Target? = first
+        val out = DictationOutput(field, {}, target = first, currentTarget = { focused })
+        out.onPartial("hello")
+        assertEquals("hello", field.text)
+        focused = first.copy(inputType = 0x81, generation = 2) // the password box on the same page
+        assertFalse(out.inOriginalField())
+        out.onPartial("hello there")
+        assertEquals("", out.draft)
+        out.onStop()
+        assertFalse(out.onFinal("hello there"))
+        assertEquals(0, out.commits)
+    }
 }

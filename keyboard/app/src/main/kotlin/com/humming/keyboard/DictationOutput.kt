@@ -33,8 +33,20 @@ class DictationOutput(
     /** The field that has input focus right now (package and field id of the current editor). */
     private val currentTarget: () -> Target? = { target },
 ) {
-    /** Identifies a text field: the app that owns it and the field id it reported. */
-    data class Target(val packageName: String?, val fieldId: Int)
+    /**
+     * Identifies one text field. [fieldId] alone is weak (every field in a WebView or Compose screen shares the host
+     * view id), so the input type, field name, hint and the keyboard's input [generation] (bumped on every fresh
+     * onStartInput) are part of the identity too. Coming back to a field after focus left it counts as a new field:
+     * the draft is then held in History rather than replayed, which is the safe failure.
+     */
+    data class Target(
+        val packageName: String?,
+        val fieldId: Int,
+        val inputType: Int = 0,
+        val fieldName: String? = null,
+        val hint: String? = null,
+        val generation: Long = 0,
+    )
 
     /**
      * True while the focused field is the one this dictation started in. The draft and the final text only ever go
@@ -96,7 +108,8 @@ class DictationOutput(
         if (!live) return
         lastPreview = text
         preview(text)
-        if (attached && inOriginalField()) showDraft(text)
+        // In another field the framework already finished our composing span: forget it so it is not replaced twice.
+        if (attached) { if (inOriginalField()) showDraft(text) else abandonDraft() }
     }
 
     /** Keyboard hidden mid-dictation (screen off, app switch): keep listening, take the draft out of the field. */
