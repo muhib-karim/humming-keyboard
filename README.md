@@ -42,7 +42,8 @@ sample sentence, because CI machines have no microphone. Sample text is made up.
 - **Words land as you speak.** An underlined draft corrects itself in place and is typed once when you stop. Dictation
   keeps going with the screen off.
 - **Clean text.** Clean mode removes fillers and stutters and applies self-corrections ("3, no, 4pm" → "4pm");
-  Accuracy mode also removes hedge fillers. Custom words, spoken punctuation and voice commands on all platforms.
+  Accuracy mode also removes hedge fillers. Lists by voice, "scratch that", custom words with spoken → written
+  replacements, spoken punctuation and voice commands on all platforms.
 - **A full keyboard on Android.** Prediction in six languages with an on-device neural model for English, glide typing,
   emoji search, stickers, clipboard history, themes, one-handed, floating and split layouts. Built on FlorisBoard.
 - **Measured accuracy.** 2.78 % (Fast) and 1.68 % (Best) word error rate on LibriSpeech test-clean, with the script
@@ -52,7 +53,12 @@ sample sentence, because CI machines have no microphone. Sample text is made up.
 
 ### New in 1.7 (release candidate)
 
-From the [competitor teardown](COMPETITORS.md#gap-list-ranked):
+From the teardowns of [keyboards](COMPETITORS.md#gap-list-ranked) and [dictation apps](COMPETITORS.md#dictation-gap-list-ranked):
+
+- **Dictation like the dictation apps** (Android, desktop, iPhone): say "bullet point" to start a list item, or dictate
+  "first, ... second, ..." and get bullets; "scratch that" drops the sentence before it; a custom-words line
+  `spoken -> written` replaces what you say (`cube cuddle -> kubectl`, `my sig -> Best, Sam`); filler removal has its
+  own switch, on by default.
 
 - **Bangla phonetic typing**: add Bengali with a QWERTY layout and type the way Avro and Ridmik users do
   (`ami bangla likhi` → আমি বাংলা লিখি); space or punctuation types the Bangla word, the Latin word stays one tap away.
@@ -78,6 +84,20 @@ From the [competitor teardown](COMPETITORS.md#gap-list-ranked):
 Public sources only, checked 17 October 2026; Fleksy, Typewise, Avro, Bijoy and OpenBangla, every source, and the
 ranked gap list are in **[COMPETITORS.md](COMPETITORS.md)**. Where Humming trails: offline voice is English only, and
 Gboard and SwiftKey support far more typing languages and install from the stores.
+
+| Dictation apps | **Humming** | Wispr Flow | Superwhisper | Aqua Voice | Apple Dictation |
+|---|---|---|---|---|---|
+| Works offline | **Yes**, default, every platform (English) | No, cloud only | Yes, local models | No, cloud only | On-device in many languages |
+| Fillers, lists, "scratch that", replacements | **All four** (1.7) | All four | Fillers, lists, replacements | Replacements | "Delete" / "undo" on iPhone (US English) |
+| Edit existing text by voice | No | Command Mode (Pro, desktop) | On selected text | Edit Mode | iPhone, US English |
+| Linux | **Yes** | No | "Coming soon" | No | No |
+| Price | **Free, no word cap** | Free 2,000 words/week; $15/month | Free with local models; $8.49/month | Free 1,000 words; $10/month | Free with the OS |
+| Open source | **Apache-2.0** | No | No | No | No |
+
+Published error rates come from different test sets and are not comparable (Superwhisper 6.6 % on its own 8-set
+benchmark, Aqua 5.55 % with the set not stated, Humming 2.78 % on LibriSpeech test-clean). Typeless, Willow, MacWhisper,
+Google and every source: **[COMPETITORS.md#dictation-apps](COMPETITORS.md#dictation-apps)**. Where Humming trails the
+dictation apps: no voice editing of text already in the field, no per-app tone, and offline dictation is English only.
 
 <details>
 <summary><strong>Against dictation apps: Wispr Flow, Typeless, Gboard Rambler</strong></summary>
@@ -250,7 +270,7 @@ the [user guide](docs/USER_GUIDE.md). Captures are from CI runs on the 1.3/1.4 b
 flowchart LR
     Mic[Microphone<br/>16 kHz mono] --> VAD[Silero VAD<br/>cut at pauses]
     VAD --> ASR[Parakeet on sherpa-onnx<br/>on-device]
-    ASR --> Clean[Clean-up rules<br/>Clean / Accuracy mode,<br/>custom words, voice commands]
+    ASR --> Clean[Clean-up rules<br/>Clean / Accuracy mode,<br/>custom words, voice commands, lists]
     Clean --> Join[Fit to the sentence<br/>around the cursor]
     Join --> Draft[Underlined draft<br/>while speaking]
     Draft --> Commit[Final text<br/>committed once on stop]
@@ -299,7 +319,7 @@ CI (`.github/workflows/`): `keyboard.yml` (Android tests and APKs), `android-rel
 | Document | Contents |
 |---|---|
 | [docs/USER_GUIDE.md](docs/USER_GUIDE.md) | Install, enable the keyboard, voice typing, settings, updates, troubleshooting |
-| [COMPETITORS.md](COMPETITORS.md) | Feature and UX teardown against Gboard, SwiftKey, Fleksy, Typewise, Ridmik, Avro, Bijoy; ranked gap list |
+| [COMPETITORS.md](COMPETITORS.md) | Teardown against Gboard, SwiftKey, Fleksy, Typewise, Ridmik, Avro, Bijoy and the dictation apps (Wispr Flow, Typeless, Superwhisper, Aqua Voice, Willow, MacWhisper, Apple, Google); ranked gap lists |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Modules, the dictation pipeline, the update channel, CI |
 | [docs/BRAND.md](docs/BRAND.md) | Colours, icon, design tokens across Android, desktop, iOS and the site |
 | [docs/RELEASING.md](docs/RELEASING.md) | Versioning, signing, release assets, update feeds, tagging |
