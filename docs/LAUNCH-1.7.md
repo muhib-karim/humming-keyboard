@@ -44,10 +44,12 @@ and 100 test-other utterances. Treat each figure as ±0.5 points.
 |---|---:|---:|---:|---:|
 | Fast (default), Parakeet TDT-CTC 110M int8 | 104 MB | 2.74–2.91 % | 4.07–4.26 % | 99–193 ms |
 | Best, Parakeet TDT 0.6B v2 int8 | 482 MB | 1.66–1.79 % | 3.06–3.25 % | 337–671 ms |
-| Lite (desktop only), Moonshine tiny int8 | 30 MB | 4.49–4.57 % | 11.78–12.03 % | 85–134 ms |
+| Lite (desktop only), Moonshine v2 tiny int8 | 30 MB | 4.49–4.57 % | 11.78–12.03 % | 85–134 ms |
 
 Ranges span the four machines; per-machine results and logs are in CI run
-[39053406494](https://github.com/muhib-karim/humming-keyboard/actions/runs/39053406494). Anyone can reproduce the run on their own fork with one command:
+[39053406494](https://github.com/muhib-karim/humming-keyboard/actions/runs/39053406494). Some older docs
+still quote the 4 October run on a different CPU (Fast 2.78 %, Best 1.68 % on test-clean, without the Lite
+model); this table is the 1.7.0 release run. Anyone can reproduce the run on their own fork with one command:
 
 ```sh
 gh workflow run wer-bench.yml -f n_clean=200 -f n_other=100
@@ -65,8 +67,9 @@ models running on sherpa-onnx (on iPhone, Apple's recogniser with on-device reco
 text then passes through the clean-up rules (fillers, self-corrections, lists, commands, custom words), is
 fitted to the sentence around the cursor, and is shown as an underlined draft while you speak and typed
 once when you stop. Models are downloaded once, from pinned URLs with SHA-256 checks. Nothing about your
-speech leaves the device unless you switch on the optional AI clean-up, which sends text only, with your
-own key.
+speech leaves the device unless you switch on one of two optional features: AI clean-up, which sends text
+only, with your own key, or Android's Online mode, which hands audio to the phone's own speech service.
+Both are off by default.
 
 The Android keyboard is a fork of FlorisBoard, so it is a full keyboard and not only a microphone: glide
 typing, prediction in six languages, emoji search, clipboard history, themes, and one-handed, floating
