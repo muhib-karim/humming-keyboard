@@ -191,4 +191,17 @@ class DictationOutputTest {
         assertTrue(out.onFinal(words.joinToString(" ")))
         assertEquals(listOf(" " + words.joinToString(" ")), field.committed)
     }
+
+    /** The draft and the one commit both go through adapt (DictationJoin), after the glue. */
+    @Test fun adaptAppliesToDraftAndCommit() {
+        val field = FakeField()
+        field.type("I told him")
+        val out = DictationOutput(field, {}, glue = " ", adapt = { DictationJoin.adapt("I told him", it) })
+        out.onPartial("The plan")
+        assertEquals("I told him the plan", field.text)
+        out.onStop()
+        assertTrue(out.onFinal("The plan works."))
+        assertEquals(listOf(" the plan works."), field.committed)
+        assertEquals("I told him the plan works.", field.text)
+    }
 }

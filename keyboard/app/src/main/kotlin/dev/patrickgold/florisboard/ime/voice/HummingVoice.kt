@@ -293,7 +293,11 @@ object HummingVoice {
         }
         val editor by app.editorInstance()
         val before = editor.activeContent.textBeforeSelection
-        glue = if (before.isNotEmpty() && !before.last().isWhitespace()) " " else ""
+        val after = editor.activeContent.textAfterSelection
+        // The dictation fits the sentence it lands in: no space after "(", lowercase when continuing a sentence, no
+        // final period when the text after the cursor carries on (DictationJoin).
+        glue = com.humming.keyboard.DictationJoin.glue(before)
+        val dictionary = Prefs.dictionary(app)
         val s = if (streaming) StreamingSession(app) { partial -> main.post { onPartial(partial) } } else null
         output = DictationOutput(
             object : DictationOutput.Field {
@@ -342,6 +346,7 @@ object HummingVoice {
             { p -> _state.update { it.copy(transcript = p) } },
             glue = glue,
             live = Prefs.liveTyping(app),
+            adapt = { t -> com.humming.keyboard.DictationJoin.adapt(before, t, after, dictionary) },
         )
         if (onlineMode) {
             val o = com.humming.keyboard.OnlineSession(app, onPartial = { p -> onOnlinePartial(app, p) },
