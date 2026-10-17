@@ -17,18 +17,19 @@ If a session ends early, the remaining work is in [HANDOFF.md](HANDOFF.md).
 - [x] Gap A: Bangla phonetic typing (`BanglaPhonetic`, wired in `LatinLanguageProvider`), BanglaPhoneticTest (CI)
 - [x] Gap B: dictation fits the sentence around the cursor (`DictationJoin`), DictationJoinTest (CI)
 - [x] Gap C: colon/semicolon/quotes/brackets/ellipsis + "delete last word" on Android, desktop, iOS (CI)
-- [ ] Whole-branch code review of gaps A-C (fresh reviewer) and fixes
+- [x] Whole-branch code review of gaps A-C (fresh reviewer) and fixes (2 Important + 2 re-graded minors fixed, 5 minors deferred)
 
 ## 3. App UI polish
-- [ ] Android: design tokens, key/candidate bar, voice button + listening state, a11y (48dp, content descriptions, AA)
-- [ ] iOS / desktop: token parity
-- [ ] docs/BRAND.md design tokens section
+- [x] Android: voice panel a11y (48dp Clean chip, roles/state), AA contrast tokens, rec-dot recomposition fix, exported-activity URI fix; Android skills review in docs/ci/ANDROID_REVIEW.md
+- [ ] Android: Smartbar mic 48dp target and candidate-strip restyle (needs device screenshots; handed off)
+- [x] iOS / desktop: token parity (desktop CSS tokens, focus, reduced motion; iOS Brand accentStrong/accentText)
+- [x] docs/BRAND.md design tokens section; docs/ci/DESIGN_AUDIT.md
 
 ## 4. GitHub Pages site (play/site/)
-- [ ] Redesigned index.html (hero, features, comparison, downloads, privacy, FAQ, footer), no CDNs/trackers
-- [ ] OG/Twitter meta, docs/social-preview.png (1280x640) + SVG source, favicon set
-- [ ] sitemap.xml, robots.txt, 404.html; privacy.html URL kept; pages.yml updated
-- [ ] Links resolve to files that exist (checked by script)
+- [x] Redesigned index.html (hero, features, comparison, downloads, privacy, FAQ, footer), no CDNs/trackers
+- [x] OG/Twitter meta, docs/social-preview.png (1280x640) + SVG source, favicon set
+- [x] sitemap.xml, robots.txt, 404.html; privacy.html URL kept; pages.yml updated
+- [x] Links resolve to files that exist (scripts/check_site.py: 3 pages, 0 problems)
 
 ## 5. README.md
 - [ ] Premium rewrite: banner, badges, hero, highlights, comparison summary, install per platform, privacy, build, contributing, license
