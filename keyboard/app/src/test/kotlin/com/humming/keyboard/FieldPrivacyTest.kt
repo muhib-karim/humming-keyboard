@@ -1,3 +1,7 @@
+/*
+ * Copyright 2026 Humming contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.humming.keyboard
 
 import org.junit.Assert.assertFalse
