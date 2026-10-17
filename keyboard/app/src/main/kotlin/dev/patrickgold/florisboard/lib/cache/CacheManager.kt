@@ -33,6 +33,7 @@ import dev.patrickgold.florisboard.lib.ext.ExtensionDefaults
 import dev.patrickgold.florisboard.lib.ext.ExtensionEditor
 import dev.patrickgold.florisboard.lib.ext.ExtensionJsonConfig
 import dev.patrickgold.florisboard.lib.io.FileRegistry
+import dev.patrickgold.florisboard.lib.io.SafeFileName
 import dev.patrickgold.florisboard.lib.io.ZipUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
@@ -86,7 +87,11 @@ class CacheManager(context: Context) {
                     val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
                     val sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE)
                     cursor.moveToFirst()
-                    val file = workspace.inputDir.subFile(cursor.getString(nameIndex))
+                    // DISPLAY_NAME comes from a provider we do not control: reduce it to one safe
+                    // path segment and make sure the result stays inside this workspace.
+                    val displayName = if (nameIndex >= 0) cursor.getString(nameIndex) else null
+                    val file = workspace.inputDir.subFile(SafeFileName.sanitize(displayName))
+                    check(SafeFileName.isContained(workspace.inputDir, file)) { "Import target escapes the workspace." }
                     contentResolver.readToFile(uri, file)
                     val ext = runCatching {
                         val extWorkingDir = workspace.outputDir.subDir(file.nameWithoutExtension)
