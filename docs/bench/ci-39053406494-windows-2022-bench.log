@@ -1,0 +1,73 @@
+lite test-clean {'n': 200, 'wer_pct': 4.51, 'rtf': 0.0183, 'median_latency_ms': 133, 'mean_audio_s': 9.1}
+lite test-other {'n': 100, 'wer_pct': 11.97, 'rtf': 0.018, 'median_latency_ms': 93, 'mean_audio_s': 6.3}
+fast test-clean {'n': 200, 'wer_pct': 2.87, 'rtf': 0.0268, 'median_latency_ms': 193, 'mean_audio_s': 9.1}
+fast test-other {'n': 100, 'wer_pct': 4.07, 'rtf': 0.0267, 'median_latency_ms': 133, 'mean_audio_s': 6.3}
+best test-clean {'n': 200, 'wer_pct': 1.77, 'rtf': 0.0914, 'median_latency_ms': 671, 'mean_audio_s': 9.1}
+best test-other {'n': 100, 'wer_pct': 3.06, 'rtf': 0.0951, 'median_latency_ms': 474, 'mean_audio_s': 6.3}
+{
+  "device": "Windows x64 (GitHub runner)",
+  "os": "Windows 10",
+  "arch": "AMD64",
+  "cpu": "INTEL(R) XEON(R) PLATINUM 8573C",
+  "threads": 2,
+  "sets": {
+    "test-clean": 200,
+    "test-other": 100
+  },
+  "models": {
+    "lite": {
+      "label": "Moonshine v2 tiny int8 (Lite, 30 MB)",
+      "load_s": 0.55,
+      "test-clean": {
+        "n": 200,
+        "wer_pct": 4.51,
+        "rtf": 0.0183,
+        "median_latency_ms": 133,
+        "mean_audio_s": 9.1
+      },
+      "test-other": {
+        "n": 100,
+        "wer_pct": 11.97,
+        "rtf": 0.018,
+        "median_latency_ms": 93,
+        "mean_audio_s": 6.3
+      }
+    },
+    "fast": {
+      "label": "Parakeet TDT-CTC 110M int8 (Fast, default)",
+      "load_s": 1.09,
+      "test-clean": {
+        "n": 200,
+        "wer_pct": 2.87,
+        "rtf": 0.0268,
+        "median_latency_ms": 193,
+        "mean_audio_s": 9.1
+      },
+      "test-other": {
+        "n": 100,
+        "wer_pct": 4.07,
+        "rtf": 0.0267,
+        "median_latency_ms": 133,
+        "mean_audio_s": 6.3
+      }
+    },
+    "best": {
+      "label": "Parakeet TDT 0.6B v2 int8 (Best, optional)",
+      "load_s": 2.31,
+      "test-clean": {
+        "n": 200,
+        "wer_pct": 1.77,
+        "rtf": 0.0914,
+        "median_latency_ms": 671,
+        "mean_audio_s": 9.1
+      },
+      "test-other": {
+        "n": 100,
+        "wer_pct": 3.06,
+        "rtf": 0.0951,
+        "median_latency_ms": 474,
+        "mean_audio_s": 6.3
+      }
+    }
+  }
+}
