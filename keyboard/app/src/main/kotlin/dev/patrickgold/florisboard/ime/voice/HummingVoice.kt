@@ -75,6 +75,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -684,7 +685,8 @@ fun VoiceInputLayout(isNight: Boolean, height: Dp, modifier: Modifier = Modifier
             if (listening) {
                 val blink = rememberInfiniteTransition(label = "rec")
                 val a by blink.animateFloat(1f, 0.25f, infiniteRepeatable(tween(700), RepeatMode.Reverse), label = "recDot")
-                Box(Modifier.size(8.dp).clip(CircleShape).background(p.rec.copy(alpha = a)))
+                // Alpha is read in the layer (draw phase), so the blink does not recompose the panel every frame.
+                Box(Modifier.size(8.dp).graphicsLayer { alpha = a }.clip(CircleShape).background(p.rec))
                 Spacer(Modifier.width(8.dp))
             }
             Text(
