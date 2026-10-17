@@ -86,4 +86,20 @@ final class ListFormatTests: XCTestCase {
         XCTAssertEqual("Groceries:\n- Eggs\n- Bread",
                        TextCleanup.apply("Groceries bullet point eggs. Bullet point milk. Delete that. Bullet point bread."))
     }
+
+    func testDeleteThatAcrossChunksRunsBeforeListFormatting() {
+        var transcript = ""
+        XCTAssertEqual("Groceries:\n- Eggs\n- Milk",
+                       TextCleanup.appendChunk("Groceries bullet point eggs. Bullet point milk.", to: &transcript))
+        XCTAssertEqual("Groceries:\n- Eggs\n- Bread",
+                       TextCleanup.appendChunk("Delete that. Bullet point bread.", to: &transcript))
+        XCTAssertEqual("Groceries:\n- Eggs", TextCleanup.appendChunk("Delete that.", to: &transcript))
+        XCTAssertEqual("", TextCleanup.appendChunk("Delete that.", to: &transcript))
+    }
+
+    func testChunkAfterListKeepsItsOwnLine() {
+        var transcript = ""
+        XCTAssertEqual("- Eggs\n- Milk", TextCleanup.appendChunk("Bullet point eggs. Bullet point milk.", to: &transcript))
+        XCTAssertEqual("- Eggs\n- Milk\nThanks.", TextCleanup.appendChunk("Thanks.", to: &transcript))
+    }
 }

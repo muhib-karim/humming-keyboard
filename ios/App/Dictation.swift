@@ -14,6 +14,9 @@ final class Dictation: ObservableObject {
     @Published var committed = ""
     @Published var partial = ""
 
+    // Keep list markers and sentence punctuation until commands from later chunks have been applied.
+    private var transcript = ""
+
     weak var settings: AppSettings?
 
     private let engine = AVAudioEngine()
@@ -32,6 +35,7 @@ final class Dictation: ObservableObject {
     func clear() {
         committed = ""
         partial = ""
+        transcript = ""
         SharedStore.latestDictation = ""
     }
 
@@ -138,25 +142,10 @@ final class Dictation: ObservableObject {
 
     private func commit(_ raw: String) {
         partial = ""
-        // Each recogniser chunk is cleaned on its own, so a chunk that is only "scratch that" / "delete that" removes
-        // the last sentence already committed.
-        if TextCleanup.isDeleteCommand(raw) {
-            committed = TextCleanup.retractSentences(committed + " Delete that.")
-            SharedStore.latestDictation = committed
-            return
-        }
         let vocab = TextCleanup.vocabulary(settings?.customWords ?? [])
-        let clean = settings?.cleanMode ?? true
-        let text = clean
-            ? TextCleanup.apply(raw, dictionary: vocab.terms, strict: settings?.accuracyMode ?? false,
-                                fillers: settings?.removeFillers ?? true, replacements: vocab.replacements)
-            : TextCleanup.retractSentences(
-                TextCleanup.applyDictionary(TextCleanup.replacePhrases(raw, vocab.replacements), terms: vocab.terms))
-        guard !text.isEmpty else { return }
-        // A list item, or the text after one, starts on its own line.
-        let lastLine = committed.components(separatedBy: "\n").last ?? ""
-        let separator = committed.isEmpty ? "" : (text.hasPrefix("- ") || lastLine.hasPrefix("- ") ? "\n" : " ")
-        committed += separator + text
+        committed = TextCleanup.appendChunk(raw, to: &transcript, clean: settings?.cleanMode ?? true,
+                                            dictionary: vocab.terms, strict: settings?.accuracyMode ?? false,
+                                            fillers: settings?.removeFillers ?? true, replacements: vocab.replacements)
         SharedStore.latestDictation = committed
     }
 
@@ -164,6 +153,7 @@ final class Dictation: ObservableObject {
 
     func demo(committed: String, partial: String, listening: Bool = false) {
         self.committed = committed
+        transcript = committed
         self.partial = partial
         phase = listening ? .listening : .idle
     }
@@ -173,6 +163,7 @@ final class Dictation: ObservableObject {
         let spoken = "um so I was like thinking we could meet at 3 no 4pm on Friday".split(separator: " ").map(String.init)
         var i = 0
         committed = ""
+        transcript = ""
         partial = ""
         phase = .idle
         demoTimer?.invalidate()

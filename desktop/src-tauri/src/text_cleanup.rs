@@ -626,6 +626,19 @@ mod tests {
         assert_eq!(apply("Book Friday. Scratch that. Book Saturday.", &[], o), "Book Friday. Scratch that. Book Saturday.");
     }
 
+    #[test]
+    fn delete_that_keeps_following_text_and_edits_lists_before_formatting() {
+        assert_eq!(clean("Book Friday. Delete that. Book Saturday."), "Book Saturday.");
+        assert_eq!(
+            bullet_list(&clean("Groceries bullet point eggs. Bullet point milk. Delete that. Bullet point bread.")).as_deref(),
+            Some("Groceries:\n- Eggs\n- Bread")
+        );
+        assert_eq!(
+            bullet_list(&clean("Groceries bullet point eggs. Bullet point milk. Delete that.")).as_deref(),
+            Some("Groceries:\n- Eggs")
+        );
+    }
+
     // Review fixes, the same cases as Android's ListFormatTest / VoiceCommandsTest.
     #[test]
     fn bullet_review_fixes() {

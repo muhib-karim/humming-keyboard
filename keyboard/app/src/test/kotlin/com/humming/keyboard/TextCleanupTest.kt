@@ -149,6 +149,13 @@ class TextCleanupTest {
         assertEquals("", clean("delete last word delete last word"))
     }
 
+    @Test fun deleteThatKeepsFollowingTextAndEditsListsBeforeFormatting() {
+        assertEquals("Book Saturday.", clean("Book Friday. Delete that. Book Saturday."))
+        assertEquals("Groceries:\n- Eggs\n- Bread",
+            clean("Groceries bullet point eggs. Bullet point milk. Delete that. Bullet point bread."))
+        assertEquals("Groceries:\n- Eggs", clean("Groceries bullet point eggs. Bullet point milk. Delete that."))
+    }
+
     /** Review fixes: a line break before an opener survives; engine commas around the commands are absorbed. */
     @Test fun openersKeepLineBreaksAndAbsorbEngineCommas() {
         assertEquals("First line\n\"Hello\".", clean("first line new line open quote hello close quote"))

@@ -93,6 +93,30 @@ public enum TextCleanup {
     /// extra filler rules need it on. `replacements` are the user's "spoken -> written" pairs, applied first.
     public static func apply(_ raw: String, dictionary: [String] = [], strict: Bool = false, fillers: Bool = true,
                              replacements: [(String, String)] = []) -> String {
+        ListFormat.apply(retractSentences(prepare(raw, dictionary: dictionary, strict: strict,
+                                                fillers: fillers, replacements: replacements)))
+    }
+
+    /// Keep sentence punctuation and spoken list markers between recogniser chunks. Sentence edits operate on this
+    /// accumulated text before formatting; replacements and filler settings apply only to the new chunk.
+    public static func appendChunk(_ raw: String, to transcript: inout String, clean: Bool = true,
+                                   dictionary: [String] = [], strict: Bool = false, fillers: Bool = true,
+                                   replacements: [(String, String)] = []) -> String {
+        let chunk = clean
+            ? prepare(raw, dictionary: dictionary, strict: strict, fillers: fillers, replacements: replacements)
+            : applyDictionary(replacePhrases(raw, replacements), terms: dictionary)
+        if !chunk.isEmpty {
+            let previous = clean ? ListFormat.apply(transcript) : transcript
+            let next = clean ? ListFormat.apply(chunk) : chunk
+            let lastLine = previous.components(separatedBy: "\n").last ?? ""
+            let separator = transcript.isEmpty ? "" : (next.hasPrefix("- ") || lastLine.hasPrefix("- ") ? "\n" : " ")
+            transcript = retractSentences(transcript + separator + chunk)
+        }
+        return clean ? ListFormat.apply(transcript) : transcript
+    }
+
+    private static func prepare(_ raw: String, dictionary: [String], strict: Bool, fillers: Bool,
+                                replacements: [(String, String)]) -> String {
         var t = sub(replacePhrases(raw, replacements), nonSpeech, "")
         if isHallucination(t) { return "" }
         let strictOn = strict && fillers
@@ -116,7 +140,7 @@ public enum TextCleanup {
         t = applyDictionary(t, terms: dictionary)
         t = compactTimes(t)
         if strictOn { t = sub(t, doubled, "$2") }
-        return ListFormat.apply(retractSentences(finish(t)))
+        return finish(t)
     }
 
     private static let arrow = re("\\s*(?:->|→)\\s*", false)
@@ -160,7 +184,7 @@ public enum TextCleanup {
     // A mark only ends a sentence before a space or the end, so "3.50" stays one sentence.
     private static let sentence = re("(?:[^.!?]|[.!?](?!\\s|$))+(?:[.!?]+(?=\\s|$)|$)", false)
 
-    /// True when the whole of `raw` is a "delete that" command (the iPhone app cleans each recogniser chunk on its own).
+    /// True when the whole of `raw` is a "delete that" command.
     public static func isDeleteCommand(_ raw: String) -> Bool {
         var b = raw.trimmingCharacters(in: .whitespacesAndNewlines)
         while let c = b.last, ".!?,".contains(c) { b.removeLast() }

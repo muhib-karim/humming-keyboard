@@ -201,4 +201,26 @@ final class TextCleanupTests: XCTestCase {
         XCTAssertFalse(TextCleanup.isDeleteCommand("Delete that file."))
         XCTAssertEqual("Book Saturday.", TextCleanup.retractSentences("Book Saturday. Book Friday. Delete that."))
     }
+
+    func testDeleteThatAcrossChunksKeepsFollowingText() {
+        var transcript = ""
+        XCTAssertEqual("Book Friday.", TextCleanup.appendChunk("Book Friday.", to: &transcript))
+        XCTAssertEqual("Book Saturday.", TextCleanup.appendChunk("Delete that. Book Saturday.", to: &transcript))
+        XCTAssertEqual("", TextCleanup.appendChunk("Delete that.", to: &transcript))
+        XCTAssertEqual("Book Sunday.", TextCleanup.appendChunk("Book Sunday.", to: &transcript))
+    }
+
+    func testDeleteThatAcrossChunksInVerbatimMode() {
+        var transcript = ""
+        XCTAssertEqual("Book Friday.", TextCleanup.appendChunk("Book Friday.", to: &transcript, clean: false))
+        XCTAssertEqual("Book Saturday.", TextCleanup.appendChunk("Delete that. Book Saturday.", to: &transcript, clean: false))
+    }
+
+    func testChunkCleanupKeepsSettingsAndDoesNotRepeatReplacements() {
+        var transcript = ""
+        let pairs = [("cat", "dog"), ("fox", "cat")]
+        XCTAssertEqual("Cat.", TextCleanup.appendChunk("fox", to: &transcript, replacements: pairs))
+        XCTAssertEqual("Cat. Um, hello.", TextCleanup.appendChunk("um, hello", to: &transcript, fillers: false, replacements: pairs))
+        XCTAssertEqual("Cat. Um, hello.", TextCleanup.appendChunk("Thank you for watching!", to: &transcript))
+    }
 }
