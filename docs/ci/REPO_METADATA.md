@@ -3,16 +3,16 @@
 For the repository's **About** box and social preview. Nothing here is applied automatically: the owner sets these in
 the repository's settings (or with `gh repo edit`, which needs write access). Every claim matches the README.
 
-## About (description, 273 of 350 characters)
+## About (description, 327 of 350 characters)
 
 > Private keyboard with offline voice typing. Talk and it types, on your device: Android keyboard (FlorisBoard-based,
-> NVIDIA Parakeet on sherpa-onnx) plus iPhone, Windows, macOS and Linux apps. No account, no analytics, no word caps.
-> Bangla phonetic typing. Free, Apache-2.0.
+> NVIDIA Parakeet on sherpa-onnx) plus iPhone, Windows, macOS and Linux apps. Lists, "scratch that" and word
+> replacements by voice. No account, no analytics, no word caps. Bangla phonetic typing. Free, Apache-2.0.
 
 Plain text to paste:
 
 ```
-Private keyboard with offline voice typing. Talk and it types, on your device: Android keyboard (FlorisBoard-based, NVIDIA Parakeet on sherpa-onnx) plus iPhone, Windows, macOS and Linux apps. No account, no analytics, no word caps. Bangla phonetic typing. Free, Apache-2.0.
+Private keyboard with offline voice typing. Talk and it types, on your device: Android keyboard (FlorisBoard-based, NVIDIA Parakeet on sherpa-onnx) plus iPhone, Windows, macOS and Linux apps. Lists, "scratch that" and word replacements by voice. No account, no analytics, no word caps. Bangla phonetic typing. Free, Apache-2.0.
 ```
 
 ## Website
@@ -40,7 +40,7 @@ the same image for OpenGraph and Twitter cards.
 
 ```sh
 gh repo edit muhib-karim/humming-keyboard \
-  --description "Private keyboard with offline voice typing. Talk and it types, on your device: Android keyboard (FlorisBoard-based, NVIDIA Parakeet on sherpa-onnx) plus iPhone, Windows, macOS and Linux apps. No account, no analytics, no word caps. Bangla phonetic typing. Free, Apache-2.0." \
+  --description 'Private keyboard with offline voice typing. Talk and it types, on your device: Android keyboard (FlorisBoard-based, NVIDIA Parakeet on sherpa-onnx) plus iPhone, Windows, macOS and Linux apps. Lists, "scratch that" and word replacements by voice. No account, no analytics, no word caps. Bangla phonetic typing. Free, Apache-2.0.' \
   --homepage "https://muhib-karim.github.io/humming-keyboard/" \
   --add-topic keyboard,android-keyboard,voice-typing,speech-to-text,dictation,offline-first,privacy,on-device-ai \
   --add-topic parakeet,sherpa-onnx,florisboard,jetpack-compose,tauri,rust,swiftui,bangla,bangla-keyboard \
