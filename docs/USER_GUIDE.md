@@ -16,7 +16,7 @@ Notes about 1.6.3 describe the Android release candidate on `main`: they apply o
 All installers are attached to the [latest GitHub Release](https://github.com/muhib-karim/humming-keyboard/releases/latest)
 together with `SHA256SUMS.txt`, and mirrored on https://humming-keyboard.pages.dev/. Which file belongs to which
 platform, and which version each platform is on, is listed in the README under
-[Download and install](../README.md#download-and-install).
+[Download and install](../README.md#install).
 
 **Checking a download.** Compare the file's SHA-256 with its line in `SHA256SUMS.txt`:
 `sha256sum <file>` (Linux), `shasum -a 256 <file>` (macOS) or `certutil -hashfile <file> SHA256` (Windows).
@@ -45,7 +45,7 @@ Xcode. Full steps, the 7-day re-signing limit and how to turn on the keyboard ar
 | Linux x86-64 | `chmod +x Humming_*_amd64.AppImage` and run it, or `sudo apt install ./Humming_*_amd64.deb` | No warning. |
 
 The Windows and macOS builds are not signed with a paid certificate, which is why the system warns once. See
-[Desktop first launch](../README.md#desktop-first-launch-unsigned-builds) in the README for details.
+[Install](../README.md#install) table in the README for details.
 
 ## 2. Turn on the keyboard (Android)
 
@@ -77,6 +77,14 @@ even if you turn the screen off or switch apps; you can tap **Stop** there too.
 **Voice commands** (always on-device):
 - "scratch that", "delete that" or "undo that", said as its own sentence, removes the sentence before it.
 - "new line" and "new paragraph".
+- Spoken punctuation: "comma", "full stop", "question mark", "exclamation mark", and from 1.7 "colon", "semicolon",
+  "open quote" / "close quote", "open bracket" / "close bracket", "ellipsis" (or "dot dot dot").
+- "delete last word" or "scratch the last word" (1.7) removes the word you said before it.
+
+**Dictating into existing text** (1.7): Humming fits the words to the sentence around the cursor. In the middle of a
+sentence a common first word is lowercased ("I told him" + "The plan works" gives "I told him the plan works"), no
+space is added after an opening bracket or quote, and the final period is dropped when the text after the cursor
+carries on. Names, "I" and your custom words keep their capitals.
 
 **Clean mode** (on by default) removes fillers ("um", "uh") and stutters and applies self-corrections: "ten, no,
 fifteen minutes" becomes "15 minutes". **Accuracy mode** (off by default) is stricter: it also removes hedge
@@ -122,8 +130,33 @@ copy and delete.
 
 Every option is searchable (**Settings > Search**) and can be exported to a file (**Settings > Other > Backup**, and
 **Restore** to import). The main groups are Languages & layouts, Theme, Keyboard, Smartbar, Typing (including
-**Prediction**), Gestures, Clipboard, Emoji and Stickers & GIFs, Privacy, Updates, Other and About. The README's
-[Android settings](../README.md#android-settings) section lists what each group contains.
+**Prediction**), Gestures, Clipboard, Emoji and Stickers & GIFs, Privacy, Updates, Other and About:
+
+- **Voice**: model (Fast / Best), download on Wi-Fi only, delete, Clean mode, Accuracy mode, Bluetooth mic, voice incognito,
+  history retention, personal dictionary.
+- **Languages & layouts**: add languages and layouts (QWERTY, QWERTZ, AZERTY and more).
+- **Theme**: light / dark / AMOLED, day and night themes, accent colour, background photo and dim, theme editor
+  (colours, fonts, key shapes).
+- **Keyboard**: height, key spacing, font size, number row, long-press symbols and delay, one-handed, split,
+  floating, bottom offset; **Input feedback**: sound and vibration.
+- **Smartbar**: toolbar buttons (add, remove, reorder), voice button size.
+- **Typing**: suggestions, **Prediction** (autocorrect strength, next word, smart prediction strength, weight of
+  your own typing, suggestions shown (3-5), best suggestion in the middle or first, learn from my typing, emoji),
+  text shortcuts, auto-capitalisation, double-space period, personal dictionary.
+- **Gestures**: glide typing and its trail, swipe gestures, space-bar trackpad.
+- **Clipboard**: history and retention. **Emoji**: skin tone, history, emoji suggestions; **Stickers & GIFs**:
+  the panel, stickers per row, your own stickers, online GIF search and whether it may run in incognito.
+- **Privacy**: incognito, learning, clear learned words, block offensive words, what uses the network.
+- **Other**: backup / restore to a file, app theme. **About**: licences.
+
+### Bangla phonetic typing (1.7)
+
+Settings > Languages & layouts > add **Bengali (Bangladesh)** and choose the **QWERTY** layout. Type romanised Bangla
+the way Avro and Ridmik users do: each word is offered in Bangla script in the suggestion strip and space or
+punctuation types it; the Latin word stays one tap away. Capitals follow the Avro convention: `T D N R` and
+`Th Dh Rh Sh` for the retroflex and other consonants, `I U O` for long or full vowels (`ami bangla likhi` →
+আমি বাংলা লিখি, `Taka` → টাকা). A vowel after a consonant becomes its sign, `o` after a consonant is the inherent vowel,
+and consonants in a row are joined. The fixed Bengali layout is still available.
 
 ### Desktop settings
 

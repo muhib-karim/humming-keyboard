@@ -127,4 +127,4 @@ in the same format.
   previous release, so the in-app update path is exercised.
 - Check that `https://humming-keyboard.pages.dev/updates/android.json` (and `latest.json` for a desktop release)
   shows the new version.
-- Update version references in the README's [Download and install](../README.md#download-and-install) section.
+- Update version references in the README's [Download and install](../README.md#install) section.
