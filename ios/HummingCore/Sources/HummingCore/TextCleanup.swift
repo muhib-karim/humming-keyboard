@@ -3,9 +3,10 @@ import Foundation
 /// Rule-based dictation clean-up, a Swift port of the Android `TextCleanup.kt` and desktop `text_cleanup.rs`, so the
 /// same words come out on every platform. Pure Foundation (no UIKit), covered by `TextCleanupTests`.
 ///
-/// Order: drop non-speech/hallucinations → fillers → spoken punctuation → (accuracy mode: hedge fillers) → leading
-/// discourse markers → self-corrections ("3, no, 4pm" → "4pm") → repeated words → dictionary casing → capitals and
-/// final punctuation.
+/// Order: the user's replacements ("cube cuddle" → "kubectl") → drop non-speech/hallucinations → fillers → spoken
+/// punctuation → (accuracy mode: hedge fillers) → leading discourse markers → self-corrections ("3, no, 4pm" → "4pm") →
+/// repeated words → dictionary casing → capitals and final punctuation → lists (`ListFormat`) → "delete that" said as
+/// its own sentence (Android's `VoiceCommands`).
 public enum TextCleanup {
     private static let W = "[\\p{L}\\p{N}_']"
 
@@ -88,28 +89,96 @@ public enum TextCleanup {
 
     /// Clean one transcript. `strict` is accuracy mode: it also removes hedge fillers ("like", "basically",
     /// "you know") when they are set off by commas, so it never drops a "like" that carries meaning.
-    public static func apply(_ raw: String, dictionary: [String] = [], strict: Bool = false) -> String {
-        var t = sub(raw, nonSpeech, "")
+    /// `fillers` (Settings › "Remove filler words", default on): off keeps um, uh and ", you know,"; accuracy mode's
+    /// extra filler rules need it on. `replacements` are the user's "spoken -> written" pairs, applied first.
+    public static func apply(_ raw: String, dictionary: [String] = [], strict: Bool = false, fillers: Bool = true,
+                             replacements: [(String, String)] = []) -> String {
+        var t = sub(replacePhrases(raw, replacements), nonSpeech, "")
         if isHallucination(t) { return "" }
-        t = sub(t, filler, "")
-        if strict { t = sub(t, strictFiller, "") }
-        t = sub(t, youKnow, " ")
+        let strictOn = strict && fillers
+        if fillers {
+            t = sub(t, filler, "")
+            if strictOn { t = sub(t, strictFiller, "") }
+            t = sub(t, youKnow, " ")
+        }
         for (r, rep) in spoken { t = sub(t, r, NSRegularExpression.escapedTemplate(for: rep)) }
         t = deleteLastWord(t)
-        if strict {
+        if strictOn {
             t = sub(t, strictPeriod, ".")
             t = sub(t, strictTrailing, "")
             t = sub(t, strictHedge, " ")
             t = sub(t, strictLeading, "$1")
         }
         t = collapseSpaces(t)
-        t = sub(t, leading, "")
+        if fillers { t = sub(t, leading, "") }
         t = selfCorrect(t)
         t = removeRepeats(t)
         t = applyDictionary(t, terms: dictionary)
         t = compactTimes(t)
-        if strict { t = sub(t, doubled, "$2") }
-        return finish(t)
+        if strictOn { t = sub(t, doubled, "$2") }
+        return retractSentences(ListFormat.apply(finish(t)))
+    }
+
+    private static let arrow = re("\\s*(?:->|→)\\s*", false)
+
+    /// Custom-word lines: "Kubernetes" is a casing term; "cube cuddle -> kubectl" (or "→") is a replacement whose
+    /// written side is also a casing term. A line with an empty side is ignored.
+    public static func vocabulary(_ lines: [String]) -> (terms: [String], replacements: [(String, String)]) {
+        var terms: [String] = []
+        var pairs: [(String, String)] = []
+        for raw in lines {
+            let line = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+            if line.isEmpty { continue }
+            let ns = line as NSString
+            guard let m = arrow.firstMatch(in: line, options: [], range: NSRange(location: 0, length: ns.length)) else {
+                if !terms.contains(line) { terms.append(line) }
+                continue
+            }
+            let spoken = ns.substring(to: m.range.location).trimmingCharacters(in: .whitespaces)
+            let written = ns.substring(from: m.range.location + m.range.length).trimmingCharacters(in: .whitespaces)
+            if spoken.isEmpty || written.isEmpty { continue }
+            pairs.append((spoken, written))
+            if !terms.contains(written) { terms.append(written) }
+        }
+        return (terms, pairs)
+    }
+
+    /// The user's "spoken -> written" pairs: whole words, any case, any spacing; the written side is typed as is.
+    public static func replacePhrases(_ input: String, _ pairs: [(String, String)]) -> String {
+        var t = input
+        for (spoken, written) in pairs {
+            let from = spoken.trimmingCharacters(in: .whitespacesAndNewlines)
+            let to = written.trimmingCharacters(in: .whitespacesAndNewlines)
+            if from.isEmpty || to.isEmpty { continue }
+            let body = words(from).map { NSRegularExpression.escapedPattern(for: $0) }.joined(separator: "\\s+")
+            t = sub(t, re("(?<!\(W))\(body)(?!\(W))"), NSRegularExpression.escapedTemplate(for: to))
+        }
+        return t
+    }
+
+    private static let deleteSentence = re("^(?:ok(?:ay)?,? )?(?:delete|scratch|undo|remove) (?:that|the last sentence)$")
+    private static let sentence = re("[^.!?]+(?:[.!?]+|$)", false)
+
+    /// "Book Friday. Scratch that. Book Saturday." → "Book Saturday." The command must be the whole sentence.
+    public static func retractSentences(_ text: String) -> String {
+        let ns = text as NSString
+        var out: [String] = []
+        var changed = false
+        for m in sentence.matches(in: text, options: [], range: NSRange(location: 0, length: ns.length)) {
+            let s = ns.substring(with: m.range)
+            var b = s.trimmingCharacters(in: .whitespacesAndNewlines)
+            if b.isEmpty { continue }
+            while let c = b.last, ".!?,".contains(c) { b.removeLast() }
+            b = b.trimmingCharacters(in: .whitespacesAndNewlines)
+            let bn = b as NSString
+            if deleteSentence.firstMatch(in: b, options: [], range: NSRange(location: 0, length: bn.length)) != nil {
+                if !out.isEmpty { out.removeLast() }
+                changed = true
+            } else {
+                out.append(s)
+            }
+        }
+        return changed ? out.joined().trimmingCharacters(in: .whitespacesAndNewlines) : text
     }
 
     private static let timeAmPm = re("(?<![\\p{L}\\p{N}])(\\d{1,2}(?::\\d{2})?)\\s?([AaPp])\\.?\\s?[Mm](?=[\\s,.;!?]|$)", false)

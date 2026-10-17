@@ -89,7 +89,8 @@ final class Dictation: ObservableObject {
         req.shouldReportPartialResults = true
         req.requiresOnDeviceRecognition = true
         req.addsPunctuation = true
-        if let words = settings?.customWords, !words.isEmpty { req.contextualStrings = words }
+        // Hints are the written forms only ("cube cuddle -> kubectl" hints "kubectl").
+        if let lines = settings?.customWords, !lines.isEmpty { req.contextualStrings = TextCleanup.vocabulary(lines).terms }
         lock.lock()
         request = req
         lock.unlock()
@@ -137,11 +138,12 @@ final class Dictation: ObservableObject {
 
     private func commit(_ raw: String) {
         partial = ""
-        let words = settings?.customWords ?? []
+        let vocab = TextCleanup.vocabulary(settings?.customWords ?? [])
         let clean = settings?.cleanMode ?? true
         let text = clean
-            ? TextCleanup.apply(raw, dictionary: words, strict: settings?.accuracyMode ?? false)
-            : TextCleanup.applyDictionary(raw, terms: words)
+            ? TextCleanup.apply(raw, dictionary: vocab.terms, strict: settings?.accuracyMode ?? false,
+                                fillers: settings?.removeFillers ?? true, replacements: vocab.replacements)
+            : TextCleanup.applyDictionary(TextCleanup.replacePhrases(raw, vocab.replacements), terms: vocab.terms)
         guard !text.isEmpty else { return }
         committed += (committed.isEmpty ? "" : " ") + text
         SharedStore.latestDictation = committed

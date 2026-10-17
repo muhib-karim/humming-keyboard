@@ -135,4 +135,36 @@ final class TextCleanupTests: XCTestCase {
         XCTAssertEqual("Call me (maybe), tomorrow.", clean("Call me, open bracket, maybe, close bracket, tomorrow."))
         XCTAssertEqual("Can you remove the last word of the title?", clean("can you remove the last word of the title"))
     }
+
+    // 1.7: replacements ("spoken -> written"), the filler switch and "delete that" (Android parity).
+    func testReplacementsRunFirst() {
+        let r = [("cube cuddle", "kubectl"), ("my sig", "Best, Sam")]
+        XCTAssertEqual("Run kubectl now.", TextCleanup.apply("run cube cuddle now", replacements: r))
+        XCTAssertEqual("Thanks. Best, Sam.", TextCleanup.apply("thanks. my sig", replacements: r))
+    }
+
+    func testReplacementIsWholeWord() {
+        XCTAssertEqual("Concatenate the dog files", TextCleanup.replacePhrases("Concatenate the cat files", [("cat", "dog")]))
+        XCTAssertEqual("kubectl  rocks", TextCleanup.replacePhrases("Cube\tCuddle  rocks", [("cube cuddle", "kubectl")]))
+    }
+
+    func testVocabularyLines() {
+        let v = TextCleanup.vocabulary(["GitHub", "cube cuddle -> kubectl", "hum ing → Humming", "-> x", "y ->"])
+        XCTAssertEqual(["GitHub", "kubectl", "Humming"], v.terms)
+        XCTAssertEqual(["cube cuddle", "hum ing"], v.replacements.map { $0.0 })
+        XCTAssertEqual(["kubectl", "Humming"], v.replacements.map { $0.1 })
+    }
+
+    func testFillerSwitchOffKeepsFillers() {
+        XCTAssertEqual("Um, I think we should ship it.", TextCleanup.apply("um, I think we should ship it", fillers: false))
+        XCTAssertEqual("So, you know, it works.", TextCleanup.apply("so, you know, it works", fillers: false))
+        XCTAssertEqual("It is, like, fine.", TextCleanup.apply("it is, like, fine", strict: true, fillers: false))
+        XCTAssertEqual("I think we should ship it.", clean("um, I think we should ship it"))
+    }
+
+    func testDeleteThatRemovesTheSentenceBefore() {
+        XCTAssertEqual("Book Saturday.", clean("Book Friday. Scratch that. Book Saturday."))
+        XCTAssertEqual("", clean("I am late. Okay, delete that."))
+        XCTAssertEqual("Can you delete that file?", clean("Can you delete that file?"))
+    }
 }
