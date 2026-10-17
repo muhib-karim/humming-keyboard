@@ -116,6 +116,8 @@ class FlorisApplication : Application() {
         DictionaryManager.init(this)
         // Humming 1.6: background update check (sideloaded APK only, switchable, at most every 6 hours).
         com.humming.keyboard.AppUpdate.maybeCheckInBackground(this)
+        // Humming 1.7.1: voice history keeps no audio; delete what older builds saved.
+        Thread { com.humming.keyboard.HistoryStore.dropLegacyAudio(filesDir) }.start()
     }
 
     private inner class BootComplete : BroadcastReceiver() {

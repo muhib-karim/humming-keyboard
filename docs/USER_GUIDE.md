@@ -138,7 +138,7 @@ Every option is searchable (**Settings > Search**) and can be exported to a file
 **Prediction**), Gestures, Clipboard, Emoji and Stickers & GIFs, Privacy, Updates, Other and About:
 
 - **Voice**: model (Fast / Best), download on Wi-Fi only, delete, Clean mode, Accuracy mode, Bluetooth mic, voice incognito,
-  history retention, personal dictionary.
+  personal dictionary.
 - **Languages & layouts**: add languages and layouts (QWERTY, QWERTZ, AZERTY and more).
 - **Theme**: light / dark / AMOLED, day and night themes, accent colour, background photo and dim, theme editor
   (colours, fonts, key shapes).

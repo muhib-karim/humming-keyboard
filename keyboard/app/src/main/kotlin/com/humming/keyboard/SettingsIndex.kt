@@ -20,7 +20,6 @@ object SettingsIndex {
         Entry("Accuracy mode (strict clean-up)", "Voice", Screen.VOICE, "accuracy filler like basically you know period strict"),
         Entry("Bluetooth headset microphone", "Voice", Screen.VOICE, "bt mic headset"),
         Entry("Voice incognito", "Voice", Screen.VOICE, "privacy history dictation"),
-        Entry("Dictation history retention", "Voice", Screen.VOICE, "history keep delete"),
         Entry("Personal dictionary for dictation", "Voice", Screen.VOICE, "names words spelling replace replacement snippet"),
         Entry("Languages and layouts", "Languages & layouts", Screen.LANGUAGES, "language multilingual layout qwerty azerty qwertz subtype spanish german french add"),
         Entry("Theme (light, dark, AMOLED)", "Theme", Screen.THEME, "dark light black amoled night day colour color"),
