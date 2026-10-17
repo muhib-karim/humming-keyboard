@@ -59,8 +59,9 @@ representative at an online or offline event.
 ## Enforcement
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
-reported to the community leaders responsible for enforcement at
-[florisboard@patrickgold.dev](mailto:florisboard@patrickgold.dev).
+reported privately to the Humming maintainers through GitHub's private reporting
+(https://github.com/muhib-karim/humming-keyboard/security/advisories/new). Problems with upstream
+FlorisBoard itself go to the FlorisBoard project.
 All complaints will be reviewed and investigated promptly and fairly.
 
 All community leaders are obligated to respect the privacy and security of the

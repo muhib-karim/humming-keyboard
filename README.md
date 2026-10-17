@@ -2,7 +2,7 @@
 
 <h1 align="center">Humming Keyboard</h1>
 
-<p align="center"><strong>Talk, and it types. Your voice never leaves your device.</strong><br>
+<p align="center"><strong>Talk, and it types. Offline by default: your voice stays on your device.</strong><br>
 A private keyboard with offline voice typing for Android, plus iPhone, Windows, macOS and Linux apps.</p>
 
 <p align="center">
