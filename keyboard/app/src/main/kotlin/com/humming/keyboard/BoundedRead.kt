@@ -7,6 +7,7 @@ import java.io.InputStream
 object BoundedRead {
     /** Reads up to [maxBytes] + 1 bytes from [input]; a result longer than [maxBytes] means the source was too large. */
     fun read(input: InputStream, maxBytes: Int): ByteArray {
+        require(maxBytes in 0 until Int.MAX_VALUE) { "maxBytes out of range: $maxBytes" }
         val out = ByteArrayOutputStream()
         val buf = ByteArray(8192)
         while (out.size() <= maxBytes) {
