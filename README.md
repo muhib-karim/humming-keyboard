@@ -59,7 +59,6 @@ From the teardowns of [keyboards](COMPETITORS.md#gap-list-ranked) and [dictation
   "first, ... second, ..." and get bullets; "scratch that" drops the sentence before it; a custom-words line
   `spoken -> written` replaces what you say (`cube cuddle -> kubectl`, `my sig -> Best, Sam`); filler removal has its
   own switch, on by default.
-
 - **Bangla phonetic typing**: add Bengali with a QWERTY layout and type the way Avro and Ridmik users do
   (`ami bangla likhi` → আমি বাংলা লিখি); space or punctuation types the Bangla word, the Latin word stays one tap away.
 - **Dictation that fits the sentence**: dictating into the middle of a line lowercases a common first word, skips the
@@ -201,12 +200,11 @@ No account, no analytics, no ads, and no cloud speech engine of Humming's own. F
 
 ## Benchmarks
 
-Measured by CI (`.github/workflows/wer-bench.yml`, run
-[37204875974](https://github.com/muhib-karim/humming-keyboard/actions/runs/37204875974) on the 1.4.0 code,
+Measured by CI ([`wer-bench.yml`](.github/workflows/wer-bench.yml), run 37204875974 on the 1.4.0 code,
 4 October 2026) on LibriSpeech with the exact models and decoder settings the apps ship, on a 2-thread x86-64 CPU
-(AMD EPYC 9V74). Lower is better. The run's output is committed:
-[`docs/bench/ci-37204875974-wer.json`](docs/bench/ci-37204875974-wer.json),
-[`bench.log`](docs/bench/ci-37204875974-bench.log).
+(AMD EPYC 9V74). Lower is better. GitHub has since expired that run's logs, so its output is committed here:
+[`docs/bench/ci-37204875974-wer.json`](docs/bench/ci-37204875974-wer.json) and
+[`docs/bench/ci-37204875974-bench.log`](docs/bench/ci-37204875974-bench.log).
 
 | Model | WER test-clean (200 clips) | WER test-other (100 clips) | Real-time factor | Median time to text | Model load |
 |---|---|---|---|---|---|
