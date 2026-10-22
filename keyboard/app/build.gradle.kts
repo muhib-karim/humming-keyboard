@@ -247,10 +247,12 @@ androidComponents {
     }
 }
 
-tasks.withType<Test> {
+// Robolectric loads classes through its own class loader; JaCoCo only counts them with includeNoLocationClasses.
+// The plugin is applied here so every Test task already has its extension when configureEach runs.
+apply(plugin = "jacoco")
+tasks.withType<Test>().configureEach {
     useJUnitPlatform()
-    // Robolectric loads classes through its own class loader; JaCoCo only counts them with this flag.
-    extensions.findByType(JacocoTaskExtension::class.java)?.apply {
+    configure<JacocoTaskExtension> {
         isIncludeNoLocationClasses = true
         excludes = listOf("jdk.internal.*")
     }
