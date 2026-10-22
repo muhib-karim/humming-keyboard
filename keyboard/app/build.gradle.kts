@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import org.gradle.testing.jacoco.plugins.JacocoTaskExtension
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.net.URI
 import java.security.MessageDigest
@@ -168,6 +169,8 @@ android {
 
             isDebuggable = true
             isJniDebuggable = false
+            // Humming 1.7.1: JaCoCo line coverage of the unit tests (createDebugUnitTestCoverageReport, keyboard.yml).
+            enableUnitTestCoverage = true
             manifestPlaceholders["profileableShell"] = "true"
 
             // Humming: app icon and name
@@ -219,7 +222,11 @@ android {
     }
 
     lint {
-        baseline = file("lint.xml")
+        // Humming 1.7.1: lint is a CI gate (keyboard.yml, job "lint"). lint.xml in this directory is the rule
+        // configuration; lint-baseline.xml holds only the issues that existed before 1.7.1 (docs/ci/STATIC_ANALYSIS.md).
+        baseline = file("lint-baseline.xml")
+        abortOnError = true
+        checkDependencies = false
     }
 
     testOptions {
@@ -234,6 +241,11 @@ android {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+    // Robolectric loads classes through its own class loader; JaCoCo only counts them with this flag.
+    extensions.findByType(JacocoTaskExtension::class.java)?.apply {
+        isIncludeNoLocationClasses = true
+        excludes = listOf("jdk.internal.*")
+    }
 }
 
 dependencies {
@@ -286,6 +298,9 @@ dependencies {
     testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.13.4")
     androidTestImplementation(libs.androidx.test.ext)
     androidTestImplementation(libs.androidx.test.espresso.core)
+    // Humming 1.7.1: the emulator smoke test drives the real keyboard with UiAutomator (ImeSmokeTest).
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.test.uiautomator)
 }
 
 fun getGitCommitHash(short: Boolean = false): Provider<String> {

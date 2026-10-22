@@ -9,7 +9,7 @@ name: android-release
 
 on:
   push:
-    branches: ["main"]
+    branches: ["main", "upgrade/**"]
     paths: ["keyboard/**", ".github/workflows/android-release.yml"]
   pull_request:
     paths: ["keyboard/**", ".github/workflows/android-release.yml"]
