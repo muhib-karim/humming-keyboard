@@ -27,6 +27,9 @@ concurrency:
 jobs:
   signed-release:
     name: signed release (APK + AAB)
+    # Dependabot pull requests get no repository secrets, so the signed build cannot run there (keyboard.yml still
+    # builds their release APK with the development key).
+    if: ${{ github.actor != 'dependabot[bot]' }}
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
@@ -123,7 +126,10 @@ jobs:
           rm -f "$RUNNER_TEMP/humming-upload.p12"
           test ! -e "$RUNNER_TEMP/humming-upload.p12" && echo "upload key file deleted"
 
+      # 1.7.1: upgrade/** branch pushes sign and verify the certificate, but keep no production-signed artifact of
+      # code that is not reviewed yet; main, pull requests, tags (release.yml) and manual runs upload as before.
       - uses: actions/upload-artifact@v4
+        if: ${{ !startsWith(github.ref, 'refs/heads/upgrade/') }}
         with:
           name: humming-keyboard-signed-release
           path: signed/
