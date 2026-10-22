@@ -116,7 +116,12 @@ class ImeSmokeTest {
 
     private fun key(label: String): Pattern = Pattern.compile("(?i)" + Pattern.quote(label))
 
-    private fun shot(name: String) = sh("screencap -p $SHOTS/$name.png")
+    /** Lets the window finish drawing first (the first capture of a newly opened screen came out blank). */
+    private fun shot(name: String) {
+        device.waitForIdle()
+        SystemClock.sleep(SETTLE)
+        sh("screencap -p $SHOTS/$name.png")
+    }
 
     private fun sh(cmd: String): String = device.executeShellCommand(cmd)
 
@@ -125,6 +130,7 @@ class ImeSmokeTest {
         const val TIMEOUT = 15_000L
         const val STEP_TIMEOUT = 2_000L
         const val SETUP_TIMEOUT = 45_000L
+        const val SETTLE = 1_500L
         const val NEW_TASK = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
     }
 }

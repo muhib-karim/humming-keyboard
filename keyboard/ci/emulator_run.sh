@@ -29,8 +29,10 @@ instrument() { # name, am instrument arguments...
   adb shell am instrument -w -r "$@" "$RUNNER" | tee "$OUT/$name.txt"
   grep -q '^OK (' "$OUT/$name.txt" && ! grep -q 'FAILURES!!!' "$OUT/$name.txt"
 }
-private_file() { # path inside the debug app's files dir, destination
-  adb exec-out run-as "$PKG" cat "files/$1" > "$2" 2>/dev/null && [ -s "$2" ] || rm -f "$2"
+private_file() { # path inside the debug app's files dir, destination (exec-out mixes in the device's stderr, so check first)
+  if [ "$(adb shell "run-as $PKG test -s files/$1 && echo present" | tr -d '\r')" = present ]; then
+    adb exec-out run-as "$PKG" cat "files/$1" > "$2"
+  fi
 }
 
 status=0
