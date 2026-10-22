@@ -67,7 +67,7 @@ class ImeSmokeTest {
         assertNotNull("Humming in Android's keyboard settings", listed)
         shot("01_android_keyboard_settings")
 
-        // 2. Humming's settings: finish the first-run setup if it shows, until the home screen's preview field is there.
+        // 2. Humming's settings: finish the first-run setup if it shows, until the home screen's preview field shows.
         ctx.startActivity(ctx.packageManager.getLaunchIntentForPackage(ctx.packageName)!!.addFlags(NEW_TASK))
         val field = homePreviewField()
         assertNotNull("Humming's settings home with the \"Try out your setup\" field", field)

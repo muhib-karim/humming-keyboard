@@ -6,5 +6,10 @@ build:
   maxIssues: 0
 
 style:
+  # ExtensionAuthorTest.kt is upstream FlorisBoard's test, commented out in full (kotest); detekt reads the whole
+  # comment as one long line. Excluded here instead of baselined, so its sample addresses are not copied into a baseline.
   MaxLineLength:
     maxLineLength: 120
+    excludes: ["**/ExtensionAuthorTest.kt"]
+  ForbiddenComment:
+    excludes: ["**/ExtensionAuthorTest.kt"]
