@@ -672,7 +672,7 @@ fun VoiceInputLayout(isNight: Boolean, height: Dp, modifier: Modifier = Modifier
 
     var now by remember { mutableLongStateOf(SystemClock.elapsedRealtime()) }
     LaunchedEffect(listening) {
-        while (listening) { now = SystemClock.elapsedRealtime(); delay(250) }
+        if (listening) while (true) { now = SystemClock.elapsedRealtime(); delay(250) } // ends when the key changes
     }
     val secs = if (st.startedAt > 0) ((now - st.startedAt) / 1000).coerceAtLeast(0) else 0
 
