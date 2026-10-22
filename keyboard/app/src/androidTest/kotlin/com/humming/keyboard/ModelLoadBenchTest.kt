@@ -33,7 +33,17 @@ class ModelLoadBenchTest {
         val m = VoiceModels.FAST
 
         val t0 = SystemClock.elapsedRealtime()
-        if (!ModelStore.ready(ctx, m)) ModelStore.download(ctx, m) { _, _ -> }
+        // The download resumes (HTTP Range), so a network hiccup on the runner costs a retry, not the job.
+        var attempt = 0
+        while (!ModelStore.ready(ctx, m)) {
+            attempt++
+            try {
+                ModelStore.download(ctx, m) { _, _ -> }
+            } catch (e: java.io.IOException) {
+                if (attempt >= DOWNLOAD_ATTEMPTS) throw e
+                SystemClock.sleep(RETRY_PAUSE_MS * attempt)
+            }
+        }
         val downloadMs = SystemClock.elapsedRealtime() - t0
         assertTrue("model downloaded and verified", ModelStore.ready(ctx, m))
 
@@ -64,5 +74,7 @@ class ModelLoadBenchTest {
 
     private companion object {
         const val LOADS = 3
+        const val DOWNLOAD_ATTEMPTS = 3
+        const val RETRY_PAUSE_MS = 5_000L
     }
 }

@@ -34,7 +34,8 @@ class ModelStoreTest {
     private val ctx: Context = RuntimeEnvironment.getApplication()
     private lateinit var server: ServerSocket
     private val requests: MutableList<String?> = java.util.Collections.synchronizedList(mutableListOf())
-    private var honourRange = true
+
+    @Volatile private var honourRange = true
     private val archive = tarBz2(
         "test-model/model.int8.onnx" to ByteArray(4096) { (it % 251).toByte() },
         "test-model/tokens.txt" to "a 0\nb 1\n".toByteArray(),
@@ -48,7 +49,10 @@ class ModelStoreTest {
         thread(isDaemon = true) {
             while (true) {
                 val client = runCatching { server.accept() }.getOrNull() ?: break
-                client.use { serve(it.getInputStream().bufferedReader(Charsets.ISO_8859_1), it.getOutputStream()) }
+                // A client that hangs up early must not stop the server for the rest of the test.
+                runCatching {
+                    client.use { serve(it.getInputStream().bufferedReader(Charsets.ISO_8859_1), it.getOutputStream()) }
+                }
             }
         }
     }
