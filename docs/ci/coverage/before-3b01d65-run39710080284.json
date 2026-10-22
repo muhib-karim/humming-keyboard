@@ -1,0 +1,305 @@
+{
+  "packages": {
+    "com/humming/keyboard": {
+      "covered": 917,
+      "missed": 1258,
+      "pct": 42.2
+    },
+    "com/humming/keyboard/predict": {
+      "covered": 573,
+      "missed": 47,
+      "pct": 92.4
+    },
+    "dev/patrickgold/florisboard": {
+      "covered": 0,
+      "missed": 770,
+      "pct": 0.0
+    },
+    "dev/patrickgold/florisboard/app": {
+      "covered": 779,
+      "missed": 880,
+      "pct": 47.0
+    },
+    "dev/patrickgold/florisboard/app/apptheme": {
+      "covered": 0,
+      "missed": 113,
+      "pct": 0.0
+    },
+    "dev/patrickgold/florisboard/app/devtools": {
+      "covered": 0,
+      "missed": 485,
+      "pct": 0.0
+    },
+    "dev/patrickgold/florisboard/app/ext": {
+      "covered": 0,
+      "missed": 1539,
+      "pct": 0.0
+    },
+    "dev/patrickgold/florisboard/app/settings": {
+      "covered": 0,
+      "missed": 88,
+      "pct": 0.0
+    },
+    "dev/patrickgold/florisboard/app/settings/about": {
+      "covered": 0,
+      "missed": 116,
+      "pct": 0.0
+    },
+    "dev/patrickgold/florisboard/app/settings/advanced": {
+      "covered": 0,
+      "missed": 627,
+      "pct": 0.0
+    },
+    "dev/patrickgold/florisboard/app/settings/clipboard": {
+      "covered": 0,
+      "missed": 105,
+      "pct": 0.0
+    },
+    "dev/patrickgold/florisboard/app/settings/dictionary": {
+      "covered": 0,
+      "missed": 275,
+      "pct": 0.0
+    },
+    "dev/patrickgold/florisboard/app/settings/gestures": {
+      "covered": 0,
+      "missed": 107,
+      "pct": 0.0
+    },
+    "dev/patrickgold/florisboard/app/settings/humming": {
+      "covered": 0,
+      "missed": 294,
+      "pct": 0.0
+    },
+    "dev/patrickgold/florisboard/app/settings/keyboard": {
+      "covered": 0,
+      "missed": 280,
+      "pct": 0.0
+    },
+    "dev/patrickgold/florisboard/app/settings/localization": {
+      "covered": 0,
+      "missed": 622,
+      "pct": 0.0
+    },
+    "dev/patrickgold/florisboard/app/settings/media": {
+      "covered": 0,
+      "missed": 132,
+      "pct": 0.0
+    },
+    "dev/patrickgold/florisboard/app/settings/smartbar": {
+      "covered": 0,
+      "missed": 55,
+      "pct": 0.0
+    },
+    "dev/patrickgold/florisboard/app/settings/theme": {
+      "covered": 6,
+      "missed": 2236,
+      "pct": 0.3
+    },
+    "dev/patrickgold/florisboard/app/settings/typing": {
+      "covered": 0,
+      "missed": 209,
+      "pct": 0.0
+    },
+    "dev/patrickgold/florisboard/app/settings/voice": {
+      "covered": 0,
+      "missed": 262,
+      "pct": 0.0
+    },
+    "dev/patrickgold/florisboard/app/setup": {
+      "covered": 3,
+      "missed": 142,
+      "pct": 2.1
+    },
+    "dev/patrickgold/florisboard/ime": {
+      "covered": 0,
+      "missed": 6,
+      "pct": 0.0
+    },
+    "dev/patrickgold/florisboard/ime/clipboard": {
+      "covered": 5,
+      "missed": 800,
+      "pct": 0.6
+    },
+    "dev/patrickgold/florisboard/ime/clipboard/provider": {
+      "covered": 0,
+      "missed": 668,
+      "pct": 0.0
+    },
+    "dev/patrickgold/florisboard/ime/core": {
+      "covered": 55,
+      "missed": 244,
+      "pct": 18.4
+    },
+    "dev/patrickgold/florisboard/ime/dictionary": {
+      "covered": 0,
+      "missed": 801,
+      "pct": 0.0
+    },
+    "dev/patrickgold/florisboard/ime/editor": {
+      "covered": 14,
+      "missed": 875,
+      "pct": 1.6
+    },
+    "dev/patrickgold/florisboard/ime/input": {
+      "covered": 6,
+      "missed": 197,
+      "pct": 3.0
+    },
+    "dev/patrickgold/florisboard/ime/keyboard": {
+      "covered": 21,
+      "missed": 1234,
+      "pct": 1.7
+    },
+    "dev/patrickgold/florisboard/ime/landscapeinput": {
+      "covered": 3,
+      "missed": 0,
+      "pct": 100.0
+    },
+    "dev/patrickgold/florisboard/ime/lifecycle": {
+      "covered": 0,
+      "missed": 28,
+      "pct": 0.0
+    },
+    "dev/patrickgold/florisboard/ime/media": {
+      "covered": 0,
+      "missed": 312,
+      "pct": 0.0
+    },
+    "dev/patrickgold/florisboard/ime/media/emoji": {
+      "covered": 27,
+      "missed": 748,
+      "pct": 3.5
+    },
+    "dev/patrickgold/florisboard/ime/media/emoticon": {
+      "covered": 0,
+      "missed": 14,
+      "pct": 0.0
+    },
+    "dev/patrickgold/florisboard/ime/nlp": {
+      "covered": 15,
+      "missed": 473,
+      "pct": 3.1
+    },
+    "dev/patrickgold/florisboard/ime/nlp/han": {
+      "covered": 0,
+      "missed": 108,
+      "pct": 0.0
+    },
+    "dev/patrickgold/florisboard/ime/nlp/latin": {
+      "covered": 12,
+      "missed": 89,
+      "pct": 11.9
+    },
+    "dev/patrickgold/florisboard/ime/onehanded": {
+      "covered": 2,
+      "missed": 54,
+      "pct": 3.6
+    },
+    "dev/patrickgold/florisboard/ime/popup": {
+      "covered": 0,
+      "missed": 441,
+      "pct": 0.0
+    },
+    "dev/patrickgold/florisboard/ime/sheet": {
+      "covered": 0,
+      "missed": 26,
+      "pct": 0.0
+    },
+    "dev/patrickgold/florisboard/ime/smartbar": {
+      "covered": 12,
+      "missed": 389,
+      "pct": 3.0
+    },
+    "dev/patrickgold/florisboard/ime/smartbar/quickaction": {
+      "covered": 44,
+      "missed": 485,
+      "pct": 8.3
+    },
+    "dev/patrickgold/florisboard/ime/text": {
+      "covered": 0,
+      "missed": 33,
+      "pct": 0.0
+    },
+    "dev/patrickgold/florisboard/ime/text/composing": {
+      "covered": 0,
+      "missed": 319,
+      "pct": 0.0
+    },
+    "dev/patrickgold/florisboard/ime/text/gestures": {
+      "covered": 30,
+      "missed": 562,
+      "pct": 5.1
+    },
+    "dev/patrickgold/florisboard/ime/text/key": {
+      "covered": 21,
+      "missed": 25,
+      "pct": 45.7
+    },
+    "dev/patrickgold/florisboard/ime/text/keyboard": {
+      "covered": 246,
+      "missed": 1043,
+      "pct": 19.1
+    },
+    "dev/patrickgold/florisboard/ime/theme": {
+      "covered": 8,
+      "missed": 906,
+      "pct": 0.9
+    },
+    "dev/patrickgold/florisboard/ime/voice": {
+      "covered": 0,
+      "missed": 587,
+      "pct": 0.0
+    },
+    "dev/patrickgold/florisboard/lib": {
+      "covered": 10,
+      "missed": 321,
+      "pct": 3.0
+    },
+    "dev/patrickgold/florisboard/lib/cache": {
+      "covered": 0,
+      "missed": 119,
+      "pct": 0.0
+    },
+    "dev/patrickgold/florisboard/lib/compose": {
+      "covered": 0,
+      "missed": 212,
+      "pct": 0.0
+    },
+    "dev/patrickgold/florisboard/lib/crashutility": {
+      "covered": 0,
+      "missed": 248,
+      "pct": 0.0
+    },
+    "dev/patrickgold/florisboard/lib/devtools": {
+      "covered": 0,
+      "missed": 259,
+      "pct": 0.0
+    },
+    "dev/patrickgold/florisboard/lib/ext": {
+      "covered": 6,
+      "missed": 402,
+      "pct": 1.5
+    },
+    "dev/patrickgold/florisboard/lib/io": {
+      "covered": 29,
+      "missed": 311,
+      "pct": 8.5
+    },
+    "dev/patrickgold/florisboard/lib/util": {
+      "covered": 0,
+      "missed": 371,
+      "pct": 0.0
+    }
+  },
+  "prefix": {
+    "covered": 1490,
+    "missed": 1305,
+    "pct": 53.3
+  },
+  "prefix_name": "com/humming/keyboard",
+  "total": {
+    "covered": 2844,
+    "missed": 24352,
+    "pct": 10.5
+  }
+}
