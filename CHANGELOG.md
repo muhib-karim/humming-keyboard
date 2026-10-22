@@ -1,5 +1,38 @@
 # Changelog
 
+## [1.7.1] - 2026-10-22
+
+Checked on a real Android emulator, measured, and gated. No new features; nothing users do changes except one fix in
+language switching.
+
+- **Status**: on branch `upgrade/v1.7.1`, every workflow green in CI. It becomes the 1.7.1 release when `v1.7.1` is
+  tagged after review; `release.yml` then builds the signed APK and attaches it to the GitHub Release.
+- **Version**: one version everywhere: Android 1.7.1 (versionCode 1701), desktop and core 1.7.1, iOS 1.7.1 (build 1701).
+- **Fix: language key after removing a language (Android)**: if the active language had just been removed from the
+  list, the language key switched to the built-in default, which might not be in the list at all. It now goes to the
+  first language in the list. The next/previous rule is a pure, unit-tested `SubtypeCycle` (`SubtypeCycleTest`).
+- **Emulator smoke test** (`android-emulator.yml`, `ImeSmokeTest`): on an Android 14 emulator, Humming is switched on
+  as the keyboard, Android's keyboard settings and Humming's settings are opened, the first-run setup is finished and
+  "hello" is typed by tapping Humming's own keys; screenshots of every step are saved as artifacts.
+- **Measured on the emulator** (run 39713465586, image `system-images;android-34;google_apis;x86_64`, 22 October
+  2026): cold start to first frame 605 ms (median of 10, release build settings), Fast voice model first load
+  1,017 ms and reload 867 ms (`ModelLoadBenchTest`, through the app's own download, SHA-256 check and engine). Raw
+  output in `docs/bench/emulator-run39713465586/`. Phone timings are not measured.
+- **More unit tests** (34 new, all passing in CI): model download, resume, verification and unpacking against a local
+  HTTP server (`ModelStoreTest`), every voice setting and the history-retention migration on real SharedPreferences
+  (`PrefsTest`, Robolectric 4.16.1), language switching (`SubtypeCycleTest`), each clean-up stage and the audio
+  helpers (`TextPostProcessingTest`). Line coverage of `com.humming.keyboard` 42.2 % → 48.2 % (JaCoCo, now reported by
+  `keyboard.yml`; `docs/ci/COVERAGE.md`).
+- **Quality gates in CI**: ktlint 1.7.1 and detekt 1.23.8 (`quality.yml`) and Android lint (`keyboard.yml`), each with
+  a committed baseline holding only the findings that existed before 1.7.1 (a missing baseline fails); gitleaks over
+  the whole history; CodeQL for Java/Kotlin (`codeql.yml`); Dependabot for Gradle and GitHub Actions. How each baseline
+  was made: `docs/ci/STATIC_ANALYSIS.md`.
+- **CI on upgrade branches**: `keyboard.yml`, `android-release.yml` and the new workflows also run on `upgrade/**`
+  pushes, so a branch is checked before review.
+- **Docs and website**: README with the emulator screenshots, numbers, quality badges and a code-backed architecture
+  diagram (`docs/android-architecture.html`); the website's "Measured" section shows the same screenshots and numbers,
+  and no longer calls 1.7 a release candidate.
+
 ## 1.7.0: Bangla phonetic typing, dictation lists and replacements, a premium look
 - **Status**: final release, tagged `v1.7.0` and published as the latest GitHub release; its update files are mirrored to
   the website's update feeds. Everything below is unit-tested in CI; it was not built on the development machine.

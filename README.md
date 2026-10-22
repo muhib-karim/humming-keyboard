@@ -12,6 +12,11 @@ A private keyboard with offline voice typing for Android, plus iPhone, Windows, 
 <a href="https://github.com/muhib-karim/humming-keyboard/actions/workflows/ios.yml"><img alt="iOS CI" src="https://github.com/muhib-karim/humming-keyboard/actions/workflows/ios.yml/badge.svg"></a>
 <a href="https://github.com/muhib-karim/humming-keyboard/actions/workflows/release.yml"><img alt="Release workflow" src="https://github.com/muhib-karim/humming-keyboard/actions/workflows/release.yml/badge.svg"></a>
 <br>
+<a href="https://github.com/muhib-karim/humming-keyboard/actions/workflows/android-emulator.yml"><img alt="Android emulator smoke test" src="https://github.com/muhib-karim/humming-keyboard/actions/workflows/android-emulator.yml/badge.svg"></a>
+<a href="https://github.com/muhib-karim/humming-keyboard/actions/workflows/quality.yml"><img alt="Quality gates: ktlint, detekt, gitleaks, site check" src="https://github.com/muhib-karim/humming-keyboard/actions/workflows/quality.yml/badge.svg"></a>
+<a href="https://github.com/muhib-karim/humming-keyboard/actions/workflows/codeql.yml"><img alt="CodeQL" src="https://github.com/muhib-karim/humming-keyboard/actions/workflows/codeql.yml/badge.svg"></a>
+<a href="docs/ci/COVERAGE.md"><img alt="Unit-test line coverage of Humming's Android code: 48.2 percent" src="https://img.shields.io/badge/coverage%20(Humming%20code)-48.2%25-2a2a33"></a>
+<br>
 <a href="#install"><img alt="Platforms: Android, iOS, Windows, macOS, Linux" src="https://img.shields.io/badge/platforms-Android%20%C2%B7%20iOS%20%C2%B7%20Windows%20%C2%B7%20macOS%20%C2%B7%20Linux-18181f"></a>
 <a href="#benchmarks"><img alt="WER 2.78% Fast, 1.68% Best (LibriSpeech test-clean, first 200 clips, plus or minus 0.5)" src="https://img.shields.io/badge/WER%20test--clean%20(200%20clips)-2.78%25%20Fast%20%C2%B7%201.68%25%20Best-2a2a33"></a>
 <a href="LICENSE"><img alt="Licence: Apache-2.0" src="https://img.shields.io/badge/licence-Apache--2.0-2a2a33"></a>
@@ -51,7 +56,20 @@ sample sentence, because CI machines have no microphone. Sample text is made up.
 - **Private, and checked in code.** No analytics, no ads. A unit test fails the build if any file outside a short list
   uses a network API ([Privacy](#privacy)).
 
-### New in 1.7 (release candidate)
+### New in 1.7.1: checked on a real Android, measured, gated
+
+No new features; 1.7.1 proves what 1.7.0 does ([changelog](CHANGELOG.md)).
+
+- **An emulator test on every push** ([`android-emulator.yml`](.github/workflows/android-emulator.yml)): Android 14
+  emulator, Humming switched on as the keyboard, its settings opened, "hello" typed by tapping its own keys. The
+  screenshots below come from that job, unedited.
+- **Measured on that emulator**: cold start and voice-model load time ([table](#on-an-android-emulator)).
+- **More unit tests** for model download and verification, settings, language switching and each clean-up step:
+  line coverage of Humming's own Android code 42.2 % → 48.2 % ([docs/ci/COVERAGE.md](docs/ci/COVERAGE.md)).
+- **Quality gates**: ktlint, detekt and Android lint (with baselines of the issues that predate 1.7.1), gitleaks over
+  the whole history, CodeQL, Dependabot ([docs/ci/STATIC_ANALYSIS.md](docs/ci/STATIC_ANALYSIS.md)).
+
+### New in 1.7
 
 From the teardowns of [keyboards](COMPETITORS.md#gap-list-ranked) and [dictation apps](COMPETITORS.md#dictation-gap-list-ranked):
 
@@ -219,6 +237,26 @@ test-clean 200) gave 2.72 %, with every reference and hypothesis in [`docs/bench
 Run it yourself: `python keyboard/ci/fetch_librispeech_sample.py bench test-clean 200`, then
 `python keyboard/ci/wer_bench.py <models_dir> bench/LibriSpeech wer.json 200 0` (needs `sherpa-onnx==1.13.8 jiwer soundfile`).
 
+### On an Android emulator
+
+Measured by [`android-emulator.yml`](.github/workflows/android-emulator.yml) run 39713465586 on 22 October 2026 (commit
+`33a14bb`), emulator image `system-images;android-34;google_apis;x86_64` on a GitHub-hosted x86-64 runner. The raw
+output is committed: [`docs/bench/emulator-run39713465586/`](docs/bench/emulator-run39713465586/).
+
+| Measurement | Result |
+|---|---:|
+| Cold start to first frame (`am start -W`, release build settings: R8 and resource shrinking; median of 10, after one uncounted launch) | 605 ms (528 to 1,329) |
+| Fast voice model, first load (`SherpaEngine`, 2 threads) | 1,017 ms |
+| Fast voice model, reload (median of 2) | 867 ms |
+| First decode of 1 s of silence | 97 ms |
+
+An emulator on a shared runner is not a phone: use these numbers to compare builds over time, not to predict your
+phone. Phone timings are **not measured** here.
+
+| Settings, after the first-run setup | The keyboard opens in the test field | "hello", typed key by key by the test |
+|:---:|:---:|:---:|
+| <img src="docs/screenshots/emulator_settings_home.png" width="220" alt="Humming's settings home on the emulator"> | <img src="docs/screenshots/emulator_keyboard.png" width="220" alt="The Humming keyboard open under the Try out your setup field"> | <img src="docs/screenshots/emulator_typed.png" width="220" alt="hello typed into the field with Humming's keys"> |
+
 <details>
 <summary><strong>Why Parakeet: the bake-off</strong></summary>
 
@@ -253,7 +291,8 @@ CI table above for claims. With 73 clips, gaps under about half a point are nois
 </p>
 
 More: Android, iPhone and desktop captures in [`docs/screenshots/`](docs/screenshots/), the Gboard voice hand-off in
-the [user guide](docs/USER_GUIDE.md). Captures are from CI runs on the 1.3/1.4 builds.
+the [user guide](docs/USER_GUIDE.md). The captures above are from CI runs on the 1.3/1.4 builds; the `emulator_*`
+captures (including Android's keyboard list and the setup screen) are from the 1.7.1 emulator test.
 
 ## Architecture
 
@@ -276,6 +315,14 @@ flowchart LR
     Join --> Draft[Underlined draft<br/>while speaking]
     Draft --> Commit[Final text<br/>committed once on stop]
 ```
+
+The Android dictation path, traced from the source (every box links to its code in the
+[interactive version](docs/android-architecture.html); open it from a clone, GitHub shows HTML as source):
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/android-architecture-dark.png">
+  <img src="docs/images/android-architecture-light.png" alt="Android dictation path: You tap the mic key in FlorisImeService, the voice panel starts WavRecorder with voice activity detection, speech segments go to SherpaEngine (Parakeet, on-device), which loads the model files; raw text goes to TextCleanup, then DictationJoin and Output commit it into the app you type in. The voice panel saves History; the keyboard asks the Predictor for suggestions. ModelStore downloads the model once over HTTPS from the sherpa-onnx GitHub release, verifies and unpacks it." width="100%">
+</picture>
 
 Every module, the dictation pipeline step by step, the update channel and CI: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 A file-level map: [docs/ci/CODEBASE_MAP.md](docs/ci/CODEBASE_MAP.md).
@@ -311,7 +358,9 @@ The sherpa-onnx Android library is downloaded once during the build and checked 
 models are not in the APK. Without the release-signing environment variables, the release build is signed with the
 development key ([docs/RELEASE_SIGNING.md](docs/RELEASE_SIGNING.md)).
 
-CI (`.github/workflows/`): `keyboard.yml` (Android tests and APKs), `android-release.yml` (signed APK and AAB),
+CI (`.github/workflows/`): `keyboard.yml` (Android unit tests with coverage, Android lint, APKs),
+`android-emulator.yml` (smoke test and measurements on an emulator), `quality.yml` (ktlint, detekt, gitleaks, site
+check), `codeql.yml`, `android-release.yml` (signed APK and AAB),
 `desktop.yml` (installers for every desktop platform), `ios.yml` (tests, screenshots, unsigned `.ipa`), `screens.yml`,
 `wer-bench.yml`, `release.yml` (a tagged release end to end) and `pages.yml` (website and update mirror).
 
@@ -324,6 +373,8 @@ CI (`.github/workflows/`): `keyboard.yml` (Android tests and APKs), `android-rel
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Modules, the dictation pipeline, the update channel, CI |
 | [docs/BRAND.md](docs/BRAND.md) | Colours, icon, design tokens across Android, desktop, iOS and the site |
 | [docs/RELEASING.md](docs/RELEASING.md) | Versioning, signing, release assets, update feeds, tagging |
+| [docs/ci/STATIC_ANALYSIS.md](docs/ci/STATIC_ANALYSIS.md) | Every CI quality gate, and how the lint baselines were made |
+| [docs/ci/COVERAGE.md](docs/ci/COVERAGE.md) | Unit-test coverage before and after 1.7.1, and what the new tests cover |
 | [docs/IOS_SIDELOAD.md](docs/IOS_SIDELOAD.md) | Installing the unsigned iOS build |
 | [docs/README.md](docs/README.md) | Index of all documentation, audits and CI notes |
 
