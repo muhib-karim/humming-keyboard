@@ -11,7 +11,9 @@ the JSON each run wrote is committed next to this file.
 | Whole app module (FlorisBoard base included) | 10.5 % (2,844 of 27,196) | 11.0 % (2,979 of 27,181) |
 
 Files: [`coverage/before-3b01d65-run39710080284.json`](coverage/before-3b01d65-run39710080284.json),
-[`coverage/after-33a14bb-run39713465530.json`](coverage/after-33a14bb-run39713465530.json).
+[`coverage/after-33a14bb-run39713465530.json`](coverage/after-33a14bb-run39713465530.json); the per-class line counts quoted
+below are in [`coverage/after-33a14bb-run39713465530-classes.json`](coverage/after-33a14bb-run39713465530-classes.json)
+(taken from that run's JaCoCo XML report).
 
 ## What the new tests cover
 
@@ -22,8 +24,9 @@ Files: [`coverage/before-3b01d65-run39710080284.json`](coverage/before-3b01d65-r
 | Language switching | `SubtypeCycleTest` (6 tests) | next / previous with wrap-around, one language, an active language that was removed, an empty list. `SubtypeCycle`: 7 of 7 lines. |
 | Text post-processing | `TextPostProcessingTest` (10 tests) | each clean-up stage on its own (`compactTimes`, `removeRepeats`, `applyDictionary`, `finish`, `selfCorrect`, `retract`) and the audio helpers (`AudioClip`, WAV header). |
 
-All 34 new tests passed in CI. The regex expectations in `TextPostProcessingTest` were also checked before CI with a
-`java.util.regex` mirror (18 of 18), because nothing is built on the development machine.
+All 34 new tests passed in CI (keyboard.yml runs 39711763314 and 39713465530). Before CI, the regex expectations in
+`TextPostProcessingTest` were also checked on the development machine with a throwaway `java.util.regex` mirror (18 of
+18 matched); that mirror is not in the repository, so CI is the record.
 
 ## Reading the numbers
 

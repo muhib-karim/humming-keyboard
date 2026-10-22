@@ -60,9 +60,10 @@ sample sentence, because CI machines have no microphone. Sample text is made up.
 
 No new features; 1.7.1 proves what 1.7.0 does ([changelog](CHANGELOG.md)).
 
-- **An emulator test on every push** ([`android-emulator.yml`](.github/workflows/android-emulator.yml)): Android 14
+- **An emulator test for every keyboard change** ([`android-emulator.yml`](.github/workflows/android-emulator.yml), on
+  pushes and pull requests that touch `keyboard/`): Android 14
   emulator, Humming switched on as the keyboard, its settings opened, "hello" typed by tapping its own keys. The
-  screenshots below come from that job, unedited.
+  screenshots below come from that job, only scaled down.
 - **Measured on that emulator**: cold start and voice-model load time ([table](#on-an-android-emulator)).
 - **More unit tests** for model download and verification, settings, language switching and each clean-up step:
   line coverage of Humming's own Android code 42.2 % → 48.2 % ([docs/ci/COVERAGE.md](docs/ci/COVERAGE.md)).

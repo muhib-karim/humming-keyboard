@@ -1,0 +1,439 @@
+{
+ "run": "39713465530",
+ "commit": "33a14bb",
+ "source": "keyboard-apk artifact, keyboard/app/build/reports/coverage/test/debug/report.xml",
+ "line_counters_by_class": {
+  "com/humming/keyboard/AppUpdate": {
+   "covered": 0,
+   "missed": 181
+  },
+  "com/humming/keyboard/AppUpdate$Status": {
+   "covered": 0,
+   "missed": 6
+  },
+  "com/humming/keyboard/AppVocabulary": {
+   "covered": 17,
+   "missed": 0
+  },
+  "com/humming/keyboard/AppVocabulary$Line": {
+   "covered": 1,
+   "missed": 0
+  },
+  "com/humming/keyboard/AudioClip": {
+   "covered": 13,
+   "missed": 0
+  },
+  "com/humming/keyboard/BanglaPhonetic": {
+   "covered": 99,
+   "missed": 5
+  },
+  "com/humming/keyboard/BanglaPhonetic$Consonant": {
+   "covered": 1,
+   "missed": 0
+  },
+  "com/humming/keyboard/BanglaPhonetic$Vowel": {
+   "covered": 1,
+   "missed": 0
+  },
+  "com/humming/keyboard/BluetoothMic": {
+   "covered": 5,
+   "missed": 14
+  },
+  "com/humming/keyboard/BluetoothMic$Route": {
+   "covered": 0,
+   "missed": 9
+  },
+  "com/humming/keyboard/BoundedRead": {
+   "covered": 8,
+   "missed": 0
+  },
+  "com/humming/keyboard/ClipTime": {
+   "covered": 14,
+   "missed": 2
+  },
+  "com/humming/keyboard/CoreLoader": {
+   "covered": 11,
+   "missed": 28
+  },
+  "com/humming/keyboard/DictationJoin": {
+   "covered": 30,
+   "missed": 0
+  },
+  "com/humming/keyboard/DictationOutput": {
+   "covered": 62,
+   "missed": 1
+  },
+  "com/humming/keyboard/DictationOutput$State": {
+   "covered": 1,
+   "missed": 0
+  },
+  "com/humming/keyboard/DictationOutput$Target": {
+   "covered": 8,
+   "missed": 0
+  },
+  "com/humming/keyboard/DictationPipeline": {
+   "covered": 0,
+   "missed": 10
+  },
+  "com/humming/keyboard/DictationPipeline$Result": {
+   "covered": 0,
+   "missed": 1
+  },
+  "com/humming/keyboard/DictationService": {
+   "covered": 0,
+   "missed": 26
+  },
+  "com/humming/keyboard/DictationService$Companion": {
+   "covered": 0,
+   "missed": 35
+  },
+  "com/humming/keyboard/EnergySegmenter": {
+   "covered": 0,
+   "missed": 5
+  },
+  "com/humming/keyboard/FieldPrivacy": {
+   "covered": 8,
+   "missed": 0
+  },
+  "com/humming/keyboard/GboardHandoff": {
+   "covered": 3,
+   "missed": 8
+  },
+  "com/humming/keyboard/GboardHandoff$Ime": {
+   "covered": 1,
+   "missed": 0
+  },
+  "com/humming/keyboard/GboardHandoff$Target": {
+   "covered": 1,
+   "missed": 0
+  },
+  "com/humming/keyboard/GifSearch": {
+   "covered": 20,
+   "missed": 38
+  },
+  "com/humming/keyboard/GifSearch$Gif": {
+   "covered": 10,
+   "missed": 0
+  },
+  "com/humming/keyboard/HistoryEntry": {
+   "covered": 0,
+   "missed": 7
+  },
+  "com/humming/keyboard/HistoryRetention": {
+   "covered": 10,
+   "missed": 0
+  },
+  "com/humming/keyboard/HistoryStore": {
+   "covered": 0,
+   "missed": 62
+  },
+  "com/humming/keyboard/HummingA11y": {
+   "covered": 14,
+   "missed": 10
+  },
+  "com/humming/keyboard/HummingBackup": {
+   "covered": 29,
+   "missed": 31
+  },
+  "com/humming/keyboard/HummingFloat": {
+   "covered": 3,
+   "missed": 1
+  },
+  "com/humming/keyboard/KeyTiming": {
+   "covered": 3,
+   "missed": 0
+  },
+  "com/humming/keyboard/KeyboardBackground": {
+   "covered": 0,
+   "missed": 19
+  },
+  "com/humming/keyboard/ListFormat": {
+   "covered": 72,
+   "missed": 1
+  },
+  "com/humming/keyboard/LlmCleanup": {
+   "covered": 1,
+   "missed": 50
+  },
+  "com/humming/keyboard/LlmCleanup$Provider": {
+   "covered": 5,
+   "missed": 0
+  },
+  "com/humming/keyboard/LlmCleanup$Provider$Companion": {
+   "covered": 0,
+   "missed": 1
+  },
+  "com/humming/keyboard/LocalEngine": {
+   "covered": 0,
+   "missed": 5
+  },
+  "com/humming/keyboard/LocalEngine$DefaultImpls": {
+   "covered": 0,
+   "missed": 5
+  },
+  "com/humming/keyboard/MockTranscriber": {
+   "covered": 0,
+   "missed": 5
+  },
+  "com/humming/keyboard/ModelDownloader": {
+   "covered": 0,
+   "missed": 56
+  },
+  "com/humming/keyboard/ModelDownloader$State": {
+   "covered": 0,
+   "missed": 9
+  },
+  "com/humming/keyboard/ModelPolicy": {
+   "covered": 11,
+   "missed": 0
+  },
+  "com/humming/keyboard/ModelPolicy$Decision": {
+   "covered": 1,
+   "missed": 0
+  },
+  "com/humming/keyboard/ModelStore": {
+   "covered": 66,
+   "missed": 7
+  },
+  "com/humming/keyboard/OnDeviceTranscriber": {
+   "covered": 0,
+   "missed": 8
+  },
+  "com/humming/keyboard/OnlineSession": {
+   "covered": 0,
+   "missed": 41
+  },
+  "com/humming/keyboard/OnlineSession$Companion": {
+   "covered": 0,
+   "missed": 8
+  },
+  "com/humming/keyboard/OnlineSession$listener$1": {
+   "covered": 0,
+   "missed": 23
+  },
+  "com/humming/keyboard/PermissionActivity": {
+   "covered": 0,
+   "missed": 17
+  },
+  "com/humming/keyboard/Prefs": {
+   "covered": 26,
+   "missed": 0
+  },
+  "com/humming/keyboard/SecretStore": {
+   "covered": 0,
+   "missed": 25
+  },
+  "com/humming/keyboard/Segmenter": {
+   "covered": 73,
+   "missed": 5
+  },
+  "com/humming/keyboard/SettingsIndex": {
+   "covered": 96,
+   "missed": 0
+  },
+  "com/humming/keyboard/SettingsIndex$Entry": {
+   "covered": 1,
+   "missed": 0
+  },
+  "com/humming/keyboard/SettingsIndex$Screen": {
+   "covered": 1,
+   "missed": 0
+  },
+  "com/humming/keyboard/SharedUriPolicy": {
+   "covered": 2,
+   "missed": 0
+  },
+  "com/humming/keyboard/SherpaEngine": {
+   "covered": 0,
+   "missed": 37
+  },
+  "com/humming/keyboard/SileroSegmenter": {
+   "covered": 0,
+   "missed": 29
+  },
+  "com/humming/keyboard/SileroSegmenter$Companion": {
+   "covered": 0,
+   "missed": 8
+  },
+  "com/humming/keyboard/SpeechSegmenter": {
+   "covered": 0,
+   "missed": 1
+  },
+  "com/humming/keyboard/SpeechSegmenter$DefaultImpls": {
+   "covered": 0,
+   "missed": 1
+  },
+  "com/humming/keyboard/SplitLayout": {
+   "covered": 11,
+   "missed": 0
+  },
+  "com/humming/keyboard/Stickers": {
+   "covered": 19,
+   "missed": 50
+  },
+  "com/humming/keyboard/Stickers$Source": {
+   "covered": 1,
+   "missed": 0
+  },
+  "com/humming/keyboard/Stickers$Sticker": {
+   "covered": 1,
+   "missed": 0
+  },
+  "com/humming/keyboard/StreamingSession": {
+   "covered": 0,
+   "missed": 104
+  },
+  "com/humming/keyboard/StreamingSession$Result": {
+   "covered": 0,
+   "missed": 11
+  },
+  "com/humming/keyboard/SubtypeCycle": {
+   "covered": 7,
+   "missed": 0
+  },
+  "com/humming/keyboard/TestAudio": {
+   "covered": 0,
+   "missed": 2
+  },
+  "com/humming/keyboard/TextCleanup": {
+   "covered": 157,
+   "missed": 6
+  },
+  "com/humming/keyboard/TranscriberUnavailable": {
+   "covered": 0,
+   "missed": 1
+  },
+  "com/humming/keyboard/Transcribers": {
+   "covered": 0,
+   "missed": 4
+  },
+  "com/humming/keyboard/UpdateInstallReceiver": {
+   "covered": 0,
+   "missed": 10
+  },
+  "com/humming/keyboard/UpdatePolicy": {
+   "covered": 21,
+   "missed": 0
+  },
+  "com/humming/keyboard/UpdatePolicy$Release": {
+   "covered": 1,
+   "missed": 0
+  },
+  "com/humming/keyboard/UseCount": {
+   "covered": 5,
+   "missed": 0
+  },
+  "com/humming/keyboard/UtilKt": {
+   "covered": 0,
+   "missed": 1
+  },
+  "com/humming/keyboard/VoiceCommands": {
+   "covered": 31,
+   "missed": 0
+  },
+  "com/humming/keyboard/VoiceCommands$Result": {
+   "covered": 1,
+   "missed": 0
+  },
+  "com/humming/keyboard/VoiceModel": {
+   "covered": 14,
+   "missed": 0
+  },
+  "com/humming/keyboard/VoiceModel$Kind": {
+   "covered": 1,
+   "missed": 0
+  },
+  "com/humming/keyboard/VoiceModels": {
+   "covered": 35,
+   "missed": 0
+  },
+  "com/humming/keyboard/Wav": {
+   "covered": 19,
+   "missed": 0
+  },
+  "com/humming/keyboard/WavRecorder": {
+   "covered": 0,
+   "missed": 107
+  },
+  "com/humming/keyboard/predict/HummingLm": {
+   "covered": 102,
+   "missed": 4
+  },
+  "com/humming/keyboard/predict/HummingLm$Companion": {
+   "covered": 1,
+   "missed": 0
+  },
+  "com/humming/keyboard/predict/HummingLm$State": {
+   "covered": 1,
+   "missed": 0
+  },
+  "com/humming/keyboard/predict/HummingLm$cache$1": {
+   "covered": 2,
+   "missed": 0
+  },
+  "com/humming/keyboard/predict/Lexicon": {
+   "covered": 51,
+   "missed": 2
+  },
+  "com/humming/keyboard/predict/Lexicon$Companion": {
+   "covered": 20,
+   "missed": 0
+  },
+  "com/humming/keyboard/predict/Ngrams": {
+   "covered": 48,
+   "missed": 0
+  },
+  "com/humming/keyboard/predict/Ngrams$Entry": {
+   "covered": 2,
+   "missed": 0
+  },
+  "com/humming/keyboard/predict/Ngrams$cache$1": {
+   "covered": 2,
+   "missed": 0
+  },
+  "com/humming/keyboard/predict/PredictionEngine": {
+   "covered": 4,
+   "missed": 31
+  },
+  "com/humming/keyboard/predict/Predictor": {
+   "covered": 158,
+   "missed": 2
+  },
+  "com/humming/keyboard/predict/Predictor$Candidate": {
+   "covered": 1,
+   "missed": 0
+  },
+  "com/humming/keyboard/predict/Predictor$Companion": {
+   "covered": 63,
+   "missed": 1
+  },
+  "com/humming/keyboard/predict/Predictor$Result": {
+   "covered": 5,
+   "missed": 0
+  },
+  "com/humming/keyboard/predict/Predictor$Settings": {
+   "covered": 9,
+   "missed": 0
+  },
+  "com/humming/keyboard/predict/StripOrder": {
+   "covered": 23,
+   "missed": 0
+  },
+  "com/humming/keyboard/predict/StripOrder$Kind": {
+   "covered": 1,
+   "missed": 0
+  },
+  "com/humming/keyboard/predict/StripOrder$Slot": {
+   "covered": 1,
+   "missed": 0
+  },
+  "com/humming/keyboard/predict/TextShortcuts": {
+   "covered": 11,
+   "missed": 0
+  },
+  "com/humming/keyboard/predict/UserModel": {
+   "covered": 71,
+   "missed": 8
+  }
+ }
+}
