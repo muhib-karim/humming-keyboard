@@ -1,0 +1,79 @@
+name: quality
+
+# Humming 1.7.1 gates that need no Android build (docs/ci/STATIC_ANALYSIS.md):
+#   - ktlint and detekt on the Android keyboard's Kotlin, pinned release files, each with a committed baseline in
+#     keyboard/config/ that holds only findings from before 1.7.1 (a missing baseline fails, it is never auto-created);
+#   - gitleaks over the whole git history;
+#   - the website: assembled exactly as pages.yml does, then every link, image and anchor checked;
+#   - the Python release, coverage and emulator-metrics script tests.
+# Android lint is the "lint" job in keyboard.yml; CodeQL is codeql.yml.
+on:
+  push:
+    branches: ["main", "upgrade/**"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  kotlin:
+    name: ktlint + detekt
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: ktlint
+        run: bash keyboard/ci/static_checks.sh ktlint
+      - name: detekt
+        if: ${{ !cancelled() }}
+        run: bash keyboard/ci/static_checks.sh detekt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: static-analysis
+          path: build/static/
+          if-no-files-found: ignore
+          retention-days: 30
+
+  gitleaks:
+    name: gitleaks (full history)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GITLEAKS_VERSION: "8.21.2"
+      GITLEAKS_SHA256: "5bc41815076e6ed6ef8fbecc9d9b75bcae31f39029ceb55da08086315316e3ba"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install gitleaks (release archive, SHA-256 pinned)
+        run: |
+          set -euo pipefail
+          cd "$RUNNER_TEMP"
+          curl -fsSL --retry 3 -o gl.tgz "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          echo "$GITLEAKS_SHA256  gl.tgz" | sha256sum -c -
+          tar xzf gl.tgz gitleaks
+      - name: Scan every commit
+        run: '"$RUNNER_TEMP/gitleaks" git --no-banner --redact --verbose .'
+
+  site-and-scripts:
+    name: website check + script tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Assemble and check the website (same scripts as pages.yml)
+        run: |
+          python3 scripts/assemble_site.py _site
+          python3 scripts/check_site.py _site
+      - name: Script tests
+        run: python3 -m unittest -v scripts/test_assemble_release.py scripts/test_coverage_summary.py scripts/test_emulator_metrics.py

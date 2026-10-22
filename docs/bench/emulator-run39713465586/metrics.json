@@ -1,0 +1,40 @@
+{
+  "image": "system-images;android-34;google_apis;x86_64",
+  "date": "2026-10-22",
+  "run": "39713465586",
+  "commit": "33a14bb",
+  "cold_start_build": "benchmark build type (release settings: R8, resource shrinking), debug-signed",
+  "cold_start_ms": {
+    "n": 10,
+    "median": 605,
+    "min": 528,
+    "max": 1329,
+    "values": [
+      627,
+      637,
+      658,
+      1329,
+      617,
+      593,
+      557,
+      587,
+      556,
+      528
+    ]
+  },
+  "model_load": {
+    "model": "fast",
+    "first_load_ms": 1017,
+    "repeat_load_median_ms": 867,
+    "load_ms": [
+      1017,
+      896,
+      838
+    ],
+    "warmup_decode_ms": 97,
+    "download_ms": 46347,
+    "threads": 2,
+    "abi": "x86_64",
+    "sdk": 34
+  }
+}

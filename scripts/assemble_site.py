@@ -20,6 +20,8 @@ SCREENSHOTS = [
     "android_clipboard.png", "android_keyboard_dark.png", "android_themes.gif", "android_settings_voice.png",
     "ios_dictate.png", "ios_dictate_dark.png", "ios_keyboard.png", "ios_settings.png", "ios_walkthrough.gif",
     "desktop_home.png", "desktop_home_dark.png", "desktop_history.png", "desktop_settings.png", "desktop_dictation.gif",
+    # 1.7.1: the CI emulator run (android-emulator.yml), unedited apart from scaling to 540x1200.
+    "emulator_settings_home.png", "emulator_keyboard.png", "emulator_typed.png",
 ]
 
 

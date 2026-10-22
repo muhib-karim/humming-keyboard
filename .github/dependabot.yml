@@ -1,0 +1,22 @@
+# Humming 1.7.1: weekly dependency updates for the Android build (Gradle version catalog and build files in keyboard/)
+# and for the GitHub Actions used by the workflows. Each ecosystem's updates arrive grouped in one pull request.
+version: 2
+updates:
+  - package-ecosystem: gradle
+    directory: /keyboard
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      gradle:
+        patterns: ["*"]
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      actions:
+        patterns: ["*"]

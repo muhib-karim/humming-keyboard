@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "finalize",
+  "status": "pass",
+  "type": "architecture",
+  "quality": "showcase",
+  "specification": {
+    "path": "docs/android-architecture.archify.json",
+    "sha256": "c3f48575b753eb0f88eb777889c05203256c3055b25c05c81281e940cb87b346",
+    "bytes": 8575
+  },
+  "artifact": {
+    "path": "docs/android-architecture.html",
+    "sha256": "2f483c753d58bc328c9b5ebd933d731320b5c48c4cdfc60eb7dfa6266523819e",
+    "bytes": 838159
+  },
+  "gates": {
+    "validate": "pass",
+    "deliver": "pass",
+    "check": "pass",
+    "browser-check": "pass"
+  },
+  "diagnostics": [],
+  "diagnosticSummary": {
+    "total": 0,
+    "shown": 0,
+    "truncated": false
+  },
+  "evidence": {
+    "receipt": "docs/android-architecture.finalize.json",
+    "summaryReceipt": "docs/android-architecture.finalize-summary.json",
+    "browserCheckReceipt": "docs/android-architecture.browser-check.json"
+  },
+  "visualReview": "not-requested",
+  "durationMs": 5843
+}

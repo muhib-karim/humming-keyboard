@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import org.gradle.testing.jacoco.plugins.JacocoTaskExtension
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.net.URI
 import java.security.MessageDigest
@@ -168,6 +169,8 @@ android {
 
             isDebuggable = true
             isJniDebuggable = false
+            // Humming 1.7.1: JaCoCo line coverage of the unit tests (createDebugUnitTestCoverageReport, keyboard.yml).
+            enableUnitTestCoverage = true
             manifestPlaceholders["profileableShell"] = "true"
 
             // Humming: app icon and name
@@ -219,7 +222,11 @@ android {
     }
 
     lint {
-        baseline = file("lint.xml")
+        // Humming 1.7.1: lint is a CI gate (keyboard.yml, job "lint"). lint.xml in this directory is the rule
+        // configuration; lint-baseline.xml holds only the issues that existed before 1.7.1 (docs/ci/STATIC_ANALYSIS.md).
+        baseline = file("lint-baseline.xml")
+        abortOnError = true
+        checkDependencies = false
     }
 
     testOptions {
@@ -232,8 +239,23 @@ android {
     }
 }
 
-tasks.withType<Test> {
+// Humming 1.7.1: the instrumented-test APK inherits the build type's resValues, which point at the app's own icons
+// (@mipmap/ic_humming is not in the test APK) and break its resource linking. The test APK needs none of them.
+androidComponents {
+    onVariants { variant ->
+        variant.androidTest?.resValues?.empty()
+    }
+}
+
+// Robolectric loads classes through its own class loader; JaCoCo only counts them with includeNoLocationClasses.
+// The plugin is applied here so every Test task already has its extension when configureEach runs.
+apply(plugin = "jacoco")
+tasks.withType<Test>().configureEach {
     useJUnitPlatform()
+    configure<JacocoTaskExtension> {
+        isIncludeNoLocationClasses = true
+        excludes = listOf("jdk.internal.*")
+    }
 }
 
 dependencies {
@@ -284,8 +306,13 @@ dependencies {
     implementation("org.apache.commons:commons-compress:1.27.1")
     testImplementation("junit:junit:4.13.2")
     testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.13.4")
+    // Humming 1.7.1: settings and model-management tests on real SharedPreferences and files (PrefsTest, ModelStoreTest).
+    testImplementation("org.robolectric:robolectric:4.16.1")
     androidTestImplementation(libs.androidx.test.ext)
     androidTestImplementation(libs.androidx.test.espresso.core)
+    // Humming 1.7.1: the emulator smoke test drives the real keyboard with UiAutomator (ImeSmokeTest).
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.test.uiautomator)
 }
 
 fun getGitCommitHash(short: Boolean = false): Provider<String> {

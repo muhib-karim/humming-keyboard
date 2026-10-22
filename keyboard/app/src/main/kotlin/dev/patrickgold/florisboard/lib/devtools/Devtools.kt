@@ -154,7 +154,7 @@ object Devtools {
         return buildString {
             if (withTitle) appendLine("======= LOGCAT =======")
             try {
-                val process = Runtime.getRuntime().exec("logcat -d")
+                val process = ProcessBuilder("/system/bin/logcat", "-d").start()
                 val bufferedReader = BufferedReader(InputStreamReader(process.inputStream))
                 var line: String?
                 while (bufferedReader.readLine().also { line = it } != null) {

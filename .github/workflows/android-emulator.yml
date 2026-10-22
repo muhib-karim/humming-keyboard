@@ -1,0 +1,77 @@
+name: android-emulator
+
+# Humming 1.7.1: the keyboard on a real Android emulator (keyboard/ci/emulator_run.sh):
+#   - ImeSmokeTest: Humming enabled as the keyboard, Android's keyboard settings and Humming's settings opened, "hello"
+#     typed with Humming's keys; screenshots of each step;
+#   - ModelLoadBenchTest: the Fast voice model downloaded through the app and its load time measured;
+#   - cold start of the release-like "benchmark" build (R8, resource shrinking) with `am start -W`.
+# The numbers are labelled with the system image and the date (scripts/emulator_metrics.py). Artifacts only.
+on:
+  push:
+    branches: ["main", "upgrade/**"]
+    paths: ["keyboard/**", ".github/workflows/android-emulator.yml", "scripts/emulator_metrics.py"]
+  pull_request:
+    paths: ["keyboard/**", ".github/workflows/android-emulator.yml", "scripts/emulator_metrics.py"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-emulator-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  emulator:
+    name: smoke test + measurements (API 34 x86_64)
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      API_LEVEL: "34"
+      SYSTEM_IMAGE: "system-images;android-34;google_apis;x86_64"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Android SDK platform 36
+        run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "platforms;android-36" "build-tools;35.0.0" > /dev/null
+      - name: Restore gradlew exec bit (web upload drops file mode)
+        working-directory: keyboard
+        run: chmod +x gradlew
+      - name: Debug APK, its test APK and the benchmark APK (x86_64)
+        working-directory: keyboard
+        run: ./gradlew --no-daemon -Phumming.abis=x86_64 :app:assembleDebug :app:assembleDebugAndroidTest :app:assembleBenchmark
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Emulator run
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ env.API_LEVEL }}
+          target: google_apis
+          arch: x86_64
+          profile: pixel_6
+          ram-size: 4096M
+          disk-size: 6000M
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          script: bash keyboard/ci/emulator_run.sh emulator-out
+      - name: Measurements (system image and date on every number)
+        if: ${{ !cancelled() }}
+        run: |
+          set -euo pipefail
+          if [ ! -f emulator-out/cold_start.txt ]; then echo "::warning::no emulator measurements (the emulator step failed)"; exit 0; fi
+          python3 scripts/emulator_metrics.py emulator-out emulator-out/metrics.json --image "$SYSTEM_IMAGE" \
+            --date "$(date -u +%F)" --run "$GITHUB_RUN_ID" --commit "${GITHUB_SHA::7}" | tee emulator-out/metrics.md
+          cat emulator-out/metrics.md >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: emulator-run
+          path: emulator-out/
+          if-no-files-found: warn
+          retention-days: 30

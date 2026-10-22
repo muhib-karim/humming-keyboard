@@ -1,4 +1,67 @@
-# Handoff: v1.7.0-rc1 premium pass
+# Handoff: v1.7.1 quality pass
+
+Branch `upgrade/v1.7.1` (from `main` `6ac587d`). Every item in [TASKS.md](TASKS.md) is done except the GitHub Release,
+which needs a tag. Everything was built and tested by GitHub Actions, nothing locally.
+
+## Coordinator actions
+
+1. Review and merge `upgrade/v1.7.1` into `main` (not done here by rule). On `main`, `pages.yml` deploys the refreshed
+   site; check `https://muhib-karim.github.io/humming-keyboard/` shows the "On an Android emulator" block.
+2. Tag the merge commit: `git tag -a v1.7.1 -m "Humming 1.7.1" && git push origin v1.7.1`. `release.yml` builds every
+   platform (versions are already 1.7.1 / 1701 everywhere) and attaches the signed APK, AAB, desktop installers and
+   the unsigned `.ipa` to the release; its notes come from CHANGELOG `[1.7.1]`. Before tagging, change that entry's
+   "Status" bullet from branch state to "final release" (as the 1.7.0 entry says).
+3. Optional: enable Dependabot security updates in the repository settings (the version-update config is committed).
+
+## What CI proved on this branch
+
+- `keyboard.yml`: unit tests (34 new, all passing), JaCoCo coverage 42.2 % → 48.2 % of `com.humming.keyboard`
+  ([docs/ci/COVERAGE.md](docs/ci/COVERAGE.md)), Android lint gate, release APK.
+- `android-emulator.yml`: ImeSmokeTest and ModelLoadBenchTest pass on `system-images;android-34;google_apis;x86_64`;
+  the README and site numbers come from run 39713465586 (`docs/bench/emulator-run39713465586/`).
+- `quality.yml` (ktlint, detekt, gitleaks full history, site check, script tests), `codeql.yml`, `android-release.yml`
+  (signed APK + AAB, certificate matches), `desktop.yml` and `ios.yml` (version bump) all green.
+
+## CodeQL: 110 open alerts → 0 (coordinator's extra DoD item)
+
+Details per alert in [docs/ci/STATIC_ANALYSIS.md](docs/ci/STATIC_ANALYSIS.md#codeql).
+
+- Fixed: `java/zipslip` (high) in `ModelDownload.kt` (`ModelPolicy.outputFile`, normalised-path check, unit test),
+  `java/relative-path-command` in upstream `Devtools.kt` (absolute `/system/bin/logcat`), and Humming's own quality
+  findings (`HummingVoice` timer loop, `Lexicon` precedence, `UpdateInstallReceiver` via `IntentCompat`).
+- Excluded in `.github/codeql/codeql-config.yml`, with the written reason there and in the guide (no API dismissals):
+  `java/android/backup-enabled` (the query reads only `allowBackup`; the allow-list rules keep models, voice settings,
+  clipboard and history out, `BackupRulesTest`) and `java/android/missing-certificate-pinning` (third-party or
+  user-chosen endpoints; the update APK is checked by SHA-256 and signing certificate).
+- Upstream FlorisBoard quality notes: suite changed to `security-extended`, `**/build/generated/**` ignored. Kept on
+  purpose: `BluetoothMic`'s deprecated SCO calls (the only headset route on Android 8 to 11).
+- Owner's call, not changed: the privacy policy says a cloud backup *may* include the personal dictionary, while the
+  rules limit cloud backup to settings and themes (learned words go only in a device-to-device transfer). The policy
+  over-discloses; tighten its wording if wanted.
+
+## Review (requesting-code-review, one general-purpose subagent)
+
+0 Critical. Important: (1) upgrade branches uploaded production-signed artifacts: fixed, they still sign and verify
+but upload nothing (`bcc86cb`); (2) Dependabot PRs would fail the signed job without secrets: fixed, skipped for
+Dependabot (`bcc86cb`); (3) handoff files stale: fixed here; (4) the emulator job depends on a 104 MB download:
+mitigated with three resumable attempts (`8faa41a`). Minors fixed: test server survives client errors, wording of the
+emulator trigger, class-level coverage evidence. Minors left open:
+
+- Robolectric downloads its `android-all` SDK 34 jar from Maven Central at test time (build infrastructure, like any
+  Gradle dependency; app code under test makes no network calls). Pre-fetching it would make the unit tests work offline.
+- `SubtypeCycle` finds the active language by object equality, as the old loop did; matching by `id` would survive an
+  edit of the active language's layout in the same moment.
+- The site links to `tree/main/docs/bench/emulator-run39713465586`, which exists once the branch is merged.
+- If the emulator download still proves flaky: cache the model archive with `actions/cache` and `adb push` it.
+
+## Open items (next pass)
+
+- Unit tests for `HistoryStore` (0 of 62 lines covered) and a TalkBack-style accessibility pass in the emulator test.
+- Shrink the lint/ktlint/detekt baselines file by file (docs/ci/STATIC_ANALYSIS.md says how).
+- Still open from 1.7.0: candidate-strip restyle, dictation gaps D5-D9, pinning third-party actions to SHAs, named
+  secrets instead of `secrets: inherit` (see below).
+
+# Earlier handoff: v1.7.0-rc1 premium pass
 
 Branch `feat/v1.7-premium`. Every item in [TASKS.md](TASKS.md) is done except the one marked open below. Nothing was
 built locally (see CLAUDE.md), so every Kotlin, Rust and Swift change is **unverified until CI runs**.

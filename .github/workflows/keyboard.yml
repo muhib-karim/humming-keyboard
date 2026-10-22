@@ -1,9 +1,10 @@
 name: keyboard
 
-# Humming keyboard (FlorisBoard base, keyboard/): unit tests, debug APK and the release APK.
+# Humming keyboard (FlorisBoard base, keyboard/): unit tests with JaCoCo line coverage, debug APK, Android lint (a gate
+# with a baseline of pre-existing issues, docs/ci/STATIC_ANALYSIS.md) and the release APK.
 on:
   push:
-    branches: ["main"]
+    branches: ["main", "upgrade/**"]
     paths: ["keyboard/**", ".github/workflows/keyboard.yml"]
   pull_request:
     paths: ["keyboard/**", ".github/workflows/keyboard.yml"]
@@ -31,10 +32,18 @@ jobs:
       - name: Restore gradlew exec bit (web upload drops file mode)
         working-directory: keyboard
         run: chmod +x gradlew
-      - name: Unit tests + debug APK
+      - name: Unit tests (with coverage) + debug APK
         working-directory: keyboard
         # app module tests: upstream v0.5.2 lib:snygg tests reference a missing package and do not compile
-        run: ./gradlew --no-daemon :app:testDebugUnitTest :app:assembleDebug
+        run: ./gradlew --no-daemon :app:createDebugUnitTestCoverageReport :app:assembleDebug
+      - name: Line coverage (JaCoCo)
+        run: |
+          set -euo pipefail
+          XML=$(find keyboard/app/build/reports/coverage -name report.xml | head -1)
+          mkdir -p coverage
+          python3 scripts/coverage_summary.py "$XML" --prefix com/humming/keyboard --json coverage/coverage.json \
+            | tee coverage/coverage.md
+          { echo "### Unit-test line coverage"; cat coverage/coverage.md; } >> "$GITHUB_STEP_SUMMARY"
       - name: sha256
         run: cd keyboard/app/build/outputs/apk/debug && sha256sum *.apk | tee apk-sha256.txt
       - uses: actions/upload-artifact@v4
@@ -44,6 +53,35 @@ jobs:
           path: |
             keyboard/app/build/outputs/apk/debug/
             keyboard/app/build/reports/tests/
+            keyboard/app/build/reports/coverage/
+            coverage/
+          retention-days: 30
+
+  lint:
+    name: Android lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Android SDK platform 36
+        run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "platforms;android-36" "build-tools;35.0.0" > /dev/null
+      - name: Restore gradlew exec bit (web upload drops file mode)
+        working-directory: keyboard
+        run: chmod +x gradlew
+      - name: Lint (fails on any error not in app/lint-baseline.xml; a missing baseline is written and fails)
+        working-directory: keyboard
+        run: ./gradlew --no-daemon :app:lintDebug
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: android-lint
+          path: |
+            keyboard/app/build/reports/lint-results-debug.*
+            keyboard/app/lint-baseline.xml
           retention-days: 30
 
   release:

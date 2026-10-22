@@ -1,0 +1,25 @@
+# Humming 1.7.1: CodeQL configuration for codeql.yml. Every choice here is explained in docs/ci/STATIC_ANALYSIS.md
+# ("CodeQL"); change both together.
+name: humming-codeql
+
+# Security queries, including the lower-precision ones. Code quality is gated by ktlint, detekt and Android lint
+# (quality.yml, keyboard.yml); the security-and-quality suite's ~100 maintainability notes were almost all in upstream
+# FlorisBoard code that Humming does not rewrite.
+queries:
+  - uses: security-extended
+
+# Code generated at build time (KSP: Room databases, the preference model) is not source anyone edits.
+paths-ignore:
+  - "**/build/generated/**"
+
+query-filters:
+  # Certificate pinning: the three HTTPS clients talk to endpoints whose certificates Humming does not control (the
+  # update feed on GitHub/Cloudflare Pages, Openverse for GIF search, the user's own AI provider). Pinning would break
+  # them at the next certificate rotation; an update APK is accepted only with Humming's signing certificate anyway.
+  - exclude:
+      id: java/android/missing-certificate-pinning
+  # Backup: the query reads only android:allowBackup. The manifest's dataExtractionRules and fullBackupContent are
+  # allow-lists (keyboard settings and installed themes only); models, voice settings, custom words, clipboard and
+  # dictation history are never backed up, which BackupRulesTest checks.
+  - exclude:
+      id: java/android/backup-enabled

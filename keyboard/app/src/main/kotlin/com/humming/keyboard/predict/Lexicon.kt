@@ -56,8 +56,8 @@ class Lexicon private constructor(
     fun key(i: Int): String = keys[i]
     fun display(i: Int): String = display[i]
     fun logP(i: Int): Float = logP[i]
-    fun isOffensive(i: Int): Boolean = flags[i].toInt() and FLAG_OFFENSIVE != 0
-    fun isAbbreviation(i: Int): Boolean = flags[i].toInt() and FLAG_ABBREV != 0
+    fun isOffensive(i: Int): Boolean = (flags[i].toInt() and FLAG_OFFENSIVE) != 0
+    fun isAbbreviation(i: Int): Boolean = (flags[i].toInt() and FLAG_ABBREV) != 0
 
     /** Word indices of a given length (for the typo search). */
     fun ofLength(len: Int): IntArray = if (len in 0..MAX_LEN) byLen[len] else IntArray(0)
