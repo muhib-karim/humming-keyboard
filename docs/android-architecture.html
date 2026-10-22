@@ -5333,8 +5333,8 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
         <text data-detail="context" x="1160" y="86" class="t-muted" font-size="9" text-anchor="middle">app storage, verified</text>
         </g>
 
-        <g id="node-modelstore" data-node-id="modelstore" data-node-label="ModelStore" tabindex="0" role="button" aria-label="Focus ModelStore, download, verify, unpack, Humming app process on the phone" aria-pressed="false" data-node-kind="backend" data-node-sublabel="download, verify, unpack" data-node-tag="only network use" data-node-context="Humming app process on the phone">
-          <title>ModelStore · download, verify, unpack · Humming app process on the phone · only network use</title>
+        <g id="node-modelstore" data-node-id="modelstore" data-node-label="ModelStore" tabindex="0" role="button" aria-label="Focus ModelStore, download, verify, unpack, Humming app process on the phone" aria-pressed="false" data-node-kind="backend" data-node-sublabel="download, verify, unpack" data-node-tag="voice path&#39;s only network" data-node-context="Humming app process on the phone">
+          <title>ModelStore · download, verify, unpack · Humming app process on the phone · voice path&#39;s only network</title>
           <rect x="1090" y="210" width="140" height="64" rx="8" class="c-mask"/>
           <rect x="1090" y="210" width="140" height="64" rx="8" class="c-backend" data-animate="node" style="--step:8" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(1096 216) scale(0.6875)">
@@ -5342,7 +5342,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
           </g>
           <text data-node-label="" data-detail-anchor="" x="1160" y="240" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">ModelStore</text>
         <text data-detail="context" x="1160" y="256" class="t-muted" font-size="9" text-anchor="middle">download, verify, unpack</text>
-        <text data-detail="fine" x="1160" y="266" class="t-backend" font-size="7" text-anchor="middle">only network use</text>
+        <text data-detail="fine" x="1160" y="266" class="t-backend" font-size="7" text-anchor="middle">voice path&#39;s only network</text>
         </g>
 
         <g id="node-github" data-node-id="github" data-node-label="sherpa-onnx releases" tabindex="0" role="button" aria-label="Focus sherpa-onnx releases, GitHub, SHA-256 pinned, Architecture component" aria-pressed="false" data-node-kind="external" data-node-sublabel="GitHub, SHA-256 pinned" data-node-context="Architecture component">
@@ -5673,8 +5673,9 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
           <h3>Offline by default</h3>
         </div>
         <ul>
-          <li>ModelStore is the only code that opens a socket: one model download, SHA-256 checked</li>
+          <li>On the voice path only ModelStore opens a socket: one model download, SHA-256 checked</li>
           <li>Recording, VAD, recognition, clean-up and history stay on the phone</li>
+          <li>GIF search, AI clean-up and update checks are opt-in and off the voice path (NetworkAuditTest)</li>
         </ul>
       </div>
 

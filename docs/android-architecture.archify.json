@@ -185,7 +185,7 @@
      "end_line": 151
     }
    ],
-   "tag": "only network use"
+   "tag": "voice path's only network"
   },
   {
    "id": "github",
@@ -439,8 +439,9 @@
    "dot": "emerald",
    "title": "Offline by default",
    "items": [
-    "ModelStore is the only code that opens a socket: one model download, SHA-256 checked",
-    "Recording, VAD, recognition, clean-up and history stay on the phone"
+    "On the voice path only ModelStore opens a socket: one model download, SHA-256 checked",
+    "Recording, VAD, recognition, clean-up and history stay on the phone",
+    "GIF search, AI clean-up and update checks are opt-in and off the voice path (NetworkAuditTest)"
    ]
   },
   {

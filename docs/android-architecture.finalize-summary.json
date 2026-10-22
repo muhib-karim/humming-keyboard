@@ -7,13 +7,13 @@
   "quality": "showcase",
   "specification": {
     "path": "docs/android-architecture.archify.json",
-    "sha256": "dc85a39cda8778c38b45b10de7d2bc36719721ad98b65cf0c2cdeba0f312ea79",
-    "bytes": 8463
+    "sha256": "c3f48575b753eb0f88eb777889c05203256c3055b25c05c81281e940cb87b346",
+    "bytes": 8575
   },
   "artifact": {
     "path": "docs/android-architecture.html",
-    "sha256": "bdbdbe0687dd9a7461c81eb9c07244764a3468286d7099568ea59a4a2593db14",
-    "bytes": 838005
+    "sha256": "2f483c753d58bc328c9b5ebd933d731320b5c48c4cdfc60eb7dfa6266523819e",
+    "bytes": 838159
   },
   "gates": {
     "validate": "pass",
@@ -33,5 +33,5 @@
     "browserCheckReceipt": "docs/android-architecture.browser-check.json"
   },
   "visualReview": "not-requested",
-  "durationMs": 6461
+  "durationMs": 5843
 }
