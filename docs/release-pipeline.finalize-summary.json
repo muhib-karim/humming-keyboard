@@ -6,12 +6,12 @@
   "type": "workflow",
   "quality": "showcase",
   "specification": {
-    "path": "/home/user/pro_finish/hk17/.archify/workflow-release-pipeline-20261017/candidate.json",
+    "path": ".archify/workflow-release-pipeline-20261017/candidate.json",
     "sha256": "db0ca7524693288b155d73f8416d8dc9db3caedb9de619972a221a28fcb2525b",
     "bytes": 7266
   },
   "artifact": {
-    "path": "/home/user/pro_finish/hk17/docs/release-pipeline.html",
+    "path": "<local path>",
     "sha256": "4c41dc42c48a82d3bf4bc8e66351969ea4083842d748195a1355fd7c1c995a5e",
     "bytes": 825975
   },
@@ -28,9 +28,9 @@
     "truncated": false
   },
   "evidence": {
-    "receipt": "/home/user/pro_finish/hk17/docs/release-pipeline.finalize.json",
-    "summaryReceipt": "/home/user/pro_finish/hk17/docs/release-pipeline.finalize-summary.json",
-    "browserCheckReceipt": "/home/user/pro_finish/hk17/docs/release-pipeline.browser-check.json"
+    "receipt": "<local path>",
+    "summaryReceipt": "<local path>",
+    "browserCheckReceipt": "<local path>"
   },
   "visualReview": "not-requested",
   "durationMs": 15988
