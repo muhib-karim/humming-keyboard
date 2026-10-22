@@ -37,8 +37,8 @@ jobs:
       EXPECTED_CERT_SHA256: "8C:8B:68:BB:E6:3A:A4:2A:85:61:59:AA:A5:B0:C9:0C:D9:54:EE:F7:8A:98:0D:39:BC:B6:69:41:75:3E:1F:C6"
       BUILD_TOOLS: "35.0.0"
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: "17"
@@ -128,7 +128,7 @@ jobs:
 
       # 1.7.1: upgrade/** branch pushes sign and verify the certificate, but keep no production-signed artifact of
       # code that is not reviewed yet; main, pull requests, tags (release.yml) and manual runs upload as before.
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: ${{ !startsWith(github.ref, 'refs/heads/upgrade/') }}
         with:
           name: humming-keyboard-signed-release

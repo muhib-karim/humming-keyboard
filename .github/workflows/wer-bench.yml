@@ -36,8 +36,8 @@ jobs:
     env:
       BENCH_DEVICE: ${{ matrix.device }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.11"
       - name: Tools
@@ -62,7 +62,7 @@ jobs:
         run: |
           python keyboard/ci/wer_bench.py m LibriSpeech wer.json "${{ inputs.n_clean || '200' }}" "${{ inputs.n_other || '100' }}" | tee bench.log
           { echo "### $BENCH_DEVICE"; echo '```'; cat wer.json; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: wer-bench-${{ matrix.os }}
           path: |

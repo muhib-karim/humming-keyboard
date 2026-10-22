@@ -31,7 +31,7 @@ jobs:
     runs-on: ubuntu-22.04
     timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: System libraries
         run: |
           sudo apt-get update -qq
@@ -57,7 +57,7 @@ jobs:
             cargo clean -p sherpa-onnx-sys || true
             for t in $(echo "${RUST_TARGETS:-}" | tr ',' ' '); do cargo clean -p sherpa-onnx-sys --target "$t" || true; done
           fi
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 20
           cache: npm
@@ -83,7 +83,7 @@ jobs:
       - name: core tests without whisper.cpp (VAD, lists, dictionary)
         working-directory: core
         run: cargo test --no-default-features --lib
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: desktop-Cargo.lock
@@ -114,14 +114,14 @@ jobs:
     env:
       MACOSX_DEPLOYMENT_TARGET: "11.0"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: System libraries (Linux)
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y -qq libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev \
             libasound2-dev libxdo-dev libssl-dev cmake clang patchelf file > /dev/null
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 20
           cache: npm
@@ -172,7 +172,7 @@ jobs:
           echo "::warning::no updater signing key in this run: building installers without self-update bundles"
           echo '{"bundle":{"createUpdaterArtifacts":false}}' > src-tauri/tauri.unsigned.conf.json
           echo "signed=false" >> "$GITHUB_OUTPUT"; echo "args=--config src-tauri/tauri.unsigned.conf.json" >> "$GITHUB_OUTPUT"
-      - uses: tauri-apps/tauri-action@v0
+      - uses: tauri-apps/tauri-action@v1
         env:
           # Updater signing key (minisign). Signs the self-update bundles; the public half is in tauri.conf.json.
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
@@ -207,7 +207,7 @@ jobs:
           ls -l
           { echo "### ${{ matrix.name }}"; echo '```'; ls -l; cat SHA256SUMS.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
           test "$(ls | wc -l)" -ge 2
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: humming-desktop-${{ matrix.name }}
           path: out/
