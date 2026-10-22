@@ -2,7 +2,6 @@ package com.humming.keyboard
 
 import android.app.Application
 import android.content.Context
-import com.sun.net.httpserver.HttpServer
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream
@@ -20,19 +19,21 @@ import org.robolectric.annotation.Config
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
-import java.net.InetSocketAddress
+import java.net.InetAddress
+import java.net.ServerSocket
 import java.security.MessageDigest
+import kotlin.concurrent.thread
 
 /**
- * Humming 1.7.1: model management ([ModelStore]) end to end against a local HTTP server on 127.0.0.1: download,
+ * Humming 1.7.1: model management ([ModelStore]) end to end against a minimal HTTP server on 127.0.0.1: download,
  * resume, SHA-256 check, unpacking only the files the engine needs, delete. The archive is built here, a few bytes.
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34], application = Application::class)
 class ModelStoreTest {
     private val ctx: Context = RuntimeEnvironment.getApplication()
-    private lateinit var server: HttpServer
-    private val requests = mutableListOf<String?>()
+    private lateinit var server: ServerSocket
+    private val requests: MutableList<String?> = java.util.Collections.synchronizedList(mutableListOf())
     private var honourRange = true
     private val archive = tarBz2(
         "test-model/model.int8.onnx" to ByteArray(4096) { (it % 251).toByte() },
@@ -42,24 +43,40 @@ class ModelStoreTest {
     )
 
     @Before fun startServer() {
-        server = HttpServer.create(InetSocketAddress("127.0.0.1", 0), 0)
-        server.createContext("/m.tar.bz2") { ex ->
-            val range = ex.requestHeaders.getFirst("Range")
-            requests += range
-            val from = range?.takeIf { honourRange }?.removePrefix("bytes=")?.removeSuffix("-")?.toInt() ?: 0
-            val body = archive.copyOfRange(from, archive.size)
-            if (from > 0) ex.responseHeaders.add("Content-Range", "bytes $from-${archive.size - 1}/${archive.size}")
-            ex.sendResponseHeaders(if (from > 0) 206 else 200, body.size.toLong())
-            ex.responseBody.use { it.write(body) }
+        // A plain socket server: unit tests compile against android.jar, which has no com.sun.net.httpserver.
+        server = ServerSocket(0, 8, InetAddress.getLoopbackAddress())
+        thread(isDaemon = true) {
+            while (true) {
+                val client = runCatching { server.accept() }.getOrNull() ?: break
+                client.use { serve(it.getInputStream().bufferedReader(Charsets.ISO_8859_1), it.getOutputStream()) }
+            }
         }
-        server.start()
     }
 
-    @After fun stopServer() = server.stop(0)
+    @After fun stopServer() = server.close()
+
+    /** One GET for the archive: honours "Range: bytes=N-" with a 206 unless [honourRange] is off. */
+    private fun serve(request: java.io.BufferedReader, out: java.io.OutputStream) {
+        val range = generateSequence { request.readLine() }
+            .takeWhile { it.isNotEmpty() }
+            .lastOrNull { it.startsWith("Range:", ignoreCase = true) }
+            ?.substringAfter(':')?.trim()
+        requests += range
+        val from = range?.takeIf { honourRange }?.removePrefix("bytes=")?.removeSuffix("-")?.toInt() ?: 0
+        val body = archive.copyOfRange(from, archive.size)
+        val head = buildString {
+            append(if (from > 0) "HTTP/1.1 206 Partial Content\r\n" else "HTTP/1.1 200 OK\r\n")
+            if (from > 0) append("Content-Range: bytes $from-${archive.size - 1}/${archive.size}\r\n")
+            append("Content-Length: ${body.size}\r\nConnection: close\r\n\r\n")
+        }
+        out.write(head.toByteArray(Charsets.ISO_8859_1))
+        out.write(body)
+        out.flush()
+    }
 
     private fun model(sha: String = sha256(archive), files: List<String> = listOf("model.int8.onnx", "tokens.txt")) =
         VoiceModel(
-            id = "test", label = "Test", blurb = "", url = "http://127.0.0.1:${server.address.port}/m.tar.bz2",
+            id = "test", label = "Test", blurb = "", url = "http://127.0.0.1:${server.localPort}/m.tar.bz2",
             downloadBytes = archive.size.toLong(), sha256 = sha, dirName = "test-model", files = files,
             diskBytes = 0, ramMb = 0, minRamMb = 0, kind = VoiceModel.Kind.NEMO_CTC, werPct = 0.0,
         )
