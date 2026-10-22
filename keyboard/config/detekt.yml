@@ -1,0 +1,10 @@
+# Humming 1.7.1: detekt on top of its default rule set (keyboard/ci/static_checks.sh passes
+# --build-upon-default-config). Findings that existed before 1.7.1 are in detekt-baseline.xml; any new one fails CI.
+# Formatting is ktlint's job (same script), so detekt's own line-length rule follows the .editorconfig limit.
+
+build:
+  maxIssues: 0
+
+style:
+  MaxLineLength:
+    maxLineLength: 120
