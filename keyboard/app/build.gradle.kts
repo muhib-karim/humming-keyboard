@@ -304,6 +304,8 @@ dependencies {
     implementation("org.apache.commons:commons-compress:1.27.1")
     testImplementation("junit:junit:4.13.2")
     testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.13.4")
+    // Humming 1.7.1: settings and model-management tests on real SharedPreferences and files (PrefsTest, ModelStoreTest).
+    testImplementation("org.robolectric:robolectric:4.16.1")
     androidTestImplementation(libs.androidx.test.ext)
     androidTestImplementation(libs.androidx.test.espresso.core)
     // Humming 1.7.1: the emulator smoke test drives the real keyboard with UiAutomator (ImeSmokeTest).
