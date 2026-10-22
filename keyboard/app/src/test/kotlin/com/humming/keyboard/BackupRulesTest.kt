@@ -41,4 +41,19 @@ class BackupRulesTest {
         assertTrue(m.contains("android:fullBackupContent=\"@xml/backup_rules\""))
         assertFalse(File("src/main/res/xml-v31/backup_rules.xml").exists())
     }
+
+    @Test
+    fun modelsVoiceSettingsClipboardAndHistoryAreNeverBackedUp() {
+        // 1.7.1: CodeQL's backup-enabled query reads only allowBackup; Android applies these rules.
+        val all = includes("backup_rules.xml") +
+            includes("data_extraction_rules.xml", "cloud-backup") +
+            includes("data_extraction_rules.xml", "device-transfer")
+        for (rule in all) {
+            for (never in listOf("models", "clipboard", "history", "humming")) {
+                assertFalse("$rule would back up $never", rule.contains(never, ignoreCase = true))
+            }
+            // Voice settings and custom words are SharedPreferences ("humming"): no rule includes that domain.
+            assertFalse("$rule includes SharedPreferences", rule.startsWith("sharedpref:"))
+        }
+    }
 }
