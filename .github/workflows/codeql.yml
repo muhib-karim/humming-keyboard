@@ -1,0 +1,52 @@
+name: codeql
+
+# Humming 1.7.1: CodeQL code scanning of the Android keyboard (Java/Kotlin). The extractor watches a real build of the
+# debug APK (x86_64 only, to keep it inside the runner's time and memory). Results go to the Security tab.
+on:
+  push:
+    branches: ["main", "upgrade/**"]
+    paths: ["keyboard/**", ".github/workflows/codeql.yml"]
+  pull_request:
+    paths: ["keyboard/**", ".github/workflows/codeql.yml"]
+  schedule:
+    - cron: "17 4 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: codeql-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    name: analyze (java-kotlin)
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Android SDK platform 36
+        run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "platforms;android-36" "build-tools;35.0.0" > /dev/null
+      - name: Restore gradlew exec bit (web upload drops file mode)
+        working-directory: keyboard
+        run: chmod +x gradlew
+      - uses: github/codeql-action/init@v4
+        with:
+          languages: java-kotlin
+          build-mode: manual
+          queries: security-and-quality
+      - name: Build (traced by CodeQL)
+        working-directory: keyboard
+        run: ./gradlew --no-daemon --no-build-cache -Phumming.abis=x86_64 :app:assembleDebug
+      - uses: github/codeql-action/analyze@v4
+        with:
+          category: "/language:java-kotlin"
