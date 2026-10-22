@@ -154,6 +154,20 @@ thead th.us { color: var(--fg); }
 .yes { color: var(--ok); font-weight: 650; }
 tbody tr:last-child th, tbody tr:last-child td { border-bottom: 0; }
 .numbers { font-variant-numeric: tabular-nums; }
+.numbers td, .numbers thead th:not(:first-child) { text-align: right; }
+table.compact { min-width: 0; }
+
+/* emulator proof (1.7.1): three CI screenshots in phone frames, then the measured table */
+.proof { margin-top: var(--s8); }
+.proof h3 { font-size: clamp(1.25rem, 1rem + 1vw, 1.5rem); }
+.proof > p { max-width: 68ch; margin-top: var(--s3); }
+.shots { display: grid; gap: var(--s5); grid-template-columns: repeat(3, minmax(0, 1fr)); margin: var(--s6) 0; max-width: 820px; }
+.shots figure { display: flex; flex-direction: column; gap: var(--s3); }
+.shots .phone { border-radius: 28px; padding: 7px; }
+.shots .phone img { border-radius: 22px; }
+.shots figcaption { font-size: .875rem; color: var(--muted); }
+.proof .table-wrap { max-width: 820px; }
+@media (max-width: 560px) { .shots { grid-template-columns: repeat(2, minmax(0, 1fr)); } .shots figure:first-child { display: none; } }
 
 /* downloads */
 .dl-grid { display: grid; gap: var(--s4); grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }

@@ -171,7 +171,7 @@
 
     <article class="feature">
       <div>
-        <h3>New in 1.7 <span class="tag">release candidate</span></h3>
+        <h3>New in 1.7</h3>
         <p>Gaps closed after a teardown of Gboard, SwiftKey, the Bangla keyboards and the dictation apps.</p>
         <ul>
           <li><strong>Bangla phonetic typing.</strong> Add Bengali with a QWERTY layout and type the way Avro users do: <span lang="bn-Latn">ami bangla likhi</span> becomes <span lang="bn">আমি বাংলা লিখি</span>, one word at a time, with the Latin word one tap away.</li>
@@ -179,7 +179,7 @@
           <li><strong>Dictation like the dictation apps.</strong> Say "bullet point" for a list item, "scratch that" to drop the last sentence, and write "spoken -&gt; written" in custom words to turn a phrase into anything. Filler removal now has its own switch. On Android, desktop and iPhone.</li>
           <li><strong>More spoken punctuation.</strong> Colon, semicolon, quotes, brackets, ellipsis and "delete last word", the same on Android, desktop and iPhone.</li>
         </ul>
-        <p class="small">These ship in the 1.7.0 release candidate and are covered by unit tests that run in CI.</p>
+        <p class="small">These shipped in 1.7.0 and are covered by unit tests that run in CI. 1.7.1 adds no features: it adds the emulator test, more unit tests and the quality gates shown under <a href="#bench">Measured</a>.</p>
       </div>
       <div class="feature-media">
         <figure class="phone"><img src="img/android_keyboard_dark.png" width="432" height="960" alt="The Humming keyboard in its dark theme with the suggestion strip" loading="lazy"></figure>
@@ -290,6 +290,28 @@
           <tr><th scope="row">Best, Parakeet TDT 0.6B v2</th><td>1.68&nbsp;%</td><td>3.12&nbsp;%</td><td>1314&nbsp;ms</td><td>482&nbsp;MB</td></tr>
         </tbody>
       </table>
+    </div>
+
+    <div class="proof">
+      <h3 id="proof-title">On an Android emulator, on every push</h3>
+      <p class="muted">Since 1.7.1 a CI job installs the keyboard on an Android 14 emulator, turns it on as the system keyboard, opens its settings and types &ldquo;hello&rdquo; by tapping its own keys. These are that job&rsquo;s screenshots, only scaled down, and its measurements.</p>
+      <div class="shots">
+        <figure><div class="phone"><img src="img/emulator_settings_home.png" width="540" height="1200" alt="Humming's settings home on the emulator: search, Voice, Languages, Theme, Keyboard and more, with the Try out your setup field at the bottom" loading="lazy"></div><figcaption>Settings, after the first-run setup</figcaption></figure>
+        <figure><div class="phone"><img src="img/emulator_keyboard.png" width="540" height="1200" alt="The Humming keyboard open under the Try out your setup field, with the suggestion strip and the mic button" loading="lazy"></div><figcaption>The keyboard opens in the test field</figcaption></figure>
+        <figure><div class="phone"><img src="img/emulator_typed.png" width="540" height="1200" alt="The word hello typed into the field with Humming's keys, suggestions he'll and hello in the strip" loading="lazy"></div><figcaption>&ldquo;hello&rdquo;, typed key by key by the test</figcaption></figure>
+      </div>
+      <div class="table-wrap" role="region" aria-labelledby="proof-title" tabindex="0">
+        <table class="numbers compact">
+          <caption>Emulator image <code>system-images;android-34;google_apis;x86_64</code> on a GitHub-hosted x86-64 runner, 22 October 2026, CI run 39713465586. An emulator is not a phone: use these to compare builds, not to predict your phone. Raw output: <a href="https://github.com/muhib-karim/humming-keyboard/tree/main/docs/bench/emulator-run39713465586">docs/bench/emulator-run39713465586</a>.</caption>
+          <thead><tr><th scope="col">Measurement</th><th scope="col">Result</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Cold start to first frame, release build settings (median of 10 launches)</th><td>605&nbsp;ms</td></tr>
+            <tr><th scope="row">Fast voice model, first load</th><td>1,017&nbsp;ms</td></tr>
+            <tr><th scope="row">Fast voice model, reload (median of 2)</th><td>867&nbsp;ms</td></tr>
+            <tr><th scope="row">First decode, 1&nbsp;s of silence</th><td>97&nbsp;ms</td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </section>

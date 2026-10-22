@@ -1,0 +1,13 @@
+{
+  "model": "fast",
+  "download_ms": 46347,
+  "load_ms": [
+    1017,
+    896,
+    838
+  ],
+  "warmup_decode_ms": 97,
+  "threads": 2,
+  "abi": "x86_64",
+  "sdk": 34
+}

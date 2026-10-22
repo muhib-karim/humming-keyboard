@@ -1,0 +1,70 @@
+Starting: Intent { cmp=com.humming.keyboard/dev.patrickgold.florisboard.SettingsLauncherAlias }
+Status: ok
+LaunchState: COLD
+Activity: com.humming.keyboard/dev.patrickgold.florisboard.app.FlorisAppActivity
+TotalTime: 627
+WaitTime: 637
+Complete
+Starting: Intent { cmp=com.humming.keyboard/dev.patrickgold.florisboard.SettingsLauncherAlias }
+Status: ok
+LaunchState: COLD
+Activity: com.humming.keyboard/dev.patrickgold.florisboard.app.FlorisAppActivity
+TotalTime: 637
+WaitTime: 649
+Complete
+Starting: Intent { cmp=com.humming.keyboard/dev.patrickgold.florisboard.SettingsLauncherAlias }
+Status: ok
+LaunchState: COLD
+Activity: com.humming.keyboard/dev.patrickgold.florisboard.app.FlorisAppActivity
+TotalTime: 658
+WaitTime: 678
+Complete
+Starting: Intent { cmp=com.humming.keyboard/dev.patrickgold.florisboard.SettingsLauncherAlias }
+Status: ok
+LaunchState: COLD
+Activity: com.humming.keyboard/dev.patrickgold.florisboard.app.FlorisAppActivity
+TotalTime: 1329
+WaitTime: 1345
+Complete
+Starting: Intent { cmp=com.humming.keyboard/dev.patrickgold.florisboard.SettingsLauncherAlias }
+Status: ok
+LaunchState: COLD
+Activity: com.humming.keyboard/dev.patrickgold.florisboard.app.FlorisAppActivity
+TotalTime: 617
+WaitTime: 625
+Complete
+Starting: Intent { cmp=com.humming.keyboard/dev.patrickgold.florisboard.SettingsLauncherAlias }
+Status: ok
+LaunchState: COLD
+Activity: com.humming.keyboard/dev.patrickgold.florisboard.app.FlorisAppActivity
+TotalTime: 593
+WaitTime: 599
+Complete
+Starting: Intent { cmp=com.humming.keyboard/dev.patrickgold.florisboard.SettingsLauncherAlias }
+Status: ok
+LaunchState: COLD
+Activity: com.humming.keyboard/dev.patrickgold.florisboard.app.FlorisAppActivity
+TotalTime: 557
+WaitTime: 562
+Complete
+Starting: Intent { cmp=com.humming.keyboard/dev.patrickgold.florisboard.SettingsLauncherAlias }
+Status: ok
+LaunchState: COLD
+Activity: com.humming.keyboard/dev.patrickgold.florisboard.app.FlorisAppActivity
+TotalTime: 587
+WaitTime: 591
+Complete
+Starting: Intent { cmp=com.humming.keyboard/dev.patrickgold.florisboard.SettingsLauncherAlias }
+Status: ok
+LaunchState: COLD
+Activity: com.humming.keyboard/dev.patrickgold.florisboard.app.FlorisAppActivity
+TotalTime: 556
+WaitTime: 561
+Complete
+Starting: Intent { cmp=com.humming.keyboard/dev.patrickgold.florisboard.SettingsLauncherAlias }
+Status: ok
+LaunchState: COLD
+Activity: com.humming.keyboard/dev.patrickgold.florisboard.app.FlorisAppActivity
+TotalTime: 528
+WaitTime: 535
+Complete
