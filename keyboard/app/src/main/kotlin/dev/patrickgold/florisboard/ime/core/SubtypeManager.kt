@@ -191,21 +191,8 @@ class SubtypeManager(context: Context) {
      * Switch to the previous subtype in the subtype list if possible.
      */
     fun switchToPrevSubtype() = scope.launch {
-        val subtypeList = subtypes
-        val cachedActiveSubtype = activeSubtype
-        var triggerNextSubtype = false
-        var newActiveSubtype: Subtype = Subtype.DEFAULT
-        for (subtype in subtypeList.asReversed()) {
-            if (triggerNextSubtype) {
-                triggerNextSubtype = false
-                newActiveSubtype = subtype
-            } else if (subtype == cachedActiveSubtype) {
-                triggerNextSubtype = true
-            }
-        }
-        if (triggerNextSubtype) {
-            newActiveSubtype = subtypeList.last()
-        }
+        // Humming 1.7.1: the rule lives in SubtypeCycle (unit-tested); a removed active subtype goes to the first one.
+        val newActiveSubtype = com.humming.keyboard.SubtypeCycle.previous(subtypes, activeSubtype) ?: Subtype.DEFAULT
         prefs.localization.activeSubtypeId.set(newActiveSubtype.id)
         activeSubtype = newActiveSubtype
     }
@@ -214,21 +201,7 @@ class SubtypeManager(context: Context) {
      * Switch to the next subtype in the subtype list if possible.
      */
     fun switchToNextSubtype() = scope.launch {
-        val subtypeList = subtypes
-        val cachedActiveSubtype = activeSubtype
-        var triggerNextSubtype = false
-        var newActiveSubtype: Subtype = Subtype.DEFAULT
-        for (subtype in subtypeList) {
-            if (triggerNextSubtype) {
-                triggerNextSubtype = false
-                newActiveSubtype = subtype
-            } else if (subtype == cachedActiveSubtype) {
-                triggerNextSubtype = true
-            }
-        }
-        if (triggerNextSubtype) {
-            newActiveSubtype = subtypeList.first()
-        }
+        val newActiveSubtype = com.humming.keyboard.SubtypeCycle.next(subtypes, activeSubtype) ?: Subtype.DEFAULT
         prefs.localization.activeSubtypeId.set(newActiveSubtype.id)
         activeSubtype = newActiveSubtype
     }
