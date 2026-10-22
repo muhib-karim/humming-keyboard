@@ -2,12 +2,14 @@ name: codeql
 
 # Humming 1.7.1: CodeQL code scanning of the Android keyboard (Java/Kotlin). The extractor watches a real build of the
 # debug APK (x86_64 only, to keep it inside the runner's time and memory). Results go to the Security tab.
+# Queries, ignored paths and the two excluded queries: .github/codeql/codeql-config.yml (reasons in
+# docs/ci/STATIC_ANALYSIS.md).
 on:
   push:
     branches: ["main", "upgrade/**"]
-    paths: ["keyboard/**", ".github/workflows/codeql.yml"]
+    paths: ["keyboard/**", ".github/workflows/codeql.yml", ".github/codeql/**"]
   pull_request:
-    paths: ["keyboard/**", ".github/workflows/codeql.yml"]
+    paths: ["keyboard/**", ".github/workflows/codeql.yml", ".github/codeql/**"]
   schedule:
     - cron: "17 4 * * 1"
   workflow_dispatch:
@@ -43,7 +45,7 @@ jobs:
         with:
           languages: java-kotlin
           build-mode: manual
-          queries: security-and-quality
+          config-file: ./.github/codeql/codeql-config.yml
       - name: Build (traced by CodeQL)
         working-directory: keyboard
         run: ./gradlew --no-daemon --no-build-cache -Phumming.abis=x86_64 :app:assembleDebug
