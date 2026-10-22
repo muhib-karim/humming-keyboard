@@ -11,6 +11,12 @@ language switching.
 - **Fix: language key after removing a language (Android)**: if the active language had just been removed from the
   list, the language key switched to the built-in default, which might not be in the list at all. It now goes to the
   first language in the list. The next/previous rule is a pure, unit-tested `SubtypeCycle` (`SubtypeCycleTest`).
+- **Security (CodeQL findings)**: unpacking a voice-model archive now also refuses any entry whose normalised path
+  would leave the model directory (zip slip; the name check before it already rejected `..`), with
+  `ModelPolicyTest` cases for `../`, `a/../../` and a same-prefix sibling folder. The developer tools' logcat dump runs
+  `/system/bin/logcat` by absolute path. Backup rules are unchanged (keyboard settings and themes only) and now tested
+  to never name models, voice settings, clipboard or history. Certificate pinning was not added, and the reasons are
+  in `docs/ci/STATIC_ANALYSIS.md`. No CodeQL alerts are open on the branch.
 - **Emulator smoke test** (`android-emulator.yml`, `ImeSmokeTest`): on an Android 14 emulator, Humming is switched on
   as the keyboard, Android's keyboard settings and Humming's settings are opened, the first-run setup is finished and
   "hello" is typed by tapping Humming's own keys; screenshots of every step are saved as artifacts.
@@ -25,7 +31,8 @@ language switching.
   `keyboard.yml`; `docs/ci/COVERAGE.md`).
 - **Quality gates in CI**: ktlint 1.7.1 and detekt 1.23.8 (`quality.yml`) and Android lint (`keyboard.yml`), each with
   a committed baseline holding only the findings that existed before 1.7.1 (a missing baseline fails); gitleaks over
-  the whole history; CodeQL for Java/Kotlin (`codeql.yml`); Dependabot for Gradle and GitHub Actions. How each baseline
+  the whole history; CodeQL for Java/Kotlin with the `security-extended` suite (`codeql.yml`,
+  `.github/codeql/codeql-config.yml`); Dependabot for Gradle and GitHub Actions. How each baseline
   was made: `docs/ci/STATIC_ANALYSIS.md`.
 - **CI on upgrade branches**: `keyboard.yml`, `android-release.yml` and the new workflows also run on `upgrade/**`
   pushes, so a branch is checked before review.

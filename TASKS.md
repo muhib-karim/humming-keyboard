@@ -21,6 +21,9 @@ plan `docs/superpowers/plans/2026-10-22-v1.7.1-quality.md`. Nothing is built loc
 - [x] 7. Version 1.7.1 / 1701 everywhere, CHANGELOG [1.7.1] - 2026-10-22, SKILLS_USED.md v1.7.1 section
 - [x] 8. Whole-branch code review (0 Critical, 4 Important: all fixed or mitigated, see HANDOFF.md); pushed with
       push.sh; every workflow on the branch head green (checked before handoff)
+- [x] 8a. Coordinator's extra item: 0 open CodeQL alerts on the branch (zip slip and relative command fixed with a test;
+      backup and certificate pinning excluded with written reasons; quality notes via the `security-extended` suite;
+      docs/ci/STATIC_ANALYSIS.md "CodeQL")
 - [ ] 9. GitHub Release v1.7.1 with the signed APK: **blocked for this session** (push.sh pushes branches only, never
       tags). The signed APK + AAB build is proven in CI on this branch (android-release.yml green, certificate matches).
       After review and merge the coordinator tags `v1.7.1`; release.yml then builds every platform and attaches the

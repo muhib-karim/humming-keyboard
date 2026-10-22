@@ -22,6 +22,23 @@ which needs a tag. Everything was built and tested by GitHub Actions, nothing lo
 - `quality.yml` (ktlint, detekt, gitleaks full history, site check, script tests), `codeql.yml`, `android-release.yml`
   (signed APK + AAB, certificate matches), `desktop.yml` and `ios.yml` (version bump) all green.
 
+## CodeQL: 110 open alerts → 0 (coordinator's extra DoD item)
+
+Details per alert in [docs/ci/STATIC_ANALYSIS.md](docs/ci/STATIC_ANALYSIS.md#codeql).
+
+- Fixed: `java/zipslip` (high) in `ModelDownload.kt` (`ModelPolicy.outputFile`, normalised-path check, unit test),
+  `java/relative-path-command` in upstream `Devtools.kt` (absolute `/system/bin/logcat`), and Humming's own quality
+  findings (`HummingVoice` timer loop, `Lexicon` precedence, `UpdateInstallReceiver` via `IntentCompat`).
+- Excluded in `.github/codeql/codeql-config.yml`, with the written reason there and in the guide (no API dismissals):
+  `java/android/backup-enabled` (the query reads only `allowBackup`; the allow-list rules keep models, voice settings,
+  clipboard and history out, `BackupRulesTest`) and `java/android/missing-certificate-pinning` (third-party or
+  user-chosen endpoints; the update APK is checked by SHA-256 and signing certificate).
+- Upstream FlorisBoard quality notes: suite changed to `security-extended`, `**/build/generated/**` ignored. Kept on
+  purpose: `BluetoothMic`'s deprecated SCO calls (the only headset route on Android 8 to 11).
+- Owner's call, not changed: the privacy policy says a cloud backup *may* include the personal dictionary, while the
+  rules limit cloud backup to settings and themes (learned words go only in a device-to-device transfer). The policy
+  over-discloses; tighten its wording if wanted.
+
 ## Review (requesting-code-review, one general-purpose subagent)
 
 0 Critical. Important: (1) upgrade branches uploaded production-signed artifacts: fixed, they still sign and verify
