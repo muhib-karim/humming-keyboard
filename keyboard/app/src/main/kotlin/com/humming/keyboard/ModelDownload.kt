@@ -41,6 +41,18 @@ object ModelPolicy {
         val rel = name.removePrefix(m.dirName + "/")
         return rel.takeIf { it in m.files }
     }
+
+    /**
+     * 1.7.1: the file an archive entry is written to, refused (IOException) when its normalised path would leave [dir]
+     * (zip slip). A second guard after [extractTarget], on the path itself rather than the name. ModelPolicyTest.
+     */
+    fun outputFile(dir: File, rel: String): File {
+        val f = File(dir, rel)
+        if (!f.toPath().normalize().startsWith(dir.toPath().normalize())) {
+            throw IOException("archive entry outside the model directory: $rel")
+        }
+        return f
+    }
 }
 
 object ModelStore {
@@ -137,7 +149,7 @@ object ModelStore {
                 val e = tar.nextEntry ?: break
                 if (e.isDirectory) continue
                 val rel = ModelPolicy.extractTarget(e.name, m) ?: continue
-                File(d, rel).outputStream().use { out -> tar.copyTo(out, 1 shl 16) }
+                ModelPolicy.outputFile(d, rel).outputStream().use { out -> tar.copyTo(out, 1 shl 16) }
             }
         }
         if (!m.files.all { File(d, it).isFile }) throw IOException("model archive is missing files")
