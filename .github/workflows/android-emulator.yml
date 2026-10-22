@@ -64,6 +64,7 @@ jobs:
         if: ${{ !cancelled() }}
         run: |
           set -euo pipefail
+          if [ ! -f emulator-out/cold_start.txt ]; then echo "::warning::no emulator measurements (the emulator step failed)"; exit 0; fi
           python3 scripts/emulator_metrics.py emulator-out emulator-out/metrics.json --image "$SYSTEM_IMAGE" \
             --date "$(date -u +%F)" --run "$GITHUB_RUN_ID" --commit "${GITHUB_SHA::7}" | tee emulator-out/metrics.md
           cat emulator-out/metrics.md >> "$GITHUB_STEP_SUMMARY"
@@ -72,5 +73,5 @@ jobs:
         with:
           name: emulator-run
           path: emulator-out/
-          if-no-files-found: error
+          if-no-files-found: warn
           retention-days: 30

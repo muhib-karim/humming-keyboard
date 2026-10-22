@@ -239,6 +239,14 @@ android {
     }
 }
 
+// Humming 1.7.1: the instrumented-test APK inherits the build type's resValues, which point at the app's own icons
+// (@mipmap/ic_humming is not in the test APK) and break its resource linking. The test APK needs none of them.
+androidComponents {
+    onVariants { variant ->
+        variant.androidTest?.resValues?.empty()
+    }
+}
+
 tasks.withType<Test> {
     useJUnitPlatform()
     // Robolectric loads classes through its own class loader; JaCoCo only counts them with this flag.
