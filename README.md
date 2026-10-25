@@ -385,6 +385,13 @@ check), `codeql.yml`, `android-release.yml` (signed APK and AAB),
 - [SECURITY.md](SECURITY.md): report vulnerabilities privately through GitHub Security Advisories.
 - [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md): Contributor Covenant 2.1.
 
+## Tech stack
+
+- **Android keyboard:** Kotlin, Jetpack Compose, Room, built on FlorisBoard
+- **Desktop app:** Tauri (Rust) with a TypeScript + Vite frontend
+- **Shared core:** Rust (Cargo)
+- **Tests and CI:** JUnit, `cargo test`, GitHub Actions
+
 ## Licence and credits
 
 Humming is licensed under the **Apache License 2.0** ([`LICENSE`](LICENSE), [`NOTICE`](NOTICE)), covering the whole
