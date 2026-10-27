@@ -9,6 +9,14 @@ enum SharedStore {
     static let defaults: UserDefaults = UserDefaults(suiteName: groupID) ?? .standard
     private static let latestKey = "latest_dictation"
 
+    private static let voiceEditKey = "voice_edit"
+    /// Edit by voice (1.8, default on): a dictated "change X to Y", "delete X", "capitalize X" or "undo that" edits
+    /// the text before the cursor instead of being typed (HummingCore VoiceEdit, same rules as Android and the core).
+    static var voiceEdit: Bool {
+        get { defaults.object(forKey: voiceEditKey) as? Bool ?? true }
+        set { defaults.set(newValue, forKey: voiceEditKey) }
+    }
+
     static var latestDictation: String {
         get { defaults.string(forKey: latestKey) ?? "" }
         set { defaults.set(newValue, forKey: latestKey) }

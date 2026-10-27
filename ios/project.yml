@@ -53,6 +53,8 @@ targets:
     sources:
       - Keyboard
       - Shared
+    dependencies:
+      - package: HummingCore
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.humming.ios.keyboard

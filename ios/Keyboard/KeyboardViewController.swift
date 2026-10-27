@@ -1,3 +1,4 @@
+import HummingCore
 import SwiftUI
 import UIKit
 
@@ -5,6 +6,8 @@ import UIKit
 /// and the keyboard's top strip inserts the latest result (or, with Full Access, whatever you copied).
 final class KeyboardViewController: UIInputViewController {
     private var host: UIHostingController<KeyboardView>?
+    /// The keyboard's own last dictation insert: the only thing "undo that" may remove.
+    private var lastDictationInsert: String?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,7 +44,29 @@ final class KeyboardViewController: UIInputViewController {
             onNextKeyboard: { [weak self] in self?.advanceToNextInputMode() },
             onPaste: { [weak self] in
                 if let s = UIPasteboard.general.string { self?.textDocumentProxy.insertText(s) }
-            }
+            },
+            onInsertDictation: { [weak self] s in self?.insertDictation(s) }
         )
+    }
+
+    /// Edit by voice: a dictated "change Tuesday to Wednesday" (etc.) edits the text before the cursor; "undo that"
+    /// removes only this keyboard's own last insert. Anything else is inserted as normal dictation.
+    private func insertDictation(_ s: String) {
+        let proxy = textDocumentProxy
+        let before = proxy.documentContextBeforeInput ?? ""
+        if SharedStore.voiceEdit, let r = VoiceEdit.voiceCommand(text: before, utterance: s) {
+            if let out = r.outcome {
+                let edit = VoiceEdit.fieldEdit(before: before, outcome: out)
+                for _ in 0..<edit.deleteCount { proxy.deleteBackward() }
+                if !edit.insert.isEmpty { proxy.insertText(edit.insert) }
+            } else {
+                let n = VoiceEdit.undoCount(before: before, lastInsert: lastDictationInsert)
+                for _ in 0..<n { proxy.deleteBackward() }
+            }
+            lastDictationInsert = nil
+            return
+        }
+        proxy.insertText(s)
+        lastDictationInsert = s
     }
 }
