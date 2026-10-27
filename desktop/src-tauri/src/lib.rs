@@ -11,6 +11,7 @@ mod settings;
 mod stt;
 mod text_cleanup;
 mod updater;
+mod voice_edit;
 
 use stt::SherpaEngine;
 use serde::Serialize;
@@ -49,6 +50,8 @@ pub struct AppState {
     to_focused_app: AtomicBool,
     /// Name of the app that had focus when the current dictation started (per-app dictionary, 1.5).
     focused_app: Arc<Mutex<Option<String>>>,
+    /// Humming's own last insertion, the only text a voice edit may touch (1.8).
+    last_insert: Mutex<voice_edit::LastInsert>,
 }
 
 #[derive(Debug, Clone, Serialize, PartialEq)]
@@ -306,14 +309,38 @@ fn stop_dictation(app: &AppHandle) {
         let latency_ms = released.elapsed().as_millis() as u64;
         let mut error = None;
         let mut inserted = false;
-        if !text.trim().is_empty() && to_focused_app {
-            match insert::insert(&text, &s.insert_method, s.restore_clipboard, s.paste_delay_ms) {
-                Ok(()) => inserted = true,
-                Err(e) => {
+        if to_focused_app {
+            // Edit by voice (1.8): a command edits only our own last insertion in the same app.
+            let action = state
+                .last_insert
+                .lock()
+                .map(|l| l.plan(&raw, &text, focused.as_deref(), s.voice_edit))
+                .unwrap_or_else(|_| voice_edit::Action::Insert(text.clone()));
+            let put = |t: &str| insert::insert(t, &s.insert_method, s.restore_clipboard, s.paste_delay_ms);
+            let result = match &action {
+                voice_edit::Action::Insert(t) => Some(put(t)),
+                voice_edit::Action::Replace { backspaces, text: t } => {
+                    Some(insert::erase(*backspaces).and_then(|()| if t.is_empty() { Ok(()) } else { put(t) }))
+                }
+                voice_edit::Action::Nothing => None,
+            };
+            match result {
+                Some(Ok(())) => {
+                    inserted = true;
+                    if let Ok(mut l) = state.last_insert.lock() {
+                        l.commit(&action, focused.as_deref());
+                    }
+                }
+                Some(Err(e)) => {
                     // Keep the words: leave them on the clipboard so nothing is lost.
                     let _ = insert::copy(&text);
                     error = Some(format!("{e}. The text is on your clipboard."));
+                    // We no longer know what is in the field, so no edit may touch it.
+                    if let Ok(mut l) = state.last_insert.lock() {
+                        l.forget();
+                    }
                 }
+                None => {}
             }
         }
         let entry = Entry { id: 0, ts: now_ms(), text: text.trim_end().to_string(), raw, audio_ms, latency_ms, model: s.model.clone(), inserted };
@@ -573,6 +600,7 @@ pub fn run() {
                 downloading: AtomicBool::new(false),
                 to_focused_app: AtomicBool::new(true),
                 focused_app: Arc::new(Mutex::new(None)),
+                last_insert: Mutex::new(voice_edit::LastInsert::default()),
             });
 
             // Tray / menu bar.
