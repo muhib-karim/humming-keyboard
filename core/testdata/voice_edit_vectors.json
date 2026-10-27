@@ -1,0 +1,198 @@
+[
+ {
+  "text": "Let's meet on Tuesday at noon",
+  "utterance": "change Tuesday to Wednesday",
+  "command": true,
+  "expect": "Let's meet on Wednesday at noon"
+ },
+ {
+  "text": "Let's meet on Tuesday at noon",
+  "utterance": "Um, change Tuesday to Wednesday.",
+  "command": true,
+  "expect": "Let's meet on Wednesday at noon"
+ },
+ {
+  "text": "fix teh typo",
+  "utterance": "replace \"teh\" with \"the\"",
+  "command": true,
+  "expect": "fix the typo"
+ },
+ {
+  "text": "Thanks, see you soon",
+  "utterance": "change see you soon to talk soon",
+  "command": true,
+  "expect": "Thanks, talk soon"
+ },
+ {
+  "text": "the cat and the cat",
+  "utterance": "change cat to dog",
+  "command": true,
+  "expect": "the cat and the dog"
+ },
+ {
+  "text": "Monday is fine",
+  "utterance": "change monday to friday",
+  "command": true,
+  "expect": "Friday is fine"
+ },
+ {
+  "text": "NASA rocks",
+  "utterance": "replace nasa with esa",
+  "command": true,
+  "expect": "ESA rocks"
+ },
+ {
+  "text": "the red car",
+  "utterance": "switch red into blue",
+  "command": true,
+  "expect": "the blue car"
+ },
+ {
+  "text": "Send it to Jon please",
+  "utterance": "replace Jon with John",
+  "command": true,
+  "expect": "Send it to John please"
+ },
+ {
+  "text": "café is open",
+  "utterance": "change open to closed",
+  "command": true,
+  "expect": "café is closed"
+ },
+ {
+  "text": "I really really like it",
+  "utterance": "delete really",
+  "command": true,
+  "expect": "I really like it"
+ },
+ {
+  "text": "Hello world",
+  "utterance": "delete hello",
+  "command": true,
+  "expect": "world"
+ },
+ {
+  "text": "It is very good.",
+  "utterance": "delete good",
+  "command": true,
+  "expect": "It is very."
+ },
+ {
+  "text": "a very big dog",
+  "utterance": "remove the word very",
+  "command": true,
+  "expect": "a big dog"
+ },
+ {
+  "text": "This is basically done",
+  "utterance": "erase basically",
+  "command": true,
+  "expect": "This is done"
+ },
+ {
+  "text": "i met john today",
+  "utterance": "capitalize john",
+  "command": true,
+  "expect": "i met John today"
+ },
+ {
+  "text": "I love new york",
+  "utterance": "capitalise new york",
+  "command": true,
+  "expect": "I love New York"
+ },
+ {
+  "text": "anything",
+  "utterance": "undo that",
+  "command": true,
+  "undo": true
+ },
+ {
+  "text": "anything",
+  "utterance": "Scratch that.",
+  "command": true,
+  "undo": true
+ },
+ {
+  "text": "anything",
+  "utterance": "Undo",
+  "command": true,
+  "undo": true
+ },
+ {
+  "text": "anything",
+  "utterance": "delete that",
+  "command": true,
+  "undo": true
+ },
+ {
+  "text": "Remember the car",
+  "utterance": "change the oil to synthetic",
+  "command": false
+ },
+ {
+  "text": "Hi team",
+  "utterance": "please delete my account",
+  "command": false
+ },
+ {
+  "text": "laundry list:",
+  "utterance": "remove the stains",
+  "command": false
+ },
+ {
+  "text": "the old one broke",
+  "utterance": "replace it with a new one",
+  "command": false
+ },
+ {
+  "text": "we are lost",
+  "utterance": "we should change course",
+  "command": false
+ },
+ {
+  "text": "it went badly",
+  "utterance": "undo the damage",
+  "command": false
+ },
+ {
+  "text": "new year",
+  "utterance": "change is good",
+  "command": false
+ },
+ {
+  "text": "We should",
+  "utterance": "capitalize on the moment",
+  "command": false
+ },
+ {
+  "text": "see you Monday",
+  "utterance": "Let's change Monday to Friday and then go home",
+  "command": false
+ },
+ {
+  "text": "no day here",
+  "utterance": "change Monday to Friday",
+  "command": false
+ },
+ {
+  "text": "the Tuesday plan",
+  "utterance": "replace Tuesday with tuesday",
+  "command": false
+ },
+ {
+  "text": "see you Tuesday",
+  "utterance": "I want to change Tuesday to Wednesday next week because Sam is away and the office is closed",
+  "command": false
+ },
+ {
+  "text": "tuesday",
+  "utterance": "change Tues to Wed",
+  "command": false
+ },
+ {
+  "text": "the plan",
+  "utterance": "delete",
+  "command": false
+ }
+]
