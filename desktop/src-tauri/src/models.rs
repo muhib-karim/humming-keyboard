@@ -1,5 +1,6 @@
-//! Speech models (sherpa-onnx exports), pinned by size and SHA-256: Fast (Parakeet 110M) and Best (Parakeet 0.6B),
-//! the same two models the Android app ships, plus desktop-only Lite (Moonshine v2 tiny, 30 MB, MIT). Each is downloaded only when the
+//! Speech models (sherpa-onnx exports), pinned by size and SHA-256: Fast (Parakeet 110M), Multilingual (Parakeet 0.6B
+//! v3, new in 1.8) and Best (Parakeet 0.6B v2), as on Android, plus desktop-only Lite and Balanced (Moonshine v2 tiny
+//! and base, MIT; Balanced new in 1.8). Measured side by side in docs/BENCHMARKS.md. Each is downloaded only when the
 //! user picks it, unpacked while it streams (no second pass over the archive), resumed if the connection drops, and
 //! checked against its pinned SHA-256 before anything is used. Nothing is bundled in the installer.
 
@@ -30,10 +31,12 @@ pub struct VoiceModel {
     /// The files the engine needs; everything else in the archive (test clips...) is skipped.
     pub files: &'static [&'static str],
     pub disk_bytes: u64,
-    /// Peak RAM while dictating (Android bake-off measurement).
+    /// Peak RAM while dictating (Android bake-off for the 1.7 models; peak RSS of the 1.8 benchmark for Balanced and
+    /// Multilingual, see docs/BENCHMARKS.md).
     pub ram_mb: u32,
     pub kind: Kind,
-    /// LibriSpeech test-clean word error rate from the README benchmark; None = not measured (shown as such).
+    /// LibriSpeech test-clean word error rate (first 200 clips, sherpa-onnx 1.13.8, every model in the same run:
+    /// docs/BENCHMARKS.md, raw output in docs/bench/local-20261028-*); None = not measured (shown as such).
     pub wer_pct: Option<f32>,
 }
 
@@ -51,8 +54,22 @@ pub const LITE: VoiceModel = VoiceModel {
     disk_bytes: 44_243_206,
     ram_mb: 250,
     kind: Kind::MoonshineV2,
-    // Lite is not in the WER benchmark (README covers Fast and Best only), so no number is shown for it.
-    wer_pct: None,
+    wer_pct: Some(4.5),
+};
+
+pub const BALANCED: VoiceModel = VoiceModel {
+    id: "balanced",
+    label: "Balanced",
+    blurb: "Moonshine base. A 111 MB download; more accurate than Lite and still light on memory.",
+    url: "https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/sherpa-onnx-moonshine-base-en-quantized-2026-02-27.tar.bz2",
+    download_bytes: 111_266_225,
+    sha256: "43232c1d13013d37317163baec3135bd771a186a4356f28c889bab453bb0e891",
+    dir_name: "sherpa-onnx-moonshine-base-en-quantized-2026-02-27",
+    files: &["encoder_model.ort", "decoder_model_merged.ort", "tokens.txt"],
+    disk_bytes: 141_300_566,
+    ram_mb: 400,
+    kind: Kind::MoonshineV2,
+    wer_pct: Some(3.1),
 };
 
 pub const FAST: VoiceModel = VoiceModel {
@@ -67,7 +84,22 @@ pub const FAST: VoiceModel = VoiceModel {
     disk_bytes: 131_662_124,
     ram_mb: 500,
     kind: Kind::NemoCtc,
-    wer_pct: Some(3.7),
+    wer_pct: Some(2.7),
+};
+
+pub const MULTI: VoiceModel = VoiceModel {
+    id: "multi",
+    label: "Multilingual",
+    blurb: "Parakeet 0.6B v3. English plus 24 more European languages, detected automatically; wants 8 GB of RAM or more.",
+    url: "https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/sherpa-onnx-nemo-parakeet-tdt-0.6b-v3-int8.tar.bz2",
+    download_bytes: 487_170_055,
+    sha256: "5793d0fd397c5778d2cf2126994d58e9d56b1be7c04d13c7a15bb1b4eafb16bf",
+    dir_name: "sherpa-onnx-nemo-parakeet-tdt-0.6b-v3-int8",
+    files: &["encoder.int8.onnx", "decoder.int8.onnx", "joiner.int8.onnx", "tokens.txt"],
+    disk_bytes: 670_478_772,
+    ram_mb: 1200,
+    kind: Kind::NemoTransducer,
+    wer_pct: Some(2.2),
 };
 
 pub const BEST: VoiceModel = VoiceModel {
@@ -82,10 +114,11 @@ pub const BEST: VoiceModel = VoiceModel {
     disk_bytes: 661_190_513,
     ram_mb: 1300,
     kind: Kind::NemoTransducer,
-    wer_pct: Some(2.6),
+    wer_pct: Some(1.8),
 };
 
-pub const CATALOG: &[VoiceModel] = &[LITE, FAST, BEST];
+/// Ordered light to heavy; `usable` falls back from the end, so the heaviest downloaded model wins.
+pub const CATALOG: &[VoiceModel] = &[LITE, BALANCED, FAST, MULTI, BEST];
 
 pub fn find(id: &str) -> Option<&'static VoiceModel> {
     CATALOG.iter().find(|m| m.id == id)
@@ -274,15 +307,17 @@ mod tests {
     use super::*;
 
     #[test]
-    fn lite_wer_is_not_measured() {
-        assert_eq!(find("lite").unwrap().wer_pct, None);
-        assert!(find("fast").unwrap().wer_pct.is_some());
-        assert!(find("best").unwrap().wer_pct.is_some());
+    fn every_model_has_a_measured_wer_in_the_same_run() {
+        let w = |id: &str| find(id).unwrap().wer_pct.unwrap();
+        // docs/bench/local-20261028-*: Best < Multilingual < Fast < Balanced < Lite.
+        assert!(w("best") < w("multi") && w("multi") < w("fast") && w("fast") < w("balanced") && w("balanced") < w("lite"));
     }
 
     #[test]
     fn catalog_matches_android() {
-        assert_eq!(CATALOG.len(), 3);
+        assert_eq!(CATALOG.len(), 5);
+        let ids: Vec<&str> = CATALOG.iter().map(|m| m.id).collect();
+        assert_eq!(ids, ["lite", "balanced", "fast", "multi", "best"]);
         for m in CATALOG {
             assert_eq!(m.sha256.len(), 64, "{}", m.id);
             assert!(m.url.starts_with(REL) && m.url.ends_with(&format!("{}.tar.bz2", m.dir_name)));
@@ -291,6 +326,11 @@ mod tests {
         assert_eq!(find("fast").unwrap().kind, Kind::NemoCtc);
         assert_eq!(find("best").unwrap().kind, Kind::NemoTransducer);
         assert_eq!(find("lite").unwrap().kind, Kind::MoonshineV2);
+        assert_eq!(find("balanced").unwrap().kind, Kind::MoonshineV2);
+        assert_eq!(find("multi").unwrap().kind, Kind::NemoTransducer);
+        for m in CATALOG {
+            assert!(m.download_bytes > 0 && m.disk_bytes > m.download_bytes / 2 && m.ram_mb > 0, "{}", m.id);
+        }
         assert!(LITE.download_bytes < FAST.download_bytes / 3);
     }
 

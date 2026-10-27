@@ -53,7 +53,7 @@ def cpu_name():
 
 
 def recognizer(kind, d):
-    if kind == "lite":
+    if kind in ("lite", "balanced"):
         return sherpa_onnx.OfflineRecognizer.from_moonshine_v2(
             encoder=os.path.join(d, "encoder_model.ort"), decoder=os.path.join(d, "decoder_model_merged.ort"),
             tokens=os.path.join(d, "tokens.txt"), num_threads=2)
@@ -80,12 +80,15 @@ def windows(samples, sr, max_s):
 
 
 # Moonshine v2 returns nothing for clips over ~10 s in sherpa-onnx 1.13.8, so the apps decode Lite in <= 8 s windows.
-MAX_WINDOW = {"lite": 8}
+MAX_WINDOW = {"lite": 8, "balanced": 8}
 
 MODELS = {
     "lite": ("Moonshine v2 tiny int8 (Lite, 30 MB)", "sherpa-onnx-moonshine-tiny-en-quantized-2026-02-27"),
     "fast": ("Parakeet TDT-CTC 110M int8 (Fast, default)", "sherpa-onnx-nemo-parakeet_tdt_ctc_110m-en-36000-int8"),
     "best": ("Parakeet TDT 0.6B v2 int8 (Best, optional)", "sherpa-onnx-nemo-parakeet-tdt-0.6b-v2-int8"),
+    # New in 1.8 (selectable, not default): see docs/BENCHMARKS.md.
+    "balanced": ("Moonshine v2 base int8 (Balanced, 111 MB)", "sherpa-onnx-moonshine-base-en-quantized-2026-02-27"),
+    "multi": ("Parakeet TDT 0.6B v3 int8 (Multilingual, optional)", "sherpa-onnx-nemo-parakeet-tdt-0.6b-v3-int8"),
 }
 sets = {"test-clean": utterances("test-clean", n_clean), "test-other": utterances("test-other", n_other)}
 # Optional per-utterance reference/hypothesis lines (JSONL) so every WER figure can be re-checked by hand.

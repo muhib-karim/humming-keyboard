@@ -145,6 +145,8 @@ mixed sets.
 | Aqua Voice | 6.24 % average WER on the Hugging Face Open ASR Leaderboard (Oct 2025, Aqua's recap, not re-checked); 5.55 % for Avalon 1.5, test set not stated [D45] | Under 50 ms to start, ~450 ms after you stop (vendor) [D45] | Cloud ("needs an internet connection") [D47]; Privacy Mode off by default [D45][D46] | macOS, Windows, iOS, Android (Oct 2026); no Linux [D45][D47] | Free 1,000 words; Pro $10 ($8 yearly) [D44] | No |
 | Willow | Vendor claim: "3x more accurate than built-in dictation", no method [D48] | Vendor claim: "as little as 200ms" [D48] | Conflicting: homepage offers an offline mode [D48], help centre says cloud models [D51] | Mac, Windows, iPhone; Android "coming soon" [D56] | Free (weaker model); Pro $15 ($12 yearly) [D49] | No |
 | MacWhisper | Not published [D57] | Not published | **Local models**, optional cloud AI with your own keys [D57] | macOS; iPhone/iPad as "Whisper Transcription" [D59] | Free; Pro €64 once [D57] | No (built on open models) |
+| Handy (open source) | Not published [D74] | Not published | **Offline**: "works completely offline"; Silero VAD, then Whisper (Small/Medium/Turbo/Large, GPU when available) or **Parakeet V3** on the CPU [D74] | Windows, macOS, Linux (desktop only) [D74] | Free [D74] | **Yes**, MIT [D74] |
+| Amical (open source) | Not published [D75] | Vendor claim: "super-fast" [D75] | "Runs entirely on your machine": Whisper plus local LLMs via Ollama [D75] | macOS, Windows; README also links an Android app and an iOS beta (offline status there not stated); no Linux [D75] | Not stated in README [D75] | **Yes**, MIT [D75] |
 | Apple Dictation | Not published | Not published | On-device "in many languages" [D60]; server transcripts may be kept up to two years if used [D65] | iPhone, iPad, Mac | Free with the OS | No |
 | Google (Gboard voice, Pixel, Rambler) | Not published | Not published | Pixel 6+ advanced voice typing on-device [D68]; Rambler needs internet for full features [D69] | Android, iOS (Gboard), web (Docs) | Free; Rambler has unpublished usage limits [D69] | No |
 
@@ -159,11 +161,14 @@ mixed sets.
 | Aqua Voice | Not documented | Via custom instructions | Edit Mode on selected text; "undo that" not supported [D45] | Dictionary and replacements ("my calendar link" → URL) [D44][D45] | 49, **Bengali listed** [D45] |
 | Willow | Yes [D48] | Yes ("Bullet, …") [D50] | New line / paragraph, spoken lists [D50]; "scratch that" not documented | Terms and voice "shortcuts" [D53] | "100+"; Bengali unverified [D52] |
 | MacWhisper | Yes [D57] | Not documented | Not documented | Not documented | "100"; Bengali not named, expected via Whisper [D42][D57] |
+| Handy | Not documented [D74] | Not documented | Push-to-talk or toggle shortcut, CLI flags and Unix signals; an optional post-processing pass (`--toggle-post-process`) [D74] | A dictionary is referenced (Raycast extension) [D74] | Parakeet V3 "automatic language detection"; Whisper multilingual; Bengali not named [D74] |
+| Amical | Via LLM formatting [D75] | Not documented | "Context-aware" formatting by active app; voice macros, hotkeys, custom workflows; MCP voice commands planned [D75] | Not documented | Whisper languages; Bengali not named [D75] |
 | Apple Dictation | Not documented | Not documented | New line / paragraph, caps; on iPhone in US English: "change … to …", "select", "delete", "undo" [D61] | None for dictation documented [D65] | 63 language/region entries; **Bangla not listed** [D64] |
 | Google | Rambler only [D69] | Not documented | New line / paragraph [D67]; Pixel: "delete last word", "clear", "undo", detailed edits [D68]; Docs: "select", "delete" [D72] | Unverified | Bengali in Gboard voice typing (2017 post) [D70] and Docs [D72]; not in Pixel advanced voice typing [D68] |
 
 **Where Humming leads:** the only app here that is free with no word cap, open source, and offline by default on
-Android, iPhone, Windows, macOS **and** Linux (Typeless is the only other one with a Linux app, and it is cloud-only).
+Android, iPhone, Windows, macOS **and** Linux (the open-source desktop apps Handy and Amical are free and local too,
+but Handy is desktop only and Amical has no Linux build) (Typeless is the only other one with a Linux app, and it is cloud-only).
 It publishes a reproducible accuracy figure with the raw output. With 1.7 it has the shared core of the dictation apps:
 filler removal with a switch, lists, "scratch that", and spoken → written replacements that double as snippets.
 **Where it trails:** no voice editing of text already in the field and no per-app tone (both need an AI model or OS
@@ -342,5 +347,7 @@ Google:
 - [D71] https://support.google.com/gboard/answer/2781851?hl=en&co=GENIE.Platform%3DiOS
 - [D72] https://support.google.com/docs/answer/4492226?hl=en (Google Docs voice typing)
 - [D73] https://techcrunch.com/2026/05/12/google-adds-gemini-powered-dictation-to-gboard-which-could-be-bad-news-for-dictation-startups/ (named press; search-result snippet only, not fetched)
+- [D74] https://github.com/cjpais/Handy (README, read 28 October 2026; licence MIT)
+- [D75] https://github.com/amicalhq/amical (README, read 28 October 2026; licence MIT)
 
 Pages that could not be fetched: superwhisper.com/pricing (404), typeless.com/download (404; /downloads works), willowvoice.com/privacy (404), goodsnooze.com (DNS failure).
