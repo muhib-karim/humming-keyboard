@@ -62,6 +62,17 @@ final class VoiceEditTests: XCTestCase {
         XCTAssertEqual(String(before.dropLast(fe.deleteCount)) + fe.insert, "I like 👍🏽 emoji")
     }
 
+    func testUndoNeverReachesAnotherDocument() {
+        let a = UUID()
+        let b = UUID()
+        XCTAssertEqual(VoiceEdit.ownedInsert("Hello", insertDocument: a, currentDocument: a), "Hello")
+        // Field B independently ends with "Hello": the insert was made in A, so nothing is owned there.
+        let inB = VoiceEdit.ownedInsert("Hello", insertDocument: a, currentDocument: b)
+        XCTAssertNil(inB)
+        XCTAssertEqual(VoiceEdit.undoCount(before: "Hi Hello", lastInsert: inB), 0)
+        XCTAssertNil(VoiceEdit.ownedInsert("Hello", insertDocument: nil, currentDocument: a))
+    }
+
     func testUndoOnlyRemovesOwnLastInsert() {
         XCTAssertEqual(VoiceEdit.undoCount(before: "Hello there. See you soon", lastInsert: "See you soon"), 12)
         XCTAssertEqual(VoiceEdit.undoCount(before: "Hello there. typed by me", lastInsert: "See you soon"), 0)

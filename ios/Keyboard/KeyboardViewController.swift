@@ -8,6 +8,8 @@ final class KeyboardViewController: UIInputViewController {
     private var host: UIHostingController<KeyboardView>?
     /// The keyboard's own last dictation insert: the only thing "undo that" may remove.
     private var lastDictationInsert: String?
+    /// The text document that insert went into; "undo that" in any other document removes nothing.
+    private var lastDictationDocument: UUID?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -73,14 +75,21 @@ final class KeyboardViewController: UIInputViewController {
                 for _ in 0..<edit.deleteCount { proxy.deleteBackward() }
                 if !edit.insert.isEmpty { proxy.insertText(edit.insert) }
             } else {
-                let n = VoiceEdit.undoCount(before: before, lastInsert: lastDictationInsert)
+                let owned = VoiceEdit.ownedInsert(
+                    lastDictationInsert,
+                    insertDocument: lastDictationDocument,
+                    currentDocument: proxy.documentIdentifier
+                )
+                let n = VoiceEdit.undoCount(before: before, lastInsert: owned)
                 for _ in 0..<n { proxy.deleteBackward() }
             }
             lastDictationInsert = nil
+            lastDictationDocument = nil
             SharedStore.latestUtterance = ""  // one edit per recording
             return
         }
         proxy.insertText(s)
         lastDictationInsert = s
+        lastDictationDocument = proxy.documentIdentifier
     }
 }

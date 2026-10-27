@@ -11,7 +11,7 @@ Android SDK, Xcode or a desktop GUI toolkit ran in CI on pull request #15.
 | Rust core, FFI build | `cd core && cargo check --no-default-features --features ffi --lib` | builds |
 | Kotlin port against the shared cases | `kotlinc VoiceEdit.kt` + a harness that reads `core/testdata/voice_edit_vectors.json` | 35 / 35 match, plus the cut-window case ("Monday" cut to "day": no command) |
 | Kotlin model catalog | `kotlinc VoiceModels.kt` + harness | catalog checks pass (3 models with size and SHA-256 checked; English clean-up off only for Multilingual) |
-| Swift core (iOS clean-up, lists, voice edit) | `cd ios/HummingCore && swift test` (Swift 6.0.3, Linux) | 59 tests, 0 failures |
+| Swift core (iOS clean-up, lists, voice edit) | `cd ios/HummingCore && swift test` (Swift 6.0.3, Linux) | 60 tests, 0 failures |
 | Desktop voice edit (`desktop/src-tauri/src/voice_edit.rs`) | the file's own tests in a stand-alone crate (the Tauri crate needs GTK/WebKit) | 8 passed, 0 failed (includes all 35 shared cases; unknown app never edits; 30 s window and one edit per insertion; Backspace counts grapheme clusters, family emoji = 1) |
 | Desktop model catalog (`desktop/src-tauri/src/models.rs`) | the file's own tests in a stand-alone crate | 6 passed, 0 failed (incl. English clean-up off only for Multilingual) |
 | Desktop clean-up (`desktop/src-tauri/src/text_cleanup.rs`) | the file's own tests in a stand-alone crate, plus checks that `neutral` keeps "Er sagt, er kommt morgen" and "Kot i pies" | 27 passed, 0 failed |
@@ -47,6 +47,7 @@ request.
 | Android: "undo that" never saw the previous recording | the last dictated commit and its field are kept across recordings, cleared for another field; a whole-utterance "undo that" now reaches it | covered by `VoiceEdit.undoCount` tests; device behaviour not tested |
 | Android/iOS: commands read from cleaned or accumulated text | commands read from the current recording's raw words (Android `spokenRaw`; iOS `latestUtterance`, all chunks of the recording, shown in the keyboard strip when clean-up left nothing) | Kotlin and Swift shared cases |
 | Cut window made a false word boundary | `voiceCommand(..., truncated)` refuses a match at index 0 of a cut window (Android when 1,000 chars, iOS always) | `matchAtTheStartOfATruncatedWindowIsNotACommand`, `testTruncatedWindowRefusesAMatchAtItsStart` |
+| iOS: "undo that" could remove matching text in another field | the keyboard records the text document (`documentIdentifier`) of its last insert; undo in any other document removes nothing | `testUndoNeverReachesAnotherDocument` |
 | Multilingual output went through English clean-up | English rules off when Multilingual is the model actually loaded, on desktop and Android (spacing and dictionary only) | `multilingual_model_skips_english_cleanup`, `neutralKeepsNonEnglishWords`, `english_cleanup_is_off_only_for_multilingual` |
 | Balanced described as between Fast and Best | reworded everywhere: less memory than Fast, slightly less accurate and slower | docs only |
 

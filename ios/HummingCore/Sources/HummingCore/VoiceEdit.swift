@@ -183,4 +183,12 @@ public enum VoiceEdit {
         guard let l = lastInsert, !l.isEmpty, before.hasSuffix(l) else { return 0 }
         return l.count
     }
+
+    /// The last insert "undo that" may remove, only while the keyboard is still in the document it was typed into.
+    /// iOS gives every text document an identifier; an insert from another document (or with no recorded one) is
+    /// never ownership of the current field's text, even when that text happens to end with the same words.
+    public static func ownedInsert(_ lastInsert: String?, insertDocument: UUID?, currentDocument: UUID) -> String? {
+        guard let doc = insertDocument, doc == currentDocument else { return nil }
+        return lastInsert
+    }
 }

@@ -168,7 +168,7 @@ mixed sets.
 
 **Where Humming leads:** the only app here that is free with no word cap, open source, and offline by default on
 Android, iPhone, Windows, macOS **and** Linux (the open-source desktop apps Handy and Amical are free and local too,
-but Handy is desktop only and Amical has no Linux build) (Typeless is the only other one with a Linux app, and it is cloud-only).
+but Handy is desktop only and Amical has no Linux build; Typeless also has a Linux app, but it is cloud-only).
 It publishes a reproducible accuracy figure with the raw output. With 1.7 it has the shared core of the dictation apps:
 filler removal with a switch, lists, "scratch that", and spoken → written replacements that double as snippets.
 With 1.8 it also edits text already in the field by voice, offline, on Android, iPhone and desktop, with one rule set
