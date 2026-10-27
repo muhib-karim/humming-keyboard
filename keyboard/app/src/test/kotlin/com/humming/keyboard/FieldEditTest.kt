@@ -11,16 +11,24 @@ class FieldEditTest {
 
     @Test fun parsesAllVerbsAndRecognizerNoise() {
         assertEquals(FieldEdit.Command.Replace("Tuesday", "Wednesday"), FieldEdit.parse("Change Tuesday to Wednesday."))
-        assertEquals(FieldEdit.Command.Replace("new date", "next Friday"),
-            FieldEdit.parse("Okay, REPLACE new date WITH next Friday!"))
+        assertEquals(
+            FieldEdit.Command.Replace("new date", "next Friday"),
+            FieldEdit.parse("Okay, REPLACE new date WITH next Friday!"),
+        )
         assertEquals(FieldEdit.Command.Delete("the old date"), FieldEdit.parse("ok, delete the old date?"))
         assertEquals(FieldEdit.Command.Delete("old date"), FieldEdit.parse("REMOVE old date,"))
-        assertEquals(FieldEdit.Command.Insert("very", "good work", true),
-            FieldEdit.parse("insert very before good work."))
-        assertEquals(FieldEdit.Command.Insert("next week", "Tuesday", false),
-            FieldEdit.parse("INSERT next week AFTER Tuesday!"))
-        assertEquals(FieldEdit.Command.Replace("Monday morning", "Tuesday afternoon"),
-            FieldEdit.parse("change Monday morning to Tuesday afternoon"))
+        assertEquals(
+            FieldEdit.Command.Insert("very", "good work", true),
+            FieldEdit.parse("insert very before good work."),
+        )
+        assertEquals(
+            FieldEdit.Command.Insert("next week", "Tuesday", false),
+            FieldEdit.parse("INSERT next week AFTER Tuesday!"),
+        )
+        assertEquals(
+            FieldEdit.Command.Replace("Monday morning", "Tuesday afternoon"),
+            FieldEdit.parse("change Monday morning to Tuesday afternoon"),
+        )
     }
 
     @Test fun doesNotParseExistingCommandsOrPartialUtterances() {
@@ -42,8 +50,10 @@ class FieldEditTest {
     }
 
     @Test fun replacesLastWholeWordAndCarriesCapital() {
-        assertEquals("Meet Tuesday, then Wednesday.",
-            edit("Meet Tuesday, then Tuesday.", "change Tuesday to Wednesday"))
+        assertEquals(
+            "Meet Tuesday, then Wednesday.",
+            edit("Meet Tuesday, then Tuesday.", "change Tuesday to Wednesday"),
+        )
         assertEquals("Meet Wednesday at noon.", edit("Meet Tuesday at noon.", "change tuesday to wednesday"))
         assertEquals("concatenate cat!", edit("concatenate cat!", "replace cat with cat"))
         assertEquals("concatenate dog!", edit("concatenate cat!", "replace cat with dog"))
@@ -52,8 +62,10 @@ class FieldEditTest {
         assertNull(FieldEdit.plan("concatenate", FieldEdit.Command.Replace("cat", "dog")))
         assertNull(FieldEdit.plan("don't", FieldEdit.Command.Replace("don", "do")))
         assertNull(FieldEdit.plan("hello", FieldEdit.Command.Delete("goodbye")))
-        assertEquals("Next Tuesday afternoon",
-            edit("Next Monday morning", "change Monday morning to Tuesday afternoon"))
+        assertEquals(
+            "Next Tuesday afternoon",
+            edit("Next Monday morning", "change Monday morning to Tuesday afternoon"),
+        )
     }
 
     @Test fun deletesOneAdjacentSpace() {

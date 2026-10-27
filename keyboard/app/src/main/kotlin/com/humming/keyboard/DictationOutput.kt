@@ -55,8 +55,8 @@ class DictationOutput(
     fun inOriginalField(): Boolean = target == null || currentTarget() == target
 
     /**
-     * Outcome of a voice edit ([tryFieldEdit]). NOT_APPLICABLE = the field can't be edited, NOT_FOUND = the target is not
-     * before the cursor; in both cases the field is untouched and the words are typed instead.
+     * Outcome of a voice edit ([tryFieldEdit]). NOT_APPLICABLE = the field can't be edited, NOT_FOUND = the target is
+     * not before the cursor; in both cases the field is untouched and the words are typed instead.
      */
     enum class FieldEditResult { NOT_APPLICABLE, NOT_FOUND, APPLIED }
 
@@ -70,6 +70,7 @@ class DictationOutput(
         fun commitFinal(text: String, replacesDraft: Boolean): Boolean
         /** Removes the draft from the field without committing anything. */
         fun clearComposing()
+
         /**
          * Reads up to [windowChars] before the cursor, asks [planner] for the edit and applies it in one batch edit.
          * NOT_APPLICABLE when there is no field or text is selected; NOT_FOUND when [planner] returns null. Both leave
@@ -109,11 +110,6 @@ class DictationOutput(
         if (field.setComposing(d)) { draft = d; draftUpdates++ }
     }
 
-    /** Forgets the draft without touching the focused field (it is not ours: the draft was in another field). */
-    private fun abandonDraft() {
-        draft = ""
-    }
-
     private fun clearDraft() {
         if (draft.isEmpty()) return
         field.clearComposing()
@@ -127,7 +123,7 @@ class DictationOutput(
         lastPreview = text
         preview(text)
         // In another field the framework already finished our composing span: forget it so it is not replaced twice.
-        if (attached) { if (inOriginalField()) showDraft(text) else abandonDraft() }
+        if (attached) { if (inOriginalField()) showDraft(text) else draft = "" }
     }
 
     /** Keyboard hidden mid-dictation (screen off, app switch): keep listening, take the draft out of the field. */
@@ -140,7 +136,7 @@ class DictationOutput(
     fun attach() {
         // Focus moved to a different field (or app) while the keyboard was hidden: stay detached so nothing spoken for
         // the first field is replayed into this one. Coming back to the original field attaches again.
-        if (!inOriginalField()) { abandonDraft(); attached = false; return }
+        if (!inOriginalField()) { draft = ""; attached = false; return }
         attached = true
         if (state == State.LISTENING && live) showDraft(lastPreview)
     }
@@ -160,7 +156,7 @@ class DictationOutput(
         preview("")
         lastPreview = ""
         if (!inOriginalField()) {
-            abandonDraft()
+            draft = "" // forget the draft without touching the focused field: it is not ours
             return false
         }
         if (text.isBlank() || !toField || !attached) {

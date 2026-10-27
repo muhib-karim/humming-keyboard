@@ -11,12 +11,28 @@ package com.humming.keyboard
 object FieldEdit {
     /** Longest utterance read as a command; anything longer is dictation. */
     const val MAX_UTTERANCE = 200
+
     /** Longest text to find, replace or insert. */
     const val MAX_PART = 60
 
+    private const val REPLACE_TARGET = 1
+    private const val CHANGE_TARGET = 2
+    private const val SECOND_PART = 3
+
     sealed class Command {
+        /** The text to look for before the cursor. */
+        val find: String
+            get() =
+                when (this) {
+                    is Replace -> target
+                    is Delete -> target
+                    is Insert -> anchor
+                }
+
         data class Replace(val target: String, val replacement: String) : Command()
+
         data class Delete(val target: String) : Command()
+
         data class Insert(val text: String, val anchor: String, val before: Boolean) : Command()
     }
 
@@ -26,7 +42,7 @@ object FieldEdit {
     }
 
     private val leadingOk = Regex("^(?:ok|okay)\\b[,.]?\\s*", RegexOption.IGNORE_CASE)
-    private val replaceCmd = Regex("^(?:change (.+?) to|replace (.+?) with) (.+)$", RegexOption.IGNORE_CASE)
+    private val replaceCmd = Regex("^(?:replace (.+?) with|change (.+?) to) (.+)$", RegexOption.IGNORE_CASE)
     private val deleteCmd = Regex("^(?:delete|remove) (.+)$", RegexOption.IGNORE_CASE)
     private val insertCmd = Regex("^insert (.+?) (before|after) (.+)$", RegexOption.IGNORE_CASE)
 
@@ -36,77 +52,85 @@ object FieldEdit {
         RegexOption.IGNORE_CASE,
     )
 
-    private fun part(s: String): String? {
-        val p = s.trim().trim(',').trim()
-        return p.takeIf { it.isNotEmpty() && it.length <= MAX_PART }
+    /** A usable target or text: trimmed, not empty, not too long. */
+    private fun part(s: String): String? = s.trim().trim(',').trim().takeIf { it.isNotEmpty() && it.length <= MAX_PART }
+
+    /** A part that is something to find in the field (not "that", "the last word", ...). */
+    private fun findable(s: String): String? = part(s)?.takeUnless { reservedTarget.matches(it) }
+
+    private fun normalise(utterance: String): String =
+        utterance.trim().replace(Regex("\\s+"), " ").replace(leadingOk, "")
+            .trimEnd('.', '!', '?', ',', ' ').trim(',', ' ')
+
+    private fun parseReplace(t: String): Command? = replaceCmd.matchEntire(t)?.let { m ->
+        val target = findable(m.groupValues[REPLACE_TARGET].ifEmpty { m.groupValues[CHANGE_TARGET] })
+        val replacement = part(m.groupValues[SECOND_PART])
+        if (target != null && replacement != null) Command.Replace(target, replacement) else null
     }
+
+    private fun parseInsert(t: String): Command? = insertCmd.matchEntire(t)?.let { m ->
+        val text = part(m.groupValues[1])
+        val anchor = findable(m.groupValues[SECOND_PART])
+        val before = m.groupValues[2].equals("before", ignoreCase = true)
+        if (text != null && anchor != null) Command.Insert(text, anchor, before) else null
+    }
+
+    private fun parseDelete(t: String): Command? =
+        deleteCmd.matchEntire(t)?.let { m -> findable(m.groupValues[1])?.let { Command.Delete(it) } }
 
     /** The command said in [utterance], or null when it is ordinary dictation (or an existing dictation command). */
     fun parse(utterance: String): Command? {
-        if (utterance.length > MAX_UTTERANCE) return null
-        val t = utterance.trim().replace(Regex("\\s+"), " ").replace(leadingOk, "")
-            .trimEnd('.', '!', '?', ',', ' ').trim(',', ' ')
-        if (t.isEmpty()) return null
-        replaceCmd.matchEntire(t)?.let { m ->
-            val target = part(m.groupValues[1].ifEmpty { m.groupValues[2] }) ?: return null
-            val replacement = part(m.groupValues[3]) ?: return null
-            if (reservedTarget.matches(target)) return null
-            return Command.Replace(target, replacement)
+        val t = if (utterance.length > MAX_UTTERANCE) "" else normalise(utterance)
+        return when {
+            t.isEmpty() -> null
+            replaceCmd.matches(t) -> parseReplace(t)
+            insertCmd.matches(t) -> parseInsert(t)
+            else -> parseDelete(t)
         }
-        insertCmd.matchEntire(t)?.let { m ->
-            val text = part(m.groupValues[1]) ?: return null
-            val anchor = part(m.groupValues[3]) ?: return null
-            if (reservedTarget.matches(anchor)) return null
-            return Command.Insert(text, anchor, before = m.groupValues[2].equals("before", ignoreCase = true))
-        }
-        deleteCmd.matchEntire(t)?.let { m ->
-            val target = part(m.groupValues[1]) ?: return null
-            if (reservedTarget.matches(target)) return null
-            return Command.Delete(target)
-        }
-        return null
     }
 
-    private fun isWordChar(c: Char) = c.isLetterOrDigit() || c == '\'' || c == '’'
+    private fun deletion(before: String, start: Int, end: Int): Edit = when {
+        start > 0 && before[start - 1] == ' ' -> Edit(start - 1, end, "")
+        end < before.length && before[end] == ' ' -> Edit(start, end + 1, "")
+        else -> Edit(start, end, "")
+    }
 
-    /** Start of the last whole-word, case-insensitive occurrence of [target] in [text], or -1. */
-    private fun lastIndex(text: String, target: String): Int {
-        var i = text.length - target.length
-        while (i >= 0) {
-            val end = i + target.length
-            if (text.regionMatches(i, target, 0, target.length, ignoreCase = true) &&
-                (i == 0 || !isWordChar(text[i - 1])) &&
-                (end == text.length || !isWordChar(text[end]))
-            ) return i
-            i--
-        }
-        return -1
+    private fun replacement(before: String, start: Int, end: Int, r: String): Edit {
+        val capital = before[start].isUpperCase() && r.first().isLowerCase()
+        return Edit(start, end, if (capital) r.replaceFirstChar { it.uppercaseChar() } else r)
     }
 
     /** The edit [cmd] makes to [before] (the text before the cursor), or null when its target is not there. */
     fun plan(before: String, cmd: Command): Edit? {
-        val find = when (cmd) {
-            is Command.Replace -> cmd.target
-            is Command.Delete -> cmd.target
-            is Command.Insert -> cmd.anchor
-        }
-        if (find.isEmpty()) return null
-        val start = lastIndex(before, find)
-        if (start < 0) return null
+        val find = cmd.find
+        val start = if (find.isEmpty()) -1 else Words.lastIndex(before, find)
         val end = start + find.length
-        return when (cmd) {
-            is Command.Replace -> {
-                val r = cmd.replacement
-                val capital = before[start].isUpperCase() && r.first().isLowerCase()
-                Edit(start, end, if (capital) r.replaceFirstChar { it.uppercaseChar() } else r)
+        return if (start < 0) {
+            null
+        } else {
+            when (cmd) {
+                is Command.Replace -> replacement(before, start, end, cmd.replacement)
+                is Command.Delete -> deletion(before, start, end)
+                is Command.Insert ->
+                    if (cmd.before) Edit(start, start, cmd.text + " ") else Edit(end, end, " " + cmd.text)
             }
-            is Command.Delete -> when {
-                start > 0 && before[start - 1] == ' ' -> Edit(start - 1, end, "")
-                end < before.length && before[end] == ' ' -> Edit(start, end + 1, "")
-                else -> Edit(start, end, "")
-            }
-            is Command.Insert ->
-                if (cmd.before) Edit(start, start, cmd.text + " ") else Edit(end, end, " " + cmd.text)
         }
     }
+}
+
+/** Whole-word, case-insensitive matching for [FieldEdit]. */
+private object Words {
+    fun isWordChar(c: Char) = c.isLetterOrDigit() || c == '\'' || c == '\u2019'
+
+    /** True when [text] has [target] at [i] as a whole word (case-insensitive). */
+    fun wholeWordAt(text: String, target: String, i: Int): Boolean {
+        val end = i + target.length
+        val startsWord = i == 0 || !isWordChar(text[i - 1])
+        val endsWord = end == text.length || !isWordChar(text[end])
+        return startsWord && endsWord && text.regionMatches(i, target, 0, target.length, ignoreCase = true)
+    }
+
+    /** Start of the last whole-word, case-insensitive occurrence of [target] in [text], or -1. */
+    fun lastIndex(text: String, target: String): Int =
+        (text.length - target.length downTo 0).firstOrNull { wholeWordAt(text, target, it) } ?: -1
 }

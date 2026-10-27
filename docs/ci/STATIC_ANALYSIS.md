@@ -27,7 +27,9 @@ baselines record exactly the findings that existed when the gates were switched 
   downloaded, checked, and committed:
   - `keyboard/config/ktlint-baseline.xml`: 5,816 findings in 273 files (quality.yml on commit `3b01d65`); 5,815 after
     the CodeQL fixes removed one. Entries of seven files edited in 1.7.1 were re-keyed to their new line numbers after
-    checking that each file's rule counts were unchanged (no finding added);
+    checking that each file's rule counts were unchanged (no finding added). The same was done for `DictationOutput.kt`,
+    `DictationOutputTest.kt`, `HummingVoice.kt` and `VoiceScreen.kt` with voice editing (rule counts per file
+    unchanged; the new `FieldEdit.kt` and `FieldEditTest.kt` have no entries);
   - `keyboard/config/detekt-baseline.xml`: 1,634 findings (same run). Two entries for `ExtensionAuthorTest.kt`, an
     upstream test that is commented out in full, were replaced by an `excludes` entry in `detekt.yml` so that the
     file's sample e-mail addresses are not copied into the baseline;
