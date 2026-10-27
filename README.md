@@ -107,7 +107,7 @@ Gboard and SwiftKey support far more typing languages and install from the store
 |---|---|---|---|---|---|
 | Works offline | **Yes**, default, every platform (English) | No, cloud only | Yes, local models | No, cloud only | On-device in many languages |
 | Fillers, lists, "scratch that", replacements | **All four** (1.7) | All four | Fillers, lists, replacements | Replacements | "Delete" / "undo" on iPhone (US English) |
-| Edit existing text by voice | No | Command Mode (Pro, desktop) | On selected text | Edit Mode | iPhone, US English |
+| Edit existing text by voice | **Android**: "change … to …", "delete …", "insert … before/after …"; desktop and iPhone no | Command Mode (Pro, desktop) | On selected text | Edit Mode | iPhone, US English |
 | Linux | **Yes** | No | "Coming soon" | No | No |
 | Price | **Free, no word cap** | Free 2,000 words/week; $15/month | Free with local models; $8.49/month | Free 1,000 words; $10/month | Free with the OS |
 | Open source | **Apache-2.0** | No | No | No | No |
@@ -115,7 +115,8 @@ Gboard and SwiftKey support far more typing languages and install from the store
 Published error rates come from different test sets and are not comparable (Superwhisper 6.6 % on its own 8-set
 benchmark, Aqua 5.55 % with the set not stated, Humming 2.78 % on LibriSpeech test-clean). Typeless, Willow, MacWhisper,
 Google and every source: **[COMPETITORS.md#dictation-apps](COMPETITORS.md#dictation-apps)**. Where Humming trails the
-dictation apps: no voice editing of text already in the field, no per-app tone, and offline dictation is English only.
+dictation apps: voice editing of text already in the field is Android only (and by exact phrase, not an AI edit mode),
+no per-app tone, and offline dictation is English only.
 
 <details>
 <summary><strong>Against dictation apps: Wispr Flow, Typeless, Gboard Rambler</strong></summary>

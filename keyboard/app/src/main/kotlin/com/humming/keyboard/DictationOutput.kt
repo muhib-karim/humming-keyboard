@@ -53,6 +53,13 @@ class DictationOutput(
      * there; in any other field (another app, another box) they are held back and the caller keeps them in History.
      */
     fun inOriginalField(): Boolean = target == null || currentTarget() == target
+
+    /**
+     * Outcome of a voice edit ([tryFieldEdit]). NOT_APPLICABLE = the field can't be edited, NOT_FOUND = the target is
+     * not before the cursor; in both cases the field is untouched and the words are typed instead.
+     */
+    enum class FieldEditResult { NOT_APPLICABLE, NOT_FOUND, APPLIED }
+
     interface Field {
         /** Shows [text] as the composing draft, replacing the previous draft in place. False when there is no field. */
         fun setComposing(text: String): Boolean
@@ -63,9 +70,22 @@ class DictationOutput(
         fun commitFinal(text: String, replacesDraft: Boolean): Boolean
         /** Removes the draft from the field without committing anything. */
         fun clearComposing()
+
+        /**
+         * Reads up to [windowChars] before the cursor and the character right after it (null when none), asks
+         * [planner] (before, next) for the edit and applies it in one batch edit.
+         * NOT_APPLICABLE when there is no field or text is selected; NOT_FOUND when [planner] returns null. Both leave
+         * the field's text untouched (the caller then types the words).
+         */
+        fun applyEdit(windowChars: Int, planner: (before: String, next: Char?) -> FieldEdit.Edit?): FieldEditResult
     }
 
     enum class State { LISTENING, FINISHING, DONE }
+
+    companion object {
+        /** Characters before the cursor a voice edit may look at. */
+        const val EDIT_WINDOW = 2000
+    }
 
     var state = State.LISTENING
         private set
@@ -91,11 +111,6 @@ class DictationOutput(
         if (field.setComposing(d)) { draft = d; draftUpdates++ }
     }
 
-    /** Forgets the draft without touching the focused field (it is not ours: the draft was in another field). */
-    private fun abandonDraft() {
-        draft = ""
-    }
-
     private fun clearDraft() {
         if (draft.isEmpty()) return
         field.clearComposing()
@@ -109,7 +124,7 @@ class DictationOutput(
         lastPreview = text
         preview(text)
         // In another field the framework already finished our composing span: forget it so it is not replaced twice.
-        if (attached) { if (inOriginalField()) showDraft(text) else abandonDraft() }
+        if (attached) { if (inOriginalField()) showDraft(text) else draft = "" }
     }
 
     /** Keyboard hidden mid-dictation (screen off, app switch): keep listening, take the draft out of the field. */
@@ -122,7 +137,7 @@ class DictationOutput(
     fun attach() {
         // Focus moved to a different field (or app) while the keyboard was hidden: stay detached so nothing spoken for
         // the first field is replayed into this one. Coming back to the original field attaches again.
-        if (!inOriginalField()) { abandonDraft(); attached = false; return }
+        if (!inOriginalField()) { draft = ""; attached = false; return }
         attached = true
         if (state == State.LISTENING && live) showDraft(lastPreview)
     }
@@ -142,7 +157,7 @@ class DictationOutput(
         preview("")
         lastPreview = ""
         if (!inOriginalField()) {
-            abandonDraft()
+            draft = "" // forget the draft without touching the focused field: it is not ours
             return false
         }
         if (text.isBlank() || !toField || !attached) {
@@ -154,6 +169,27 @@ class DictationOutput(
         draft = ""
         if (ok) commits++
         return ok
+    }
+
+    /**
+     * The final transcript was a voice edit ([FieldEdit]): take the draft out and edit the text before the cursor
+     * instead of typing. Only in the original field while the keyboard is attached; the caller checks privacy (a
+     * private field is never read). Only APPLIED ends the dictation (nothing typed). NOT_APPLICABLE and NOT_FOUND
+     * leave it open so the caller types the words with [onFinal]: a dictated sentence is never lost.
+     */
+    fun tryFieldEdit(cmd: FieldEdit.Command, windowChars: Int = EDIT_WINDOW): FieldEditResult {
+        if (state == State.DONE || !attached || !inOriginalField()) return FieldEditResult.NOT_APPLICABLE
+        clearDraft()
+        // One extra character so a target at the window's start is checked for a word boundary.
+        val r = field.applyEdit(windowChars + 1) { before, next ->
+            FieldEdit.plan(before, cmd, if (before.length > windowChars) 1 else 0, next)
+        }
+        if (r == FieldEditResult.APPLIED) {
+            state = State.DONE
+            preview("")
+            lastPreview = ""
+        }
+        return r
     }
 
     /** Cancel: nothing was committed, so taking the draft out leaves the field as it was. Always true. */

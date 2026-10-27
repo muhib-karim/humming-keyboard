@@ -186,6 +186,9 @@ fun VoiceScreen() = FlorisScreen {
             Text(
                 "Say \"new line\" or \"new paragraph\" anywhere, \"bullet point\" to start a list item, and \"delete that\" or " +
                     "\"scratch that\" to remove the sentence before it. A list said as \"first, ... second, ...\" becomes bullets. " +
+                    "To fix text already in the field, say only \"change Tuesday to Wednesday\", \"delete Tuesday\" " +
+                    "or " +
+                    "\"insert next before Tuesday\" (or \"after\"). " +
                     "With AI clean-up on, end with \"make it formal\", \"make it casual\", \"make it shorter\", " +
                     "\"bullet points\", \"fix the grammar\" or \"translate it to Spanish\".",
                 fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurfaceVariant,

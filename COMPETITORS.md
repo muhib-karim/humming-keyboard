@@ -152,7 +152,7 @@ mixed sets.
 
 | App | Fillers removed | Lists | Voice commands | Personal dictionary / replacements / snippets | Languages, Bangla |
 |---|---|---|---|---|---|
-| **Humming 1.7** | **Yes**, switch, on by default ✅ | **Yes**: "bullet point", "first, ... second, ..." ✅ | "new line", "new paragraph", spoken punctuation, "scratch that" / "delete that" ✅, "delete last word", self-corrections ("3, no, 4pm"); no editing of text already in the field | Custom words (casing, recogniser hints on iPhone) and **"spoken -> written" replacements** ✅, per app on Android and desktop | Offline dictation: English. Bangla: phonetic **typing** (Android); Android's opt-in Online mode uses the phone's speech service, Bangla there unverified |
+| **Humming 1.7** | **Yes**, switch, on by default ✅ | **Yes**: "bullet point", "first, ... second, ..." ✅ | "new line", "new paragraph", spoken punctuation, "scratch that" / "delete that" ✅, "delete last word", self-corrections ("3, no, 4pm"); on Android "change … to …", "delete …", "insert … before/after …" edit text already in the field (not on desktop or iPhone) | Custom words (casing, recogniser hints on iPhone) and **"spoken -> written" replacements** ✅, per app on Android and desktop | Offline dictation: English. Bangla: phonetic **typing** (Android); Android's opt-in Online mode uses the phone's speech service, Bangla there unverified |
 | Wispr Flow | Yes, three levels [D9] | Yes ("one… two…") [D6] | New line / paragraph, Backtrack ("scratch that") [D6]; Command Mode on selected text, Pro, desktop [D5] | Dictionary with auto-learn, misspelling fixes, snippets on every plan [D10][D11] | "100+"; Bengali unverified [D7] |
 | Typeless | Yes [D19] | Yes [D19] | Speak-to-edit on selected text [D24]; "new line" / "scratch that" not documented | Dictionary, auto-add, CSV import; replacements not documented [D25] | "100+"; no list, Bengali unverified [D19] |
 | Superwhisper | Yes, Message mode [D34] | Yes, Note mode [D34] | Commands on selected text (Super mode) [D34]; "new line" / "scratch that" not documented | Vocabulary hints and **replacements**, e.g. "my work email" → address [D32] | "100+"; Bengali not named, expected via Whisper models [D33][D42] |
@@ -166,8 +166,8 @@ mixed sets.
 Android, iPhone, Windows, macOS **and** Linux (Typeless is the only other one with a Linux app, and it is cloud-only).
 It publishes a reproducible accuracy figure with the raw output. With 1.7 it has the shared core of the dictation apps:
 filler removal with a switch, lists, "scratch that", and spoken → written replacements that double as snippets.
-**Where it trails:** no voice editing of text already in the field and no per-app tone (both need an AI model or OS
-accessibility hooks); offline dictation is English only, while Aqua and Google list Bengali (online).
+**Where it trails:** voice editing of text already in the field is Android only (exact phrases, no AI edit mode) and
+there is no per-app tone (that needs an AI model); offline dictation is English only, while Aqua and Google list Bengali (online).
 
 ## Dictation gap list (ranked)
 
@@ -181,7 +181,7 @@ Swift `ListFormatTests`, `TextCleanupTests`).
 | D2 | Smart lists ("bullet point", "first, ... second, ...") | Wispr, Typeless, Superwhisper, Willow | 4 | 5 | 20 | ✅ Android, desktop, iPhone (`ListFormat`, `bullet_list`) |
 | D3 | "Scratch that" / "delete that" as its own sentence on every platform | Wispr, Typeless, Willow | 4 | 5 | 20 | ✅ desktop and iPhone; Android had it |
 | D4 | A switch for filler-word removal (default on) | Wispr (clean-up levels) | 3 | 5 | 15 | ✅ Android and iPhone; desktop had it |
-| D5 | Voice editing of text already in the field ("change X to Y", "select", "delete X") | Apple (US English), Pixel, Docs; AI edit modes in Wispr, Typeless, Superwhisper, Aqua | 4 | 2 | 8 | Open: needs `InputConnection` editing on Android and accessibility APIs on desktop |
+| D5 | Voice editing of text already in the field ("change X to Y", "select", "delete X") | Apple (US English), Pixel, Docs; AI edit modes in Wispr, Typeless, Superwhisper, Aqua | 4 | 2 | 8 | ✅ Android (`FieldEdit`: "change X to Y", "delete X", "insert X before/after Y"); desktop (accessibility APIs) and iPhone open |
 | D6 | Per-app tone and style | Wispr, Typeless, Superwhisper, Aqua, Willow, MacWhisper | 3 | 2 | 6 | Open: needs a language model; Android's own-key AI clean-up covers "make it formal" |
 | D7 | Dictionary that learns from your corrections | Wispr (desktop), Typeless | 3 | 2 | 6 | Open |
 | D8 | Offline dictation in Bangla and more languages | Aqua (cloud, Bengali listed), Superwhisper / MacWhisper via Whisper (untested) | 5 | 1 | 5 | Open (keyboard gap 7) |
