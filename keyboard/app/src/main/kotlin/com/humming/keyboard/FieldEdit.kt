@@ -103,10 +103,12 @@ object FieldEdit {
     /**
      * The edit [cmd] makes to [before] (the text before the cursor), or null when its target is not there. The first
      * [contextChars] characters are only word-boundary context (the slice may start mid-word): no match starts there.
+     * [next] is the character right after the cursor (null when none): a match ending at the cursor is a whole word
+     * only when [next] is not a word character. The edit never reaches past the cursor.
      */
-    fun plan(before: String, cmd: Command, contextChars: Int = 0): Edit? {
+    fun plan(before: String, cmd: Command, contextChars: Int = 0, next: Char? = null): Edit? {
         val find = cmd.find
-        val start = if (find.isEmpty()) -1 else Words.lastIndex(before, find, contextChars)
+        val start = if (find.isEmpty()) -1 else Words.lastIndex(before, find, contextChars, next)
         val end = start + find.length
         return if (start < 0) {
             null
@@ -125,15 +127,16 @@ object FieldEdit {
 private object Words {
     fun isWordChar(c: Char) = c.isLetterOrDigit() || c == '\'' || c == '\u2019'
 
-    /** True when [text] has [target] at [i] as a whole word (case-insensitive). */
-    fun wholeWordAt(text: String, target: String, i: Int): Boolean {
+    /** True when [text] has [target] at [i] as a whole word (case-insensitive); [next] is the char after [text]. */
+    fun wholeWordAt(text: String, target: String, i: Int, next: Char?): Boolean {
         val end = i + target.length
         val startsWord = i == 0 || !isWordChar(text[i - 1])
-        val endsWord = end == text.length || !isWordChar(text[end])
+        val after = if (end == text.length) next else text[end]
+        val endsWord = after == null || !isWordChar(after)
         return startsWord && endsWord && text.regionMatches(i, target, 0, target.length, ignoreCase = true)
     }
 
     /** Start (>= [from]) of the last whole-word, case-insensitive occurrence of [target] in [text], or -1. */
-    fun lastIndex(text: String, target: String, from: Int = 0): Int =
-        (text.length - target.length downTo from).firstOrNull { wholeWordAt(text, target, it) } ?: -1
+    fun lastIndex(text: String, target: String, from: Int, next: Char?): Int =
+        (text.length - target.length downTo from).firstOrNull { wholeWordAt(text, target, it, next) } ?: -1
 }

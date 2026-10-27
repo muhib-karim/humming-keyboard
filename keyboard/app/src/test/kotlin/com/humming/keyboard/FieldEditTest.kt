@@ -100,4 +100,14 @@ class FieldEditTest {
             FieldEdit.plan("Tuesday", FieldEdit.Command.Replace("Tuesday", "Monday")),
         )
     }
+
+    @Test fun matchEndingAtTheCursorNeedsAWordBoundaryAfterIt() {
+        assertNull(FieldEdit.plan("cat", FieldEdit.Command.Delete("cat"), next = 'f'))
+        assertEquals(
+            FieldEdit.Edit(0, 4, ""),
+            FieldEdit.plan("cat and cat", FieldEdit.Command.Delete("cat"), next = 'f'),
+        )
+        assertEquals(FieldEdit.Edit(0, 3, ""), FieldEdit.plan("cat", FieldEdit.Command.Delete("cat"), next = ' '))
+        assertEquals(FieldEdit.Edit(0, 3, ""), FieldEdit.plan("cat", FieldEdit.Command.Delete("cat"), next = '.'))
+    }
 }

@@ -368,7 +368,7 @@ object HummingVoice {
                 // the text is left as it was (the words are typed).
                 override fun applyEdit(
                     windowChars: Int,
-                    planner: (String) -> com.humming.keyboard.FieldEdit.Edit?,
+                    planner: (String, Char?) -> com.humming.keyboard.FieldEdit.Edit?,
                 ): DictationOutput.FieldEditResult {
                     val ed by app.editorInstance()
                     val ic = ic()
@@ -386,7 +386,8 @@ object HummingVoice {
                             }
                             val cursorOnly = !sel.isNotValid && sel.start == sel.end
                             val before = if (cursorOnly) ic.getTextBeforeCursor(windowChars, 0)?.toString() else null
-                            val edit = before?.let(planner)
+                            val next = ic.getTextAfterCursor(1, 0)?.firstOrNull()
+                            val edit = before?.let { planner(it, next) }
                             // Field offset of the first character of [before].
                             val shift = sel.start - (before?.length ?: 0)
                             result = when {
@@ -620,12 +621,14 @@ object HummingVoice {
                             DictationOutput.FieldEditResult.APPLIED -> {}
                             DictationOutput.FieldEditResult.NOT_FOUND -> {
                                 // Never lose a sentence: no match means it was dictation after all.
-                                out.onFinal(text)
-                                notFound = when (cmd) {
-                                    is com.humming.keyboard.FieldEdit.Command.Replace -> cmd.target
-                                    is com.humming.keyboard.FieldEdit.Command.Delete -> cmd.target
-                                    is com.humming.keyboard.FieldEdit.Command.Insert -> cmd.anchor
-                                    null -> ""
+                                // Only claim the words were typed when they were.
+                                if (out.onFinal(text)) {
+                                    notFound = when (cmd) {
+                                        is com.humming.keyboard.FieldEdit.Command.Replace -> cmd.target
+                                        is com.humming.keyboard.FieldEdit.Command.Delete -> cmd.target
+                                        is com.humming.keyboard.FieldEdit.Command.Insert -> cmd.anchor
+                                        null -> ""
+                                    }
                                 }
                             }
                             DictationOutput.FieldEditResult.NOT_APPLICABLE -> out.onFinal(text)

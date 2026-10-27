@@ -72,11 +72,12 @@ class DictationOutput(
         fun clearComposing()
 
         /**
-         * Reads up to [windowChars] before the cursor, asks [planner] for the edit and applies it in one batch edit.
+         * Reads up to [windowChars] before the cursor and the character right after it (null when none), asks
+         * [planner] (before, next) for the edit and applies it in one batch edit.
          * NOT_APPLICABLE when there is no field or text is selected; NOT_FOUND when [planner] returns null. Both leave
          * the field's text untouched (the caller then types the words).
          */
-        fun applyEdit(windowChars: Int, planner: (String) -> FieldEdit.Edit?): FieldEditResult
+        fun applyEdit(windowChars: Int, planner: (before: String, next: Char?) -> FieldEdit.Edit?): FieldEditResult
     }
 
     enum class State { LISTENING, FINISHING, DONE }
@@ -180,8 +181,8 @@ class DictationOutput(
         if (state == State.DONE || !attached || !inOriginalField()) return FieldEditResult.NOT_APPLICABLE
         clearDraft()
         // One extra character so a target at the window's start is checked for a word boundary.
-        val r = field.applyEdit(windowChars + 1) { before ->
-            FieldEdit.plan(before, cmd, if (before.length > windowChars) 1 else 0)
+        val r = field.applyEdit(windowChars + 1) { before, next ->
+            FieldEdit.plan(before, cmd, if (before.length > windowChars) 1 else 0, next)
         }
         if (r == FieldEditResult.APPLIED) {
             state = State.DONE

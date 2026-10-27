@@ -18,7 +18,10 @@ class DictationOutputTest {
         val committed = mutableListOf<String>()
         val base = StringBuilder()
         var composing = ""
-        val text: String get() = base.toString() + composing
+
+        /** Text after the cursor (never edited). */
+        val tail = StringBuilder()
+        val text: String get() = base.toString() + composing + tail
         var composingCalls = 0
         override fun setComposing(text: String): Boolean { composing = text; composingCalls++; return true }
         override fun commitFinal(text: String, replacesDraft: Boolean): Boolean {
@@ -27,11 +30,11 @@ class DictationOutputTest {
         override fun clearComposing() { composing = "" }
         override fun applyEdit(
             windowChars: Int,
-            planner: (String) -> FieldEdit.Edit?,
+            planner: (String, Char?) -> FieldEdit.Edit?,
         ): DictationOutput.FieldEditResult {
             composing = ""
             val before = base.takeLast(windowChars).toString()
-            val e = planner(before) ?: return DictationOutput.FieldEditResult.NOT_FOUND
+            val e = planner(before, tail.firstOrNull()) ?: return DictationOutput.FieldEditResult.NOT_FOUND
             val offset = base.length - before.length
             base.replace(offset + e.start, offset + e.end, e.replacement)
             return DictationOutput.FieldEditResult.APPLIED
@@ -348,6 +351,17 @@ class DictationOutputTest {
         assertEquals("Hello there. Delete Tuesday.", field.text)
         assertEquals(1, out.commits)
         assertFalse(out.onFinal("Delete Tuesday."))
+    }
+
+    @Test
+    fun aVoiceEditNeverMatchesPartOfTheWordAtTheCursor() {
+        val field = FakeField()
+        field.type("cat")
+        field.tail.append("fish")
+        val out = DictationOutput(field, {}, glue = " ")
+        out.onStop()
+        assertEquals(DictationOutput.FieldEditResult.NOT_FOUND, out.tryFieldEdit(FieldEdit.Command.Delete("cat")))
+        assertEquals("catfish", field.text)
     }
 
     @Test
