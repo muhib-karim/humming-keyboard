@@ -364,8 +364,9 @@ object HummingVoice {
                 }
 
                 // A voice edit (FieldEdit): the text before the cursor is read, edited in place in one batch edit, and
-                // the cursor stays after the same text. With a selection, no match or an editor that refuses the edit
-                // the text is left as it was (the words are typed).
+                // the cursor stays after the same text. The cursor comes only from getExtractedText (the cached
+                // selection can be stale after the draft was removed). With a selection, no cursor position, no match
+                // or an editor that refuses the edit the text is left as it was (the words are typed).
                 override fun applyEdit(
                     windowChars: Int,
                     planner: (String, Char?) -> com.humming.keyboard.FieldEdit.Edit?,
@@ -382,7 +383,7 @@ object HummingVoice {
                             val sel = if (x != null && x.selectionStart >= 0) {
                                 EditorRange(x.startOffset + x.selectionStart, x.startOffset + x.selectionEnd)
                             } else {
-                                ed.activeContent.selection
+                                EditorRange.Unspecified
                             }
                             val cursorOnly = !sel.isNotValid && sel.start == sel.end
                             val before = if (cursorOnly) ic.getTextBeforeCursor(windowChars, 0)?.toString() else null
