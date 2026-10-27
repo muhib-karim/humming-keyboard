@@ -364,8 +364,8 @@ object HummingVoice {
                 }
 
                 // A voice edit (FieldEdit): the text before the cursor is read, edited in place in one batch edit, and
-                // the cursor stays after the same text. With a selection or no match nothing is touched (the words
-                // are typed).
+                // the cursor stays after the same text. With a selection, no match or an editor that refuses the edit
+                // the text is left as it was (the words are typed).
                 override fun applyEdit(
                     windowChars: Int,
                     planner: (String) -> com.humming.keyboard.FieldEdit.Edit?,
@@ -396,15 +396,21 @@ object HummingVoice {
                                 else -> {
                                     val absStart = shift + edit.start
                                     val absEnd = shift + edit.end
-                                    if (absStart == absEnd) {
+                                    val placed = if (absStart == absEnd) {
                                         ic.setSelection(absStart, absStart)
                                     } else {
                                         ic.setComposingRegion(absStart, absEnd)
                                     }
-                                    ic.commitText(edit.replacement, 1)
-                                    val newCursor = sel.start + edit.replacement.length - (edit.end - edit.start)
-                                    ic.setSelection(newCursor, newCursor)
-                                    DictationOutput.FieldEditResult.APPLIED
+                                    if (placed && ic.commitText(edit.replacement, 1)) {
+                                        val newCursor = sel.start + edit.replacement.length - (edit.end - edit.start)
+                                        ic.setSelection(newCursor, newCursor)
+                                        DictationOutput.FieldEditResult.APPLIED
+                                    } else {
+                                        // The editor refused: put the cursor back, the words are typed instead.
+                                        ic.finishComposingText()
+                                        ic.setSelection(sel.start, sel.end)
+                                        DictationOutput.FieldEditResult.NOT_APPLICABLE
+                                    }
                                 }
                             }
                         } finally {

@@ -179,7 +179,10 @@ class DictationOutput(
     fun tryFieldEdit(cmd: FieldEdit.Command, windowChars: Int = EDIT_WINDOW): FieldEditResult {
         if (state == State.DONE || !attached || !inOriginalField()) return FieldEditResult.NOT_APPLICABLE
         clearDraft()
-        val r = field.applyEdit(windowChars) { before -> FieldEdit.plan(before, cmd) }
+        // One extra character so a target at the window's start is checked for a word boundary.
+        val r = field.applyEdit(windowChars + 1) { before ->
+            FieldEdit.plan(before, cmd, if (before.length > windowChars) 1 else 0)
+        }
         if (r == FieldEditResult.APPLIED) {
             state = State.DONE
             preview("")

@@ -88,4 +88,16 @@ class FieldEditTest {
         assertNull(FieldEdit.plan("day", FieldEdit.Command.Insert("new", "night", true)))
         assertTrue(FieldEdit.plan("cat", FieldEdit.Command.Insert("big", "cat", true))!!.start == 0)
     }
+
+    @Test fun windowContextCharIsNeverMatched() {
+        assertNull(FieldEdit.plan("rTuesday", FieldEdit.Command.Delete("Tuesday"), 1))
+        assertEquals(
+            FieldEdit.Edit(1, 8, "Monday"),
+            FieldEdit.plan(" Tuesday", FieldEdit.Command.Replace("Tuesday", "Monday"), 1),
+        )
+        assertEquals(
+            FieldEdit.Edit(0, 7, "Monday"),
+            FieldEdit.plan("Tuesday", FieldEdit.Command.Replace("Tuesday", "Monday")),
+        )
+    }
 }

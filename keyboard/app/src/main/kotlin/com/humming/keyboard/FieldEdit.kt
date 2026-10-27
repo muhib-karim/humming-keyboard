@@ -100,10 +100,13 @@ object FieldEdit {
         return Edit(start, end, if (capital) r.replaceFirstChar { it.uppercaseChar() } else r)
     }
 
-    /** The edit [cmd] makes to [before] (the text before the cursor), or null when its target is not there. */
-    fun plan(before: String, cmd: Command): Edit? {
+    /**
+     * The edit [cmd] makes to [before] (the text before the cursor), or null when its target is not there. The first
+     * [contextChars] characters are only word-boundary context (the slice may start mid-word): no match starts there.
+     */
+    fun plan(before: String, cmd: Command, contextChars: Int = 0): Edit? {
         val find = cmd.find
-        val start = if (find.isEmpty()) -1 else Words.lastIndex(before, find)
+        val start = if (find.isEmpty()) -1 else Words.lastIndex(before, find, contextChars)
         val end = start + find.length
         return if (start < 0) {
             null
@@ -130,7 +133,7 @@ private object Words {
         return startsWord && endsWord && text.regionMatches(i, target, 0, target.length, ignoreCase = true)
     }
 
-    /** Start of the last whole-word, case-insensitive occurrence of [target] in [text], or -1. */
-    fun lastIndex(text: String, target: String): Int =
-        (text.length - target.length downTo 0).firstOrNull { wholeWordAt(text, target, it) } ?: -1
+    /** Start (>= [from]) of the last whole-word, case-insensitive occurrence of [target] in [text], or -1. */
+    fun lastIndex(text: String, target: String, from: Int = 0): Int =
+        (text.length - target.length downTo from).firstOrNull { wholeWordAt(text, target, it) } ?: -1
 }
