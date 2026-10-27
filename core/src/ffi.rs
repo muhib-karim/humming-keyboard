@@ -4,7 +4,7 @@
 
 use std::sync::Arc;
 
-use crate::{CleanupOpts, Dictation, SpeedOpts, Timing, Transcript, VadConfig};
+use crate::{EditCommand, EditOutcome, CleanupOpts, Dictation, SpeedOpts, Timing, Transcript, VadConfig};
 
 /// FFI mirror of `crate::EngineConfig` (`model_path` is a plain string path).
 #[derive(Debug, Clone, uniffi::Record)]
@@ -154,4 +154,20 @@ pub fn core_version() -> String {
 #[uniffi::export]
 pub fn stt_available() -> bool {
     cfg!(feature = "whisper")
+}
+
+/// Result of [`voice_edit`]: the recognised command and, when it applies to `text`, the edit.
+/// (A Record instead of a tuple, because UniFFI cannot carry tuples.)
+#[derive(Debug, Clone, uniffi::Record)]
+pub struct VoiceEditResult {
+    pub command: EditCommand,
+    /// `None` for `Undo` (the caller removes its own last insertion).
+    pub outcome: Option<EditOutcome>,
+}
+
+/// D5 voice-command editing. `text` is the text before the cursor; `utterance` is the whole
+/// dictated utterance. Returns `None` when the utterance is ordinary dictation.
+#[uniffi::export]
+pub fn voice_edit(text: String, utterance: String) -> Option<VoiceEditResult> {
+    crate::voice_command(&text, &utterance).map(|(command, outcome)| VoiceEditResult { command, outcome })
 }
