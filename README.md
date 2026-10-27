@@ -67,8 +67,9 @@ sample sentence, because CI machines have no microphone. Sample text is made up.
   (`core/testdata/voice_edit_vectors.json`). On desktop it edits only Humming's own last insertion, in the same app.
   On by default, with a switch ("Edit by voice") on every platform.
 - **Two new speech models.** *Multilingual* (NVIDIA Parakeet TDT 0.6B v3, int8) types 25 European languages on Android
-  and desktop (phones with 6 GB of memory or more); clean-up and voice commands stay English-only. *Balanced* on desktop
-  (Moonshine base, int8) sits between Fast and Best. Fast stays the default.
+  and desktop (phones with 6 GB of memory or more); the English clean-up rules are switched off for it. *Balanced* on
+  desktop (Moonshine base, int8) uses less memory than Fast, at slightly lower accuracy and speed. Fast stays the
+  default.
 - **Every model measured in one run** with the app's own speech engine (LibriSpeech test-clean, first 200 clips): Best
   1.77 %, Multilingual 2.24 %, Fast 2.72 %, Balanced 3.11 %, Lite 4.51 % word error rate, with speed and memory, in
   [docs/BENCHMARKS.md](docs/BENCHMARKS.md).

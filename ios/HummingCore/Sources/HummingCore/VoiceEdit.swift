@@ -158,11 +158,13 @@ public enum VoiceEdit {
     }
 
     /// The one call hosts make. Undo comes back with a nil outcome; anything else that isn't a command which
-    /// applies to `text` returns nil and the host inserts the utterance as dictation.
-    public static func voiceCommand(text: String, utterance: String) -> Result? {
+    /// applies to `text` returns nil and the host inserts the utterance as dictation. `truncated`: `text` is a
+    /// window cut from a longer field, so its first character may sit mid-word and a match there is refused.
+    public static func voiceCommand(text: String, utterance: String, truncated: Bool = false) -> Result? {
         guard let cmd = parse(utterance) else { return nil }
         if cmd == .undo { return Result(command: cmd, outcome: nil) }
         guard let out = apply(text, cmd) else { return nil }
+        if truncated && out.start == 0 { return nil }
         return Result(command: cmd, outcome: out)
     }
 

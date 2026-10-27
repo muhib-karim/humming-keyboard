@@ -21,6 +21,14 @@ enum SharedStore {
         get { defaults.string(forKey: latestKey) ?? "" }
         set { defaults.set(newValue, forKey: latestKey) }
     }
+
+    private static let utteranceKey = "latest_utterance"
+    /// The raw words of the latest single recording, before clean-up (1.8): what edit by voice reads, so an
+    /// earlier recording in `latestDictation` or a clean-up rule can't turn dictation into a command or hide one.
+    static var latestUtterance: String {
+        get { defaults.string(forKey: utteranceKey) ?? "" }
+        set { defaults.set(newValue, forKey: utteranceKey) }
+    }
 }
 
 /// Humming's colours: the same tokens as Android and desktop (docs/BRAND.md "Design tokens").

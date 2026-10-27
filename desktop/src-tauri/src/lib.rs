@@ -169,7 +169,10 @@ pub fn finalize_text_for(raw: &str, s: &Settings, app: Option<&str>) -> String {
         active.iter().filter(|d| !d.spoken.trim().is_empty()).map(|d| d.to_core()).collect();
     let replaced = humming_core::cleanup::apply_dictionary(raw, &phrases);
     let terms: Vec<String> = active.iter().map(|d| d.written.clone()).collect();
-    let opts = if s.clean_mode {
+    // The clean-up rules are English (fillers, self-corrections, spoken commands, lists). With the Multilingual
+    // model the speech may be German, French, ...: keep the words and only normalise spacing (1.8).
+    let english = models::english_cleanup(&s.model);
+    let opts = if s.clean_mode && english {
         text_cleanup::Opts {
             remove_fillers: s.remove_fillers,
             voice_commands: s.voice_commands,
@@ -177,14 +180,14 @@ pub fn finalize_text_for(raw: &str, s: &Settings, app: Option<&str>) -> String {
             strict: s.accuracy_mode,
         }
     } else {
-        text_cleanup::Opts { remove_fillers: false, voice_commands: s.voice_commands, self_corrections: false, strict: false }
+        text_cleanup::Opts { remove_fillers: false, voice_commands: s.voice_commands && english, self_corrections: false, strict: false }
     };
     let mut text = text_cleanup::apply(&replaced, &terms, opts);
     // "bullet point" items (1.7) first; otherwise a spoken "first, ... second, ..." list. Verbatim mode keeps the words.
-    let bullets = if s.clean_mode && s.voice_commands { text_cleanup::bullet_list(&text) } else { None };
+    let bullets = if english && s.clean_mode && s.voice_commands { text_cleanup::bullet_list(&text) } else { None };
     if let Some(list) = bullets {
         text = list;
-    } else if s.clean_mode && s.format_lists {
+    } else if english && s.clean_mode && s.format_lists {
         if let Some(list) = humming_core::cleanup::format_spoken_list(&text) {
             text = list;
         }
@@ -243,12 +246,12 @@ fn start_dictation(app: &AppHandle, to_focused_app: bool) -> Result<(), String> 
     }
     let s = state.settings.lock().map(|g| g.clone()).unwrap_or_default();
     state.to_focused_app.store(to_focused_app, Ordering::SeqCst);
-    // Which app the text is for (per-app dictionary). Looked up off the hotkey thread; it is ready long before
-    // the transcript is.
+    // Which app the text is for (per-app dictionary, and the same-app check of edit by voice). Looked up off the
+    // hotkey thread; it is ready long before the transcript is. Unknown (None) means no voice edit can run.
     if let Ok(mut g) = state.focused_app.lock() {
         *g = None;
     }
-    if to_focused_app && s.dictionary.iter().any(|d| !d.apps.is_empty()) {
+    if to_focused_app {
         let slot = state.focused_app.clone();
         std::thread::spawn(move || {
             let name = focus::focused_app();
@@ -311,11 +314,24 @@ fn stop_dictation(app: &AppHandle) {
         let mut inserted = false;
         if to_focused_app {
             // Edit by voice (1.8): a command edits only our own last insertion in the same app.
-            let action = state
+            let now = now_ms();
+            let mut action = state
                 .last_insert
                 .lock()
-                .map(|l| l.plan(&raw, &text, focused.as_deref(), s.voice_edit))
+                .map(|l| l.plan(&raw, &text, focused.as_deref(), s.voice_edit, now))
                 .unwrap_or_else(|_| voice_edit::Action::Insert(text.clone()));
+            // Re-check focus right before any Backspace: if the app changed (or can't be read) since the
+            // dictation started, refuse the edit and forget our insertion rather than erase in another app.
+            if matches!(action, voice_edit::Action::Replace { .. }) {
+                let now_app = focus::focused_app();
+                if now_app.is_none() || now_app != focused {
+                    action = voice_edit::Action::Nothing;
+                    error = Some("Edit not applied: the app changed".to_string());
+                    if let Ok(mut l) = state.last_insert.lock() {
+                        l.forget();
+                    }
+                }
+            }
             let put = |t: &str| insert::insert(t, &s.insert_method, s.restore_clipboard, s.paste_delay_ms);
             let result = match &action {
                 voice_edit::Action::Insert(t) => Some(put(t)),
@@ -328,7 +344,7 @@ fn stop_dictation(app: &AppHandle) {
                 Some(Ok(())) => {
                     inserted = true;
                     if let Ok(mut l) = state.last_insert.lock() {
-                        l.commit(&action, focused.as_deref());
+                        l.commit(&action, focused.as_deref(), now);
                     }
                 }
                 Some(Err(e)) => {
@@ -712,6 +728,17 @@ mod tests {
         s.dictionary.push(settings::VocabEntry { spoken: String::new(), written: "Okonkwo".into(), apps: vec![] });
         let out = finalize_text("push it to git hub for okonkwo", &s);
         assert_eq!(out, "Push it to GitHub for Okonkwo.");
+    }
+
+    #[test]
+    fn multilingual_model_skips_english_cleanup() {
+        // Codex review finding 7: German "Er" (he) is not the English filler "er".
+        let s = Settings { trailing_space: false, model: "multi".into(), ..Settings::default() };
+        let out = finalize_text("Er sagt, er kommt morgen", &s);
+        assert!(out.starts_with("Er sagt"), "{out}");
+        assert!(out.contains("er kommt"), "{out}");
+        let en = Settings { trailing_space: false, ..Settings::default() };
+        assert!(!finalize_text("er so i think", &en).to_lowercase().starts_with("er "));
     }
 
     #[test]

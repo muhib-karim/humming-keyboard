@@ -67,4 +67,14 @@ final class VoiceEditTests: XCTestCase {
         XCTAssertEqual(VoiceEdit.undoCount(before: "Hello there. typed by me", lastInsert: "See you soon"), 0)
         XCTAssertEqual(VoiceEdit.undoCount(before: "anything", lastInsert: nil), 0)
     }
+
+    func testTruncatedWindowRefusesAMatchAtItsStart() {
+        // Codex review finding 6: "Mon|day" cut by the context window is not the word "day".
+        let full = "Monday " + String(repeating: "x", count: 996)
+        let window = String(full.suffix(1000))
+        XCTAssertTrue(window.hasPrefix("day "))
+        XCTAssertNil(VoiceEdit.voiceCommand(text: window, utterance: "change day to night", truncated: true))
+        XCTAssertNotNil(VoiceEdit.voiceCommand(text: "day one", utterance: "change day to night"))
+        XCTAssertNotNil(VoiceEdit.voiceCommand(text: "the day one", utterance: "change day to night", truncated: true))
+    }
 }

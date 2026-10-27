@@ -13,17 +13,27 @@ iOS 1.8.0 (build 1800).
   words are typed as ordinary dictation. One rule set: `core/src/voice_edit.rs` (Rust, also exposed through the FFI),
   ported to Kotlin (`VoiceEdit.kt`) and Swift (`VoiceEdit.swift`); all three run the same 35 shared test cases in
   `core/testdata/voice_edit_vectors.json`. Each platform has an "Edit by voice" switch, on by default.
-  - Android: edits up to a bounded window of text before the cursor through the input connection.
-    Known limit: a whole-utterance "undo that" / "scratch that" is handled earlier by the existing voice commands, so
-    there it removes the last dictation rather than going through voice edit; "undo" inside a longer utterance works.
-  - iPhone: the keyboard extension edits the text before the cursor.
-  - Desktop: edits only Humming's own last insertion and only while the same app is focused (Backspace over the
-    changed tail, then types the new tail); if typing fails, the memory of the last insertion is dropped.
+  - Commands are read from the recording's own raw words, before clean-up, so a clean-up rule can't create or hide
+    one.
+  - Android: edits up to 1,000 characters before the cursor through the input connection; when that window is cut
+    from a longer field, a match at its very start is refused (it may be the middle of a word). "Undo that" removes
+    the keyboard's own last dictated text, from this or an earlier recording, only in the same field (same input
+    session) and only if it still sits right before the cursor.
+  - iPhone: the keyboard extension edits the text before the cursor, reading the command from the latest recording
+    only (not the whole accumulated dictation), once per recording. iOS may hand the keyboard only part of the field,
+    so a match at the very start of that text is refused.
+  - Desktop: edits only Humming's own last insertion. Limits, because desktop Humming can't see what you do in the
+    app afterwards: the focused app must be known both when the text was typed and now, and be the same (checked
+    again right before any Backspace); the edit must come within 30 seconds of the insertion; one edit per insertion
+    (after it, Humming forgets the text). Backspace counts are whole characters (one press for an emoji such as a
+    family emoji). If typing fails, the memory of the last insertion is dropped.
 - **Multilingual model**: NVIDIA Parakeet TDT 0.6B v3 (int8, sherpa-onnx), 25 European languages, on Android and
   desktop, offered on devices with at least 6 GB of memory, with a SHA-256 check on download. Transcription only for
-  non-English speech: clean-up and voice-command rules stay English. Licence attribution in `keyboard/LICENSES.md`.
-- **Balanced model (desktop)**: Moonshine base (int8), between Fast and Best in accuracy and speed. Fast stays the
-  default everywhere.
+  non-English speech: the English clean-up rules (fillers, self-corrections, spoken commands, lists) are switched off
+  for its output, which only gets spacing and your own dictionary, so a German "Er" is not removed as a filler. Licence attribution in `keyboard/LICENSES.md`.
+- **Balanced model (desktop)**: Moonshine base (int8). Uses less memory than Fast (379 MB vs 478 MB peak), at slightly
+  lower accuracy (3.11 % vs 2.72 % word error rate) and slightly slower (real-time factor 0.0376 vs 0.0299); for
+  laptops short on memory. Fast stays the default everywhere.
 - **Benchmarks**: every model measured in one run with the apps' own engine (sherpa-onnx 1.13.8) on LibriSpeech
   test-clean (first 200 clips): word error rate Best 1.77 %, Multilingual 2.24 %, Fast 2.72 %, Balanced 3.11 %,
   Lite 4.51 %, with real-time factor, median latency and peak memory, in `docs/BENCHMARKS.md` (raw output in

@@ -75,4 +75,14 @@ class VoiceEditTest {
         assertEquals(0, VoiceEdit.undoCount("Hello world!", "world"))
         assertEquals(0, VoiceEdit.undoCount("Hello world", null))
     }
+
+    @Test fun matchAtTheStartOfATruncatedWindowIsNotACommand() {
+        // Codex review finding 6: "Mon|day" cut by the context window is not the word "day".
+        val full = "Monday " + "x".repeat(996)
+        val window = full.takeLast(VoiceEdit.CONTEXT_CHARS)
+        assertTrue(window.startsWith("day "))
+        assertNull(VoiceEdit.voiceCommand(window, "change day to night", truncated = true))
+        assertNotNull(VoiceEdit.voiceCommand("day one", "change day to night"))
+        assertNotNull(VoiceEdit.voiceCommand("the day one", "change day to night", truncated = true))
+    }
 }

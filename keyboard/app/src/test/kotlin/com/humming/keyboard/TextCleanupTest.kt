@@ -200,4 +200,11 @@ class TextCleanupTest {
 
     @Test fun strictNeedsFillersOn() =
         assertEquals("It is, like, fine.", TextCleanup.apply("it is, like, fine", strict = true, fillers = false))
+
+    @Test fun neutralKeepsNonEnglishWords() {
+        // Codex review finding 7: with the Multilingual model, German "Er" (he) is not the English filler "er".
+        val german = TextCleanup.neutral("Er sagt,  er kommt morgen ", emptyList(), emptyList())
+        assertEquals("Er sagt, er kommt morgen", german)
+        assertTrue(!TextCleanup.apply("er so i think").lowercase().startsWith("er "))
+    }
 }

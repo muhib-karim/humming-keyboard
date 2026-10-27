@@ -85,6 +85,11 @@ object VoiceModels {
 
     val all: List<VoiceModel> = listOf(FAST, BEST, MULTI)
 
+    /** Whether the English clean-up rules (fillers, self-corrections, spoken commands, lists) apply to [id]'s
+     *  output. The Multilingual model may be transcribing German, French, ... so its text only gets spacing
+     *  and the user's own dictionary and replacements (1.8). */
+    fun englishCleanup(id: String): Boolean = id != MULTI.id
+
     fun byId(id: String?): VoiceModel = all.firstOrNull { it.id == id } ?: FAST
 
     /** Whether [m] may be used on a phone with [totalRamMb] of memory. */

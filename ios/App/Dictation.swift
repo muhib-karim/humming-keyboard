@@ -37,6 +37,7 @@ final class Dictation: ObservableObject {
         partial = ""
         transcript = ""
         SharedStore.latestDictation = ""
+        SharedStore.latestUtterance = ""
     }
 
     func start() {
@@ -147,6 +148,7 @@ final class Dictation: ObservableObject {
                                             dictionary: vocab.terms, strict: settings?.accuracyMode ?? false,
                                             fillers: settings?.removeFillers ?? true, replacements: vocab.replacements)
         SharedStore.latestDictation = committed
+        SharedStore.latestUtterance = raw
     }
 
     // MARK: CI screenshots (the simulator has no microphone)

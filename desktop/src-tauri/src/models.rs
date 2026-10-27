@@ -120,6 +120,13 @@ pub const BEST: VoiceModel = VoiceModel {
 /// Ordered light to heavy; `usable` falls back from the end, so the heaviest downloaded model wins.
 pub const CATALOG: &[VoiceModel] = &[LITE, BALANCED, FAST, MULTI, BEST];
 
+/// Whether the English clean-up rules (fillers, self-corrections, spoken commands, lists) apply to this model's
+/// output. The Multilingual model may be transcribing German, French, ...: its text only gets spacing and
+/// punctuation normalisation (1.8).
+pub fn english_cleanup(model_id: &str) -> bool {
+    model_id != MULTI.id
+}
+
 pub fn find(id: &str) -> Option<&'static VoiceModel> {
     CATALOG.iter().find(|m| m.id == id)
 }
@@ -305,6 +312,14 @@ pub fn release_base() -> &'static str {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn english_cleanup_is_off_only_for_multilingual() {
+        assert!(!english_cleanup(MULTI.id));
+        for m in CATALOG.iter().filter(|m| m.id != MULTI.id) {
+            assert!(english_cleanup(m.id), "{}", m.id);
+        }
+    }
 
     #[test]
     fn every_model_has_a_measured_wer_in_the_same_run() {

@@ -39,7 +39,9 @@ selectable:
   gated to phones with 6 GB of RAM like Best. Note: Humming's text clean-up and voice commands are English rules, so
   other languages get transcription without them.
 - **Balanced (desktop): Moonshine v2 base** (MIT, int8 export by sherpa-onnx). More accurate than Lite (3.11 % vs
-  4.51 %) at under half of Fast's memory; a middle step for older laptops.
+  4.51 %) and lighter than Fast (379 MB vs 478 MB peak memory, about 79 %), but slightly less accurate than Fast
+  (3.11 % vs 2.72 %) and slightly slower (real-time factor 0.0376 vs 0.0299). It is not between Fast and Best: it is
+  the option for laptops short on memory.
 
 **Default unchanged: Fast** (Parakeet TDT-CTC 110M). In this run it is still the best trade-off: 2.72 % WER at the
 lowest latency of the Parakeet models. Best remains the most accurate (1.77 %).

@@ -47,4 +47,10 @@ class VoiceModelsTest {
         assertEquals(VoiceModel.Kind.NEMO_TRANSDUCER, VoiceModels.MULTI.kind)
         assertEquals(VoiceModels.all.size, VoiceModels.all.map { it.dirName }.toSet().size)
     }
+
+    @Test fun englishCleanupIsOffOnlyForMultilingual() {
+        assertTrue(!VoiceModels.englishCleanup(VoiceModels.MULTI.id))
+        val others = VoiceModels.all.filter { it.id != VoiceModels.MULTI.id }
+        for (m in others) assertTrue(m.id, VoiceModels.englishCleanup(m.id))
+    }
 }

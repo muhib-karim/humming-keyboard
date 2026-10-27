@@ -32,6 +32,8 @@ tar = "0.4"
 bzip2 = "0.6"
 fancy-regex = "0.14"
 once_cell = "1"
+# Edit by voice (1.8): Backspace counts are grapheme clusters, not Unicode scalars.
+unicode-segmentation = "1"
 # Speech-to-text: the same engine and version as the Android app (NVIDIA Parakeet on sherpa-onnx 1.13.8).
 # Links sherpa-onnx's prebuilt static libraries for the target (downloaded by its build script).
 sherpa-onnx = { version = "=1.13.8", default-features = false, features = ["static"] }

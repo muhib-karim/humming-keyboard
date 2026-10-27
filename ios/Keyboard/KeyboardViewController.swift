@@ -50,11 +50,15 @@ final class KeyboardViewController: UIInputViewController {
     }
 
     /// Edit by voice: a dictated "change Tuesday to Wednesday" (etc.) edits the text before the cursor; "undo that"
-    /// removes only this keyboard's own last insert. Anything else is inserted as normal dictation.
+    /// removes only this keyboard's own last insert. Anything else is inserted as normal dictation. The command is
+    /// read from the latest recording's raw words (not the accumulated, cleaned dictation), and iOS may hand over
+    /// only part of the field, so a match at the very start of that context is refused (it may be mid-word).
     private func insertDictation(_ s: String) {
         let proxy = textDocumentProxy
         let before = proxy.documentContextBeforeInput ?? ""
-        if SharedStore.voiceEdit, let r = VoiceEdit.voiceCommand(text: before, utterance: s) {
+        let spoken = SharedStore.latestUtterance
+        if SharedStore.voiceEdit, !spoken.isEmpty,
+           let r = VoiceEdit.voiceCommand(text: before, utterance: spoken, truncated: true) {
             if let out = r.outcome {
                 let edit = VoiceEdit.fieldEdit(before: before, outcome: out)
                 for _ in 0..<edit.deleteCount { proxy.deleteBackward() }
@@ -64,6 +68,7 @@ final class KeyboardViewController: UIInputViewController {
                 for _ in 0..<n { proxy.deleteBackward() }
             }
             lastDictationInsert = nil
+            SharedStore.latestUtterance = ""  // one edit per recording
             return
         }
         proxy.insertText(s)

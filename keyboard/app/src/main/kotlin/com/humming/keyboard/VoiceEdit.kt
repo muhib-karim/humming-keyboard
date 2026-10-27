@@ -135,11 +135,15 @@ object VoiceEdit {
     }
 
     /** The one call hosts make. Undo comes back with a null outcome; anything else that isn't a command
-     *  which applies to [text] returns null and the host inserts the utterance as dictation. */
-    fun voiceCommand(text: String, utterance: String): Result? {
+     *  which applies to [text] returns null and the host inserts the utterance as dictation. [truncated]: [text]
+     *  is a window cut from a longer field (e.g. exactly [CONTEXT_CHARS] long), so it may start mid-word. */
+    fun voiceCommand(text: String, utterance: String, truncated: Boolean = false): Result? {
         val cmd = parse(utterance) ?: return null
         if (cmd == Command.Undo) return Result(cmd, null)
         val out = apply(text, cmd) ?: return null
+        // [text] cut from a longer field: its first char may sit mid-word ("Mon|day"), so a match there is not
+        // a real word boundary and the utterance stays dictation.
+        if (truncated && out.start == 0) return null
         return Result(cmd, out)
     }
 
