@@ -9,9 +9,26 @@ enum SharedStore {
     static let defaults: UserDefaults = UserDefaults(suiteName: groupID) ?? .standard
     private static let latestKey = "latest_dictation"
 
+    private static let voiceEditKey = "voice_edit"
+    /// Edit by voice (1.8, default on): a dictated "change X to Y", "delete X", "capitalize X" or "undo that" edits
+    /// the text before the cursor instead of being typed (HummingCore VoiceEdit, same rules as Android and the core).
+    static var voiceEdit: Bool {
+        get { defaults.object(forKey: voiceEditKey) as? Bool ?? true }
+        set { defaults.set(newValue, forKey: voiceEditKey) }
+    }
+
     static var latestDictation: String {
         get { defaults.string(forKey: latestKey) ?? "" }
         set { defaults.set(newValue, forKey: latestKey) }
+    }
+
+    private static let utteranceKey = "latest_utterance"
+    /// The raw words of the latest recording (every recognition chunk since the mic was turned on), before
+    /// clean-up (1.8): what edit by voice reads, so an
+    /// earlier recording in `latestDictation` or a clean-up rule can't turn dictation into a command or hide one.
+    static var latestUtterance: String {
+        get { defaults.string(forKey: utteranceKey) ?? "" }
+        set { defaults.set(newValue, forKey: utteranceKey) }
     }
 }
 

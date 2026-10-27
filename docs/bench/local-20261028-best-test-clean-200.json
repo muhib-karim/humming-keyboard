@@ -1,0 +1,24 @@
+{
+  "device": "Linux x64 (shared 16-CPU cloud box, other jobs running)",
+  "os": "Linux 6.1.158+",
+  "arch": "x86_64",
+  "cpu": "Intel(R) Xeon(R) Processor @ 2.60GHz",
+  "threads": 2,
+  "sets": {
+    "test-clean": 200,
+    "test-other": 0
+  },
+  "models": {
+    "best": {
+      "label": "Parakeet TDT 0.6B v2 int8 (Best, optional)",
+      "load_s": 2.38,
+      "test-clean": {
+        "n": 200,
+        "wer_pct": 1.77,
+        "rtf": 0.0949,
+        "median_latency_ms": 671,
+        "mean_audio_s": 9.1
+      }
+    }
+  }
+}

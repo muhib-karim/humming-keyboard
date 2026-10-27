@@ -1,3 +1,4 @@
+import HummingCore
 import SwiftUI
 import UIKit
 
@@ -5,6 +6,10 @@ import UIKit
 /// and the keyboard's top strip inserts the latest result (or, with Full Access, whatever you copied).
 final class KeyboardViewController: UIInputViewController {
     private var host: UIHostingController<KeyboardView>?
+    /// The keyboard's own last dictation insert: the only thing "undo that" may remove.
+    private var lastDictationInsert: String?
+    /// The text document that insert went into; "undo that" in any other document removes nothing.
+    private var lastDictationDocument: UUID?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,7 +38,7 @@ final class KeyboardViewController: UIInputViewController {
 
     private func makeView() -> KeyboardView {
         KeyboardView(
-            dictation: SharedStore.latestDictation,
+            dictation: pendingDictation(),
             showGlobe: needsInputModeSwitchKey,
             canPaste: hasFullAccess,
             onInsert: { [weak self] s in self?.textDocumentProxy.insertText(s) },
@@ -41,7 +46,50 @@ final class KeyboardViewController: UIInputViewController {
             onNextKeyboard: { [weak self] in self?.advanceToNextInputMode() },
             onPaste: { [weak self] in
                 if let s = UIPasteboard.general.string { self?.textDocumentProxy.insertText(s) }
-            }
+            },
+            onInsertDictation: { [weak self] s in self?.insertDictation(s) }
         )
+    }
+
+    /// The strip's text: the latest dictation, or, when clean-up left nothing (e.g. the whole recording was
+    /// "undo that"), the latest recording's own words if they are an edit command, so the command can still run.
+    private func pendingDictation() -> String {
+        let cleaned = SharedStore.latestDictation
+        let spoken = SharedStore.latestUtterance
+        if cleaned.isEmpty, SharedStore.voiceEdit, VoiceEdit.parse(spoken) != nil { return spoken }
+        return cleaned
+    }
+
+    /// Edit by voice: a dictated "change Tuesday to Wednesday" (etc.) edits the text before the cursor; "undo that"
+    /// removes only this keyboard's own last insert. Anything else is inserted as normal dictation. The command is
+    /// read from the latest recording's raw words (not the accumulated, cleaned dictation), and iOS may hand over
+    /// only part of the field, so a match at the very start of that context is refused (it may be mid-word).
+    private func insertDictation(_ s: String) {
+        let proxy = textDocumentProxy
+        let before = proxy.documentContextBeforeInput ?? ""
+        let spoken = SharedStore.latestUtterance
+        if SharedStore.voiceEdit, !spoken.isEmpty,
+           let r = VoiceEdit.voiceCommand(text: before, utterance: spoken, truncated: true) {
+            if let out = r.outcome {
+                let edit = VoiceEdit.fieldEdit(before: before, outcome: out)
+                for _ in 0..<edit.deleteCount { proxy.deleteBackward() }
+                if !edit.insert.isEmpty { proxy.insertText(edit.insert) }
+            } else {
+                let owned = VoiceEdit.ownedInsert(
+                    lastDictationInsert,
+                    insertDocument: lastDictationDocument,
+                    currentDocument: proxy.documentIdentifier
+                )
+                let n = VoiceEdit.undoCount(before: before, lastInsert: owned)
+                for _ in 0..<n { proxy.deleteBackward() }
+            }
+            lastDictationInsert = nil
+            lastDictationDocument = nil
+            SharedStore.latestUtterance = ""  // one edit per recording
+            return
+        }
+        proxy.insertText(s)
+        lastDictationInsert = s
+        lastDictationDocument = proxy.documentIdentifier
     }
 }

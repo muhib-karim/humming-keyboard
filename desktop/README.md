@@ -14,7 +14,7 @@ the Linux .deb only reports a new version).
 |---|---|
 | Push-to-talk on a global shortcut (default `Ctrl+Shift+Space` / `Cmd+Shift+Space`), or press-to-toggle | yes |
 | Paste into the focused app (clipboard + Ctrl/Cmd+V, clipboard restored), or type key by key | yes |
-| Offline speech-to-text: Parakeet Fast (110M) / Best (0.6B) on sherpa-onnx, as on Android, plus Lite (Moonshine tiny, 30 MB, desktop only); downloaded on first run with a SHA-256 check, Lite first by default (quick start) | yes |
+| Offline speech-to-text: Parakeet Fast (110M) / Multilingual (0.6B v3) / Best (0.6B v2) on sherpa-onnx, as on Android, plus Lite and Balanced (Moonshine tiny 30 MB / base 111 MB, desktop only); downloaded on first run with a SHA-256 check, Lite first by default (quick start) | yes |
 | Clean mode (Android rules): fillers, self-corrections ("3, no, 4pm" -> "4pm"), repeats, "4 pm" -> "4pm", capitals, final ? or . | yes |
 | Spoken lists -> bullets ("first, eggs, second, milk") | yes (desktop extra, can be turned off) |
 | Verbatim mode | yes |
@@ -25,7 +25,7 @@ the Linux .deb only reports a new version).
 | Tray / menu bar app, listening overlay with a live mic level | yes |
 | Settings: shortcut (with a recorder), mode, model, language, microphone, paste method, overlay, start at login | yes |
 | In-app "Try it" box (transcribe without pasting) and a cleanup tester | yes |
-| Languages other than English | not yet (Parakeet models are English, as on Android) |
+| Languages other than English | yes, with the optional Multilingual model (Parakeet v3: 25 European languages, detected automatically); clean-up rules stay English |
 | Speak-to-edit ("make that shorter"), LLM rewrite | not yet |
 | Auto-update | yes (1.6): signed Tauri updater, Settings > Updates; checks 45 s after launch and every 4 hours. Exceptions: the Linux .deb only shows that a new version is out, and macOS updates itself from its first 1.6 build on. See the main README |
 | Code signing / notarisation | not yet (needs the owner's certificates) |
@@ -34,9 +34,14 @@ the Linux .deb only reports a new version).
 
 | Model | Download | Word error rate (73-clip LibriSpeech bake-off, one-off run on a desktop CPU) | RAM |
 |---|---|---|---|
-| Lite: Moonshine tiny English, quantized (first-run quick start) | 30 MB | not measured | ~250 MB |
-| Fast: Parakeet TDT-CTC 110M int8 (default) | 104 MB | 3.7 % | ~500 MB |
-| Best: Parakeet TDT 0.6B v2 int8 | 482 MB | 2.6 % | ~1.3 GB |
+| Lite: Moonshine tiny English, quantized (first-run quick start) | 30 MB | 4.5 % | ~250 MB |
+| Balanced: Moonshine base English, quantized (new in 1.8) | 111 MB | 3.1 % | ~400 MB |
+| Fast: Parakeet TDT-CTC 110M int8 (default) | 104 MB | 2.7 % | ~500 MB |
+| Multilingual: Parakeet TDT 0.6B v3 int8, 25 European languages (new in 1.8) | 487 MB | 2.2 % (English) | ~1.2 GB |
+| Best: Parakeet TDT 0.6B v2 int8 | 482 MB | 1.8 % | ~1.3 GB |
+
+1.8 numbers: every model measured in one run on LibriSpeech test-clean (first 200 clips), sherpa-onnx 1.13.8; see
+[docs/BENCHMARKS.md](../docs/BENCHMARKS.md).
 
 The bake-off's script and raw outputs are not in the repository (see the main README's
 [bake-off, under Benchmarks](../README.md#benchmarks)). The committed CI benchmark (the first 200 LibriSpeech test-clean

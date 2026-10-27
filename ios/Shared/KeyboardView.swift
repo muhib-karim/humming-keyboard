@@ -10,6 +10,8 @@ struct KeyboardView: View {
     var onBackspace: () -> Void
     var onNextKeyboard: () -> Void = {}
     var onPaste: () -> Void = {}
+    /// Inserting the latest dictation (the keyboard extension routes it through voice editing); nil = onInsert.
+    var onInsertDictation: ((String) -> Void)? = nil
 
     @State private var shifted = true
     @State private var numbers = false
@@ -45,7 +47,7 @@ struct KeyboardView: View {
     private var strip: some View {
         HStack(spacing: 8) {
             if !dictation.isEmpty {
-                Button { onInsert(dictation) } label: {
+                Button { (onInsertDictation ?? onInsert)(dictation) } label: {
                     HStack(spacing: 6) {
                         Image(systemName: "waveform")
                         Text(dictation).lineLimit(1).truncationMode(.tail)

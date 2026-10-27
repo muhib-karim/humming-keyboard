@@ -4,7 +4,7 @@ import { listen } from "@tauri-apps/api/event";
 type Dict = { spoken: string; written: string; apps?: string[] };
 type Settings = {
   hotkey: string; mode: string; model: string;
-  clean_mode: boolean; remove_fillers: boolean; self_corrections: boolean; voice_commands: boolean;
+  clean_mode: boolean; remove_fillers: boolean; self_corrections: boolean; voice_commands: boolean; voice_edit: boolean;
   format_lists: boolean; accuracy_mode: boolean; dictionary: Dict[]; insert_method: string; restore_clipboard: boolean;
   paste_delay_ms: number; trailing_space: boolean; input_device: string; show_overlay: boolean;
   launch_at_login: boolean; history_enabled: boolean; history_limit: number; max_seconds: number;

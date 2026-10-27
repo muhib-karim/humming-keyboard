@@ -27,6 +27,18 @@ fn paste_chord(e: &mut Enigo) -> Result<(), String> {
     r
 }
 
+/// Edit by voice (1.8): delete the last `n` characters Humming itself typed, with Backspace presses.
+pub fn erase(n: usize) -> Result<(), String> {
+    if n == 0 {
+        return Ok(());
+    }
+    let mut e = enigo()?;
+    for _ in 0..n {
+        e.key(Key::Backspace, Direction::Click).map_err(|x| x.to_string())?;
+    }
+    Ok(())
+}
+
 pub fn insert(text: &str, method: &str, restore_clipboard: bool, paste_delay_ms: u64) -> Result<(), String> {
     if text.is_empty() {
         return Ok(());

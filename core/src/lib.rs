@@ -14,11 +14,13 @@ mod error;
 pub mod ffi;
 pub mod model;
 pub mod vad;
+pub mod voice_edit;
 
 pub use cleanup::{cleanup, CleanupOpts, DictionaryEntry};
 pub use engine::{Dictation, Engine, EngineConfig, Segment, SpeedOpts, Timing, Transcript};
 pub use error::CoreError;
 pub use vad::VadConfig;
+pub use voice_edit::{apply_command, parse_command, voice_command, EditCommand, EditOutcome};
 
 /// The sample rate the engine works at. Other rates are resampled on the way in.
 pub const SAMPLE_RATE: u32 = 16_000;

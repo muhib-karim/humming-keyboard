@@ -47,6 +47,9 @@ pub struct Settings {
     pub remove_fillers: bool,
     pub self_corrections: bool,
     pub voice_commands: bool,
+    /// Edit by voice (1.8): "change X to Y", "delete X", "capitalize X", "undo that" edit Humming's own last
+    /// insertion in the same app instead of being typed.
+    pub voice_edit: bool,
     pub format_lists: bool,
     /// Accuracy mode (1.4): strict clean-up on top of Clean mode (hedge fillers set off by commas, a final "period").
     pub accuracy_mode: bool,
@@ -86,6 +89,7 @@ impl Default for Settings {
             remove_fillers: true,
             self_corrections: true,
             voice_commands: true,
+            voice_edit: true,
             format_lists: true,
             accuracy_mode: false,
             dictionary: Vec::new(),

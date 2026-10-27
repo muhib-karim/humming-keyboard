@@ -37,6 +37,9 @@ class StreamingSession(
     private val accuracyMode = Prefs.accuracyMode(app)
     private val fillers = Prefs.removeFillers(app)
     private val replacements = Prefs.replacements(app)
+
+    /** False for the Multilingual model: no English clean-up rules on possibly non-English words (1.8). */
+    private val english = VoiceModels.englishCleanup(ModelStore.current(app).id)
     @Volatile private var engine: LocalEngine? = null
     private val acquired = java.util.concurrent.atomic.AtomicBoolean(false)
     @Volatile private var closed = false
@@ -135,9 +138,10 @@ class StreamingSession(
     }
 
     /** Spoken editing commands ("delete that") applied; a closing style command is left for the AI pass. */
-    private fun clean(raw: String): String = VoiceCommands.apply(cleanText(raw)).text
+    private fun clean(raw: String): String = if (english) VoiceCommands.apply(cleanText(raw)).text else cleanText(raw)
 
     private fun cleanText(raw: String): String {
+        if (!english) return TextCleanup.neutral(raw, dictionary, replacements)
         if (!cleanMode) {
             return TextCleanup.applyDictionary(TextCleanup.replacePhrases(raw.trim().replace(Regex("\\s+"), " "), replacements), dictionary)
         }
@@ -157,7 +161,11 @@ class StreamingSession(
         worker.shutdown()
         worker.awaitTermination(600, TimeUnit.SECONDS)
         val raw = synchronized(raws) { raws.joinToString(" ") }
-        val cmd = if (raw.isBlank()) VoiceCommands.Result("", null) else VoiceCommands.apply(cleanText(raw))
+        val cmd = when {
+            raw.isBlank() -> VoiceCommands.Result("", null)
+            !english -> VoiceCommands.Result(cleanText(raw), null)
+            else -> VoiceCommands.apply(cleanText(raw))
+        }
         val text = cmd.text
         closed = true
         releaseEngine()

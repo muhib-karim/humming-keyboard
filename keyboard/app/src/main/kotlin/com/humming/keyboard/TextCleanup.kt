@@ -203,6 +203,11 @@ object TextCleanup {
         return Regex("(?i)\\b(\\p{L}+ \\p{L}+) \\1\\b").replace(out.joinToString(" "), "$1")
     }
 
+    /** Multilingual model (1.8): the words may not be English, so only spacing and the user's own
+     *  replacements and dictionary apply (no filler, self-correction, spoken-command or list rules). */
+    fun neutral(raw: String, dictionary: List<String>, replacements: List<Pair<String, String>>): String =
+        applyDictionary(replacePhrases(raw.trim().replace(Regex("\\s+"), " "), replacements), dictionary)
+
     /** Dictionary terms win over whatever casing the engine produced ("okonkwo" → "Okonkwo"). */
     fun applyDictionary(input: String, terms: List<String>): String {
         var t = input

@@ -83,7 +83,7 @@ and Linux [H6][H7].
 
 ## Bangla input in detail
 
-| | Humming 1.7 | Ridmik | Avro (desktop) | OpenBangla | Gboard | SwiftKey | Bijoy |
+| | Humming 1.8 | Ridmik | Avro (desktop) | OpenBangla | Gboard | SwiftKey | Bijoy |
 |---|---|---|---|---|---|---|---|
 | Phonetic (romanised → Bangla) | Yes, rule-based, Avro-style conventions [H4] | Yes, "like your favorite Avro keyboard" [31] | Yes, defines Avro Phonetic [33] | "100% compatibility" with Avro Phonetic [40] | Own transliteration [9] | Android only [19] | No |
 | Fixed Bangla layout | Yes (`bengali_bd`, from FlorisBoard) | Jatiyo, Probhat [31] | Probhat, Munir Optima, Bornona, National [33] | Same set [40] | Yes [9] | Yes [18] | Bijoy (proprietary) [30] |
@@ -145,6 +145,8 @@ mixed sets.
 | Aqua Voice | 6.24 % average WER on the Hugging Face Open ASR Leaderboard (Oct 2025, Aqua's recap, not re-checked); 5.55 % for Avalon 1.5, test set not stated [D45] | Under 50 ms to start, ~450 ms after you stop (vendor) [D45] | Cloud ("needs an internet connection") [D47]; Privacy Mode off by default [D45][D46] | macOS, Windows, iOS, Android (Oct 2026); no Linux [D45][D47] | Free 1,000 words; Pro $10 ($8 yearly) [D44] | No |
 | Willow | Vendor claim: "3x more accurate than built-in dictation", no method [D48] | Vendor claim: "as little as 200ms" [D48] | Conflicting: homepage offers an offline mode [D48], help centre says cloud models [D51] | Mac, Windows, iPhone; Android "coming soon" [D56] | Free (weaker model); Pro $15 ($12 yearly) [D49] | No |
 | MacWhisper | Not published [D57] | Not published | **Local models**, optional cloud AI with your own keys [D57] | macOS; iPhone/iPad as "Whisper Transcription" [D59] | Free; Pro €64 once [D57] | No (built on open models) |
+| Handy (open source) | Not published [D74] | Not published | **Offline**: "works completely offline"; Silero VAD, then Whisper (Small/Medium/Turbo/Large, GPU when available) or **Parakeet V3** on the CPU [D74] | Windows, macOS, Linux (desktop only) [D74] | Free [D74] | **Yes**, MIT [D74] |
+| Amical (open source) | Not published [D75] | Vendor claim: "super-fast" [D75] | "Runs entirely on your machine": Whisper plus local LLMs via Ollama [D75] | macOS, Windows; README also links an Android app and an iOS beta (offline status there not stated); no Linux [D75] | Not stated in README [D75] | **Yes**, MIT [D75] |
 | Apple Dictation | Not published | Not published | On-device "in many languages" [D60]; server transcripts may be kept up to two years if used [D65] | iPhone, iPad, Mac | Free with the OS | No |
 | Google (Gboard voice, Pixel, Rambler) | Not published | Not published | Pixel 6+ advanced voice typing on-device [D68]; Rambler needs internet for full features [D69] | Android, iOS (Gboard), web (Docs) | Free; Rambler has unpublished usage limits [D69] | No |
 
@@ -152,22 +154,29 @@ mixed sets.
 
 | App | Fillers removed | Lists | Voice commands | Personal dictionary / replacements / snippets | Languages, Bangla |
 |---|---|---|---|---|---|
-| **Humming 1.7** | **Yes**, switch, on by default ✅ | **Yes**: "bullet point", "first, ... second, ..." ✅ | "new line", "new paragraph", spoken punctuation, "scratch that" / "delete that" ✅, "delete last word", self-corrections ("3, no, 4pm"); no editing of text already in the field | Custom words (casing, recogniser hints on iPhone) and **"spoken -> written" replacements** ✅, per app on Android and desktop | Offline dictation: English. Bangla: phonetic **typing** (Android); Android's opt-in Online mode uses the phone's speech service, Bangla there unverified |
+| **Humming 1.8** | **Yes**, switch, on by default ✅ | **Yes**: "bullet point", "first, ... second, ..." ✅ | "new line", "new paragraph", spoken punctuation, "scratch that" / "delete that" ✅, "delete last word", self-corrections ("3, no, 4pm"); **edit by voice** on text already in the field: "change X to Y", "delete X", "capitalize X", "undo that" ✅ (1.8) | Custom words (casing, recogniser hints on iPhone) and **"spoken -> written" replacements** ✅, per app on Android and desktop | Offline dictation: English. Bangla: phonetic **typing** (Android); Android's opt-in Online mode uses the phone's speech service, Bangla there unverified |
 | Wispr Flow | Yes, three levels [D9] | Yes ("one… two…") [D6] | New line / paragraph, Backtrack ("scratch that") [D6]; Command Mode on selected text, Pro, desktop [D5] | Dictionary with auto-learn, misspelling fixes, snippets on every plan [D10][D11] | "100+"; Bengali unverified [D7] |
 | Typeless | Yes [D19] | Yes [D19] | Speak-to-edit on selected text [D24]; "new line" / "scratch that" not documented | Dictionary, auto-add, CSV import; replacements not documented [D25] | "100+"; no list, Bengali unverified [D19] |
 | Superwhisper | Yes, Message mode [D34] | Yes, Note mode [D34] | Commands on selected text (Super mode) [D34]; "new line" / "scratch that" not documented | Vocabulary hints and **replacements**, e.g. "my work email" → address [D32] | "100+"; Bengali not named, expected via Whisper models [D33][D42] |
 | Aqua Voice | Not documented | Via custom instructions | Edit Mode on selected text; "undo that" not supported [D45] | Dictionary and replacements ("my calendar link" → URL) [D44][D45] | 49, **Bengali listed** [D45] |
 | Willow | Yes [D48] | Yes ("Bullet, …") [D50] | New line / paragraph, spoken lists [D50]; "scratch that" not documented | Terms and voice "shortcuts" [D53] | "100+"; Bengali unverified [D52] |
 | MacWhisper | Yes [D57] | Not documented | Not documented | Not documented | "100"; Bengali not named, expected via Whisper [D42][D57] |
+| Handy | Not documented [D74] | Not documented | Push-to-talk or toggle shortcut, CLI flags and Unix signals; an optional post-processing pass (`--toggle-post-process`) [D74] | A dictionary is referenced (Raycast extension) [D74] | Parakeet V3 "automatic language detection"; Whisper multilingual; Bengali not named [D74] |
+| Amical | Via LLM formatting [D75] | Not documented | "Context-aware" formatting by active app; voice macros, hotkeys, custom workflows; MCP voice commands planned [D75] | Not documented | Whisper languages; Bengali not named [D75] |
 | Apple Dictation | Not documented | Not documented | New line / paragraph, caps; on iPhone in US English: "change … to …", "select", "delete", "undo" [D61] | None for dictation documented [D65] | 63 language/region entries; **Bangla not listed** [D64] |
 | Google | Rambler only [D69] | Not documented | New line / paragraph [D67]; Pixel: "delete last word", "clear", "undo", detailed edits [D68]; Docs: "select", "delete" [D72] | Unverified | Bengali in Gboard voice typing (2017 post) [D70] and Docs [D72]; not in Pixel advanced voice typing [D68] |
 
 **Where Humming leads:** the only app here that is free with no word cap, open source, and offline by default on
-Android, iPhone, Windows, macOS **and** Linux (Typeless is the only other one with a Linux app, and it is cloud-only).
+Android, iPhone, Windows, macOS **and** Linux (the open-source desktop apps Handy and Amical are free and local too,
+but Handy is desktop only and Amical has no Linux build; Typeless also has a Linux app, but it is cloud-only).
 It publishes a reproducible accuracy figure with the raw output. With 1.7 it has the shared core of the dictation apps:
 filler removal with a switch, lists, "scratch that", and spoken → written replacements that double as snippets.
-**Where it trails:** no voice editing of text already in the field and no per-app tone (both need an AI model or OS
-accessibility hooks); offline dictation is English only, while Aqua and Google list Bengali (online).
+With 1.8 it also edits text already in the field by voice, offline, on Android, iPhone and desktop, with one rule set
+tested by the same 35 cases on every platform.
+**Where it trails:** voice editing is rule-based ("change / delete / capitalize X", "undo that"), not free-form AI
+rewriting of a selection like Wispr's Command Mode or Typeless' speak-to-edit; on desktop it edits only Humming's own
+last insertion; no per-app tone (needs a language model). Offline clean-up and commands are English only; the new
+Multilingual model transcribes 25 European languages offline, and Bengali is still online-only elsewhere (Aqua, Google).
 
 ## Dictation gap list (ranked)
 
@@ -181,7 +190,7 @@ Swift `ListFormatTests`, `TextCleanupTests`).
 | D2 | Smart lists ("bullet point", "first, ... second, ...") | Wispr, Typeless, Superwhisper, Willow | 4 | 5 | 20 | ✅ Android, desktop, iPhone (`ListFormat`, `bullet_list`) |
 | D3 | "Scratch that" / "delete that" as its own sentence on every platform | Wispr, Typeless, Willow | 4 | 5 | 20 | ✅ desktop and iPhone; Android had it |
 | D4 | A switch for filler-word removal (default on) | Wispr (clean-up levels) | 3 | 5 | 15 | ✅ Android and iPhone; desktop had it |
-| D5 | Voice editing of text already in the field ("change X to Y", "select", "delete X") | Apple (US English), Pixel, Docs; AI edit modes in Wispr, Typeless, Superwhisper, Aqua | 4 | 2 | 8 | Open: needs `InputConnection` editing on Android and accessibility APIs on desktop |
+| D5 | Voice editing of text already in the field ("change X to Y", "select", "delete X") | Apple (US English), Pixel, Docs; AI edit modes in Wispr, Typeless, Superwhisper, Aqua | 4 | 2 | 8 | ✅ 1.8, Android, iPhone and desktop: Rust `core/src/voice_edit.rs` tests + `core/testdata/voice_edit_vectors.json` (35 shared cases), Kotlin `VoiceEditTest.kt`, Swift `VoiceEditTests.swift`, desktop `desktop/src-tauri/src/voice_edit.rs` tests. Rule-based commands; desktop edits only Humming's own last insertion |
 | D6 | Per-app tone and style | Wispr, Typeless, Superwhisper, Aqua, Willow, MacWhisper | 3 | 2 | 6 | Open: needs a language model; Android's own-key AI clean-up covers "make it formal" |
 | D7 | Dictionary that learns from your corrections | Wispr (desktop), Typeless | 3 | 2 | 6 | Open |
 | D8 | Offline dictation in Bangla and more languages | Aqua (cloud, Bengali listed), Superwhisper / MacWhisper via Whisper (untested) | 5 | 1 | 5 | Open (keyboard gap 7) |
@@ -342,5 +351,7 @@ Google:
 - [D71] https://support.google.com/gboard/answer/2781851?hl=en&co=GENIE.Platform%3DiOS
 - [D72] https://support.google.com/docs/answer/4492226?hl=en (Google Docs voice typing)
 - [D73] https://techcrunch.com/2026/05/12/google-adds-gemini-powered-dictation-to-gboard-which-could-be-bad-news-for-dictation-startups/ (named press; search-result snippet only, not fetched)
+- [D74] https://github.com/cjpais/Handy (README, read 28 October 2026; licence MIT)
+- [D75] https://github.com/amicalhq/amical (README, read 28 October 2026; licence MIT)
 
 Pages that could not be fetched: superwhisper.com/pricing (404), typeless.com/download (404; /downloads works), willowvoice.com/privacy (404), goodsnooze.com (DNS failure).

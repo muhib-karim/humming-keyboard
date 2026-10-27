@@ -19,6 +19,7 @@ struct SettingsView: View {
                         .disabled(!settings.cleanMode)
                     Toggle("Accuracy mode", isOn: $settings.accuracyMode)
                         .disabled(!settings.cleanMode || !settings.removeFillers)
+                    Toggle("Edit by voice", isOn: $settings.voiceEdit)
                 } header: {
                     Text("Voice")
                 } footer: {

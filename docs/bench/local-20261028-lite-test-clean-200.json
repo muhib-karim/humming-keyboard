@@ -1,0 +1,24 @@
+{
+  "device": "Linux x64 (shared 16-CPU cloud box, other jobs running)",
+  "os": "Linux 6.1.158+",
+  "arch": "x86_64",
+  "cpu": "Intel(R) Xeon(R) Processor @ 2.60GHz",
+  "threads": 2,
+  "sets": {
+    "test-clean": 200,
+    "test-other": 0
+  },
+  "models": {
+    "lite": {
+      "label": "Moonshine v2 tiny int8 (Lite, 30 MB)",
+      "load_s": 0.44,
+      "test-clean": {
+        "n": 200,
+        "wer_pct": 4.51,
+        "rtf": 0.0206,
+        "median_latency_ms": 157,
+        "mean_audio_s": 9.1
+      }
+    }
+  }
+}

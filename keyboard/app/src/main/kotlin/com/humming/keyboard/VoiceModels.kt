@@ -25,6 +25,7 @@ data class VoiceModel(
     /** Phones with less total RAM than this don't get the model (the keyboard would be killed). */
     val minRamMb: Int,
     val kind: Kind,
+    /** LibriSpeech test-clean WER, first 200 clips, sherpa-onnx 1.13.8, all models in one run (docs/BENCHMARKS.md). */
     val werPct: Double,
 ) {
     enum class Kind { NEMO_CTC, NEMO_TRANSDUCER }
@@ -46,7 +47,7 @@ object VoiceModels {
         ramMb = 500,
         minRamMb = 2_500,
         kind = VoiceModel.Kind.NEMO_CTC,
-        werPct = 3.7,
+        werPct = 2.7,
     )
 
     val BEST = VoiceModel(
@@ -62,10 +63,32 @@ object VoiceModels {
         ramMb = 1_300,
         minRamMb = 5_500,
         kind = VoiceModel.Kind.NEMO_TRANSDUCER,
-        werPct = 2.6,
+        werPct = 1.8,
     )
 
-    val all: List<VoiceModel> = listOf(FAST, BEST)
+    /** New in 1.8: English plus 24 more European languages, detected automatically (see docs/BENCHMARKS.md). */
+    val MULTI = VoiceModel(
+        id = "multi",
+        label = "Multilingual",
+        blurb = "Parakeet 0.6B v3. English plus 24 more European languages; needs a phone with 6 GB of RAM or more.",
+        url = REL + "sherpa-onnx-nemo-parakeet-tdt-0.6b-v3-int8.tar.bz2",
+        downloadBytes = 487_170_055L,
+        sha256 = "5793d0fd397c5778d2cf2126994d58e9d56b1be7c04d13c7a15bb1b4eafb16bf",
+        dirName = "sherpa-onnx-nemo-parakeet-tdt-0.6b-v3-int8",
+        files = listOf("encoder.int8.onnx", "decoder.int8.onnx", "joiner.int8.onnx", "tokens.txt"),
+        diskBytes = 670_478_772L,
+        ramMb = 1_200,
+        minRamMb = 5_500,
+        kind = VoiceModel.Kind.NEMO_TRANSDUCER,
+        werPct = 2.2,
+    )
+
+    val all: List<VoiceModel> = listOf(FAST, BEST, MULTI)
+
+    /** Whether the English clean-up rules (fillers, self-corrections, spoken commands, lists) apply to [id]'s
+     *  output. The Multilingual model may be transcribing German, French, ... so its text only gets spacing
+     *  and the user's own dictionary and replacements (1.8). */
+    fun englishCleanup(id: String): Boolean = id != MULTI.id
 
     fun byId(id: String?): VoiceModel = all.firstOrNull { it.id == id } ?: FAST
 
@@ -79,7 +102,9 @@ object VoiceModels {
     }
 
     /** "104 MB", "1.3 GB". */
-    fun formatBytes(bytes: Long): String =
-        if (bytes >= 1_000_000_000L) String.format(java.util.Locale.US, "%.1f GB", bytes / 1e9)
-        else "${(bytes + 500_000) / 1_000_000} MB"
+    fun formatBytes(bytes: Long): String = if (bytes >= 1_000_000_000L) {
+        String.format(java.util.Locale.US, "%.1f GB", bytes / 1e9)
+    } else {
+        "${(bytes + 500_000) / 1_000_000} MB"
+    }
 }

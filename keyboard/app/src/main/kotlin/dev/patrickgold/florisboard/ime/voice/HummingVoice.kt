@@ -151,6 +151,14 @@ object HummingVoice {
     private var session: StreamingSession? = null
     private var output: DictationOutput? = null
     private var glue = ""
+
+    /** Raw words of the recording being committed, before clean-up: what edit by voice reads (1.8). */
+    private var spokenRaw = ""
+
+    /** The keyboard's own last dictated commit and the field it went into (what "undo that" may remove). Kept
+     *  across recordings; a different field (or a new input session of it) means there is nothing of ours. */
+    private var lastCommit: String? = null
+    private var lastCommitTarget: com.humming.keyboard.DictationOutput.Target? = null
     private var busy = false
     @Volatile private var warmed = false
     private var appContext: Context? = null
@@ -337,15 +345,62 @@ object HummingVoice {
                     ic.endBatchEdit()
                     return ok
                 }
+
+                private fun remember(text: String?) {
+                    lastCommit = text
+                    lastCommitTarget = if (text == null) null else startedIn
+                }
+
+                @Suppress("ReturnCount")
                 override fun commitFinal(text: String, replacesDraft: Boolean): Boolean {
                     val ed by app.editorInstance()
                     val ic = ic()
                     if (ic == null) { ed.externalComposing = false; return false }
+                    // D5 voice editing: a whole utterance such as "change Tuesday to Wednesday" edits the text
+                    // before the cursor instead of being typed. Only when the target is really there;
+                    // otherwise it is dictation as usual.
+                    val voiceEditOn = com.humming.keyboard.Prefs.voiceEdit(app)
+                    // Commands are read from this recording's raw words, not the cleaned text (1.8).
+                    val spoken = spokenRaw.ifBlank { text }
+                    if (voiceEditOn && com.humming.keyboard.VoiceEdit.parse(spoken) != null) {
+                        ic.beginBatchEdit()
+                        if (replacesDraft) ic.setComposingText("", 1)
+                        ic.finishComposingText()
+                        ic.endBatchEdit()
+                        val ctxChars = com.humming.keyboard.VoiceEdit.CONTEXT_CHARS
+                        val before = ic.getTextBeforeCursor(ctxChars, 0)?.toString() ?: ""
+                        val truncated = before.length >= ctxChars
+                        val r = com.humming.keyboard.VoiceEdit.voiceCommand(before, spoken, truncated)
+                        ic.beginBatchEdit()
+                        val done: Boolean
+                        val o = r?.outcome
+                        if (r == null) {
+                            done = ic.commitText(text, 1)
+                            if (done) remember(text)
+                        } else if (o == null) {
+                            // "undo that": remove only the keyboard's own last dictated text (from this or an
+                            // earlier recording), only in the same field and if it still sits before the cursor
+                            val mine = lastCommit.takeIf { startedIn != null && lastCommitTarget == startedIn }
+                            val n = com.humming.keyboard.VoiceEdit.undoCount(before, mine)
+                            if (n > 0) ic.deleteSurroundingText(n, 0)
+                            remember(null)
+                            done = true
+                        } else {
+                            val (del, put) = com.humming.keyboard.VoiceEdit.fieldEdit(before, o)
+                            if (del > 0) ic.deleteSurroundingText(del, 0)
+                            done = ic.commitText(put, 1)
+                            remember(null)
+                        }
+                        ic.endBatchEdit()
+                        ed.externalComposing = false
+                        return done
+                    }
                     ic.beginBatchEdit()
                     // commitText replaces the composing text: the draft when there is one, else nothing (the keyboard's
                     // own composing word is fixed first).
                     if (!replacesDraft) ic.finishComposingText()
                     val ok = ic.commitText(text, 1)
+                    if (ok) remember(text)
                     ic.endBatchEdit()
                     ed.externalComposing = false
                     return ok
@@ -511,21 +566,25 @@ object HummingVoice {
             open = !discard && it.open) }
         Thread({
             val started = System.nanoTime()
+            var spoken = ""
             val result: Result<Pair<String, String>> = runCatching {
                 var instruction: String? = null
                 var (text, engine) = if (o != null) {
                     val raw = o.finish()
+                    spoken = raw
                     if (raw.isBlank() && o.error != null) throw TranscriberUnavailable(o.error ?: "")
                     val c = cleanOnline(app, raw)
                     instruction = c.instruction
                     Pair(c.text, "online · speech service")
                 } else if (s != null) {
                     val res = s.finish()
+                    spoken = res.raw
                     if (res.text.isBlank() && res.error != null) throw TranscriberUnavailable(res.error)
                     instruction = res.instruction
                     Pair(res.text, "on-device · ${CoreLoader.variant}")
                 } else {
                     val res = DictationPipeline.run(app, clip)
+                    spoken = res.raw
                     Pair(res.text, res.engine)
                 }
                 // Optional AI clean-up with the user's own key (never in incognito; failure keeps the text above).
@@ -543,9 +602,17 @@ object HummingVoice {
             }
             main.post {
                 result.onSuccess { (text, engine) ->
+                    spokenRaw = spoken
                     val out = output
+                    // A whole-utterance "undo that" is consumed by the voice commands (blank text); with edit
+                    // by voice on it still removes the keyboard's own last dictated text in this field (1.8).
+                    val undoOnly = !discard && toField && out != null && text.isBlank() &&
+                        com.humming.keyboard.Prefs.voiceEdit(app) &&
+                        com.humming.keyboard.VoiceEdit.parse(spoken) == com.humming.keyboard.VoiceEdit.Command.Undo
                     if (discard) {
                         // Cancelled: the words already typed were taken back out in stop().
+                    } else if (undoOnly) {
+                        out?.onFinal(spoken)
                     } else if (text.isBlank()) {
                         out?.onFinal("")
                     } else if (!toField || out == null) {
@@ -556,7 +623,7 @@ object HummingVoice {
                     if (BuildConfig.DEBUG) Log.i(TAG, "HUMMING_FINAL engine=$engine chars=${text.length} " +
                         "stop_to_insert_ms=${SystemClock.elapsedRealtime() - stopAt} to_field=$toField")
                     session = null; output = null; busy = false
-                    if (text.isBlank() && toField) {
+                    if (text.isBlank() && toField && !undoOnly) {
                         _state.update { it.copy(phase = VoiceState.Phase.ERROR, transcript = "",
                             message = "Didn't catch that. Tap the mic and try again.") }
                     } else {
