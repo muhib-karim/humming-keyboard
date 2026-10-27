@@ -49,6 +49,14 @@ class FieldEditTest {
         assertNull(FieldEdit.parse("delete ${"x".repeat(195)}"))
     }
 
+    @Test fun ambiguousSeparatorIsDictation() {
+        assertNull(FieldEdit.parse("change go to school to work"))
+        assertNull(FieldEdit.parse("replace this with that with care"))
+        assertNull(FieldEdit.parse("insert very before good before"))
+        assertEquals(FieldEdit.Command.Replace("Tuesday", "Wednesday"), FieldEdit.parse("change Tuesday to Wednesday"))
+        assertEquals(FieldEdit.Command.Insert("today", "Tuesday", false), FieldEdit.parse("insert today after Tuesday"))
+    }
+
     @Test fun replacesLastWholeWordAndCarriesCapital() {
         assertEquals(
             "Meet Tuesday, then Wednesday.",

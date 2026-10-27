@@ -46,6 +46,11 @@ object FieldEdit {
     private val deleteCmd = Regex("^(?:delete|remove) (.+)$", RegexOption.IGNORE_CASE)
     private val insertCmd = Regex("^insert (.+?) (before|after) (.+)$", RegexOption.IGNORE_CASE)
 
+    /** Separator words; said more than once, the command is ambiguous and stays dictation. */
+    private val toWord = Regex("\\bto\\b", RegexOption.IGNORE_CASE)
+    private val withWord = Regex("\\bwith\\b", RegexOption.IGNORE_CASE)
+    private val insertWord = Regex("\\b(?:before|after)\\b", RegexOption.IGNORE_CASE)
+
     /** Targets that belong to the existing dictation commands (or are pronouns with nothing to find). */
     private val reservedTarget = Regex(
         "^(?:that|this|it|all|everything|(?:the )?last (?:word|sentence|line|paragraph)|all of it|all text)$",
@@ -65,14 +70,17 @@ object FieldEdit {
     private fun parseReplace(t: String): Command? = replaceCmd.matchEntire(t)?.let { m ->
         val target = findable(m.groupValues[REPLACE_TARGET].ifEmpty { m.groupValues[CHANGE_TARGET] })
         val replacement = part(m.groupValues[SECOND_PART])
-        if (target != null && replacement != null) Command.Replace(target, replacement) else null
+        val sep = if (m.groupValues[REPLACE_TARGET].isEmpty()) toWord else withWord
+        val unambiguous = sep.findAll(t).count() == 1
+        if (target != null && replacement != null && unambiguous) Command.Replace(target, replacement) else null
     }
 
     private fun parseInsert(t: String): Command? = insertCmd.matchEntire(t)?.let { m ->
         val text = part(m.groupValues[1])
         val anchor = findable(m.groupValues[SECOND_PART])
         val before = m.groupValues[2].equals("before", ignoreCase = true)
-        if (text != null && anchor != null) Command.Insert(text, anchor, before) else null
+        val unambiguous = insertWord.findAll(t).count() == 1
+        if (text != null && anchor != null && unambiguous) Command.Insert(text, anchor, before) else null
     }
 
     private fun parseDelete(t: String): Command? =

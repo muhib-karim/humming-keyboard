@@ -386,12 +386,14 @@ object HummingVoice {
                             }
                             val cursorOnly = !sel.isNotValid && sel.start == sel.end
                             val before = if (cursorOnly) ic.getTextBeforeCursor(windowChars, 0)?.toString() else null
-                            val next = ic.getTextAfterCursor(1, 0)?.firstOrNull()
-                            val edit = before?.let { planner(it, next) }
+                            // null: the editor could not answer (not applicable); empty: end of field (no next).
+                            val afterCursor = ic.getTextAfterCursor(1, 0)
+                            val next = afterCursor?.firstOrNull()
+                            val edit = if (afterCursor == null) null else before?.let { planner(it, next) }
                             // Field offset of the first character of [before].
                             val shift = sel.start - (before?.length ?: 0)
                             result = when {
-                                before == null -> DictationOutput.FieldEditResult.NOT_APPLICABLE
+                                before == null || afterCursor == null -> DictationOutput.FieldEditResult.NOT_APPLICABLE
                                 edit == null -> DictationOutput.FieldEditResult.NOT_FOUND
                                 shift + edit.start < 0 -> DictationOutput.FieldEditResult.NOT_APPLICABLE
                                 else -> {
