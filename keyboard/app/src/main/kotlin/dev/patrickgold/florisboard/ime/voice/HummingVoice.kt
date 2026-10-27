@@ -337,6 +337,7 @@ object HummingVoice {
                     ic.endBatchEdit()
                     return ok
                 }
+
                 /** The keyboard's own last dictated commit (what "undo that" may remove). */
                 private var lastCommit: String? = null
                 override fun commitFinal(text: String, replacesDraft: Boolean): Boolean {
@@ -345,7 +346,8 @@ object HummingVoice {
                     if (ic == null) { ed.externalComposing = false; return false }
                     // D5 voice editing: a whole utterance such as "change Tuesday to Wednesday" edits the text before the
                     // cursor instead of being typed. Only when the target is really there; otherwise it is dictation as usual.
-                    if (com.humming.keyboard.Prefs.voiceEdit(app) && com.humming.keyboard.VoiceEdit.parse(text) != null) {
+                    val voiceEditOn = com.humming.keyboard.Prefs.voiceEdit(app)
+                    if (voiceEditOn && com.humming.keyboard.VoiceEdit.parse(text) != null) {
                         ic.beginBatchEdit()
                         if (replacesDraft) ic.setComposingText("", 1)
                         ic.finishComposingText()

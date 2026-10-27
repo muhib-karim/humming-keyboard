@@ -18,6 +18,7 @@ object VoiceEdit {
         data class Replace(val target: String, val replacement: String) : Command()
         data class Delete(val target: String) : Command()
         data class Capitalize(val target: String) : Command()
+
         /** "undo that" / "scratch that": the host removes its own last insertion. */
         object Undo : Command()
     }
@@ -32,11 +33,21 @@ object VoiceEdit {
     private val LEAD = Pattern.compile("^(?:(?:um+|uh+|okay|ok|so|please|hey humming|humming)[,\\s]+)+", F)
     private val TRAIL = Pattern.compile("(?:[,\\s]+please)?[\\s.!?,]*$", F)
     private val RE_REPLACE = Pattern.compile(
-        "^(?:change|replace|switch)\\s+[\"\u201C]?(.+?)[\"\u201D]?\\s+(?:to|with|into)\\s+[\"\u201C]?(.+?)[\"\u201D]?$", F)
-    private val RE_DELETE = Pattern.compile("^(?:delete|remove|erase)\\s+(?:the\\s+word\\s+)?[\"\u201C]?(.+?)[\"\u201D]?$", F)
-    private val RE_CAP = Pattern.compile("^(?:capitalize|capitalise)\\s+(?:the\\s+word\\s+)?[\"\u201C]?(.+?)[\"\u201D]?$", F)
+        "^(?:change|replace|switch)\\s+[\"\u201C]?(.+?)[\"\u201D]?\\s+(?:to|with|into)\\s+[\"\u201C]?(.+?)[\"\u201D]?$",
+        F,
+    )
+    private val RE_DELETE = Pattern.compile(
+        "^(?:delete|remove|erase)\\s+(?:the\\s+word\\s+)?[\"\u201C]?(.+?)[\"\u201D]?$",
+        F,
+    )
+    private val RE_CAP = Pattern.compile(
+        "^(?:capitalize|capitalise)\\s+(?:the\\s+word\\s+)?[\"\u201C]?(.+?)[\"\u201D]?$",
+        F,
+    )
     private val RE_UNDO = Pattern.compile(
-        "^(?:undo(?:\\s+that)?|scratch\\s+that|delete\\s+that|undo\\s+the\\s+last\\s+(?:bit|part|sentence))$", F)
+        "^(?:undo(?:\\s+that)?|scratch\\s+that|delete\\s+that|undo\\s+the\\s+last\\s+(?:bit|part|sentence))$",
+        F,
+    )
     private val WS = Regex("\\s+")
 
     private fun normalise(utterance: String): String? {
@@ -56,7 +67,13 @@ object VoiceEdit {
             if (m.matches()) {
                 val a = m.group(1)!!.trim()
                 val b = m.group(2)!!.trim()
-                return if (a.isNotEmpty() && b.isNotEmpty() && !a.equals(b, ignoreCase = true)) Command.Replace(a, b) else null
+                return if (a.isNotEmpty() && b.isNotEmpty() &&
+                    !a.equals(b, ignoreCase = true)
+                ) {
+                    Command.Replace(a, b)
+                } else {
+                    null
+                }
             }
         }
         RE_CAP.matcher(t).let { m -> if (m.matches()) return Command.Capitalize(m.group(1)!!.trim()) }
