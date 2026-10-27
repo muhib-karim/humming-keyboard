@@ -39,7 +39,7 @@ class StreamingSession(
     private val replacements = Prefs.replacements(app)
 
     /** False for the Multilingual model: no English clean-up rules on possibly non-English words (1.8). */
-    private val english = VoiceModels.englishCleanup(ModelDownload.current(app).id)
+    private val english = VoiceModels.englishCleanup(ModelStore.current(app).id)
     @Volatile private var engine: LocalEngine? = null
     private val acquired = java.util.concurrent.atomic.AtomicBoolean(false)
     @Volatile private var closed = false

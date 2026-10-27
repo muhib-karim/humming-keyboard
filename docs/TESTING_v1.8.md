@@ -14,7 +14,7 @@ Android SDK, Xcode or a desktop GUI toolkit ran in CI on pull request #15.
 | Swift core (iOS clean-up, lists, voice edit) | `cd ios/HummingCore && swift test` (Swift 6.0.3, Linux) | 59 tests, 0 failures |
 | Desktop voice edit (`desktop/src-tauri/src/voice_edit.rs`) | the file's own tests in a stand-alone crate (the Tauri crate needs GTK/WebKit) | 8 passed, 0 failed (includes all 35 shared cases; unknown app never edits; 30 s window and one edit per insertion; Backspace counts grapheme clusters, family emoji = 1) |
 | Desktop model catalog (`desktop/src-tauri/src/models.rs`) | the file's own tests in a stand-alone crate | 6 passed, 0 failed (incl. English clean-up off only for Multilingual) |
-| Desktop clean-up (`desktop/src-tauri/src/text_cleanup.rs`) | the file's own tests in a stand-alone crate, plus a check that the Multilingual options keep "Er sagt, er kommt morgen" | 26 passed, 0 failed |
+| Desktop clean-up (`desktop/src-tauri/src/text_cleanup.rs`) | the file's own tests in a stand-alone crate, plus checks that `neutral` keeps "Er sagt, er kommt morgen" and "Kot i pies" | 27 passed, 0 failed |
 | Kotlin clean-up for Multilingual | `kotlinc TextCleanup.kt` + harness | `neutral` keeps "Er sagt, er kommt morgen"; English clean-up still removes "er" |
 | Kotlin style | `bash keyboard/ci/static_checks.sh ktlint` | 0 findings |
 | Kotlin static analysis | `bash keyboard/ci/static_checks.sh detekt` | 0 findings |
@@ -41,13 +41,13 @@ request.
 
 | Finding | Fix | Test |
 |---|---|---|
-| Desktop: unknown app counted as "same app" | the focused app is always read; an edit needs a known, identical app at insertion and now, re-checked right before any Backspace | `unknown_app_never_edits` |
+| Desktop: unknown app counted as "same app" | the focused app is always read (at start and right before typing); text is ours only if it went into the start app; an edit needs a known, identical app, re-checked right before any Backspace | `unknown_app_never_edits` |
 | Desktop: stale last insertion | edits only within 30 s (`EDIT_WINDOW_MS`) and once per insertion | `edits_expire_and_happen_once` |
 | Desktop: Backspace counted Unicode scalars | counts grapheme clusters (`unicode-segmentation`); a cut inside a cluster is refused | `backspaces_count_grapheme_clusters` |
 | Android: "undo that" never saw the previous recording | the last dictated commit and its field are kept across recordings, cleared for another field; a whole-utterance "undo that" now reaches it | covered by `VoiceEdit.undoCount` tests; device behaviour not tested |
-| Android/iOS: commands read from cleaned or accumulated text | commands read from the current recording's raw words (Android `spokenRaw`, iOS `latestUtterance`) | Kotlin and Swift shared cases |
+| Android/iOS: commands read from cleaned or accumulated text | commands read from the current recording's raw words (Android `spokenRaw`; iOS `latestUtterance`, all chunks of the recording, shown in the keyboard strip when clean-up left nothing) | Kotlin and Swift shared cases |
 | Cut window made a false word boundary | `voiceCommand(..., truncated)` refuses a match at index 0 of a cut window (Android when 1,000 chars, iOS always) | `matchAtTheStartOfATruncatedWindowIsNotACommand`, `testTruncatedWindowRefusesAMatchAtItsStart` |
-| Multilingual output went through English clean-up | English rules off for Multilingual on desktop and Android (spacing and dictionary only) | `multilingual_model_skips_english_cleanup`, `neutralKeepsNonEnglishWords`, `english_cleanup_is_off_only_for_multilingual` |
+| Multilingual output went through English clean-up | English rules off when Multilingual is the model actually loaded, on desktop and Android (spacing and dictionary only) | `multilingual_model_skips_english_cleanup`, `neutralKeepsNonEnglishWords`, `english_cleanup_is_off_only_for_multilingual` |
 | Balanced described as between Fast and Best | reworded everywhere: less memory than Fast, slightly less accurate and slower | docs only |
 
 ## Not tested

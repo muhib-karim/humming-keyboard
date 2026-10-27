@@ -16,6 +16,8 @@ final class Dictation: ObservableObject {
 
     // Keep list markers and sentence punctuation until commands from later chunks have been applied.
     private var transcript = ""
+    /// Raw words of the current recording (all recognition chunks since start), for edit by voice.
+    private var recordingRaw = ""
 
     weak var settings: AppSettings?
 
@@ -41,6 +43,8 @@ final class Dictation: ObservableObject {
     }
 
     func start() {
+        recordingRaw = ""
+        SharedStore.latestUtterance = ""
         SFSpeechRecognizer.requestAuthorization { status in
             DispatchQueue.main.async {
                 guard status == .authorized else {
@@ -148,7 +152,8 @@ final class Dictation: ObservableObject {
                                             dictionary: vocab.terms, strict: settings?.accuracyMode ?? false,
                                             fillers: settings?.removeFillers ?? true, replacements: vocab.replacements)
         SharedStore.latestDictation = committed
-        SharedStore.latestUtterance = raw
+        recordingRaw = recordingRaw.isEmpty ? raw : recordingRaw + " " + raw
+        SharedStore.latestUtterance = recordingRaw
     }
 
     // MARK: CI screenshots (the simulator has no microphone)

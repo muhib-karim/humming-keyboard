@@ -36,7 +36,7 @@ final class KeyboardViewController: UIInputViewController {
 
     private func makeView() -> KeyboardView {
         KeyboardView(
-            dictation: SharedStore.latestDictation,
+            dictation: pendingDictation(),
             showGlobe: needsInputModeSwitchKey,
             canPaste: hasFullAccess,
             onInsert: { [weak self] s in self?.textDocumentProxy.insertText(s) },
@@ -47,6 +47,15 @@ final class KeyboardViewController: UIInputViewController {
             },
             onInsertDictation: { [weak self] s in self?.insertDictation(s) }
         )
+    }
+
+    /// The strip's text: the latest dictation, or, when clean-up left nothing (e.g. the whole recording was
+    /// "undo that"), the latest recording's own words if they are an edit command, so the command can still run.
+    private func pendingDictation() -> String {
+        let cleaned = SharedStore.latestDictation
+        let spoken = SharedStore.latestUtterance
+        if cleaned.isEmpty, SharedStore.voiceEdit, VoiceEdit.parse(spoken) != nil { return spoken }
+        return cleaned
     }
 
     /// Edit by voice: a dictated "change Tuesday to Wednesday" (etc.) edits the text before the cursor; "undo that"

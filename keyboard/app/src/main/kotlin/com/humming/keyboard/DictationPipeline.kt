@@ -27,7 +27,7 @@ object DictationPipeline {
         val raw = transcriber.transcribe(clip)
         val text = when {
             transcriber is MockTranscriber -> raw
-            !VoiceModels.englishCleanup(ModelDownload.current(ctx).id) ->
+            !VoiceModels.englishCleanup(ModelStore.current(ctx).id) ->
                 TextCleanup.neutral(raw, Prefs.dictionary(ctx), Prefs.replacements(ctx))
             else -> {
                 val dictionary = Prefs.dictionary(ctx)

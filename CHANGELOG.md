@@ -24,13 +24,15 @@ iOS 1.8.0 (build 1800).
     so a match at the very start of that text is refused.
   - Desktop: edits only Humming's own last insertion. Limits, because desktop Humming can't see what you do in the
     app afterwards: the focused app must be known both when the text was typed and now, and be the same (checked
-    again right before any Backspace); the edit must come within 30 seconds of the insertion; one edit per insertion
+    again right before any Backspace); text counts as Humming's only if it went into the app the dictation started
+    in; typing or moving the cursor yourself in that same app within the window is not detected; the edit must come within 30 seconds of the insertion; one edit per insertion
     (after it, Humming forgets the text). Backspace counts are whole characters (one press for an emoji such as a
     family emoji). If typing fails, the memory of the last insertion is dropped.
 - **Multilingual model**: NVIDIA Parakeet TDT 0.6B v3 (int8, sherpa-onnx), 25 European languages, on Android and
   desktop, offered on devices with at least 6 GB of memory, with a SHA-256 check on download. Transcription only for
   non-English speech: the English clean-up rules (fillers, self-corrections, spoken commands, lists) are switched off
-  for its output, which only gets spacing and your own dictionary, so a German "Er" is not removed as a filler. Licence attribution in `keyboard/LICENSES.md`.
+  for its output (and whenever it is the model actually loaded), which only gets spacing and your own dictionary, so a
+  German "Er" is not removed as a filler and a Polish "i" is not capitalised. Licence attribution in `keyboard/LICENSES.md`.
 - **Balanced model (desktop)**: Moonshine base (int8). Uses less memory than Fast (379 MB vs 478 MB peak), at slightly
   lower accuracy (3.11 % vs 2.72 % word error rate) and slightly slower (real-time factor 0.0376 vs 0.0299); for
   laptops short on memory. Fast stays the default everywhere.

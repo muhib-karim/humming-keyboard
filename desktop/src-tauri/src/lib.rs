@@ -172,6 +172,13 @@ pub fn finalize_text_for(raw: &str, s: &Settings, app: Option<&str>) -> String {
     // The clean-up rules are English (fillers, self-corrections, spoken commands, lists). With the Multilingual
     // model the speech may be German, French, ...: keep the words and only normalise spacing (1.8).
     let english = models::english_cleanup(&s.model);
+    if !english {
+        let mut text = text_cleanup::neutral(&replaced, &terms);
+        if s.trailing_space && !text.is_empty() && !text.ends_with('\n') {
+            text.push(' ');
+        }
+        return text;
+    }
     let opts = if s.clean_mode && english {
         text_cleanup::Opts {
             remove_fillers: s.remove_fillers,
@@ -282,8 +289,9 @@ fn stop_dictation(app: &AppHandle) {
     let released = Instant::now();
     let Some((samples, rate, wall_ms)) = state.recorder.stop() else { return };
     let to_focused_app = state.to_focused_app.load(Ordering::SeqCst);
-    let engine = state.engine.lock().ok().and_then(|g| g.as_ref().map(|e| e.engine.clone()));
-    let Some(engine) = engine else {
+    // The model actually loaded (it can be a fallback while the picked one downloads): clean-up rules follow it.
+    let engine = state.engine.lock().ok().and_then(|g| g.as_ref().map(|e| (e.engine.clone(), e.key.clone())));
+    let Some((engine, loaded_model)) = engine else {
         hide_overlay(app);
         set_status(app, "no_model", "Download a speech model first");
         return;
@@ -299,7 +307,8 @@ fn stop_dictation(app: &AppHandle) {
     let app = app.clone();
     tauri::async_runtime::spawn_blocking(move || {
         let state = app.state::<AppState>();
-        let s = state.settings.lock().map(|g| g.clone()).unwrap_or_default();
+        let mut s = state.settings.lock().map(|g| g.clone()).unwrap_or_default();
+        s.model = loaded_model;
         let pcm = stt::to_16k(&samples, rate);
         let audio_ms = pcm.len() as u64 * 1000 / stt::SAMPLE_RATE as u64;
         // All silence (an accidental press, a muted mic): insert nothing rather than let the model guess.
@@ -333,8 +342,13 @@ fn stop_dictation(app: &AppHandle) {
                 }
             }
             let put = |t: &str| insert::insert(t, &s.insert_method, s.restore_clipboard, s.paste_delay_ms);
+            // The app that really receives this insertion (focus may have moved since the dictation started).
+            let mut insert_app = focused.clone();
             let result = match &action {
-                voice_edit::Action::Insert(t) => Some(put(t)),
+                voice_edit::Action::Insert(t) => {
+                    insert_app = focus::focused_app();
+                    Some(put(t))
+                }
                 voice_edit::Action::Replace { backspaces, text: t } => {
                     Some(insert::erase(*backspaces).and_then(|()| if t.is_empty() { Ok(()) } else { put(t) }))
                 }
@@ -344,7 +358,9 @@ fn stop_dictation(app: &AppHandle) {
                 Some(Ok(())) => {
                     inserted = true;
                     if let Ok(mut l) = state.last_insert.lock() {
-                        l.commit(&action, focused.as_deref(), now);
+                        // Ours only if it went into the app the dictation started in (else forgotten).
+                        let owner = if insert_app == focused { insert_app.as_deref() } else { None };
+                        l.commit(&action, owner, now);
                     }
                 }
                 Some(Err(e)) => {
@@ -734,9 +750,8 @@ mod tests {
     fn multilingual_model_skips_english_cleanup() {
         // Codex review finding 7: German "Er" (he) is not the English filler "er".
         let s = Settings { trailing_space: false, model: "multi".into(), ..Settings::default() };
-        let out = finalize_text("Er sagt, er kommt morgen", &s);
-        assert!(out.starts_with("Er sagt"), "{out}");
-        assert!(out.contains("er kommt"), "{out}");
+        assert_eq!(finalize_text("Er sagt, er kommt morgen", &s), "Er sagt, er kommt morgen");
+        assert_eq!(finalize_text("Kot i pies", &s), "Kot i pies");
         let en = Settings { trailing_space: false, ..Settings::default() };
         assert!(!finalize_text("er so i think", &en).to_lowercase().starts_with("er "));
     }

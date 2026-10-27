@@ -285,6 +285,14 @@ pub fn compact_times(input: &str) -> String {
         .into_owned()
 }
 
+/// Multilingual model (1.8): the words may not be English, so none of the English rules run (no fillers,
+/// self-corrections, spoken commands, repeats, times, casing or end punctuation): only non-speech tags are
+/// dropped, spaces collapsed and the user's own dictionary applied. "Kot i pies" stays "Kot i pies".
+pub fn neutral(raw: &str, dictionary: &[String]) -> String {
+    let t = replace_all(&NON_SPEECH, raw, "");
+    apply_dictionary(collapse_spaces(&t).trim(), dictionary)
+}
+
 pub fn is_hallucination(text: &str) -> bool {
     let n = normalize(text);
     HALLUCINATIONS.contains(&n.as_str()) || n.starts_with("subtitles by") || n.starts_with("transcribed by")

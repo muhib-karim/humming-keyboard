@@ -23,7 +23,8 @@ enum SharedStore {
     }
 
     private static let utteranceKey = "latest_utterance"
-    /// The raw words of the latest single recording, before clean-up (1.8): what edit by voice reads, so an
+    /// The raw words of the latest recording (every recognition chunk since the mic was turned on), before
+    /// clean-up (1.8): what edit by voice reads, so an
     /// earlier recording in `latestDictation` or a clean-up rule can't turn dictation into a command or hide one.
     static var latestUtterance: String {
         get { defaults.string(forKey: utteranceKey) ?? "" }
