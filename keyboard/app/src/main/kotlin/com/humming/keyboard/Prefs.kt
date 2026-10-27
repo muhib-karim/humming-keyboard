@@ -19,6 +19,7 @@ object Prefs {
     const val KEY_ENGINE = "speech_engine"
     const val KEY_LLM_PROVIDER = "llm_provider"
     const val KEY_LLM_MODEL = "llm_model"
+    const val KEY_VOICE_EDIT = "voice_edit"
 
     /** Speech engine: on this phone, no network (default), or the phone's online speech service (opt-in). */
     const val ENGINE_OFFLINE = "offline"
@@ -71,6 +72,9 @@ object Prefs {
      * removed, spoken punctuation applied. Off = verbatim.
      */
     fun cleanMode(ctx: Context): Boolean = get(ctx).getBoolean(KEY_CLEAN, true)
+
+    /** D5: spoken edits ("change Tuesday to Wednesday", "delete really"). On by default. */
+    fun voiceEdit(ctx: Context): Boolean = get(ctx).getBoolean(KEY_VOICE_EDIT, true)
 
     /**
      * Accuracy mode (default off, 1.4): the strict clean-up rules on top of Clean mode. Hedge fillers ("like",

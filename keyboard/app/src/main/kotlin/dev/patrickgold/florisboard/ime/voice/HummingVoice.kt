@@ -337,15 +337,49 @@ object HummingVoice {
                     ic.endBatchEdit()
                     return ok
                 }
+                /** The keyboard's own last dictated commit (what "undo that" may remove). */
+                private var lastCommit: String? = null
                 override fun commitFinal(text: String, replacesDraft: Boolean): Boolean {
                     val ed by app.editorInstance()
                     val ic = ic()
                     if (ic == null) { ed.externalComposing = false; return false }
+                    // D5 voice editing: a whole utterance such as "change Tuesday to Wednesday" edits the text before the
+                    // cursor instead of being typed. Only when the target is really there; otherwise it is dictation as usual.
+                    if (com.humming.keyboard.Prefs.voiceEdit(app) && com.humming.keyboard.VoiceEdit.parse(text) != null) {
+                        ic.beginBatchEdit()
+                        if (replacesDraft) ic.setComposingText("", 1)
+                        ic.finishComposingText()
+                        ic.endBatchEdit()
+                        val before = ic.getTextBeforeCursor(1000, 0)?.toString() ?: ""
+                        val r = com.humming.keyboard.VoiceEdit.voiceCommand(before, text)
+                        ic.beginBatchEdit()
+                        val done: Boolean
+                        val o = r?.outcome
+                        if (r == null) {
+                            done = ic.commitText(text, 1)
+                            if (done) lastCommit = text
+                        } else if (o == null) {
+                            // "undo that": remove only the keyboard's own last dictated text, if it still sits before the cursor
+                            val n = com.humming.keyboard.VoiceEdit.undoCount(before, lastCommit)
+                            if (n > 0) ic.deleteSurroundingText(n, 0)
+                            lastCommit = null
+                            done = true
+                        } else {
+                            val (del, put) = com.humming.keyboard.VoiceEdit.fieldEdit(before, o)
+                            if (del > 0) ic.deleteSurroundingText(del, 0)
+                            done = ic.commitText(put, 1)
+                            lastCommit = null
+                        }
+                        ic.endBatchEdit()
+                        ed.externalComposing = false
+                        return done
+                    }
                     ic.beginBatchEdit()
                     // commitText replaces the composing text: the draft when there is one, else nothing (the keyboard's
                     // own composing word is fixed first).
                     if (!replacesDraft) ic.finishComposingText()
                     val ok = ic.commitText(text, 1)
+                    if (ok) lastCommit = text
                     ic.endBatchEdit()
                     ed.externalComposing = false
                     return ok

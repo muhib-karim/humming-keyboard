@@ -167,6 +167,9 @@ fun VoiceScreen() = FlorisScreen {
             ToggleRow("Clean up speech", "Removes stutters and repeats, applies corrections like \"3pm, no wait, 4pm\" → \"4pm\", " +
                 "and turns spoken lists into bullets.",
                 Prefs.KEY_CLEAN, Prefs.cleanMode(app))
+            ToggleRow("Edit by voice", "Say a whole edit such as \"change Tuesday to Wednesday\", \"delete really\" or " +
+                "\"capitalize monday\" and it changes your text instead of being typed. Only when that word is already there.",
+                Prefs.KEY_VOICE_EDIT, Prefs.voiceEdit(app))
             ToggleRow("Remove filler words", "Drops um, uh, er and hmm, and \"you know\" between commas. Off keeps them.",
                 Prefs.KEY_FILLERS, Prefs.removeFillers(app))
             ToggleRow("Accuracy mode", "Stricter clean-up, still on this phone: also removes \"like\", \"basically\" and \"you know\" " +
