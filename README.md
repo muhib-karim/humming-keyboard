@@ -3,7 +3,8 @@
 <h1 align="center">Humming Keyboard</h1>
 
 <p align="center"><strong>Talk, and it types. Offline by default: your voice stays on your device.</strong><br>
-A private keyboard with offline voice typing for Android, plus iPhone, Windows, macOS and Linux apps.</p>
+One project, one version: a private keyboard with offline voice typing for Android, plus iPhone, Windows, macOS
+and Linux apps and the website, all built from this repository.</p>
 
 <p align="center">
 <a href="https://github.com/muhib-karim/humming-keyboard/releases"><img alt="Latest release, including release candidates" src="https://img.shields.io/github/v/release/muhib-karim/humming-keyboard?include_prereleases&amp;color=e5486b&amp;label=release"></a>
@@ -55,6 +56,23 @@ sample sentence, because CI machines have no microphone. Sample text is made up.
   and raw output in this repository ([Benchmarks](#benchmarks)).
 - **Private, and checked in code.** No analytics, no ads. A unit test fails the build if any file outside a short list
   uses a network API ([Privacy](#privacy)).
+
+### New in 1.8: edit by voice, two more speech models, Handy and Amical compared
+
+- **Edit by voice** on Android, iPhone and desktop. Say a whole utterance such as "change Tuesday to Wednesday",
+  "delete the word really", "capitalize monday" or "undo that", and Humming edits the text you already have instead of
+  typing the words. It only acts when the whole utterance is the command (at most 14 words) and the word you name is
+  really there; otherwise the words are typed as normal dictation ("change the oil to synthetic" stays text). One rule
+  set in the shared Rust core, ported to Kotlin and Swift, all checked against the same 35 test cases
+  (`core/testdata/voice_edit_vectors.json`). On desktop it edits only Humming's own last insertion, in the same app.
+  On by default, with a switch ("Edit by voice") on every platform.
+- **Two new speech models.** *Multilingual* (NVIDIA Parakeet TDT 0.6B v3, int8) types 25 European languages on Android
+  and desktop (phones with 6 GB of memory or more); clean-up and voice commands stay English-only. *Balanced* on desktop
+  (Moonshine base, int8) sits between Fast and Best. Fast stays the default.
+- **Every model measured in one run** with the app's own speech engine (LibriSpeech test-clean, first 200 clips): Best
+  1.77 %, Multilingual 2.24 %, Fast 2.72 %, Balanced 3.11 %, Lite 4.51 % word error rate, with speed and memory, in
+  [docs/BENCHMARKS.md](docs/BENCHMARKS.md).
+- **Compared with the open-source desktop apps Handy and Amical** in [COMPETITORS.md](COMPETITORS.md).
 
 ### New in 1.7.1: checked on a real Android, measured, gated
 
@@ -219,6 +237,10 @@ No account, no analytics, no ads, and no cloud speech engine of Humming's own. F
 
 ## Benchmarks
 
+**1.8:** every model (Lite, Fast, Balanced, Best, Multilingual) re-measured side by side in one run with the
+apps' own engine (sherpa-onnx 1.13.8): word error rate, speed and peak memory are in
+[docs/BENCHMARKS.md](docs/BENCHMARKS.md). The figures below are the earlier CI run.
+
 Measured by CI ([`wer-bench.yml`](.github/workflows/wer-bench.yml), run 37204875974 on the 1.4.0 code,
 4 October 2026) on LibriSpeech with the exact models and decoder settings the apps ship, on a 2-thread x86-64 CPU
 (AMD EPYC 9V74). Lower is better. GitHub has since expired that run's logs, so its output is committed here:
@@ -375,6 +397,8 @@ check), `codeql.yml`, `android-release.yml` (signed APK and AAB),
 | [docs/BRAND.md](docs/BRAND.md) | Colours, icon, design tokens across Android, desktop, iOS and the site |
 | [docs/RELEASING.md](docs/RELEASING.md) | Versioning, signing, release assets, update feeds, tagging |
 | [docs/ci/STATIC_ANALYSIS.md](docs/ci/STATIC_ANALYSIS.md) | Every CI quality gate, and how the lint baselines were made |
+| [docs/BENCHMARKS.md](docs/BENCHMARKS.md) | Every speech model measured side by side (1.8): word error rate, speed, memory |
+| [docs/TESTING_v1.8.md](docs/TESTING_v1.8.md) | What was tested for 1.8, with commands and results |
 | [docs/ci/COVERAGE.md](docs/ci/COVERAGE.md) | Unit-test coverage before and after 1.7.1, and what the new tests cover |
 | [docs/IOS_SIDELOAD.md](docs/IOS_SIDELOAD.md) | Installing the unsigned iOS build |
 | [docs/README.md](docs/README.md) | Index of all documentation, audits and CI notes |

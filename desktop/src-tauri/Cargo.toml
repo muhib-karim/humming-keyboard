@@ -1,6 +1,6 @@
 [package]
 name = "humming-desktop"
-version = "1.7.1"
+version = "1.8.0"
 description = "Humming for Windows and macOS: hold a hotkey, speak, and clean text lands in whatever app has focus"
 edition = "2021"
 license = "Apache-2.0"
