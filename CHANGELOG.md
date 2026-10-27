@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+- **Voice editing of text already in the field (Android)**: say just "change Tuesday to Wednesday" (or "replace … with
+  …"), "delete Tuesday" (or "remove …"), or "insert next before Tuesday" / "insert … after …" and Humming edits the
+  last whole-word match before the cursor (within 2,000 characters) instead of typing the words. Case-insensitive, a
+  capital is kept, a deleted word takes one space with it; with no match nothing is typed and the panel says
+  "Couldn't find …". On-device and deterministic, no AI model. "delete that", "scratch that", "delete last word" and
+  "delete all" keep their meaning; password and incognito fields are never read (the words are typed as before)
+  (`FieldEdit`, `FieldEditTest`, `DictationOutputTest`). Desktop and iPhone do not have it yet.
+
 ## [1.7.1] - 2026-10-22
 
 Checked on a real Android emulator, measured, and gated. No new features; nothing users do changes except one fix in

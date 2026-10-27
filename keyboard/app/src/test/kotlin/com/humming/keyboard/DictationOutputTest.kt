@@ -25,6 +25,17 @@ class DictationOutputTest {
             composing = ""; committed.add(text); base.append(text); return true
         }
         override fun clearComposing() { composing = "" }
+        override fun applyEdit(
+            windowChars: Int,
+            planner: (String) -> FieldEdit.Edit?,
+        ): DictationOutput.FieldEditResult {
+            composing = ""
+            val before = base.takeLast(windowChars).toString()
+            val e = planner(before) ?: return DictationOutput.FieldEditResult.NOT_FOUND
+            val offset = base.length - before.length
+            base.replace(offset + e.start, offset + e.end, e.replacement)
+            return DictationOutput.FieldEditResult.APPLIED
+        }
         fun type(s: String) { base.append(s) }
     }
 
@@ -300,5 +311,56 @@ class DictationOutputTest {
         out.onStop()
         assertFalse(out.onFinal("hello there"))
         assertEquals(0, out.commits)
+    }
+
+    // --- voice edits of the text already in the field ---
+
+    @Test
+    fun aVoiceEditRemovesTheDraftAndEditsInsteadOfTyping() {
+        val field = FakeField()
+        field.type("Meet on Tuesday.")
+        val out = DictationOutput(field, {}, glue = " ")
+        out.onPartial("change Tuesday to Wednesday")
+        assertEquals("Meet on Tuesday. change Tuesday to Wednesday", field.text)
+        out.onStop()
+        val cmd = FieldEdit.parse("Change Tuesday to Wednesday.")!!
+        assertEquals(DictationOutput.FieldEditResult.APPLIED, out.tryFieldEdit(cmd))
+        assertEquals("Meet on Wednesday.", field.text)
+        assertEquals("", out.draft)
+        assertEquals(0, out.commits)
+        assertFalse("the dictation is over", out.onFinal("Change Tuesday to Wednesday."))
+        assertEquals("Meet on Wednesday.", field.text)
+    }
+
+    @Test
+    fun aVoiceEditThatFindsNothingTypesTheWordsOnce() {
+        val field = FakeField()
+        field.type("Hello there.")
+        val out = DictationOutput(field, {}, glue = " ")
+        out.onPartial("delete Tuesday")
+        out.onStop()
+        assertEquals(DictationOutput.FieldEditResult.NOT_FOUND, out.tryFieldEdit(FieldEdit.Command.Delete("Tuesday")))
+        assertEquals("the field is untouched", "Hello there.", field.text)
+        assertEquals(0, field.committed.size)
+        assertEquals(DictationOutput.State.FINISHING, out.state)
+        assertTrue("the dictation is still open", out.onFinal("Delete Tuesday."))
+        assertEquals(listOf(" Delete Tuesday."), field.committed)
+        assertEquals("Hello there. Delete Tuesday.", field.text)
+        assertEquals(1, out.commits)
+        assertFalse(out.onFinal("Delete Tuesday."))
+    }
+
+    @Test
+    fun aVoiceEditInAnotherFieldIsNotApplicableAndTypesAsBefore() {
+        val field = FakeField()
+        var focused: DictationOutput.Target? = notes
+        val out = DictationOutput(field, {}, target = notes, currentTarget = { focused })
+        out.onStop()
+        focused = bank
+        assertEquals(DictationOutput.FieldEditResult.NOT_APPLICABLE, out.tryFieldEdit(FieldEdit.Command.Delete("x")))
+        focused = notes
+        out.detach()
+        assertEquals(DictationOutput.FieldEditResult.NOT_APPLICABLE, out.tryFieldEdit(FieldEdit.Command.Delete("x")))
+        assertEquals("", field.text)
     }
 }

@@ -17,6 +17,7 @@ import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
 import android.util.Log
+import android.view.inputmethod.ExtractedTextRequest
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -105,6 +106,7 @@ import com.humming.keyboard.VoiceModels
 import com.humming.keyboard.WavRecorder
 import dev.patrickgold.florisboard.BuildConfig
 import dev.patrickgold.florisboard.editorInstance
+import dev.patrickgold.florisboard.ime.editor.EditorRange
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -360,6 +362,48 @@ object HummingVoice {
                     }
                     ed.externalComposing = false
                 }
+                // A voice edit (FieldEdit): the text before the cursor is read, edited in place in one batch edit, and
+                // the cursor stays after the same text. With a selection or no match nothing is touched (the words
+                // are typed).
+                override fun applyEdit(
+                    windowChars: Int,
+                    planner: (String) -> com.humming.keyboard.FieldEdit.Edit?,
+                ): DictationOutput.FieldEditResult {
+                    val ed by app.editorInstance()
+                    val ic = ic() ?: return DictationOutput.FieldEditResult.NOT_APPLICABLE
+                    ic.beginBatchEdit()
+                    try {
+                        ic.finishComposingText()
+                        ed.externalComposing = false
+                        val x = ic.getExtractedText(ExtractedTextRequest(), 0)
+                        val sel = if (x != null && x.selectionStart >= 0) {
+                            EditorRange(x.startOffset + x.selectionStart, x.startOffset + x.selectionEnd)
+                        } else {
+                            ed.activeContent.selection
+                        }
+                        if (sel.isNotValid || sel.start != sel.end) {
+                            return DictationOutput.FieldEditResult.NOT_APPLICABLE
+                        }
+                        val before = ic.getTextBeforeCursor(windowChars, 0)?.toString()
+                            ?: return DictationOutput.FieldEditResult.NOT_APPLICABLE
+                        val edit = planner(before) ?: return DictationOutput.FieldEditResult.NOT_FOUND
+                        val cursor = sel.start
+                        val absStart = cursor - before.length + edit.start
+                        val absEnd = cursor - before.length + edit.end
+                        if (absStart < 0) return DictationOutput.FieldEditResult.NOT_APPLICABLE
+                        if (absStart == absEnd) {
+                            ic.setSelection(absStart, absStart)
+                        } else {
+                            ic.setComposingRegion(absStart, absEnd)
+                        }
+                        ic.commitText(edit.replacement, 1)
+                        val newCursor = cursor + edit.replacement.length - (edit.end - edit.start)
+                        ic.setSelection(newCursor, newCursor)
+                        return DictationOutput.FieldEditResult.APPLIED
+                    } finally {
+                        ic.endBatchEdit()
+                    }
+                }
             },
             { p -> _state.update { it.copy(transcript = p) } },
             glue = glue,
@@ -544,6 +588,7 @@ object HummingVoice {
             main.post {
                 result.onSuccess { (text, engine) ->
                     val out = output
+                    var notFound: String? = null
                     if (discard) {
                         // Cancelled: the words already typed were taken back out in stop().
                     } else if (text.isBlank()) {
@@ -551,12 +596,34 @@ object HummingVoice {
                     } else if (!toField || out == null) {
                         out?.onFinal(text, toField = false)
                     } else {
-                        out.onFinal(text)
+                        // "change X to Y", "delete X", "insert X after Y": edit the text already in the field instead
+                        // of typing the words. Never in a private field (it is not read); otherwise typed as before.
+                        val isPrivate = keepPrivate || incognito(app)
+                        val cmd = if (isPrivate) null else com.humming.keyboard.FieldEdit.parse(text)
+                        val edit = cmd?.let { out.tryFieldEdit(it) } ?: DictationOutput.FieldEditResult.NOT_APPLICABLE
+                        when (edit) {
+                            DictationOutput.FieldEditResult.APPLIED -> {}
+                            DictationOutput.FieldEditResult.NOT_FOUND -> {
+                                // Never lose a sentence: no match means it was dictation after all.
+                                out.onFinal(text)
+                                notFound = when (cmd) {
+                                    is com.humming.keyboard.FieldEdit.Command.Replace -> cmd.target
+                                    is com.humming.keyboard.FieldEdit.Command.Delete -> cmd.target
+                                    is com.humming.keyboard.FieldEdit.Command.Insert -> cmd.anchor
+                                    null -> ""
+                                }
+                            }
+                            DictationOutput.FieldEditResult.NOT_APPLICABLE -> out.onFinal(text)
+                        }
                     }
                     if (BuildConfig.DEBUG) Log.i(TAG, "HUMMING_FINAL engine=$engine chars=${text.length} " +
                         "stop_to_insert_ms=${SystemClock.elapsedRealtime() - stopAt} to_field=$toField")
                     session = null; output = null; busy = false
-                    if (text.isBlank() && toField) {
+                    if (notFound != null) {
+                        // The edit found nothing and the words were typed: say so in the panel (not an error).
+                        _state.update { it.copy(phase = VoiceState.Phase.IDLE, transcript = "", level = 0f,
+                            message = "Couldn\u2019t find \u201c$notFound\u201d, typed it instead") }
+                    } else if (text.isBlank() && toField) {
                         _state.update { it.copy(phase = VoiceState.Phase.ERROR, transcript = "",
                             message = "Didn't catch that. Tap the mic and try again.") }
                     } else {
