@@ -1,3 +1,5 @@
+@file:Suppress("ReturnCount", "ComplexCondition")
+
 package com.humming.keyboard
 
 import java.util.regex.Pattern
@@ -14,6 +16,9 @@ import java.util.regex.Pattern
  * Offsets here are UTF-16 indices (what InputConnection counts); the Rust core reports Unicode scalars.
  */
 object VoiceEdit {
+    /** How much text before the cursor a voice edit may look at. */
+    const val CONTEXT_CHARS = 1000
+
     sealed class Command {
         data class Replace(val target: String, val replacement: String) : Command()
         data class Delete(val target: String) : Command()

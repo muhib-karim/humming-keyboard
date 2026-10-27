@@ -1,3 +1,5 @@
+@file:Suppress("LoopWithTooManyJumpStatements")
+
 package com.humming.keyboard
 
 import kotlinx.serialization.json.Json
