@@ -33,6 +33,14 @@ Fixes from the November 2026 production audit. No new features.
   compared the two sides ignoring ASCII case only; the desktop app then deleted and retyped the same text and dropped
   the words. A case-only change is now refused for any alphabet, as on Android and iPhone. The shared test set has
   36 cases.
+- **Best model download**: on 7 November 2026 the sherpa-onnx project replaced
+  `sherpa-onnx-nemo-parakeet-tdt-0.6b-v2-int8.tar.bz2` on its `asr-models` release (now 482,440,461 bytes). The SHA-256
+  and size pinned in the Android and desktop apps no longer matched, so new downloads of the Best model were refused
+  (nothing unverified was installed; a model already on the device kept working). The apps now pin the new file,
+  `6fc4426b54aa549a0019b8a75b8dea59164e71790a37ac56a045ad57f915f714`. `wer-bench.yml` carries the same pin and size:
+  on CI it downloads the archive, checks both, and decodes LibriSpeech with the files the apps load
+  (`encoder.int8.onnx`, `decoder.int8.onnx`, `joiner.int8.onnx`, `tokens.txt`, same folder name, same sherpa-onnx
+  1.13.8). It now fails if a model it downloaded is missing from its report or decodes nonsense.
 - **Documentation**: the README gains a Quickstart and the lint, core, desktop and script-test commands, and no longer
   says that Humming cannot edit text by voice or that offline voice is English only (both changed in 1.8). Several
   documents still said that GitHub Actions does not run and that the repository is private; corrected.

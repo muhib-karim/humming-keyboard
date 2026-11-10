@@ -13,6 +13,11 @@ apps use (sherpa-onnx **1.13.8**, CPU, 2 threads) and the same model files the a
 - Peak RSS is the whole benchmark process (Python plus the model), so it slightly overstates the model alone.
 - Raw output, including every reference and hypothesis: `docs/bench/local-20261028-<model>-test-clean-200.json` and
   `...-per-utterance.jsonl`.
+- **Update, 10 November 2026.** On 7 November 2026 the sherpa-onnx project replaced the Best archive
+  (`sherpa-onnx-nemo-parakeet-tdt-0.6b-v2-int8.tar.bz2`) on its release. The Best row below was measured with the
+  earlier file (SHA-256 `157c157bc51155e03e37d2466522a3a737dd9c72bb25f36eb18912964161e1ad`). The apps now pin the new
+  file (`6fc4426b54aa549a0019b8a75b8dea59164e71790a37ac56a045ad57f915f714`), which `wer-bench.yml` downloads and
+  measures on CI.
 
 | Model in the app | What it is | Download | WER | Real-time factor | Median latency per clip | Load | Peak RSS |
 |---|---|---|---|---|---|---|---|

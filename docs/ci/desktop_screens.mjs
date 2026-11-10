@@ -44,7 +44,7 @@ const mock = () => {
     app_info: () => ({ version: "1.6.0", os: "linux", arch: "x86_64", models_dir: "~/.local/share/humming/models", history_file: "~/.local/share/humming/history.jsonl" }),
     list_models: () => [
       { id: "fast", label: "Fast", blurb: "Parakeet 110M. Instant and very accurate. Recommended.", download_bytes: 104337827, disk_bytes: 126e6, ram_mb: 500, wer_pct: 3.7, downloaded: true, active: true },
-      { id: "best", label: "Best", blurb: "Parakeet 0.6B. The most accurate; wants 8 GB of RAM or more.", download_bytes: 482468385, disk_bytes: 640e6, ram_mb: 1300, wer_pct: 2.6, downloaded: false, active: false },
+      { id: "best", label: "Best", blurb: "Parakeet 0.6B. The most accurate; wants 8 GB of RAM or more.", download_bytes: 482440461, disk_bytes: 640e6, ram_mb: 1300, wer_pct: 2.6, downloaded: false, active: false },
     ],
     list_input_devices: () => ["Built-in Microphone", "USB Headset"],
     get_history: () => history,
