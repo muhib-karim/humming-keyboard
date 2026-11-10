@@ -2,8 +2,8 @@
  * Humming (added file, 1.6). In-app updates for the sideloaded APK.
  *
  * The SECOND place in the app that touches the network (NetworkAuditTest allows it by name). What it does:
- *  1. Reads the small update feed (android.json) that CI publishes with every GitHub Release, mirrored to the
- *     project's public GitHub Pages site because the source repository is private.
+ *  1. Reads the small update feed (android.json) that CI publishes with every GitHub Release and mirrors to the
+ *     project's GitHub Pages site (pages.yml), where the app reads it without an account or an API limit.
  *  2. If the feed's versionCode is higher than this app's, downloads the APK (on Wi-Fi only when it runs on its
  *     own), computes its SHA-256 and compares it with the line for that file in the release's SHA256SUMS.txt.
  *  3. Reads the downloaded APK's signing certificate and installs it only if it is Humming's release certificate
@@ -94,7 +94,7 @@ object UpdatePolicy {
 }
 
 object AppUpdate {
-    const val FEED_BASE = "https://humming-keyboard.pages.dev/updates/"
+    const val FEED_BASE = "https://muhib-karim.github.io/humming-keyboard/updates/"
     const val FEED_URL = FEED_BASE + "android.json"
     const val SUMS_URL = FEED_BASE + "SHA256SUMS.txt"
     const val CHECK_EVERY_MS = 6L * 60 * 60 * 1000

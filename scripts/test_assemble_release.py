@@ -137,7 +137,7 @@ class AssembleReleaseTest(unittest.TestCase):
         self.assertNotEqual(r.returncode, 0)
         self.assertIn("more than one", r.stdout)
 
-    def check_pages_feeds(self, feeds):
+    def check_pages_feeds(self, feeds, stale=False):
         # Execute the workflow's verification bodies with network/package operations replaced by local fixtures.
         workflow = os.path.join(os.path.dirname(SCRIPT), "../.github/workflows/pages.yml")
         with open(workflow, encoding="utf-8") as fh:
@@ -146,15 +146,17 @@ class AssembleReleaseTest(unittest.TestCase):
             write(os.path.join(self.root, "_site/updates", feed), "{}")
         log = os.path.join(self.root, "requests")
         write(log, "")
-        env = dict(os.environ, GITHUB_STEP_SUMMARY=os.path.join(self.root, "summary"), REQUESTS=log)
+        env = dict(os.environ, GITHUB_STEP_SUMMARY=os.path.join(self.root, "summary"), REQUESTS=log,
+                   STALE="1" if stale else "")
         stubs = r'''
 pip() { :; }
 sleep() { :; }
 curl() {
   local url="${@: -1}" feed
   feed="${url##*/}"
+  feed="${feed%%\?*}"
   echo "$feed" >> "$REQUESTS"
-  test -f "_site/updates/$feed"
+  if [ -n "$STALE" ]; then echo '{"version": "the previous release"}'; else cat "_site/updates/$feed"; fi
 }
 python3() {
   test "$1" = scripts/verify_updater.py
@@ -163,7 +165,7 @@ python3() {
 }
 '''
         for step in steps:
-            if "scripts/verify_updater.py --config" not in step and 'curl -fsS "$BASE/android.json"' not in step:
+            if "scripts/verify_updater.py --config" not in step and 'curl -fsS "$BASE/android.json' not in step:
                 continue
             gate = re.search(r"if: hashFiles\('([^']+)'\) != ''", step)
             self.assertIsNotNone(gate, step)
@@ -174,11 +176,15 @@ python3() {
             body = body.replace("${{ steps.deployment.outputs.page_url }}", "https://example.invalid/")
             r = subprocess.run(["bash", "-c", stubs + body], cwd=self.root, env=env,
                                capture_output=True, text=True)
+            if stale:
+                self.assertNotEqual(r.returncode, 0, r.stdout + r.stderr)
+                self.assertIn("is not the feed this run deployed", r.stdout)
+                continue
             self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
         with open(log) as fh:
             requests = fh.read().splitlines()
         expected = set(feeds)
-        if "latest.json" in feeds:
+        if "latest.json" in feeds and not stale:
             expected.add("verified desktop signature")
         self.assertEqual(set(requests), expected)
 
@@ -198,6 +204,10 @@ python3() {
 
     def test_pages_without_feeds_skips_verification(self):
         self.check_pages_feeds(())
+
+    def test_pages_fails_while_the_live_feed_is_not_the_one_just_deployed(self):
+        # The 1.8.0 release run read a cached 1.7.1 latest.json right after deploying 1.8.0, and passed.
+        self.check_pages_feeds(("latest.json", "android.json"), stale=True)
 
 
 if __name__ == "__main__":

@@ -1,5 +1,54 @@
 # Changelog
 
+## [Unreleased]
+
+Fixes from the November 2026 production audit. No new features.
+
+- **Update host**: new builds read their update feeds from the GitHub Pages site
+  (`https://muhib-karim.github.io/humming-keyboard/updates/`), which `pages.yml` deploys and checks, instead of
+  `humming-keyboard.pages.dev`, which no workflow deployed: it still served the 1.7.1 feeds after 1.8.0 was released, so
+  installed apps were not offered 1.8.0. Versions 1.6 to 1.8.0 keep asking the old host; what to do about it is in
+  `docs/RELEASING.md` ("Legacy update host"). On Android the About screen's repository, issue and changelog links, and
+  on desktop the "download it from" hint, now point at the public GitHub repository. The privacy policy names the new
+  host.
+- **Release checks**: after a deploy, `pages.yml` waits until each live feed is the file it just deployed (the 1.8.0
+  release run had checked a cached 1.7.1 feed and passed) and verifies every desktop bundle the site serves against
+  its signature (`verify_updater.py --base-url`).
+- **One gate for pull requests**: `ci.yml` runs the quality checks (ktlint, detekt, gitleaks, website, script tests)
+  on every pull request and each platform's tests when its code, or the shared test vectors, changed; its `gate` job
+  is the single status check to require on `main`. Before, the platform workflows were skipped by their path filters
+  on unrelated pull requests, so they could not be required, and `main` required nothing. Pull request builds no
+  longer receive the updater signing key. `screens.yml` and `wer-bench.yml` no longer start on every release tag.
+- **Custom words (Android)**: a replacement whose written side starts with "@", such as `at sign -> @` or
+  `my handle -> @muhib`, was read as an app tag with nothing to type and the whole line was ignored. It now works; an
+  app tag after it (`my handle -> @muhib @slack`) still applies.
+- **Clean-up (Android, desktop, iPhone)**: the word "ER", written in capitals by the speech engine, was removed as
+  the filler "er" ("She went to the ER." became "She went to the."). Only "er" and "Er" count as the filler now. Same
+  change and tests in `TextCleanup.kt`, `text_cleanup.rs` and `TextCleanup.swift`.
+- **Core clean-up**: the "Actually, no, ..." sentence restart measured where to cut in a lowercased copy of the
+  sentence and cut the original there. After a character whose lowercase form is longer ("İ") the result was wrong
+  ("... at tfour o'clock?"), or the core panicked when the cut fell inside a character. Offsets now come from an
+  ASCII-lowercased copy, which keeps every byte position.
+- **Edit by voice (desktop, core)**: "replace Émile with émile" was treated as a command by the Rust core, because it
+  compared the two sides ignoring ASCII case only; the desktop app then deleted and retyped the same text and dropped
+  the words. A case-only change is now refused for any alphabet, as on Android and iPhone. The shared test set has
+  36 cases.
+- **Best model download**: on 7 November 2026 the sherpa-onnx project replaced
+  `sherpa-onnx-nemo-parakeet-tdt-0.6b-v2-int8.tar.bz2` on its `asr-models` release (now 482,440,461 bytes). The SHA-256
+  and size pinned in the Android and desktop apps no longer matched, so new downloads of the Best model were refused
+  (nothing unverified was installed; a model already on the device kept working). The apps now pin the new file,
+  `6fc4426b54aa549a0019b8a75b8dea59164e71790a37ac56a045ad57f915f714`. `wer-bench.yml` carries the same pin and size:
+  on CI it downloads the archive, checks both, and decodes LibriSpeech with the files the apps load
+  (`encoder.int8.onnx`, `decoder.int8.onnx`, `joiner.int8.onnx`, `tokens.txt`, same folder name, same sherpa-onnx
+  1.13.8). It now fails if a model it downloaded is missing from its report or decodes nonsense.
+- **Multilingual model download**: the same happened to `sherpa-onnx-nemo-parakeet-tdt-0.6b-v3-int8.tar.bz2`, replaced
+  upstream three minutes later (now 487,211,443 bytes), so new downloads of the Multilingual model were refused too.
+  The apps now pin `1495e91b59d7fc53ddca91f3431758ec99f8fa253fdb0e1e851be0f72b14b0f9`, the digest GitHub reports for the
+  asset. This model was not in `wer-bench.yml`, which is why CI did not report it; it is now, with the same checks.
+- **Documentation**: the README gains a Quickstart and the lint, core, desktop and script-test commands, and no longer
+  says that Humming cannot edit text by voice or that offline voice is English only (both changed in 1.8). Several
+  documents still said that GitHub Actions does not run and that the repository is private; corrected.
+
 ## [1.8.0] - 2026-10-28
 
 Edit by voice on every platform, two more speech models, every model measured side by side, and the open-source

@@ -5,10 +5,9 @@ name: ios
 on:
   push:
     branches: ["**"]
-    paths: ["ios/**", ".github/workflows/ios.yml"]
-  pull_request:
-    paths: ["ios/**", ".github/workflows/ios.yml"]
-  # release.yml builds the unsigned .ipa for each tagged release through this workflow.
+    paths: ["ios/**", "core/testdata/**", ".github/workflows/ios.yml"]
+  # release.yml builds the unsigned .ipa for each tagged release through this workflow; ci.yml calls it for pull
+  # requests that touch ios/ or the shared test vectors in core/testdata/ (which VoiceEditTests reads).
   workflow_call:
   workflow_dispatch:
 

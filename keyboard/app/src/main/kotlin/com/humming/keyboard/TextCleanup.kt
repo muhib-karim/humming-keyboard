@@ -16,7 +16,9 @@ object TextCleanup {
         "\\[[^\\]]*]|\\((?:[^)]*(?:music|applause|silence|blank|inaudible|laugh)[^)]*)\\)|\\*[^*]+\\*",
         RegexOption.IGNORE_CASE,
     )
-    private val FILLER = Regex("(?<!$W)(?:um+|uh+|erm+|er|hmm+)(?!$W)[,.]?\\s*", RegexOption.IGNORE_CASE)
+
+    // "ER" in capitals is the emergency room, not the hesitation "er": (?-i:[Ee]r) matches only "er" and "Er".
+    private val FILLER = Regex("(?<!$W)(?:um+|uh+|erm+|(?-i:[Ee]r)|hmm+)(?!$W)[,.]?\\s*", RegexOption.IGNORE_CASE)
     private val YOU_KNOW = Regex(",?\\s*\\byou know\\b,\\s*", RegexOption.IGNORE_CASE)
     private val LEADING = Regex("^(?:(?:so|well|okay|ok|like|right)\\s*,\\s*)+", RegexOption.IGNORE_CASE)
     private val MARKER = Regex(

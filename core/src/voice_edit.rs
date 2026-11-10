@@ -64,7 +64,8 @@ pub fn parse_command(utterance: &str) -> Option<EditCommand> {
     if RE_UNDO.is_match(&t) { return Some(EditCommand::Undo); }
     if let Some(c) = RE_REPLACE.captures(&t) {
         let (a, b) = (c[1].trim(), c[2].trim());
-        if !a.is_empty() && !b.is_empty() && !a.eq_ignore_ascii_case(b) {
+        // A case-only change is not a command, for any alphabet ("Émile" / "émile"), as in the Kotlin and Swift ports.
+        if !a.is_empty() && !b.is_empty() && a.to_lowercase() != b.to_lowercase() {
             return Some(EditCommand::Replace { target: a.to_string(), replacement: b.to_string() });
         }
         return None;

@@ -9,8 +9,8 @@ on:
   push:
     branches: ["**"]
     paths: ["desktop/**", "core/**", ".github/workflows/desktop.yml"]
-  pull_request:
-    paths: ["desktop/**", "core/**", ".github/workflows/desktop.yml"]
+  # Pull requests: ci.yml calls this workflow when the pull request touches desktop/ or core/ (without secrets, so
+  # the installers are built without self-update bundles). release.yml calls it for tagged releases.
   workflow_call:
   workflow_dispatch:
 

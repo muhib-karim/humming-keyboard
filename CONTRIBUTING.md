@@ -2,8 +2,8 @@
 
 Thank you for helping improve Humming. This guide covers bug reports, feature ideas and pull requests.
 
-The repository is private for now and is planned to be made public with the 1.6.3 release. Once it is public,
-issues and pull requests will be open to everyone. By taking part you agree to follow the [Code of Conduct](CODE_OF_CONDUCT.md).
+The repository is public: issues and pull requests are open to everyone. By taking part you agree to follow the
+[Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## Reporting a bug
 
@@ -12,7 +12,7 @@ Open an issue with the **Bug report** template. The most useful reports include:
 - the platform and Humming version (Android: **Settings > About**; desktop: the app's Settings; iOS: the app);
 - the device or operating system version;
 - what you did, what you expected and what happened;
-- whether it happens in Offline or Online voice mode, and with the Fast or Best model (for voice problems);
+- whether it happens in Offline or Online voice mode, and with which voice model (for voice problems);
 - for a crash on Android, the log from the crash screen (it is never sent automatically; copy it yourself).
 
 Please do not paste API keys, personal text you dictated, or anything else private into an issue: issues are public.
@@ -32,9 +32,8 @@ Build instructions per platform are in the README under [Build from source](READ
 detail in [desktop/README.md](desktop/README.md), [docs/IOS_SIDELOAD.md](docs/IOS_SIDELOAD.md) (Xcode route) and
 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) (how the code is organised).
 
-Run the tests for the part you changed before opening a pull request. The GitHub Actions workflows are configured to
-run these too, but Actions has not run on this repository since 5 October 2026, so for now local runs are the only
-check:
+Run the tests for the part you changed before opening a pull request. CI runs them again on the pull request
+([what CI checks](#what-ci-checks-on-a-pull-request)):
 
 | Area | Command |
 |---|---|
@@ -42,6 +41,8 @@ check:
 | Desktop app | `cd desktop && npm ci && npm run build`, then `cd src-tauri && cargo test` |
 | Shared core | `cd core && cargo test --no-default-features --lib` |
 | iOS clean-up rules | `cd ios/HummingCore && swift test` |
+| Kotlin style (Java 17 only, no Gradle) | `bash keyboard/ci/static_checks.sh ktlint`, then `bash keyboard/ci/static_checks.sh detekt` |
+| Release, site and CI scripts | `python3 -m unittest discover -s scripts -p 'test_*.py'` |
 
 ## Pull requests
 
@@ -49,6 +50,21 @@ check:
 2. Fill in the pull request template: what changed, why, how you tested it, and any screenshots for UI changes.
 3. Add an entry to [CHANGELOG.md](CHANGELOG.md) for user-visible changes.
 4. Keep the documentation in step with the code (README, `docs/`, in-app text).
+
+### What CI checks on a pull request
+
+[`ci.yml`](.github/workflows/ci.yml) runs on every pull request:
+
+- always: ktlint and detekt (new findings only; older ones are in the baselines under `keyboard/config/`), gitleaks
+  over the whole history, the website check and the script tests;
+- when the pull request touches `keyboard/`: the Android unit tests, Android lint and the APK builds;
+- when it touches `desktop/` or `core/`: the desktop and core tests and the installers;
+- when it touches `ios/`: the Swift tests and the simulator build;
+- a change to the shared test vectors in `core/testdata/` runs all three platforms.
+
+Its last job, `gate`, passes only when all of those passed. `gate` is the one status check to require on `main`
+(branch protection or a ruleset); it reports on every pull request. CodeQL and the emulator smoke test also run on pull requests that touch
+`keyboard/`; they are not part of the gate. Details: [docs/ci/STATIC_ANALYSIS.md](docs/ci/STATIC_ANALYSIS.md).
 
 ### Project rules
 

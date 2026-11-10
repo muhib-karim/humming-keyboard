@@ -79,10 +79,10 @@ npm run tauri build                                       # installer for this m
 npm run tauri build -- --target universal-apple-darwin    # universal macOS .dmg
 ```
 
-CI (`.github/workflows/desktop.yml`) is configured to type-check and unit-test on Linux, then build an unsigned
-universal macOS `.dmg` and Windows `.msi` + setup `.exe`, uploaded as workflow artifacts with `SHA256SUMS.txt`.
-GitHub Actions has not run on this repository since 5 October 2026; desktop 1.6.0 was built outside Actions (see the
-CHANGELOG).
+CI (`.github/workflows/desktop.yml`) type-checks and unit-tests on Linux, then builds an unsigned universal macOS
+`.dmg`, Windows `.msi` + setup `.exe` and a Linux AppImage + `.deb`, uploaded as workflow artifacts with
+`SHA256SUMS.txt`. Desktop 1.6.0 was built outside Actions (see the CHANGELOG); 1.8.0 was built by this workflow
+through `release.yml`.
 
 ## How to open it (the builds are unsigned)
 

@@ -19,6 +19,7 @@ Set up for CI on 2026-10-03. An upload key exists (PKCS12, RSA 4096, generic DN)
 secrets are set: `HUMMING_KEYSTORE_BASE64`, `HUMMING_KEYSTORE_PASSWORD`, `HUMMING_KEY_ALIAS`, `HUMMING_KEY_PASSWORD`.
 These four names are the only keystore secrets the workflows read. Status as of 14 October 2026: GitHub Actions has
 not run on this repository since 5 October 2026, so releases since 1.6.0 were signed with the same key outside Actions (see the CHANGELOG).
+Update, 10 November 2026: Actions runs again, and 1.8.0 was signed by this workflow through `release.yml` (run 40593674436).
 
 `.github/workflows/android-release.yml` (push to `main` touching `keyboard/`, or run by hand):
 1. decodes `HUMMING_KEYSTORE_BASE64` to a temp file under `$RUNNER_TEMP` (mode 600) and points `HUMMING_KEYSTORE` at it;

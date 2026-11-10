@@ -23,7 +23,7 @@ use tauri_plugin_updater::UpdaterExt;
 pub const FIRST_CHECK: Duration = Duration::from_secs(45);
 pub const CHECK_EVERY: Duration = Duration::from_secs(4 * 60 * 60);
 /// Where a user can download a build by hand (shown when the app cannot replace itself).
-pub const RELEASES_PAGE: &str = "https://humming-keyboard.pages.dev/";
+pub const RELEASES_PAGE: &str = "https://github.com/muhib-karim/humming-keyboard/releases/latest";
 
 #[derive(Debug, Clone, Serialize, PartialEq, Default)]
 pub struct UpdateStatus {

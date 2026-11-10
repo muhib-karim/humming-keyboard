@@ -97,12 +97,32 @@ It also refuses a version that does not match both `desktop/src-tauri/tauri.conf
 | `latest.json` | Desktop apps (`tauri-plugin-updater`) | `version`, `notes`, `pub_date` and, per platform (`darwin-aarch64`, `darwin-x86_64`, `windows-x86_64`, `linux-x86_64` and their installer-specific variants), the download URL and minisign signature |
 | `android.json` | Android APK (`AppUpdate.kt`) | `versionCode`, `versionName`, `apk` (file name), `sha256` and `notes` |
 
-The apps read both feeds from `https://humming-keyboard.pages.dev/updates/` (`AppUpdate.FEED_BASE` and the updater
-endpoint in `tauri.conf.json`). The download URLs inside `latest.json` point at the same place.
+The apps read both feeds from `https://muhib-karim.github.io/humming-keyboard/updates/` (`AppUpdate.FEED_BASE` and
+the updater endpoint in `tauri.conf.json`). The download URLs that `assemble_release.py` writes into `latest.json`
+point at the same place.
 
 `pages.yml` copies the latest GitHub Release's feeds, `SHA256SUMS.txt`, the APK and the desktop update files to
-`/updates/` on the GitHub Pages site and checks the live feed's signatures. It only mirrors a release that contains a
-`latest.json`; for a release without one it publishes nothing under `/updates/`.
+`/updates/` on the GitHub Pages site. After the deploy it waits until each live feed is the file it just deployed (a
+cached older feed fails the run) and checks every desktop bundle the site serves against its signature. It only
+mirrors a release that contains a feed (`latest.json` or `android.json`); for a release without one it publishes
+nothing under `/updates/`.
+
+### Legacy update host (versions 1.6 to 1.8.0)
+
+Humming 1.6 to 1.8.0 read their feeds from `https://humming-keyboard.pages.dev/updates/`, a Cloudflare Pages project
+that no workflow in this repository deploys, and the `latest.json` of the 1.8.0 release lists its downloads there. On
+10 November 2026 that host still served the 1.7.1 feeds, so those versions were not offered 1.8.0. Installed apps
+cannot change the address they ask, so the Cloudflare project has to answer for them. Either:
+
+- **Redirect once (recommended).** Deploy a `_redirects` file to the Cloudflare project with the line
+  `/updates/* https://muhib-karim.github.io/humming-keyboard/updates/:splat 302`. Cloudflare follows a redirect even
+  where a file exists at that path, unless a Pages Function serves the route. Both updaters follow HTTPS redirects, so
+  every installed version then reads the GitHub Pages mirror that CI keeps current.
+- **Or upload each release by hand**: the feeds, `SHA256SUMS.txt` and the update files of the release, under
+  `/updates/`.
+
+Check it with `curl -sI https://humming-keyboard.pages.dev/updates/android.json` (a 302 to the GitHub Pages site) and
+with the command below against `https://humming-keyboard.pages.dev/updates/latest.json`.
 
 Check a feed by hand at any time:
 
@@ -129,7 +149,7 @@ With GitHub Actions available, a release is one tag:
 
 Check the release script locally (no keys, fake artifacts): `python3 -m unittest scripts/test_assemble_release.py`.
 
-**Without GitHub Actions** (the case since 5 October 2026, and how 1.6.0 was built): build each platform on a
+**Without GitHub Actions** (how 1.6.0 was built): build each platform on a
 machine that has the signing material, verify every update signature with `scripts/verify_updater.py` and every
 certificate as `android-release.yml` does, assemble the files with the names above and a `SHA256SUMS.txt`, create the
 tag and the GitHub Release by hand, and publish the feeds and installers to the update mirror. macOS and iOS builds
@@ -142,6 +162,7 @@ in the same format.
 
 - Install the APK over the previous version and check **Settings > Updates > Check for updates** on a device with the
   previous release, so the in-app update path is exercised.
-- Check that `https://humming-keyboard.pages.dev/updates/android.json` (and `latest.json` for a desktop release)
-  shows the new version.
+- Check that `https://muhib-karim.github.io/humming-keyboard/updates/android.json` (and `latest.json` for a desktop
+  release) shows the new version, and that `https://humming-keyboard.pages.dev/updates/android.json` does too
+  ([legacy update host](#legacy-update-host-versions-16-to-180)).
 - Update version references in the README's [Download and install](../README.md#install) section.

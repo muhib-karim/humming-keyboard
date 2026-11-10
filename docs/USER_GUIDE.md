@@ -14,7 +14,8 @@ Notes about 1.6.3 describe the Android release candidate on `main`: they apply o
 ## 1. Install
 
 All installers are attached to the [latest GitHub Release](https://github.com/muhib-karim/humming-keyboard/releases/latest)
-together with `SHA256SUMS.txt`, and mirrored on https://humming-keyboard.pages.dev/. Which file belongs to which
+together with `SHA256SUMS.txt`; the files the apps update from are also served from
+https://muhib-karim.github.io/humming-keyboard/updates/. Which file belongs to which
 platform, and which version each platform is on, is listed in the README under
 [Download and install](../README.md#install).
 

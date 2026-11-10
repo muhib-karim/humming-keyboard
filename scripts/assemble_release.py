@@ -24,7 +24,7 @@ import argparse, datetime, glob, hashlib, json, os, re, shutil, subprocess, sys
 
 ROOT = os.environ.get("HUMMING_ROOT") or os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SCRIPTS = os.path.dirname(os.path.abspath(__file__))
-FEED = "https://humming-keyboard.pages.dev/updates/"
+FEED = "https://muhib-karim.github.io/humming-keyboard/updates/"
 DRY_RUN = os.environ.get("HUMMING_RELEASE_DRY_RUN") == "1"
 
 PLATFORM_NAMES = {"android": "Android", "ios": "iOS", "macos": "macOS", "windows": "Windows", "linux": "Linux"}

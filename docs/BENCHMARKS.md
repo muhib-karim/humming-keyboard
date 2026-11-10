@@ -13,6 +13,14 @@ apps use (sherpa-onnx **1.13.8**, CPU, 2 threads) and the same model files the a
 - Peak RSS is the whole benchmark process (Python plus the model), so it slightly overstates the model alone.
 - Raw output, including every reference and hypothesis: `docs/bench/local-20261028-<model>-test-clean-200.json` and
   `...-per-utterance.jsonl`.
+- **Update, 10 November 2026.** On 7 November 2026 the sherpa-onnx project replaced both Parakeet 0.6B archives on its
+  release. The Best and Multilingual rows below were measured with the earlier files; the apps now pin the new ones,
+  which `wer-bench.yml` downloads and measures on CI.
+
+  | Archive | Measured below (SHA-256) | Pinned by the apps now (SHA-256) |
+  |---|---|---|
+  | Best, `sherpa-onnx-nemo-parakeet-tdt-0.6b-v2-int8.tar.bz2` | `157c157bc51155e03e37d2466522a3a737dd9c72bb25f36eb18912964161e1ad` | `6fc4426b54aa549a0019b8a75b8dea59164e71790a37ac56a045ad57f915f714` |
+  | Multilingual, `sherpa-onnx-nemo-parakeet-tdt-0.6b-v3-int8.tar.bz2` | `5793d0fd397c5778d2cf2126994d58e9d56b1be7c04d13c7a15bb1b4eafb16bf` | `1495e91b59d7fc53ddca91f3431758ec99f8fa253fdb0e1e851be0f72b14b0f9` |
 
 | Model in the app | What it is | Download | WER | Real-time factor | Median latency per clip | Load | Peak RSS |
 |---|---|---|---|---|---|---|---|

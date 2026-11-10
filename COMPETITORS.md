@@ -172,7 +172,7 @@ but Handy is desktop only and Amical has no Linux build; Typeless also has a Lin
 It publishes a reproducible accuracy figure with the raw output. With 1.7 it has the shared core of the dictation apps:
 filler removal with a switch, lists, "scratch that", and spoken → written replacements that double as snippets.
 With 1.8 it also edits text already in the field by voice, offline, on Android, iPhone and desktop, with one rule set
-tested by the same 35 cases on every platform.
+tested by the same 36 cases on every platform.
 **Where it trails:** voice editing is rule-based ("change / delete / capitalize X", "undo that"), not free-form AI
 rewriting of a selection like Wispr's Command Mode or Typeless' speak-to-edit; on desktop it edits only Humming's own
 last insertion; no per-app tone (needs a language model). Offline clean-up and commands are English only; the new
@@ -190,7 +190,7 @@ Swift `ListFormatTests`, `TextCleanupTests`).
 | D2 | Smart lists ("bullet point", "first, ... second, ...") | Wispr, Typeless, Superwhisper, Willow | 4 | 5 | 20 | ✅ Android, desktop, iPhone (`ListFormat`, `bullet_list`) |
 | D3 | "Scratch that" / "delete that" as its own sentence on every platform | Wispr, Typeless, Willow | 4 | 5 | 20 | ✅ desktop and iPhone; Android had it |
 | D4 | A switch for filler-word removal (default on) | Wispr (clean-up levels) | 3 | 5 | 15 | ✅ Android and iPhone; desktop had it |
-| D5 | Voice editing of text already in the field ("change X to Y", "select", "delete X") | Apple (US English), Pixel, Docs; AI edit modes in Wispr, Typeless, Superwhisper, Aqua | 4 | 2 | 8 | ✅ 1.8, Android, iPhone and desktop: Rust `core/src/voice_edit.rs` tests + `core/testdata/voice_edit_vectors.json` (35 shared cases), Kotlin `VoiceEditTest.kt`, Swift `VoiceEditTests.swift`, desktop `desktop/src-tauri/src/voice_edit.rs` tests. Rule-based commands; desktop edits only Humming's own last insertion |
+| D5 | Voice editing of text already in the field ("change X to Y", "select", "delete X") | Apple (US English), Pixel, Docs; AI edit modes in Wispr, Typeless, Superwhisper, Aqua | 4 | 2 | 8 | ✅ 1.8, Android, iPhone and desktop: Rust `core/src/voice_edit.rs` tests + `core/testdata/voice_edit_vectors.json` (36 shared cases), Kotlin `VoiceEditTest.kt`, Swift `VoiceEditTests.swift`, desktop `desktop/src-tauri/src/voice_edit.rs` tests. Rule-based commands; desktop edits only Humming's own last insertion |
 | D6 | Per-app tone and style | Wispr, Typeless, Superwhisper, Aqua, Willow, MacWhisper | 3 | 2 | 6 | Open: needs a language model; Android's own-key AI clean-up covers "make it formal" |
 | D7 | Dictionary that learns from your corrections | Wispr (desktop), Typeless | 3 | 2 | 6 | Open |
 | D8 | Offline dictation in Bangla and more languages | Aqua (cloud, Bengali listed), Superwhisper / MacWhisper via Whisper (untested) | 5 | 1 | 5 | Open (keyboard gap 7) |

@@ -1,7 +1,13 @@
 # Static analysis and quality gates (since 1.7.1)
 
-Every gate runs on GitHub Actions for pushes to `main` and `upgrade/**` branches and for pull requests. None of them
-runs Gradle on a developer machine.
+Every gate runs on GitHub Actions; none of them runs Gradle on a developer machine.
+
+- **Pull requests:** `ci.yml` runs `quality.yml` every time, and `keyboard.yml`, `desktop.yml` and `ios.yml` when the
+  pull request touches that platform (a change to the shared test vectors in `core/testdata/` runs all three). Its last
+  job, **`gate`**, fails unless all of those passed. It always reports, so it is the one status check to require on
+  `main`; a workflow skipped by a path filter never reports. `codeql.yml` and `android-emulator.yml` also run on pull
+  requests that touch `keyboard/` and are not part of the gate.
+- **Pushes to `main` and `upgrade/**`:** each workflow runs for the paths it covers.
 
 | Gate | Where | Tool | Fails when |
 |---|---|---|---|
@@ -11,7 +17,7 @@ runs Gradle on a developer machine.
 | Secrets | `quality.yml` → gitleaks | gitleaks 8.21.2 (SHA-256 pinned), every commit in the history | any leak |
 | Security | `codeql.yml` | CodeQL `java-kotlin`, `security-extended` queries, traced debug build, `.github/codeql/codeql-config.yml` | the analysis cannot run; alerts go to the Security tab, and the branch is expected to have **0 open** (see "CodeQL" below) |
 | Website | `quality.yml` → website check | `scripts/assemble_site.py` + `scripts/check_site.py` (same as `pages.yml`) | a broken link, image, anchor or a request to another origin |
-| Script tests | `quality.yml` | `unittest` for the release, coverage and emulator-metrics scripts | a failing test |
+| Script tests | `quality.yml` | `unittest` for the release, coverage, emulator-metrics and update-verifier scripts | a failing test |
 | Unit tests + coverage | `keyboard.yml` → build | JUnit 4/5, Robolectric 4.16.1, JaCoCo (`createDebugUnitTestCoverageReport`) | a failing test (coverage is reported, see [COVERAGE.md](COVERAGE.md)) |
 | Emulator smoke test | `android-emulator.yml` | UiAutomator on an API 34 emulator | Humming cannot be enabled, opened or typed with |
 | Dependencies | `.github/dependabot.yml` | Dependabot, weekly: Gradle (`/keyboard`) and GitHub Actions | (opens grouped pull requests) |

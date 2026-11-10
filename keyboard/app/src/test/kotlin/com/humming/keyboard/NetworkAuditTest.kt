@@ -63,7 +63,7 @@ class NetworkAuditTest {
     @Test
     fun theUpdaterIsHttpsOnlyChecksummedAndCertificatePinned() {
         val t = sources().first { it.name == "AppUpdate.kt" }.readText()
-        assertTrue("one fixed HTTPS feed", t.contains("const val FEED_BASE = \"https://humming-keyboard.pages.dev/updates/\""))
+        assertEquals("https://muhib-karim.github.io/humming-keyboard/updates/", AppUpdate.FEED_BASE)
         assertTrue(t.contains("require(url.startsWith(\"https://\"))"))
         assertTrue("SHA-256 against SHA256SUMS.txt", t.contains("SHA256SUMS.txt") && t.contains("checksum mismatch"))
         assertTrue("signing certificate pinned", t.contains("certMatches") && t.contains("GET_SIGNING_CERTIFICATES"))
