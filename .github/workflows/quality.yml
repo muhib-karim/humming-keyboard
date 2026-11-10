@@ -5,7 +5,7 @@ name: quality
 #     keyboard/config/ that holds only findings from before 1.7.1 (a missing baseline fails, it is never auto-created);
 #   - gitleaks over the whole git history;
 #   - the website: assembled exactly as pages.yml does, then every link, image and anchor checked;
-#   - the Python release, coverage and emulator-metrics script tests.
+#   - the Python release, coverage, emulator-metrics and update-verifier script tests.
 # Android lint is the "lint" job in keyboard.yml; CodeQL is codeql.yml.
 on:
   push:
@@ -76,4 +76,4 @@ jobs:
           python3 scripts/assemble_site.py _site
           python3 scripts/check_site.py _site
       - name: Script tests
-        run: python3 -m unittest -v scripts/test_assemble_release.py scripts/test_coverage_summary.py scripts/test_emulator_metrics.py
+        run: python3 -m unittest -v scripts/test_assemble_release.py scripts/test_coverage_summary.py scripts/test_emulator_metrics.py scripts/test_verify_updater.py

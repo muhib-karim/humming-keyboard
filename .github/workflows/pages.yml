@@ -4,7 +4,8 @@ name: pages
 # screenshots and social image copied in from docs/ by scripts/assemble_site.py and checked by scripts/check_site.py. 1.6: also mirrors the LATEST GitHub Release's update files to /updates/
 # (latest.json + the signed desktop update bundles, android.json + the APK, SHA256SUMS.txt). The apps read their
 # update feeds from here, so they never need a GitHub login. release.yml calls this after
-# each release, and every site deploy carries the mirror along, then checks the live feed's signatures.
+# each release, and every site deploy carries the mirror along, then checks the live feeds: each must be the file this
+# run deployed (not a cached older one), and every desktop bundle this site serves must match its signature.
 on:
   push:
     branches: ["main"]
@@ -71,13 +72,29 @@ jobs:
           set -euo pipefail
           pip install -q pynacl
           BASE="${{ steps.deployment.outputs.page_url }}updates"
-          for i in 1 2 3 4 5 6; do curl -fsS -o /dev/null "$BASE/latest.json" && break; sleep 20; done
-          python3 scripts/verify_updater.py --config desktop/src-tauri/tauri.conf.json --latest "$BASE/latest.json" --download \
-            | tee -a "$GITHUB_STEP_SUMMARY"
+          # The CDN can serve the previous deployment for a while: the 1.8.0 release run read a cached 1.7.1 feed here
+          # and passed. Wait until the live feed is, byte for byte, the one this run deployed ("?run=" skips the cache).
+          live=$(mktemp)
+          for i in $(seq 1 15); do
+            curl -fsS "$BASE/latest.json?run=${GITHUB_RUN_ID:-0}-$i" > "$live" || true
+            if cmp -s "$live" _site/updates/latest.json; then break; fi
+            if [ "$i" = 15 ]; then echo "::error::$BASE/latest.json is not the feed this run deployed"; exit 1; fi
+            sleep 20
+          done
+          # Each bundle is fetched from this site by its file name and checked against its signature. The feed of a
+          # release made before the update host moved here (1.8.0 and older) still lists the old host.
+          python3 scripts/verify_updater.py --config desktop/src-tauri/tauri.conf.json --latest "$live" --download \
+            --base-url "$BASE/" | tee -a "$GITHUB_STEP_SUMMARY"
       - name: Check the live Android update feed
         if: hashFiles('_site/updates/android.json') != ''
         run: |
           set -euo pipefail
           BASE="${{ steps.deployment.outputs.page_url }}updates"
-          for i in 1 2 3 4 5 6; do curl -fsS -o /dev/null "$BASE/android.json" && break; sleep 20; done
-          curl -fsS "$BASE/android.json" | tee -a "$GITHUB_STEP_SUMMARY"
+          live=$(mktemp)
+          for i in $(seq 1 15); do
+            curl -fsS "$BASE/android.json?run=${GITHUB_RUN_ID:-0}-$i" > "$live" || true
+            if cmp -s "$live" _site/updates/android.json; then break; fi
+            if [ "$i" = 15 ]; then echo "::error::$BASE/android.json is not the feed this run deployed"; exit 1; fi
+            sleep 20
+          done
+          tee -a "$GITHUB_STEP_SUMMARY" < "$live"
