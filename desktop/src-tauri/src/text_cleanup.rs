@@ -19,7 +19,9 @@ fn re(p: &str) -> Regex {
 static NON_SPEECH: Lazy<Regex> = Lazy::new(|| {
     re(r"(?i)\[[^\]]*\]|\((?:[^)]*(?:music|applause|silence|blank|inaudible|laugh)[^)]*)\)|\*[^*]+\*")
 });
-static FILLER: Lazy<Regex> = Lazy::new(|| re(&format!(r"(?i)(?<!{W})(?:um+|uh+|erm+|er|hmm+)(?!{W})[,.]?\s*")));
+// "ER" in capitals is the emergency room, not the hesitation "er": (?-i:[Ee]r) matches only "er" and "Er".
+static FILLER: Lazy<Regex> =
+    Lazy::new(|| re(&format!(r"(?i)(?<!{W})(?:um+|uh+|erm+|(?-i:[Ee]r)|hmm+)(?!{W})[,.]?\s*")));
 static YOU_KNOW: Lazy<Regex> = Lazy::new(|| re(r"(?i),?\s*\byou know\b,\s*"));
 static LEADING: Lazy<Regex> = Lazy::new(|| re(r"(?i)^(?:(?:so|well|okay|ok|like|right)\s*,\s*)+"));
 static MARKER: Lazy<Regex> = Lazy::new(|| {
@@ -462,6 +464,15 @@ mod tests {
     #[test]
     fn fillers_and_capitals() {
         assert_eq!(clean("um so i think we should go"), "So I think we should go.");
+    }
+
+    // "ER" in capitals is a word. It used to be deleted as the filler "er": "She went to the ER." -> "She went to the."
+    #[test]
+    fn the_word_er_is_not_the_filler_er() {
+        assert_eq!(clean("she went to the ER"), "She went to the ER.");
+        assert_eq!(clean("She went to the ER. It was busy."), "She went to the ER. It was busy.");
+        assert_eq!(clean("er, I think so"), "I think so.");
+        assert_eq!(clean("Er, I think so."), "I think so.");
     }
 
     #[test]

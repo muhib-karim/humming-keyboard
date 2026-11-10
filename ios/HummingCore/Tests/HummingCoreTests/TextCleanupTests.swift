@@ -33,6 +33,14 @@ final class TextCleanupTests: XCTestCase {
         XCTAssertEqual("I think we should ship it.", clean("So, I think we should ship it."))
     }
 
+    /// "ER" in capitals is a word. It used to be deleted as the filler "er": "She went to the ER." -> "She went to the."
+    func testTheWordErIsNotTheFillerEr() {
+        XCTAssertEqual("She went to the ER.", clean("she went to the ER"))
+        XCTAssertEqual("She went to the ER. It was busy.", clean("She went to the ER. It was busy."))
+        XCTAssertEqual("I think so.", clean("er, I think so"))
+        XCTAssertEqual("I think so.", clean("Er, I think so."))
+    }
+
     func testRepeats() {
         XCTAssertEqual("I think we should go.", clean("I I think we we should go"))
         XCTAssertEqual("We should go now.", clean("we should we should go now"))

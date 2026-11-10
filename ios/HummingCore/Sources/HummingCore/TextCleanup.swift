@@ -38,7 +38,8 @@ public enum TextCleanup {
     }
 
     private static let nonSpeech = re("\\[[^\\]]*]|\\((?:[^)]*(?:music|applause|silence|blank|inaudible|laugh)[^)]*)\\)|\\*[^*]+\\*")
-    private static let filler = re("(?<!\(W))(?:um+|uh+|erm+|er|hmm+)(?!\(W))[,.]?\\s*")
+    // "ER" in capitals is the emergency room, not the hesitation "er": (?-i:[Ee]r) matches only "er" and "Er".
+    private static let filler = re("(?<!\(W))(?:um+|uh+|erm+|(?-i:[Ee]r)|hmm+)(?!\(W))[,.]?\\s*")
     private static let youKnow = re(",?\\s*\\byou know\\b,\\s*")
     private static let leading = re("^(?:(?:so|well|okay|ok|like|right)\\s*,\\s*)+")
     private static let marker = re(",\\s*(no wait|wait,? no|sorry,? i mean|i mean|sorry|no|scratch that|make that|or rather)\\s*,?\\s+")

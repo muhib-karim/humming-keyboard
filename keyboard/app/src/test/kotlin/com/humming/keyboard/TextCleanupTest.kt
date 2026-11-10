@@ -207,4 +207,14 @@ class TextCleanupTest {
         assertEquals("Er sagt, er kommt morgen", german)
         assertTrue(!TextCleanup.apply("er so i think").lowercase().startsWith("er "))
     }
+
+    // "ER" in capitals is a word (the emergency room). It used to be deleted as the filler "er":
+    // "She went to the ER." came out as "She went to the."
+    @Test
+    fun theWordErIsNotTheFillerEr() {
+        assertEquals("She went to the ER.", clean("she went to the ER"))
+        assertEquals("She went to the ER. It was busy.", clean("She went to the ER. It was busy."))
+        assertEquals("I think so.", clean("er, I think so"))
+        assertEquals("I think so.", clean("Er, I think so."))
+    }
 }
