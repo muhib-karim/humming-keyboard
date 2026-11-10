@@ -52,7 +52,8 @@ jobs:
           # app refuses a download whose size differs, so the size is checked here too).
           for f in sherpa-onnx-moonshine-tiny-en-quantized-2026-02-27:9ec31b342d8fa3240c3b81b8f82e1cf7e3ac467c93ca5a999b741d5887164f8d:29858559 \
                    sherpa-onnx-nemo-parakeet_tdt_ctc_110m-en-36000-int8:17f945007b52ccd8b7200ffc7c5652e9e8e961dfdf479cefcabd06cf5703630b:104337827 \
-                   sherpa-onnx-nemo-parakeet-tdt-0.6b-v2-int8:6fc4426b54aa549a0019b8a75b8dea59164e71790a37ac56a045ad57f915f714:482440461; do
+                   sherpa-onnx-nemo-parakeet-tdt-0.6b-v2-int8:6fc4426b54aa549a0019b8a75b8dea59164e71790a37ac56a045ad57f915f714:482440461 \
+                   sherpa-onnx-nemo-parakeet-tdt-0.6b-v3-int8:1495e91b59d7fc53ddca91f3431758ec99f8fa253fdb0e1e851be0f72b14b0f9:487211443; do
             IFS=: read -r n h size <<< "$f"
             curl -sSL --retry 3 -o "$n.tar.bz2" "https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/$n.tar.bz2"
             got=$(python -c "import hashlib,os,sys;p=sys.argv[1];print(hashlib.sha256(open(p,'rb').read()).hexdigest(),os.path.getsize(p))" "$n.tar.bz2")
@@ -73,7 +74,7 @@ jobs:
           { echo "### $BENCH_DEVICE"; echo '```'; cat wer.json; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
           # Every model downloaded above must be in the report (wer_bench.py skips a model whose folder is missing), and
           # one that loads but decodes nonsense must not pass: on 50 or more test-clean clips every model is under 5 %.
-          python - lite fast best <<'EOF'
+          python - lite fast best multi <<'EOF'
           import json, sys
           models = json.load(open("wer.json"))["models"]
           bad = ["%s was not benchmarked" % k for k in sys.argv[1:] if k not in models]

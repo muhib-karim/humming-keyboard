@@ -41,6 +41,10 @@ Fixes from the November 2026 production audit. No new features.
   on CI it downloads the archive, checks both, and decodes LibriSpeech with the files the apps load
   (`encoder.int8.onnx`, `decoder.int8.onnx`, `joiner.int8.onnx`, `tokens.txt`, same folder name, same sherpa-onnx
   1.13.8). It now fails if a model it downloaded is missing from its report or decodes nonsense.
+- **Multilingual model download**: the same happened to `sherpa-onnx-nemo-parakeet-tdt-0.6b-v3-int8.tar.bz2`, replaced
+  upstream three minutes later (now 487,211,443 bytes), so new downloads of the Multilingual model were refused too.
+  The apps now pin `1495e91b59d7fc53ddca91f3431758ec99f8fa253fdb0e1e851be0f72b14b0f9`, the digest GitHub reports for the
+  asset. This model was not in `wer-bench.yml`, which is why CI did not report it; it is now, with the same checks.
 - **Documentation**: the README gains a Quickstart and the lint, core, desktop and script-test commands, and no longer
   says that Humming cannot edit text by voice or that offline voice is English only (both changed in 1.8). Several
   documents still said that GitHub Actions does not run and that the repository is private; corrected.
