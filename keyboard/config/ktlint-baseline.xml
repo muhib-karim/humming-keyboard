@@ -187,31 +187,31 @@
         <error line="364" column="125" source="standard:argument-list-wrapping" />
     </file>
     <file name="keyboard/app/src/main/kotlin/com/humming/keyboard/AppVocabulary.kt">
-        <error line="24" column="28" source="standard:binary-expression-wrapping" />
-        <error line="24" column="69" source="standard:argument-list-wrapping" />
-        <error line="24" column="75" source="standard:argument-list-wrapping" />
-        <error line="24" column="83" source="standard:argument-list-wrapping" />
-        <error line="24" column="86" source="standard:argument-list-wrapping" />
-        <error line="24" column="92" source="standard:function-literal" />
-        <error line="24" column="93" source="standard:wrapping" />
-        <error line="24" column="116" source="standard:function-literal" />
-        <error line="24" column="121" source="standard:max-line-length" />
-        <error line="24" column="125" source="standard:function-literal" />
-        <error line="24" column="126" source="standard:wrapping" />
-        <error line="24" column="143" source="standard:function-literal" />
-        <error line="45" column="26" source="standard:function-literal" />
-        <error line="45" column="34" source="standard:argument-list-wrapping" />
-        <error line="45" column="36" source="standard:argument-list-wrapping" />
-        <error line="45" column="38" source="standard:function-literal" />
-        <error line="45" column="47" source="standard:function-literal" />
-        <error line="45" column="85" source="standard:argument-list-wrapping" />
-        <error line="45" column="89" source="standard:argument-list-wrapping" />
-        <error line="45" column="92" source="standard:argument-list-wrapping" />
-        <error line="45" column="94" source="standard:function-literal" />
-        <error line="45" column="100" source="standard:function-literal" />
-        <error line="45" column="114" source="standard:binary-expression-wrapping" />
-        <error line="45" column="121" source="standard:max-line-length" />
-        <error line="45" column="123" source="standard:function-literal" />
+        <error line="26" column="28" source="standard:binary-expression-wrapping" />
+        <error line="26" column="69" source="standard:argument-list-wrapping" />
+        <error line="26" column="75" source="standard:argument-list-wrapping" />
+        <error line="26" column="83" source="standard:argument-list-wrapping" />
+        <error line="26" column="86" source="standard:argument-list-wrapping" />
+        <error line="26" column="92" source="standard:function-literal" />
+        <error line="26" column="93" source="standard:wrapping" />
+        <error line="26" column="116" source="standard:function-literal" />
+        <error line="26" column="121" source="standard:max-line-length" />
+        <error line="26" column="125" source="standard:function-literal" />
+        <error line="26" column="126" source="standard:wrapping" />
+        <error line="26" column="143" source="standard:function-literal" />
+        <error line="47" column="26" source="standard:function-literal" />
+        <error line="47" column="34" source="standard:argument-list-wrapping" />
+        <error line="47" column="36" source="standard:argument-list-wrapping" />
+        <error line="47" column="38" source="standard:function-literal" />
+        <error line="47" column="47" source="standard:function-literal" />
+        <error line="47" column="85" source="standard:argument-list-wrapping" />
+        <error line="47" column="89" source="standard:argument-list-wrapping" />
+        <error line="47" column="92" source="standard:argument-list-wrapping" />
+        <error line="47" column="94" source="standard:function-literal" />
+        <error line="47" column="100" source="standard:function-literal" />
+        <error line="47" column="114" source="standard:binary-expression-wrapping" />
+        <error line="47" column="121" source="standard:max-line-length" />
+        <error line="47" column="123" source="standard:function-literal" />
     </file>
     <file name="keyboard/app/src/main/kotlin/com/humming/keyboard/BanglaPhonetic.kt">
         <error line="60" column="49" source="standard:function-signature" />

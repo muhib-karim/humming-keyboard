@@ -19,6 +19,9 @@ Fixes from the November 2026 production audit. No new features.
   is the single status check to require on `main`. Before, the platform workflows were skipped by their path filters
   on unrelated pull requests, so they could not be required, and `main` required nothing. Pull request builds no
   longer receive the updater signing key. `screens.yml` and `wer-bench.yml` no longer start on every release tag.
+- **Custom words (Android)**: a replacement whose written side starts with "@", such as `at sign -> @` or
+  `my handle -> @muhib`, was read as an app tag with nothing to type and the whole line was ignored. It now works; an
+  app tag after it (`my handle -> @muhib @slack`) still applies.
 
 ## [1.8.0] - 2026-10-28
 

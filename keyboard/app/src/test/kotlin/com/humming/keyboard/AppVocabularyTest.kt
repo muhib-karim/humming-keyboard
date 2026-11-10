@@ -36,4 +36,18 @@ class AppVocabularyTest {
         // The written side is also a casing term.
         assertEquals(listOf("GitHub", "kubectl", "Best, Sam"), AppVocabulary.select(l, "com.termux"))
     }
+
+    // A written side that starts with "@" is text to type, not an app tag. These lines used to be dropped whole.
+    @Test
+    fun writtenSideMayStartWithAnAtSign() {
+        assertEquals(AppVocabulary.Line("@", emptyList(), "at sign"), AppVocabulary.parse("at sign -> @"))
+        assertEquals(AppVocabulary.Line("@muhib", emptyList(), "my handle"), AppVocabulary.parse("my handle → @muhib"))
+        // A real app tag after it still counts.
+        val tagged = AppVocabulary.parse("my handle -> @muhib @slack")
+        assertEquals(AppVocabulary.Line("@muhib", listOf("slack"), "my handle"), tagged)
+        assertEquals(listOf("at sign" to "@"), AppVocabulary.replacements(listOf("at sign -> @"), "com.android.chrome"))
+        // An "@" that does not follow the arrow is an app tag, as before.
+        val perApp = AppVocabulary.parse("cube cuddle -> kubectl @termux")
+        assertEquals(AppVocabulary.Line("kubectl", listOf("termux"), "cube cuddle"), perApp)
+    }
 }

@@ -8,18 +8,20 @@ package com.humming.keyboard
  * the words (case-insensitive). Lines without " @" apply in every app. "name@example.com" is not a tag (no space).
  *
  * 1.7: "spoken -> written" (or "→") replaces what the recogniser heard: "cube cuddle -> kubectl @termux". The written
- * side is also a casing term. A line with an empty side is ignored.
+ * side is also a casing term. A line with an empty side is ignored. An "@" straight after the arrow is the written
+ * side, not an app tag: "at sign -> @", "my handle -> @muhib".
  */
 object AppVocabulary {
     /** [term] is the written form; [spoken] is what it replaces ("" = a casing term only). */
     data class Line(val term: String, val apps: List<String>, val spoken: String = "")
 
     private val ARROW = Regex("\\s*(?:->|→)\\s*")
+    private val ENDS_WITH_ARROW = Regex("(?:->|→)\\s*$")
 
     fun parse(line: String): Line? {
         val t = line.trim()
         if (t.isEmpty()) return null
-        val at = t.lastIndexOf(" @")
+        val at = t.lastIndexOf(" @").takeUnless { it >= 0 && ENDS_WITH_ARROW.containsMatchIn(t.substring(0, it)) } ?: -1
         val term = if (at < 0) t else t.substring(0, at).trim()
         val apps = if (at < 0) emptyList<String>() else t.substring(at + 2).split(',').map { it.trim().lowercase() }.filter { it.isNotEmpty() }
         if (term.isEmpty()) return null
