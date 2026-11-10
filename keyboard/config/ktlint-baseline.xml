@@ -6111,12 +6111,6 @@
         <error line="59" column="121" source="standard:wrapping" />
         <error line="59" column="121" source="standard:max-line-length" />
         <error line="59" column="130" source="standard:function-literal" />
-        <error line="66" column="20" source="standard:argument-list-wrapping" />
-        <error line="66" column="44" source="standard:argument-list-wrapping" />
-        <error line="66" column="55" source="standard:argument-list-wrapping" />
-        <error line="66" column="121" source="standard:max-line-length" />
-        <error line="66" column="126" source="standard:argument-list-wrapping" />
-        <error line="66" column="127" source="standard:argument-list-wrapping" />
         <error line="70" column="20" source="standard:argument-list-wrapping" />
         <error line="70" column="70" source="standard:binary-expression-wrapping" />
         <error line="70" column="70" source="standard:argument-list-wrapping" />

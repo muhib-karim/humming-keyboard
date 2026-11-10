@@ -209,7 +209,9 @@ updater refuses an APK signed with any other key.
 | iPhone / iPad | No automatic updates for a sideloaded app: sideload the new `.ipa`. |
 
 Feeds (`latest.json`, `android.json`) are written by [`scripts/assemble_release.py`](scripts/assemble_release.py) and
-mirrored to `https://humming-keyboard.pages.dev/updates/`; release candidates are not mirrored. How a release is cut:
+mirrored by `pages.yml` to `https://muhib-karim.github.io/humming-keyboard/updates/`, where the apps read them; release
+candidates are not mirrored. Versions 1.6 to 1.8.0 read `humming-keyboard.pages.dev` instead
+([legacy update host](docs/RELEASING.md#legacy-update-host-versions-16-to-180)). How a release is cut:
 [docs/RELEASING.md](docs/RELEASING.md).
 
 ## Privacy
@@ -358,7 +360,7 @@ A file-level map: [docs/ci/CODEBASE_MAP.md](docs/ci/CODEBASE_MAP.md).
 | Prediction | Dictionaries and next-word tables for six languages, an int8 word-level LSTM run by Humming's own Kotlin code |
 | Desktop | Tauri v2, Rust (sherpa-onnx, cpal, arboard, enigo, tauri-plugin-updater), TypeScript + Vite |
 | iOS | SwiftUI, Apple Speech with on-device recognition required, XcodeGen, Swift package `HummingCore` |
-| Release and CI | GitHub Actions, Python release scripts, GitHub Pages and Cloudflare Pages |
+| Release and CI | GitHub Actions, Python release scripts, GitHub Pages |
 
 ## Build from source
 

@@ -126,10 +126,13 @@ script lines it summarises). Release candidates (`vX.Y.Z-rcN`) become GitHub pre
 - **Feeds.** `latest.json` (Tauri updater format, one signed entry per desktop platform) and `android.json`
   (`versionCode`, `versionName`, APK name, SHA-256, notes) are written by `scripts/assemble_release.py` with
   `SHA256SUMS.txt` over every release file.
-- **Mirror.** The apps read their feeds from a mirror of the release files: `AppUpdate.FEED_BASE` and the
-  desktop updater endpoint in `desktop/src-tauri/tauri.conf.json` point at https://humming-keyboard.pages.dev/updates/.
-  `pages.yml` also copies the latest release's update files to the GitHub Pages site's `/updates/` and checks the
-  live feed's signatures with `scripts/verify_updater.py`.
+- **Mirror.** The apps read their feeds from a mirror of the release files on the GitHub Pages site:
+  `AppUpdate.FEED_BASE` and the desktop updater endpoint in `desktop/src-tauri/tauri.conf.json` point at
+  https://muhib-karim.github.io/humming-keyboard/updates/. `pages.yml` copies the latest release's update files there
+  and checks the live feeds: each must be the file it just deployed, and every desktop bundle the site serves must
+  match its signature (`scripts/verify_updater.py`). Versions 1.6 to 1.8.0 read
+  https://humming-keyboard.pages.dev/updates/, which no workflow deploys
+  ([RELEASING.md](RELEASING.md#legacy-update-host-versions-16-to-180)).
 - **Desktop.** `tauri-plugin-updater` installs only files signed with Humming's minisign (Ed25519) update key; the
   public key is `plugins.updater.pubkey` in `tauri.conf.json`.
 - **Android.** `AppUpdate` downloads a newer APK, compares its SHA-256 with `SHA256SUMS.txt`, requires the release

@@ -1194,7 +1194,6 @@
     <ID>MaxLineLength:NetworkAuditTest.kt$NetworkAuditTest$assertEquals("network APIs outside ModelDownload.kt, GifSearch.kt, LlmCleanup.kt and AppUpdate.kt", emptyList&lt;String&gt;(), offenders)</ID>
     <ID>MaxLineLength:NetworkAuditTest.kt$NetworkAuditTest$assertTrue("${f.name} must not open network connections", networkApis.none { t.contains(it) } &amp;&amp; !t.contains("java.net"))</ID>
     <ID>MaxLineLength:NetworkAuditTest.kt$NetworkAuditTest$assertTrue("Android's installer, never a silent root trick", t.contains("PackageInstaller") &amp;&amp; !t.contains("Runtime.getRuntime"))</ID>
-    <ID>MaxLineLength:NetworkAuditTest.kt$NetworkAuditTest$assertTrue("one fixed HTTPS feed", t.contains("const val FEED_BASE = \"https://humming-keyboard.pages.dev/updates/\""))</ID>
     <ID>MaxLineLength:NetworkAuditTest.kt$NetworkAuditTest$r.walkTopDown().filter { it.isFile &amp;&amp; (it.extension == "kt" || it.extension == "java") &amp;&amp; "/build/" !in it.path &amp;&amp; "/test/" !in it.path }.toList()</ID>
     <ID>MaxLineLength:NetworkAuditTest.kt$NetworkAuditTest$val</ID>
     <ID>MaxLineLength:NetworkAuditTest.kt$NetworkAuditTest$val callers = sources().filter { it.name != "GifSearch.kt" &amp;&amp; it.readText().contains("GifSearch.search") }.map { it.name }</ID>

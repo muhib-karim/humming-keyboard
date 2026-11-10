@@ -1,5 +1,20 @@
 # Changelog
 
+## [Unreleased]
+
+Fixes from the November 2026 production audit. No new features.
+
+- **Update host**: new builds read their update feeds from the GitHub Pages site
+  (`https://muhib-karim.github.io/humming-keyboard/updates/`), which `pages.yml` deploys and checks, instead of
+  `humming-keyboard.pages.dev`, which no workflow deployed: it still served the 1.7.1 feeds after 1.8.0 was released, so
+  installed apps were not offered 1.8.0. Versions 1.6 to 1.8.0 keep asking the old host; what to do about it is in
+  `docs/RELEASING.md` ("Legacy update host"). On Android the About screen's repository, issue and changelog links, and
+  on desktop the "download it from" hint, now point at the public GitHub repository. The privacy policy names the new
+  host.
+- **Release checks**: after a deploy, `pages.yml` waits until each live feed is the file it just deployed (the 1.8.0
+  release run had checked a cached 1.7.1 feed and passed) and verifies every desktop bundle the site serves against
+  its signature (`verify_updater.py --base-url`).
+
 ## [1.8.0] - 2026-10-28
 
 Edit by voice on every platform, two more speech models, every model measured side by side, and the open-source
