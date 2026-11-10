@@ -146,14 +146,18 @@ Release steps are in [RELEASING.md](RELEASING.md); keys in [RELEASE_SIGNING.md](
 
 | Workflow | Runs on | Does |
 |---|---|---|
-| `keyboard.yml` | Changes under `keyboard/` | Android unit tests (including `NetworkAuditTest`), debug APK, release APK |
+| `ci.yml` | Every pull request | Calls `quality.yml` always and `keyboard.yml`, `desktop.yml`, `ios.yml` when their code (or `core/testdata/`) changed; its `gate` job is the one status check to require on `main` |
+| `quality.yml` | Pushes to `main` and `upgrade/**`, or from `ci.yml` | ktlint, detekt, gitleaks over the whole history, website check, script tests |
+| `keyboard.yml` | Changes under `keyboard/` on `main` and `upgrade/**`, or from `ci.yml` | Android unit tests (including `NetworkAuditTest`) with coverage, Android lint, debug APK, release APK |
+| `codeql.yml`, `android-emulator.yml` | Changes under `keyboard/` (push or pull request); CodeQL also weekly | CodeQL code scanning; smoke test and measurements on an emulator |
 | `android-release.yml` | Changes under `keyboard/` (push to `main` or pull request), by hand, or from `release.yml` | Signed release APK and Play AAB; checks the signing certificate |
-| `desktop.yml` | Changes under `desktop/` or `core/`, or from `release.yml` | Type-check and unit tests, installers for macOS, Windows and Linux with `SHA256SUMS.txt` |
-| `ios.yml` | Changes under `ios/`, or from `release.yml` | Swift tests on Linux and the iOS simulator, screenshots, unsigned `.ipa` |
+| `desktop.yml` | Pushes that change `desktop/` or `core/`, or from `ci.yml` and `release.yml` | Type-check and unit tests, installers for macOS, Windows and Linux with `SHA256SUMS.txt` |
+| `ios.yml` | Pushes that change `ios/`, or from `ci.yml` and `release.yml` | Swift tests on Linux and the iOS simulator, screenshots, unsigned `.ipa` |
 | `screens.yml` | Desktop UI changes | Desktop screenshots and walkthrough GIF (artifacts only) |
 | `wer-bench.yml` | By hand, or changes to the benchmark script | The LibriSpeech word-error-rate benchmark quoted in the README |
 | `release.yml` | A pushed `v*` tag | Every platform build, `assemble_release.py`, the GitHub Release, then `pages.yml` |
-| `pages.yml` | Website changes on `main`, by hand, or from `release.yml` | Publishes `play/site/` to GitHub Pages and mirrors the latest release's update files |
+| `pages.yml` | Website changes on `main`, by hand, or from `release.yml` | Publishes `play/site/` to GitHub Pages, mirrors the latest release's update files and checks the live feeds |
 
-GitHub Actions has not started jobs on this repository since 5 October 2026 (account billing); releases since 1.6.0
-were built outside Actions, as described in [CHANGELOG.md](../CHANGELOG.md).
+For part of October 2026 GitHub Actions did not start jobs (account billing), and releases since 1.6.0 were built
+outside Actions, as described in [CHANGELOG.md](../CHANGELOG.md). 1.8.0 is the first release that `release.yml` built
+and published end to end (run 40593674436, 27 October 2026).

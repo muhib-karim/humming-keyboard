@@ -2,8 +2,8 @@
 
 Thank you for helping improve Humming. This guide covers bug reports, feature ideas and pull requests.
 
-The repository is private for now and is planned to be made public with the 1.6.3 release. Once it is public,
-issues and pull requests will be open to everyone. By taking part you agree to follow the [Code of Conduct](CODE_OF_CONDUCT.md).
+The repository is public: issues and pull requests are open to everyone. By taking part you agree to follow the
+[Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## Reporting a bug
 
@@ -12,7 +12,7 @@ Open an issue with the **Bug report** template. The most useful reports include:
 - the platform and Humming version (Android: **Settings > About**; desktop: the app's Settings; iOS: the app);
 - the device or operating system version;
 - what you did, what you expected and what happened;
-- whether it happens in Offline or Online voice mode, and with the Fast or Best model (for voice problems);
+- whether it happens in Offline or Online voice mode, and with which voice model (for voice problems);
 - for a crash on Android, the log from the crash screen (it is never sent automatically; copy it yourself).
 
 Please do not paste API keys, personal text you dictated, or anything else private into an issue: issues are public.
@@ -62,8 +62,8 @@ Run the tests for the part you changed before opening a pull request. CI runs th
 - when it touches `ios/`: the Swift tests and the simulator build;
 - a change to the shared test vectors in `core/testdata/` runs all three platforms.
 
-Its last job, `gate`, passes only when all of those passed. `gate` is the status check that `main` requires, so a pull
-request cannot be merged while it is red. CodeQL and the emulator smoke test also run on pull requests that touch
+Its last job, `gate`, passes only when all of those passed. `gate` is the one status check to require on `main`
+(branch protection or a ruleset); it reports on every pull request. CodeQL and the emulator smoke test also run on pull requests that touch
 `keyboard/`; they are not part of the gate. Details: [docs/ci/STATIC_ANALYSIS.md](docs/ci/STATIC_ANALYSIS.md).
 
 ### Project rules

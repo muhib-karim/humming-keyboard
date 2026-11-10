@@ -16,7 +16,8 @@ and Linux apps and the website, all built from this repository.</p>
 <a href="https://github.com/muhib-karim/humming-keyboard/actions/workflows/android-emulator.yml"><img alt="Android emulator smoke test" src="https://github.com/muhib-karim/humming-keyboard/actions/workflows/android-emulator.yml/badge.svg"></a>
 <a href="https://github.com/muhib-karim/humming-keyboard/actions/workflows/quality.yml"><img alt="Quality gates: ktlint, detekt, gitleaks, site check" src="https://github.com/muhib-karim/humming-keyboard/actions/workflows/quality.yml/badge.svg"></a>
 <a href="https://github.com/muhib-karim/humming-keyboard/actions/workflows/codeql.yml"><img alt="CodeQL" src="https://github.com/muhib-karim/humming-keyboard/actions/workflows/codeql.yml/badge.svg"></a>
-<a href="docs/ci/COVERAGE.md"><img alt="Unit-test line coverage of Humming's Android code: 48.2 percent" src="https://img.shields.io/badge/coverage%20(Humming%20code)-48.2%25-2a2a33"></a>
+<a href="https://github.com/muhib-karim/humming-keyboard/actions/workflows/pages.yml"><img alt="Website and update mirror" src="https://github.com/muhib-karim/humming-keyboard/actions/workflows/pages.yml/badge.svg"></a>
+<a href="docs/ci/COVERAGE.md"><img alt="Unit-test line coverage of Humming's Android code, measured for 1.7.1: 48.2 percent" src="https://img.shields.io/badge/coverage%20(Humming%20code%2C%201.7.1)-48.2%25-2a2a33"></a>
 <br>
 <a href="#install"><img alt="Platforms: Android, iOS, Windows, macOS, Linux" src="https://img.shields.io/badge/platforms-Android%20%C2%B7%20iOS%20%C2%B7%20Windows%20%C2%B7%20macOS%20%C2%B7%20Linux-18181f"></a>
 <a href="#benchmarks"><img alt="WER 2.78% Fast, 1.68% Best (LibriSpeech test-clean, first 200 clips, plus or minus 0.5)" src="https://img.shields.io/badge/WER%20test--clean%20(200%20clips)-2.78%25%20Fast%20%C2%B7%201.68%25%20Best-2a2a33"></a>
@@ -38,6 +39,28 @@ and Linux apps and the website, all built from this repository.</p>
 
 <sub>Captures from earlier CI runs (Android emulator in airplane mode, iOS simulator, the desktop interface) playing a
 sample sentence, because CI machines have no microphone. Sample text is made up.</sub>
+
+## Quickstart
+
+**Use it.** Download the file for your platform from the
+[latest release](https://github.com/muhib-karim/humming-keyboard/releases/latest) and follow [Install](#install).
+On Android: install the APK, enable Humming as a keyboard, tap the mic key and talk. The speech model downloads once;
+after that, dictation in the default Offline mode needs no network.
+
+**Build and test it.** Each part has one test command (toolchains and more commands:
+[Build from source](#build-from-source)):
+
+```sh
+git clone https://github.com/muhib-karim/humming-keyboard.git && cd humming-keyboard
+(cd keyboard && ./gradlew :app:testDebugUnitTest)          # Android keyboard
+(cd core && cargo test --no-default-features --lib)        # shared Rust core
+(cd desktop/src-tauri && cargo test)                       # desktop app
+(cd ios/HummingCore && swift test)                         # iOS clean-up and edit-by-voice rules
+python3 -m unittest discover -s scripts -p 'test_*.py'     # release, site and CI scripts
+```
+
+CI runs them on pull requests, each platform's tests when its code changed:
+[what CI checks](CONTRIBUTING.md#what-ci-checks-on-a-pull-request).
 
 ## Highlights
 
@@ -110,7 +133,7 @@ From the teardowns of [keyboards](COMPETITORS.md#gap-list-ranked) and [dictation
 
 | | **Humming** | Gboard | Microsoft SwiftKey | Ridmik (Bangla) |
 |---|---|---|---|---|
-| Offline voice typing | **Yes**, default, every platform (English) | Pixel 6 or later, 6 languages | Not in the stable app; an on-device English mode is reported in a beta | No, uses Google's speech service |
+| Offline voice typing | **Yes**, default, every platform (English; 25 European languages with the Multilingual model on Android and desktop) | Pixel 6 or later, 6 languages | Not in the stable app; an on-device English mode is reported in a beta | No, uses Google's speech service |
 | Published accuracy | **WER 2.78 % / 1.68 %** | Not published | Not published | Not published |
 | Telemetry | **None** | Usage statistics; federated learning on by default | Typing data opt-in; voice clips opt-out | Play label: may collect personal info and IDs |
 | Voice limits | **None** | Rambler: "usage limits", no numbers | None documented | None documented |
@@ -119,14 +142,15 @@ From the teardowns of [keyboards](COMPETITORS.md#gap-list-ranked) and [dictation
 | Open source | **Apache-2.0** | No | No | No |
 
 Public sources only, checked 17 October 2026; Fleksy, Typewise, Avro, Bijoy and OpenBangla, every source, and the
-ranked gap list are in **[COMPETITORS.md](COMPETITORS.md)**. Where Humming trails: offline voice is English only, and
+ranked gap list are in **[COMPETITORS.md](COMPETITORS.md)**. Where Humming trails: offline voice is English only on
+iPhone and with the default model (25 European languages need the Multilingual model, on Android and desktop), and
 Gboard and SwiftKey support far more typing languages and install from the stores.
 
 | Dictation apps | **Humming** | Wispr Flow | Superwhisper | Aqua Voice | Apple Dictation |
 |---|---|---|---|---|---|
-| Works offline | **Yes**, default, every platform (English) | No, cloud only | Yes, local models | No, cloud only | On-device in many languages |
+| Works offline | **Yes**, default, every platform (English; 25 European languages with the Multilingual model on Android and desktop) | No, cloud only | Yes, local models | No, cloud only | On-device in many languages |
 | Fillers, lists, "scratch that", replacements | **All four** (1.7) | All four | Fillers, lists, replacements | Replacements | "Delete" / "undo" on iPhone (US English) |
-| Edit existing text by voice | No | Command Mode (Pro, desktop) | On selected text | Edit Mode | iPhone, US English |
+| Edit existing text by voice | **Yes** (1.8), offline: "change X to Y", "delete X", "capitalize X", "undo that" | Command Mode (Pro, desktop) | On selected text | Edit Mode | iPhone, US English |
 | Linux | **Yes** | No | "Coming soon" | No | No |
 | Price | **Free, no word cap** | Free 2,000 words/week; $15/month | Free with local models; $8.49/month | Free 1,000 words; $10/month | Free with the OS |
 | Open source | **Apache-2.0** | No | No | No | No |
@@ -134,7 +158,8 @@ Gboard and SwiftKey support far more typing languages and install from the store
 Published error rates come from different test sets and are not comparable (Superwhisper 6.6 % on its own 8-set
 benchmark, Aqua 5.55 % with the set not stated, Humming 2.78 % on LibriSpeech test-clean). Typeless, Willow, MacWhisper,
 Google and every source: **[COMPETITORS.md#dictation-apps](COMPETITORS.md#dictation-apps)**. Where Humming trails the
-dictation apps: no voice editing of text already in the field, no per-app tone, and offline dictation is English only.
+dictation apps: voice editing is rule-based (a few whole-utterance commands), not free-form AI rewriting; no per-app
+tone; and offline dictation beyond English needs the Multilingual model (Android and desktop).
 
 <details>
 <summary><strong>Against dictation apps: Wispr Flow, Typeless, Gboard Rambler</strong></summary>
@@ -149,7 +174,7 @@ Checked on the vendors' own pages on 4 October 2026. Prices are per user per mon
 | Free-tier limit | **None** | 2,000 words/week desktop, 1,000/week mobile [5] | "Limited words" [6] | None stated |
 | Longest dictation | **No limit** on Android and iOS (desktop: none by default) | 20 min desktop [7], 5 min Android [8] | 9 min [9] | Not stated |
 | Platforms | **Android, iOS, Windows, macOS, Linux** | Mac, Windows, iOS, Android [5] | macOS, Windows, iOS, Android [6] | Pixel 11 phones only [12] |
-| Languages | English offline; Online mode: the phone's languages | 100+ [5][10] | 100+ [6] | A listed set of major languages [12] |
+| Languages | English offline, plus 24 more European languages with the Multilingual model (Android, desktop); Online mode: the phone's languages | 100+ [5][10] | 100+ [6] | A listed set of major languages [12] |
 | Published WER | **2.78 % / 1.68 %** (LibriSpeech, this repo) | Chart on Wispr's own data, no figures in text [13] | Not published | Not published |
 
 Other offline options: **FUTO Keyboard** (Android, "100% Offline, 100% Private" [16]; its Whisper models were measured
@@ -327,7 +352,7 @@ captures (including Android's keyboard list and the setup screen) are from the 1
 | [`keyboard/`](keyboard/) | Android keyboard: a fork of FlorisBoard v0.5.2 (Kotlin, Jetpack Compose). Humming's code is in `com.humming.keyboard`; changes to upstream are listed in [`keyboard/NOTICE-HUMMING.md`](keyboard/NOTICE-HUMMING.md). |
 | [`desktop/`](desktop/) | Windows, macOS and Linux app (Tauri v2: Rust back end, TypeScript UI). |
 | [`ios/`](ios/) | iPhone and iPad app and keyboard extension (SwiftUI), clean-up rules as the `HummingCore` Swift package. |
-| [`core/`](core/) | Shared Rust crate (VAD, audio helpers, clean-up, spoken lists; optional whisper.cpp). |
+| [`core/`](core/) | Shared Rust crate (VAD, audio helpers, clean-up, spoken lists, edit-by-voice rules; optional whisper.cpp). |
 | [`play/`](play/) | Website (`play/site/`, GitHub Pages), privacy policy, Google Play listing material. |
 | [`scripts/`](scripts/) | Release assembly, update-signature verification, site assembly and checks (Python). |
 | [`docs/`](docs/) | Documentation, screenshots, benchmark outputs, audits. |
@@ -356,7 +381,7 @@ A file-level map: [docs/ci/CODEBASE_MAP.md](docs/ci/CODEBASE_MAP.md).
 | Area | Technology |
 |---|---|
 | Android | Kotlin, Jetpack Compose, FlorisBoard v0.5.2, sherpa-onnx 1.13.8, Silero VAD v4, min SDK 26, target SDK 36 |
-| Speech models | NVIDIA Parakeet TDT-CTC 110M int8 (Fast), Parakeet TDT 0.6B v2 int8 (Best); desktop also Moonshine tiny (Lite) |
+| Speech models | NVIDIA Parakeet TDT-CTC 110M int8 (Fast), Parakeet TDT 0.6B v2 int8 (Best), Parakeet TDT 0.6B v3 int8 (Multilingual); desktop also Moonshine v2 base (Balanced) and tiny (Lite) |
 | Prediction | Dictionaries and next-word tables for six languages, an int8 word-level LSTM run by Humming's own Kotlin code |
 | Desktop | Tauri v2, Rust (sherpa-onnx, cpal, arboard, enigo, tauri-plugin-updater), TypeScript + Vite |
 | iOS | SwiftUI, Apple Speech with on-device recognition required, XcodeGen, Swift package `HummingCore` |
@@ -364,7 +389,9 @@ A file-level map: [docs/ci/CODEBASE_MAP.md](docs/ci/CODEBASE_MAP.md).
 
 ## Build from source
 
-Requirements and every platform in detail: the per-app READMEs and [docs/RELEASING.md](docs/RELEASING.md).
+Requirements and every platform in detail: [desktop/README.md](desktop/README.md),
+[docs/IOS_SIDELOAD.md](docs/IOS_SIDELOAD.md) (the Xcode route), [keyboard/ci/README.md](keyboard/ci/README.md) (the
+keyboard's CI scripts) and [docs/RELEASING.md](docs/RELEASING.md).
 
 ```sh
 # Android (JDK 17, Android SDK platform 36, build-tools 35)
@@ -372,19 +399,32 @@ cd keyboard
 ./gradlew :app:testDebugUnitTest      # unit tests
 ./gradlew :app:assembleDebug          # debug APK in app/build/outputs/apk/debug/
 
+# Kotlin style gates, the same ones CI runs (Java 17 only, no Gradle; from the repository root)
+bash keyboard/ci/static_checks.sh ktlint
+bash keyboard/ci/static_checks.sh detekt
+
 # Desktop (Node 20+, Rust stable, the platform toolchain)
 cd desktop && npm ci && npm run tauri dev
+cd desktop && npm run build && cd src-tauri && cargo test     # type check, then unit tests
+
+# Shared core (Rust stable; no speech model needed)
+cd core && cargo test --no-default-features --lib
 
 # iOS (macOS, Xcode 16+)
 brew install xcodegen && cd ios && xcodegen generate && open Humming.xcodeproj
 cd ios/HummingCore && swift test      # clean-up rules, also on Linux
+
+# Release, site and CI scripts (Python 3, no packages needed)
+python3 -m unittest discover -s scripts -p 'test_*.py'
 ```
 
 The sherpa-onnx Android library is downloaded once during the build and checked against a pinned SHA-256; speech
 models are not in the APK. Without the release-signing environment variables, the release build is signed with the
 development key ([docs/RELEASE_SIGNING.md](docs/RELEASE_SIGNING.md)).
 
-CI (`.github/workflows/`): `keyboard.yml` (Android unit tests with coverage, Android lint, APKs),
+CI (`.github/workflows/`): `ci.yml` (every pull request: the quality checks always, each platform's tests when its
+code changed; its `gate` job is the check `main` should require), `keyboard.yml` (Android unit tests with coverage,
+Android lint, APKs),
 `android-emulator.yml` (smoke test and measurements on an emulator), `quality.yml` (ktlint, detekt, gitleaks, site
 check), `codeql.yml`, `android-release.yml` (signed APK and AAB),
 `desktop.yml` (installers for every desktop platform), `ios.yml` (tests, screenshots, unsigned `.ipa`), `screens.yml`,

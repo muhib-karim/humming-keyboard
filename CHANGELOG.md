@@ -33,6 +33,9 @@ Fixes from the November 2026 production audit. No new features.
   compared the two sides ignoring ASCII case only; the desktop app then deleted and retyped the same text and dropped
   the words. A case-only change is now refused for any alphabet, as on Android and iPhone. The shared test set has
   36 cases.
+- **Documentation**: the README gains a Quickstart and the lint, core, desktop and script-test commands, and no longer
+  says that Humming cannot edit text by voice or that offline voice is English only (both changed in 1.8). Several
+  documents still said that GitHub Actions does not run and that the repository is private; corrected.
 
 ## [1.8.0] - 2026-10-28
 

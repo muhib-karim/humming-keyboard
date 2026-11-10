@@ -149,7 +149,7 @@ With GitHub Actions available, a release is one tag:
 
 Check the release script locally (no keys, fake artifacts): `python3 -m unittest scripts/test_assemble_release.py`.
 
-**Without GitHub Actions** (the case since 5 October 2026, and how 1.6.0 was built): build each platform on a
+**Without GitHub Actions** (how 1.6.0 was built): build each platform on a
 machine that has the signing material, verify every update signature with `scripts/verify_updater.py` and every
 certificate as `android-release.yml` does, assemble the files with the names above and a `SHA256SUMS.txt`, create the
 tag and the GitHub Release by hand, and publish the feeds and installers to the update mirror. macOS and iOS builds

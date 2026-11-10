@@ -54,5 +54,6 @@ into (Google's speech service in Online mode, Openverse, Gemini, OpenAI, Groq, G
 
 Release signing keys and the desktop update key are held by the owner. The CI workflows read them from repository
 secrets ([docs/RELEASE_SIGNING.md](docs/RELEASE_SIGNING.md)); releases since 1.6.0 were built and signed outside GitHub
-Actions with the same keys, because Actions has not run on this repository since 5 October 2026. If you find a key, password or token committed
-anywhere in this repository or its history, report it privately as above.
+Actions with the same keys while Actions was not running, and 1.8.0 is the first release that `release.yml` built,
+signed and published (run 40593674436). Pull request builds receive no secrets. If you find a key, password or token
+committed anywhere in this repository or its history, report it privately as above.
