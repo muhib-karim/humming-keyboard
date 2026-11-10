@@ -297,7 +297,9 @@ fn restart_sentence(text: &str) -> String {
     SENTENCE_RESTART
         .replace_all(text, |c: &regex::Captures| {
             let before = &c[1];
-            let lower = before.to_lowercase();
+            // ASCII lowercase keeps every byte offset valid in `before`. Full lowercasing can change a character's
+            // length ("İ" is 2 bytes, its lowercase 3), which shifted the cut or put it inside a character (a panic).
+            let lower = before.to_ascii_lowercase();
             let preps = [" at ", " on ", " in ", " to ", " for ", " by ", " from "];
             let cut = preps.iter().filter_map(|p| lower.rfind(p).map(|i| (i, p.len()))).max_by_key(|x| x.0);
             match cut {
@@ -613,6 +615,21 @@ mod tests {
     #[test]
     fn ellipsis_kept() {
         assert_eq!(c("well... okay"), "Well... okay.");
+    }
+
+    /// The preposition was found in a lowercased copy and the original sliced at that offset: after "İ" the result
+    /// was "... at tfour o'clock?", and a cut inside "é" panicked.
+    #[test]
+    fn sentence_restart_keeps_its_place_after_non_ascii_text() {
+        assert_eq!(
+            restart_sentence("Pick up the kids at three thirty? Actually, no, four o'clock."),
+            "Pick up the kids at four o'clock?"
+        );
+        assert_eq!(
+            restart_sentence("İlkay picks up the kids at three thirty? Actually, no, four o'clock."),
+            "İlkay picks up the kids at four o'clock?"
+        );
+        assert_eq!(restart_sentence("İlkay at école? Actually, no, home."), "İlkay at home?");
     }
 
     /// CLEAN_SET.md: 20 rambly utterances. Rule-only Clean mode must get at least 16 exactly right.

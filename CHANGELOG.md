@@ -25,6 +25,10 @@ Fixes from the November 2026 production audit. No new features.
 - **Clean-up (Android, desktop, iPhone)**: the word "ER", written in capitals by the speech engine, was removed as
   the filler "er" ("She went to the ER." became "She went to the."). Only "er" and "Er" count as the filler now. Same
   change and tests in `TextCleanup.kt`, `text_cleanup.rs` and `TextCleanup.swift`.
+- **Core clean-up**: the "Actually, no, ..." sentence restart measured where to cut in a lowercased copy of the
+  sentence and cut the original there. After a character whose lowercase form is longer ("İ") the result was wrong
+  ("... at tfour o'clock?"), or the core panicked when the cut fell inside a character. Offsets now come from an
+  ASCII-lowercased copy, which keeps every byte position.
 
 ## [1.8.0] - 2026-10-28
 
