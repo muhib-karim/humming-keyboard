@@ -29,7 +29,7 @@ jobs:
         include:
           - { os: ubuntu-22.04, device: "Linux x64 (GitHub runner)" }
           - { os: ubuntu-24.04-arm, device: "Linux arm64 (GitHub runner)" }
-          - { os: macos-14, device: "macOS Apple Silicon (GitHub runner)" }
+          - { os: macos-15, device: "macOS Apple Silicon (GitHub runner)" }
           - { os: windows-2022, device: "Windows x64 (GitHub runner)" }
     runs-on: ${{ matrix.os }}
     timeout-minutes: 90
