@@ -4,6 +4,9 @@ name: wer-bench
 # (README benchmark table). Same runtime (sherpa-onnx 1.13.8), files and SHA-256 pins as the apps' downloads.
 on:
   push:
+    # Branch pushes only: path filters are not evaluated for tags, so every release tag used to start this benchmark
+    # (models and LibriSpeech downloaded on four runners).
+    branches: ["**"]
     paths: [".github/workflows/wer-bench.yml", "keyboard/ci/wer_bench.py"]
   workflow_dispatch:
     inputs:

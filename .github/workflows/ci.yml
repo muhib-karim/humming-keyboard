@@ -1,0 +1,93 @@
+name: ci
+
+# The one gate for pull requests. It has no path filter, so it always runs and its last job, "gate", can be the single
+# required status check on main (a workflow skipped by a path filter never reports, which leaves a required check
+# pending for ever):
+#   - changes: the areas the pull request touches (the diff of its merge commit against the base branch);
+#   - quality: ktlint, detekt, gitleaks, website check and script tests (quality.yml), on every pull request;
+#   - keyboard / desktop / ios: that platform's tests and builds (keyboard.yml, desktop.yml, ios.yml) when its area
+#     changed. core/testdata/ holds the test vectors all three share, so it counts for each of them;
+#   - gate: fails unless "changes" and "quality" succeeded and each platform job succeeded or was skipped.
+# No secrets are passed on, so a pull request never gets the updater signing key (desktop.yml then builds installers
+# without self-update bundles). codeql.yml, android-emulator.yml and android-release.yml keep their own pull request
+# triggers and are not part of the gate.
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  changes:
+    name: changed areas
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      keyboard: ${{ steps.areas.outputs.keyboard }}
+      desktop: ${{ steps.areas.outputs.desktop }}
+      ios: ${{ steps.areas.outputs.ios }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 2
+      - name: Areas this pull request touches
+        id: areas
+        run: |
+          set -euo pipefail
+          # A pull request is checked out as its merge commit, whose first parent is the base branch, so this is the
+          # pull request's own diff. A manual run checks every area.
+          if [ "$GITHUB_EVENT_NAME" = pull_request ]; then
+            files=$(git diff --name-only HEAD^1 HEAD)
+          else
+            files=.github/workflows/ci.yml
+          fi
+          echo "$files"
+          area() {
+            if grep -qE "$2|^\.github/workflows/ci\.yml$" <<< "$files"; then v=true; else v=false; fi
+            echo "$1=$v" | tee -a "$GITHUB_OUTPUT"
+          }
+          area keyboard '^keyboard/|^core/testdata/|^scripts/coverage_summary\.py$|^\.github/workflows/keyboard\.yml$'
+          area desktop '^desktop/|^core/|^\.github/workflows/desktop\.yml$'
+          area ios '^ios/|^core/testdata/|^\.github/workflows/ios\.yml$'
+
+  quality:
+    uses: ./.github/workflows/quality.yml
+
+  keyboard:
+    needs: changes
+    if: needs.changes.outputs.keyboard == 'true'
+    uses: ./.github/workflows/keyboard.yml
+
+  desktop:
+    needs: changes
+    if: needs.changes.outputs.desktop == 'true'
+    uses: ./.github/workflows/desktop.yml
+
+  ios:
+    needs: changes
+    if: needs.changes.outputs.ios == 'true'
+    uses: ./.github/workflows/ios.yml
+
+  gate:
+    name: gate
+    needs: [changes, quality, keyboard, desktop, ios]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Every job passed (a platform whose area did not change is skipped)
+        env:
+          NEEDS: ${{ toJSON(needs) }}
+        run: |
+          set -euo pipefail
+          jq -r 'to_entries[] | "\(.key): \(.value.result)"' <<< "$NEEDS" | tee -a "$GITHUB_STEP_SUMMARY"
+          if ! jq -e '.changes.result == "success" and .quality.result == "success"
+                      and ([.[].result] | all(. == "success" or . == "skipped"))' <<< "$NEEDS" > /dev/null; then
+            echo "::error::a job this pull request needs failed or was cancelled"
+            exit 1
+          fi

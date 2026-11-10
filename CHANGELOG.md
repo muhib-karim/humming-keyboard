@@ -14,6 +14,11 @@ Fixes from the November 2026 production audit. No new features.
 - **Release checks**: after a deploy, `pages.yml` waits until each live feed is the file it just deployed (the 1.8.0
   release run had checked a cached 1.7.1 feed and passed) and verifies every desktop bundle the site serves against
   its signature (`verify_updater.py --base-url`).
+- **One gate for pull requests**: `ci.yml` runs the quality checks (ktlint, detekt, gitleaks, website, script tests)
+  on every pull request and each platform's tests when its code, or the shared test vectors, changed; its `gate` job
+  is the single status check to require on `main`. Before, the platform workflows were skipped by their path filters
+  on unrelated pull requests, so they could not be required, and `main` required nothing. Pull request builds no
+  longer receive the updater signing key. `screens.yml` and `wer-bench.yml` no longer start on every release tag.
 
 ## [1.8.0] - 2026-10-28
 

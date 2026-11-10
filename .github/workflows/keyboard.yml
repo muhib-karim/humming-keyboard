@@ -2,19 +2,21 @@ name: keyboard
 
 # Humming keyboard (FlorisBoard base, keyboard/): unit tests with JaCoCo line coverage, debug APK, Android lint (a gate
 # with a baseline of pre-existing issues, docs/ci/STATIC_ANALYSIS.md) and the release APK.
+# Pull requests: ci.yml calls this workflow when the pull request touches the keyboard (or the shared test vectors in
+# core/testdata/, which VoiceEditTest reads).
 on:
   push:
     branches: ["main", "upgrade/**"]
-    paths: ["keyboard/**", ".github/workflows/keyboard.yml"]
-  pull_request:
-    paths: ["keyboard/**", ".github/workflows/keyboard.yml"]
+    paths: ["keyboard/**", "core/testdata/**", "scripts/coverage_summary.py", ".github/workflows/keyboard.yml"]
+  workflow_call:
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: keyboard-${{ github.ref }}-${{ github.sha }}
+  # github.workflow is the caller's name when ci.yml calls this workflow.
+  group: keyboard-${{ github.workflow }}-${{ github.ref }}-${{ github.sha }}
   cancel-in-progress: true
 
 jobs:

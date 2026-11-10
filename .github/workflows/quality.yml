@@ -7,17 +7,19 @@ name: quality
 #   - the website: assembled exactly as pages.yml does, then every link, image and anchor checked;
 #   - the Python release, coverage, emulator-metrics and update-verifier script tests.
 # Android lint is the "lint" job in keyboard.yml; CodeQL is codeql.yml.
+# Pull requests: ci.yml calls this workflow on every one (its "gate" job is the required check).
 on:
   push:
     branches: ["main", "upgrade/**"]
-  pull_request:
+  workflow_call:
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: quality-${{ github.ref }}
+  # github.workflow is the caller's name when ci.yml calls this workflow, so the two never cancel each other.
+  group: quality-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:

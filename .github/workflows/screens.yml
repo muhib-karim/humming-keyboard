@@ -5,6 +5,8 @@ name: screens
 # Light and dark, every tab, plus a short walkthrough GIF. Artifacts only; nothing is committed from here.
 on:
   push:
+    # Branch pushes only: path filters are not evaluated for tags, so every release tag used to start this workflow.
+    branches: ["**"]
     paths: ["desktop/src/**", "desktop/index.html", "docs/ci/desktop_screens.mjs", ".github/workflows/screens.yml"]
   workflow_dispatch:
 
