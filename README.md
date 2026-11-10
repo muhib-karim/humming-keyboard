@@ -63,7 +63,7 @@ sample sentence, because CI machines have no microphone. Sample text is made up.
   "delete the word really", "capitalize monday" or "undo that", and Humming edits the text you already have instead of
   typing the words. It only acts when the whole utterance is the command (at most 14 words) and the word you name is
   really there; otherwise the words are typed as normal dictation ("change the oil to synthetic" stays text). One rule
-  set in the shared Rust core, ported to Kotlin and Swift, all checked against the same 35 test cases
+  set in the shared Rust core, ported to Kotlin and Swift, all checked against the same 36 test cases
   (`core/testdata/voice_edit_vectors.json`). On desktop it edits only Humming's own last insertion, in the same app.
   On by default, with a switch ("Edit by voice") on every platform.
 - **Two new speech models.** *Multilingual* (NVIDIA Parakeet TDT 0.6B v3, int8) types 25 European languages on Android

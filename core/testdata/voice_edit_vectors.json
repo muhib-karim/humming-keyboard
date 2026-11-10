@@ -181,6 +181,11 @@
   "command": false
  },
  {
+  "text": "the Émile plan",
+  "utterance": "replace Émile with émile",
+  "command": false
+ },
+ {
   "text": "see you Tuesday",
   "utterance": "I want to change Tuesday to Wednesday next week because Sam is away and the office is closed",
   "command": false

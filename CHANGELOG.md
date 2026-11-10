@@ -29,6 +29,10 @@ Fixes from the November 2026 production audit. No new features.
   sentence and cut the original there. After a character whose lowercase form is longer ("İ") the result was wrong
   ("... at tfour o'clock?"), or the core panicked when the cut fell inside a character. Offsets now come from an
   ASCII-lowercased copy, which keeps every byte position.
+- **Edit by voice (desktop, core)**: "replace Émile with émile" was treated as a command by the Rust core, because it
+  compared the two sides ignoring ASCII case only; the desktop app then deleted and retyped the same text and dropped
+  the words. A case-only change is now refused for any alphabet, as on Android and iPhone. The shared test set has
+  36 cases.
 
 ## [1.8.0] - 2026-10-28
 
