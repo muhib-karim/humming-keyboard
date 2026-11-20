@@ -303,11 +303,11 @@ dependencies {
     testImplementation(libs.kotlin.test.junit5)
     // Humming: speech engine (sherpa-onnx + onnxruntime, Apache-2.0 / MIT) and the model archive reader (Apache-2.0).
     implementation(files(sherpaAar))
-    implementation("org.apache.commons:commons-compress:1.27.1")
+    implementation("org.apache.commons:commons-compress:1.28.0")
     testImplementation("junit:junit:4.13.2")
-    testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.13.4")
+    testRuntimeOnly("org.junit.vintage:junit-vintage-engine:6.1.3")
     // Humming 1.7.1: settings and model-management tests on real SharedPreferences and files (PrefsTest, ModelStoreTest).
-    testImplementation("org.robolectric:robolectric:4.16.1")
+    testImplementation("org.robolectric:robolectric:4.17")
     androidTestImplementation(libs.androidx.test.ext)
     androidTestImplementation(libs.androidx.test.espresso.core)
     // Humming 1.7.1: the emulator smoke test drives the real keyboard with UiAutomator (ImeSmokeTest).
