@@ -45,4 +45,13 @@ class ModelPolicyTest {
             }
         }
     }
+
+    @Test
+    fun checksDownloadLength() {
+        assertNull(ModelPolicy.checkDownloadLength(100L, 100L))
+        val truncated = ModelPolicy.checkDownloadLength(64L, 100L)
+        assertTrue(truncated != null && truncated.contains("incomplete"))
+        val oversized = ModelPolicy.checkDownloadLength(120L, 100L)
+        assertTrue(oversized != null && oversized.contains("exceeded"))
+    }
 }
