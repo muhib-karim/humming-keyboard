@@ -53,6 +53,13 @@ object ModelPolicy {
         }
         return f
     }
+
+    /** Checks whether a downloaded archive matches its expected byte length before hashing. Pure: ModelPolicyTest. */
+    fun checkDownloadLength(actualBytes: Long, expectedBytes: Long): String? = when {
+        actualBytes < expectedBytes -> "incomplete model download ($actualBytes of $expectedBytes bytes)"
+        actualBytes > expectedBytes -> "model download exceeded expected size ($actualBytes > $expectedBytes bytes)"
+        else -> null
+    }
 }
 
 object ModelStore {
@@ -130,6 +137,11 @@ object ModelStore {
             } finally {
                 conn.disconnect()
             }
+        }
+        val actualBytes = part.length()
+        ModelPolicy.checkDownloadLength(actualBytes, m.downloadBytes)?.let { msg ->
+            if (actualBytes > m.downloadBytes) part.delete()
+            throw IOException(msg)
         }
         part.inputStream().use { input ->
             val buf = ByteArray(256 * 1024)
