@@ -16,21 +16,22 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
   group: pages
   cancel-in-progress: false
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      contents: read
+    outputs:
+      has_feeds: ${{ steps.feeds.outputs.has_feeds }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
       - name: Assemble the site
         # play/site/ plus the screenshots it shows (copied from docs/), then a check that every local link, image and
         # #anchor resolves, tags balance and nothing loads from another origin. The same two scripts run locally.
@@ -60,12 +61,48 @@ jobs:
             rm -f ./*
           fi
           ls -la
+      - name: Record whether update feeds were mirrored
+        id: feeds
+        run: |
+          if [ -f _site/updates/latest.json ] || [ -f _site/updates/android.json ]; then
+            echo "has_feeds=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_feeds=false" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        if: steps.feeds.outputs.has_feeds == 'true'
+        with:
+          name: mirrored-feeds
+          path: _site/updates/*.json
+          retention-days: 1
+          if-no-files-found: ignore
       - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6
       - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5
         with:
           path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
       - id: deployment
         uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        if: needs.build.outputs.has_feeds == 'true'
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        if: needs.build.outputs.has_feeds == 'true'
+        with:
+          name: mirrored-feeds
+          path: _site/updates
       - name: Check the live desktop update feed (signatures against the app's public key)
         if: hashFiles('_site/updates/latest.json') != ''
         run: |
