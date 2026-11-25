@@ -2,7 +2,14 @@
 
 ## [Unreleased]
 
-Fixes from the November 2026 production audit. No new features.
+## [1.8.1] - 2026-11-25
+
+Fixes from the November 2026 production audit. Versions: Android 1.8.1 (versionCode 1801), desktop and core 1.8.1,
+iOS 1.8.1 (build 1801).
+
+- **Partial model downloads (Android)**: when a model download stream ends early (truncated transfer),
+  `ModelStore.download` now checks the downloaded byte count before SHA-256 verification and keeps the `.part` file
+  for HTTP `Range` resume instead of deleting it as a checksum mismatch (#24).
 
 - **Update host**: new builds read their update feeds from the GitHub Pages site
   (`https://muhib-karim.github.io/humming-keyboard/updates/`), which `pages.yml` deploys and checks, instead of
