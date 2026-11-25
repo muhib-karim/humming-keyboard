@@ -30,7 +30,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - name: Assemble the site
         # play/site/ plus the screenshots it shows (copied from docs/), then a check that every local link, image and
         # #anchor resolves, tags balance and nothing loads from another origin. The same two scripts run locally.
@@ -60,12 +60,12 @@ jobs:
             rm -f ./*
           fi
           ls -la
-      - uses: actions/configure-pages@v6
-      - uses: actions/upload-pages-artifact@v5
+      - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5
         with:
           path: _site
       - id: deployment
-        uses: actions/deploy-pages@v5
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5
       - name: Check the live desktop update feed (signatures against the app's public key)
         if: hashFiles('_site/updates/latest.json') != ''
         run: |
