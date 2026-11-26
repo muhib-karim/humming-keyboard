@@ -20,7 +20,7 @@ and Linux apps and the website, all built from this repository.</p>
 <a href="docs/ci/COVERAGE.md"><img alt="Unit-test line coverage of Humming's Android code, measured for 1.7.1: 48.2 percent" src="https://img.shields.io/badge/coverage%20(Humming%20code%2C%201.7.1)-48.2%25-2a2a33"></a>
 <br>
 <a href="#install"><img alt="Platforms: Android, iOS, Windows, macOS, Linux" src="https://img.shields.io/badge/platforms-Android%20%C2%B7%20iOS%20%C2%B7%20Windows%20%C2%B7%20macOS%20%C2%B7%20Linux-18181f"></a>
-<a href="#benchmarks"><img alt="WER 2.78% Fast, 1.68% Best (LibriSpeech test-clean, first 200 clips, plus or minus 0.5)" src="https://img.shields.io/badge/WER%20test--clean%20(200%20clips)-2.78%25%20Fast%20%C2%B7%201.68%25%20Best-2a2a33"></a>
+<a href="#benchmarks"><img alt="WER 1.77% Best, 2.24% Multilingual, 2.72% Fast (LibriSpeech test-clean, first 200 clips)" src="https://img.shields.io/badge/WER%20test--clean%20(200%20clips)-1.77%25%20Best%20%C2%B7%202.72%25%20Fast-2a2a33"></a>
 <a href="LICENSE"><img alt="Licence: Apache-2.0" src="https://img.shields.io/badge/licence-Apache--2.0-2a2a33"></a>
 </p>
 
@@ -146,20 +146,23 @@ ranked gap list are in **[COMPETITORS.md](COMPETITORS.md)**. Where Humming trail
 iPhone and with the default model (25 European languages need the Multilingual model, on Android and desktop), and
 Gboard and SwiftKey support far more typing languages and install from the stores.
 
-| Dictation apps | **Humming** | Wispr Flow | Superwhisper | Aqua Voice | Apple Dictation |
-|---|---|---|---|---|---|
-| Works offline | **Yes**, default, every platform (English; 25 European languages with the Multilingual model on Android and desktop) | No, cloud only | Yes, local models | No, cloud only | On-device in many languages |
-| Fillers, lists, "scratch that", replacements | **All four** (1.7) | All four | Fillers, lists, replacements | Replacements | "Delete" / "undo" on iPhone (US English) |
-| Edit existing text by voice | **Yes** (1.8), offline: "change X to Y", "delete X", "capitalize X", "undo that" | Command Mode (Pro, desktop) | On selected text | Edit Mode | iPhone, US English |
-| Linux | **Yes** | No | "Coming soon" | No | No |
-| Price | **Free, no word cap** | Free 2,000 words/week; $15/month | Free with local models; $8.49/month | Free 1,000 words; $10/month | Free with the OS |
-| Open source | **Apache-2.0** | No | No | No | No |
+| Dictation apps | **Humming** | Wispr Flow | Typeless | Hex (Anomaly) | Superwhisper | Apple Dictation |
+|---|---|---|---|---|---|---|
+| Works offline | **Yes**, default, all 5 platforms (English; 25 EU languages with Multilingual on Android & desktop) | No, cloud only | No, cloud only (zero retention) | **Yes**, local models (GPU & CPU) | Yes, local models | On-device in many languages |
+| Published accuracy | **1.77 % Best · 2.24 % Multi · 2.72 % Fast** (LibriSpeech test-clean, raw output committed) | Charts only; 8.7 % measured by Superwhisper | Not published | Not published | 6.6 % WER (own 8-set bench) | Not published |
+| Fillers, lists, "scratch that", replacements | **All four** (per-app on Android & desktop) | All four | Fillers, lists, CSV dictionary | Built-in cleanups & per-app QuickJS pipelines | Fillers, lists, replacements | "Delete" / "undo" on iPhone (US EN) |
+| Edit existing text by voice | **Yes** (1.8), offline: "change X to Y", "delete X", "capitalize X", "undo that" | Command Mode (Pro, desktop) | Speak-to-edit on selection | Custom pipelines / OpenCode rewrite | On selected text | iPhone, US English |
+| Platforms | **Android, iPhone, Windows, macOS, Linux** | Mac, Windows, iOS, Android (no Linux) | macOS, Windows, Linux, iOS, Android | macOS, Windows, Linux (mobile in TestFlight / dev) | macOS, Windows, iOS, Android | iPhone, iPad, Mac |
+| Price | **Free, no word cap** | Free 2,000 words/week; $12–15/month | Limited free; $12/mo yearly / $30 mo | **Free** | Free local; $8.49/month | Free with the OS |
+| Open source | **Apache-2.0** | No | No | **MIT** | No | No |
 
 Published error rates come from different test sets and are not comparable (Superwhisper 6.6 % on its own 8-set
-benchmark, Aqua 5.55 % with the set not stated, Humming 2.78 % on LibriSpeech test-clean). Typeless, Willow, MacWhisper,
-Google and every source: **[COMPETITORS.md#dictation-apps](COMPETITORS.md#dictation-apps)**. Where Humming trails the
-dictation apps: voice editing is rule-based (a few whole-utterance commands), not free-form AI rewriting; no per-app
-tone; and offline dictation beyond English needs the Multilingual model (Android and desktop).
+benchmark, Aqua 5.55 % with the set not stated, Humming 1.77–2.72 % on LibriSpeech test-clean). Aqua Voice, Willow,
+MacWhisper, Handy, Amical, Google, and **Granola** (botless cloud meeting notepad with human-in-the-loop synthesis and
+MCP, an adjacent lane outside cursor dictation), plus every source and architectural teardown:
+**[COMPETITORS.md#dictation-apps](COMPETITORS.md#dictation-apps)**. Where Humming trails: voice editing is rule-based
+rather than free-form LLM rewriting; no per-app LLM tone; no streaming ASR / GPU acceleration or local SDK yet (Hex's
+strengths); and offline dictation beyond English needs the Multilingual model (Android and desktop).
 
 <details>
 <summary><strong>Against dictation apps: Wispr Flow, Typeless, Gboard Rambler</strong></summary>
@@ -265,14 +268,24 @@ No account, no analytics, no ads, and no cloud speech engine of Humming's own. F
 
 ## Benchmarks
 
-**1.8:** every model (Lite, Fast, Balanced, Best, Multilingual) re-measured side by side in one run with the
-apps' own engine (sherpa-onnx 1.13.8): word error rate, speed and peak memory are in
-[docs/BENCHMARKS.md](docs/BENCHMARKS.md). The figures below are the earlier CI run.
+All five downloadable models measured side by side in one run (28 October 2026) with the exact runtime the apps ship
+(**sherpa-onnx 1.13.8**, CPU, 2 threads) on LibriSpeech **test-clean** (first 200 clips, mean 9.1 s). Lower is better.
+Full method, re-pinned archive hashes (10 November 2026), and raw per-utterance JSONL output:
+**[docs/BENCHMARKS.md](docs/BENCHMARKS.md)** and [`docs/bench/`](docs/bench/).
 
-Measured by CI ([`wer-bench.yml`](.github/workflows/wer-bench.yml), run 37204875974 on the 1.4.0 code,
-4 October 2026) on LibriSpeech with the exact models and decoder settings the apps ship, on a 2-thread x86-64 CPU
-(AMD EPYC 9V74). Lower is better. GitHub has since expired that run's logs, so its output is committed here:
-[`docs/bench/ci-37204875974-wer.json`](docs/bench/ci-37204875974-wer.json) and
+| Model | Platforms | Download | WER (test-clean, 200) | Real-time factor | Median latency | Load | Peak RSS |
+|---|---|---:|---:|---:|---:|---:|---:|
+| **Best** — Parakeet TDT 0.6B v2 int8 | Android (6 GB+), Desktop | 482 MB | **1.77 %** | 0.0949 | 671 ms | 2.38 s | 1,266 MB |
+| **Multilingual** — Parakeet TDT 0.6B v3 int8 (25 EU) | Android (6 GB+), Desktop | 487 MB | **2.24 %** | 0.0956 | 695 ms | 2.43 s | 1,129 MB |
+| **Fast (default)** — Parakeet TDT-CTC 110M int8 | Android, Desktop | 104 MB | **2.72 %** | 0.0299 | 217 ms | 1.06 s | 478 MB |
+| **Balanced** — Moonshine v2 base int8 | Desktop | 111 MB | **3.11 %** | 0.0376 | 300 ms | 0.85 s | 379 MB |
+| **Lite** — Moonshine v2 tiny int8 | Desktop | 30 MB | **4.51 %** | 0.0206 | 157 ms | 0.44 s | 174 MB |
+
+<details>
+<summary><strong>Earlier CI run (4 October 2026, test-clean + test-other)</strong></summary>
+
+Measured by CI ([`wer-bench.yml`](.github/workflows/wer-bench.yml), run 37204875974, AMD EPYC 9V74, 2 threads). Raw
+output committed in [`docs/bench/ci-37204875974-wer.json`](docs/bench/ci-37204875974-wer.json) and
 [`docs/bench/ci-37204875974-bench.log`](docs/bench/ci-37204875974-bench.log).
 
 | Model | WER test-clean (200 clips) | WER test-other (100 clips) | Real-time factor | Median time to text | Model load |
@@ -280,13 +293,13 @@ Measured by CI ([`wer-bench.yml`](.github/workflows/wer-bench.yml), run 37204875
 | **Fast** (default): Parakeet TDT-CTC 110M int8, 104 MB | **2.78 %** | **4.20 %** | 0.043 (23x real time) | 312 ms clean · 217 ms other | 1.16 s |
 | **Best**: Parakeet TDT 0.6B v2 int8, 482 MB | **1.68 %** | **3.12 %** | 0.177 (6x real time) | 1314 ms clean · 937 ms other | 2.13 s |
 
-The sample is fixed (the first 200 test-clean and 100 test-other utterances by ID), so treat the WER as ±0.5 points.
-These are desktop-CPU figures; phone speed has not been benchmarked here, so no phone latency is claimed. The
-desktop-only Lite model (Moonshine tiny) is not in this benchmark. A re-run outside CI on 8 October 2026 (Fast,
-test-clean 200) gave 2.72 %, with every reference and hypothesis in [`docs/bench/`](docs/bench/).
+</details>
 
-Run it yourself: `python keyboard/ci/fetch_librispeech_sample.py bench test-clean 200`, then
-`python keyboard/ci/wer_bench.py <models_dir> bench/LibriSpeech wer.json 200 0` (needs `sherpa-onnx==1.13.8 jiwer soundfile`).
+The sample is fixed (first 200 test-clean utterances by ID), so treat WER as ±0.5 points. These are desktop-CPU
+figures; phone speed is not measured here, so no phone latency is claimed.
+
+Run it yourself: `python3 keyboard/ci/fetch_librispeech_sample.py bench test-clean 200`, then
+`python3 keyboard/ci/wer_bench.py <models_dir> bench/LibriSpeech wer.json 200 0` (needs `sherpa-onnx==1.13.8 jiwer soundfile`).
 
 ### On an Android emulator
 

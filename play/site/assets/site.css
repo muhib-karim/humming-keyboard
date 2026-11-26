@@ -57,8 +57,8 @@ figure { margin: 0; }
 .brand { display: inline-flex; align-items: center; gap: var(--s3); color: var(--fg); text-decoration: none; font-weight: 750; font-size: 1.125rem; letter-spacing: -.01em; }
 .brand img { width: 32px; height: 32px; border-radius: 8px; }
 .nav { margin-left: auto; display: flex; align-items: center; gap: var(--s1); }
-.nav a { color: var(--muted); text-decoration: none; padding: var(--s2) var(--s3); border-radius: var(--r-s); font-size: .9375rem; }
-.nav a:hover { color: var(--fg); background: var(--surface-2); }
+.nav a:not(.btn) { color: var(--muted); text-decoration: none; padding: var(--s2) var(--s3); border-radius: var(--r-s); font-size: .9375rem; }
+.nav a:not(.btn):hover { color: var(--fg); background: var(--surface-2); }
 .nav .btn { margin-left: var(--s2); }
 @media (max-width: 760px) { .nav a:not(.btn) { display: none; } }
 
@@ -80,7 +80,7 @@ figure { margin: 0; }
   background: radial-gradient(closest-side, var(--glow), transparent 70%); pointer-events: none; }
 .hero .wrap { position: relative; display: grid; gap: var(--s7); align-items: center; }
 @media (min-width: 960px) { .hero .wrap { grid-template-columns: 1.05fr .95fr; } .hero { padding: var(--s9) 0 var(--s8); } }
-.hero h1 { font-size: clamp(2.5rem, 1.4rem + 4.6vw, 4.25rem); font-weight: 800; letter-spacing: -.035em; }
+.hero h1 { font-size: clamp(2.25rem, 1.3rem + 3.4vw, 3.65rem); font-weight: 800; letter-spacing: -.035em; }
 .hero h1 em { font-style: normal; color: var(--accent-ink); }
 .hero .lead { font-size: clamp(1.0625rem, 1rem + .35vw, 1.25rem); color: var(--muted); max-width: 36rem; margin-top: var(--s5); }
 .cta { display: flex; flex-wrap: wrap; gap: var(--s3); margin-top: var(--s6); }
@@ -158,15 +158,15 @@ tbody tr:last-child th, tbody tr:last-child td { border-bottom: 0; }
 table.compact { min-width: 0; }
 
 /* emulator proof (1.7.1): three CI screenshots in phone frames, then the measured table */
-.proof { margin-top: var(--s8); }
-.proof h3 { font-size: clamp(1.25rem, 1rem + 1vw, 1.5rem); }
-.proof > p { max-width: 68ch; margin-top: var(--s3); }
+#bench .proof { margin-top: var(--s8); padding: 0; border-bottom: 0; }
+#bench .proof h3 { font-size: clamp(1.25rem, 1rem + 1vw, 1.5rem); }
+#bench .proof > p { max-width: 68ch; margin-top: var(--s3); }
 .shots { display: grid; gap: var(--s5); grid-template-columns: repeat(3, minmax(0, 1fr)); margin: var(--s6) 0; max-width: 820px; }
 .shots figure { display: flex; flex-direction: column; gap: var(--s3); }
 .shots .phone { border-radius: 28px; padding: 7px; }
 .shots .phone img { border-radius: 22px; }
 .shots figcaption { font-size: .875rem; color: var(--muted); }
-.proof .table-wrap { max-width: 820px; }
+#bench .proof .table-wrap { max-width: 820px; }
 @media (max-width: 560px) { .shots { grid-template-columns: repeat(2, minmax(0, 1fr)); } .shots figure:first-child { display: none; } }
 
 /* downloads */

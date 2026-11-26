@@ -8,9 +8,9 @@ taken from Play search snippets are marked *(Play snippet)*.
 
 Compared: **Gboard** (Google), **Microsoft SwiftKey**, **Fleksy**, **Typewise**, **Ridmik Keyboard** (the most-used
 Bangla keyboard), and for Bangla input on computers **Avro Keyboard** (phonetic), **Bijoy** (fixed layout) and
-**OpenBangla Keyboard** (Linux, Avro-compatible). A second part compares voice-dictation apps: **Wispr Flow**,
-**Typeless**, **Superwhisper**, **Aqua Voice**, **Willow**, **MacWhisper**, and Apple's and Google's built-in
-dictation.
+**OpenBangla Keyboard** (Linux, Avro-compatible). A second part compares voice-dictation and adjacent voice-AI apps:
+**Wispr Flow**, **Typeless**, **Hex** (Anomaly), **Granola**, **Superwhisper**, **Aqua Voice**, **Willow**,
+**MacWhisper**, **Handy**, **Amical**, and Apple's and Google's built-in dictation.
 
 - [Summary table](#summary-table)
 - [Column by column](#column-by-column)
@@ -145,8 +145,10 @@ mixed sets.
 | Aqua Voice | 6.24 % average WER on the Hugging Face Open ASR Leaderboard (Oct 2025, Aqua's recap, not re-checked); 5.55 % for Avalon 1.5, test set not stated [D45] | Under 50 ms to start, ~450 ms after you stop (vendor) [D45] | Cloud ("needs an internet connection") [D47]; Privacy Mode off by default [D45][D46] | macOS, Windows, iOS, Android (Oct 2026); no Linux [D45][D47] | Free 1,000 words; Pro $10 ($8 yearly) [D44] | No |
 | Willow | Vendor claim: "3x more accurate than built-in dictation", no method [D48] | Vendor claim: "as little as 200ms" [D48] | Conflicting: homepage offers an offline mode [D48], help centre says cloud models [D51] | Mac, Windows, iPhone; Android "coming soon" [D56] | Free (weaker model); Pro $15 ($12 yearly) [D49] | No |
 | MacWhisper | Not published [D57] | Not published | **Local models**, optional cloud AI with your own keys [D57] | macOS; iPhone/iPad as "Whisper Transcription" [D59] | Free; Pro €64 once [D57] | No (built on open models) |
+| Hex (Anomaly) | Not published [D76] | Not published; streaming models write while you talk [D76] | **Offline**: single-process local Rust app; nothing leaves the machine after model download; optional OpenCode rewrite [D76] | macOS, Windows, **Linux** (desktop shipping; iOS TestFlight & Android in dev) [D76][D77] | Free [D76] | **Yes**, MIT [D76] |
 | Handy (open source) | Not published [D74] | Not published | **Offline**: "works completely offline"; Silero VAD, then Whisper (Small/Medium/Turbo/Large, GPU when available) or **Parakeet V3** on the CPU [D74] | Windows, macOS, Linux (desktop only) [D74] | Free [D74] | **Yes**, MIT [D74] |
 | Amical (open source) | Not published [D75] | Vendor claim: "super-fast" [D75] | "Runs entirely on your machine": Whisper plus local LLMs via Ollama [D75] | macOS, Windows; README also links an Android app and an iOS beta (offline status there not stated); no Linux [D75] | Not stated in README [D75] | **Yes**, MIT [D75] |
+| Granola *(meeting notepad, not cursor dictation)* | Not published [D78] | Real-time meeting transcript + post-call synthesis [D78] | Device-level audio capture (no call bot; raw audio not retained); cloud ASR (Deepgram / AssemblyAI) + cloud LLMs (OpenAI / Anthropic / Google); SOC 2 Type II [D78][D79] | macOS, Windows, iOS, Watch [D78] | Freemium / paid tiers [D78] | No |
 | Apple Dictation | Not published | Not published | On-device "in many languages" [D60]; server transcripts may be kept up to two years if used [D65] | iPhone, iPad, Mac | Free with the OS | No |
 | Google (Gboard voice, Pixel, Rambler) | Not published | Not published | Pixel 6+ advanced voice typing on-device [D68]; Rambler needs internet for full features [D69] | Android, iOS (Gboard), web (Docs) | Free; Rambler has unpublished usage limits [D69] | No |
 
@@ -161,22 +163,55 @@ mixed sets.
 | Aqua Voice | Not documented | Via custom instructions | Edit Mode on selected text; "undo that" not supported [D45] | Dictionary and replacements ("my calendar link" → URL) [D44][D45] | 49, **Bengali listed** [D45] |
 | Willow | Yes [D48] | Yes ("Bullet, …") [D50] | New line / paragraph, spoken lists [D50]; "scratch that" not documented | Terms and voice "shortcuts" [D53] | "100+"; Bengali unverified [D52] |
 | MacWhisper | Yes [D57] | Not documented | Not documented | Not documented | "100"; Bengali not named, expected via Whisper [D42][D57] |
+| Hex (Anomaly) | Built-in cleanups + custom pipeline [D76] | Via custom pipeline / OpenCode rewrite [D76] | Hold or Tap shortcut; re-paste last dictation (`Option+Shift+V` / `Ctrl+Alt+V`); sandboxed QuickJS per-app output pipelines (`hex.config.ts`); local HTTP API + TypeScript SDK; Labs: Meetings, Annotate [D76][D77] | Vocabulary list read by Whisper/Qwen3-ASR/Parakeet (Labs) + per-app word replacements [D76] | Parakeet Unified/v3 (25 EU langs), Cohere (14), Whisper large-v3-turbo, Qwen3-ASR (30), SenseVoice, Nemotron 3.5 (27), Granite 5.0, custom GGUF [D76] |
 | Handy | Not documented [D74] | Not documented | Push-to-talk or toggle shortcut, CLI flags and Unix signals; an optional post-processing pass (`--toggle-post-process`) [D74] | A dictionary is referenced (Raycast extension) [D74] | Parakeet V3 "automatic language detection"; Whisper multilingual; Bengali not named [D74] |
 | Amical | Via LLM formatting [D75] | Not documented | "Context-aware" formatting by active app; voice macros, hotkeys, custom workflows; MCP voice commands planned [D75] | Not documented | Whisper languages; Bengali not named [D75] |
+| Granola *(meeting notepad)* | LLM synthesis [D78] | Structured meeting notes [D78] | Human-in-the-loop note steering (typed bullets steer AI summary), mid-meeting catch-up, cross-meeting chat, MCP connector for Claude/Cursor [D78][D79] | Meeting context / templates [D78] | Depends on Deepgram / AssemblyAI cloud ASR [D79] |
 | Apple Dictation | Not documented | Not documented | New line / paragraph, caps; on iPhone in US English: "change … to …", "select", "delete", "undo" [D61] | None for dictation documented [D65] | 63 language/region entries; **Bangla not listed** [D64] |
 | Google | Rambler only [D69] | Not documented | New line / paragraph [D67]; Pixel: "delete last word", "clear", "undo", detailed edits [D68]; Docs: "select", "delete" [D72] | Unverified | Bengali in Gboard voice typing (2017 post) [D70] and Docs [D72]; not in Pixel advanced voice typing [D68] |
 
-**Where Humming leads:** the only app here that is free with no word cap, open source, and offline by default on
-Android, iPhone, Windows, macOS **and** Linux (the open-source desktop apps Handy and Amical are free and local too,
-but Handy is desktop only and Amical has no Linux build; Typeless also has a Linux app, but it is cloud-only).
-It publishes a reproducible accuracy figure with the raw output. With 1.7 it has the shared core of the dictation apps:
-filler removal with a switch, lists, "scratch that", and spoken → written replacements that double as snippets.
-With 1.8 it also edits text already in the field by voice, offline, on Android, iPhone and desktop, with one rule set
-tested by the same 36 cases on every platform.
+**Where Humming leads:** the only app here that is free with no word cap, open source (Apache-2.0), and ships
+offline-by-default apps across **all five platforms today** — a full Android keyboard, an iPhone app/keyboard, and
+Windows, macOS and Linux desktop apps (Hex by Anomaly, Handy and Amical are strong MIT desktop peers, but Handy is
+desktop-only, Amical has no Linux build, and Hex's mobile apps are still in TestFlight / Android dev; Typeless has a
+Linux app, but it is cloud-only). Humming publishes reproducible WER, latency and RAM benchmarks with raw output
+committed. With 1.7–1.8 it ships the shared core of the dictation apps — filler removal with a switch, lists,
+"scratch that", per-app spoken → written replacements, and offline edit-by-voice across Android, iPhone and desktop
+tested by the same 36 vectors on every platform.
 **Where it trails:** voice editing is rule-based ("change / delete / capitalize X", "undo that"), not free-form AI
 rewriting of a selection like Wispr's Command Mode or Typeless' speak-to-edit; on desktop it edits only Humming's own
-last insertion; no per-app tone (needs a language model). Offline clean-up and commands are English only; the new
-Multilingual model transcribes 25 European languages offline, and Bengali is still online-only elsewhere (Aqua, Google).
+last insertion; no per-app LLM tone; no streaming ASR or GPU acceleration yet (Hex ships Parakeet Unified/Nemotron
+streaming, custom GGUF models, Vulkan/Metal GPU, re-paste shortcut, QuickJS per-app output pipelines, and a local
+SDK/API); no botless meeting-notes synthesis (Granola's and Wispr Notetaker's lane). Offline clean-up and commands are
+English only; the Multilingual model transcribes 25 European languages offline, and Bengali voice is still online-only.
+
+### Architectural teardown: Wispr Flow, Typeless, Granola, and Hex by Anomaly
+
+Checked 27 November 2026 against public vendor documentation and the `anomalyco/hex` MIT repository [D1–D29, D76–D79]:
+
+- **Wispr Flow (cloud "Voice OS" + proprietary ASR):** System-wide input layer without app plugins. Uses proprietary
+  **Canto-2** speech models trained with **Entity-GRPO** + attention-shaping rewards so custom dictionaries recognise
+  proper nouns without false insertions [D15][D16], followed by cloud LLM semantic editing (fillers, false starts,
+  per-app tone, Command Mode) and a botless **Notetaker** for meetings + Ask AI. Trade-off: cloud-only transcription,
+  usage telemetry collected regardless of data controls [D4], no native Linux app [D8], $12–15/month Pro.
+- **Typeless (cross-platform cloud dictation + LLM cleanup):** OS Accessibility / mobile keyboard extension layer
+  streaming compressed mic audio over the network to cloud STT + LLM editing passes (fillers, self-corrections, lists,
+  per-app tone, speak-to-edit on selected text, whisper mode, CSV dictionary import) under a zero-data-retention policy
+  [D19–D29]. Trade-off: cloud-only (no offline mode), $12/mo yearly / $30 monthly Pro.
+- **Granola (botless human-in-the-loop meeting notepad):** Adjacent lane — not cursor dictation or a keyboard. Captures
+  system audio + local mic directly on-device (no bot joins Zoom/Meet/Teams; raw audio not retained), transcribes via
+  cloud ASR (**Deepgram / AssemblyAI**), and orchestrates frontier cloud LLMs (**OpenAI / Anthropic / Google**) using
+  the user's typed rough bullets to steer synthesis [D78][D79]. Adds mid-meeting catch-up, cross-meeting chat, and an
+  **MCP connector** so AI agents (Claude, Cursor) can query meeting notes. Trade-off: cloud processing & storage (AWS,
+  SOC 2 Type II), no system-wide typing/dictation.
+- **Hex by Anomaly (`anomalyco/hex`, MIT, Rust + Rune):** Closest open-source desktop peer. Single-process native Rust
+  app using the **Rune** desktop UI framework with Metal/Vulkan GPU acceleration and CPU fallback [D76][D77]. Ships a
+  broad local model picker (Parakeet Unified streaming, Parakeet v3, Cohere Transcribe, Whisper large-v3-turbo,
+  Qwen3-ASR, SenseVoice, Nemotron 3.5, Granite 5.0, custom GGUF), re-paste last dictation shortcut, 7-day searchable
+  history, sandboxed **QuickJS** per-app output pipelines (`hex.config.ts`) + optional OpenCode rewrite, an
+  authenticated local HTTP transcription API + `@hex/commands` TypeScript SDK, and opt-in **Labs** (macOS Meetings,
+  Annotate screen+voice capture). Trade-off: desktop-first (iOS in TestFlight, Android in dev; no full Android IME
+  keyboard), no committed WER benchmark suite.
 
 ## Dictation gap list (ranked)
 
@@ -195,7 +230,11 @@ Swift `ListFormatTests`, `TextCleanupTests`).
 | D7 | Dictionary that learns from your corrections | Wispr (desktop), Typeless | 3 | 2 | 6 | Open |
 | D8 | Offline dictation in Bangla and more languages | Aqua (cloud, Bengali listed), Superwhisper / MacWhisper via Whisper (untested) | 5 | 1 | 5 | Open (keyboard gap 7) |
 | D9 | Whisper / quiet-speech mode | Typeless | 2 | 2 | 4 | Open |
-| D10 | Team-shared dictionary | Wispr, Aqua, Willow | 1 | 2 | 2 | Won't do: needs accounts and a server |
+| D10 | Re-paste last dictation global shortcut (`Option+Shift+V` / `Ctrl+Alt+V`) | Hex (Anomaly) | 4 | 5 | 20 | Open (desktop): small addition on top of existing `History` and `insert::insert` |
+| D11 | Streaming local ASR + GPU acceleration (Metal / Vulkan) | Hex (Anomaly), Superwhisper | 4 | 2 | 8 | Open: needs sherpa-onnx online recogniser path and device benchmarks (`docs/BENCHMARKS.md`) |
+| D12 | Local authenticated HTTP API / CLI pipe for developer tools | Hex (Anomaly), Handy | 3 | 3 | 9 | Open: reuse `core` crate + existing loaded desktop model |
+| D13 | Opt-in local meeting transcript notepad (botless system audio + mic) | Granola (cloud), Hex Labs (macOS), Wispr Notetaker (cloud) | 3 | 1 | 3 | Deferred: separate scope from keyboard/cursor dictation; keep core lean unless scoped as an opt-in desktop lab |
+| D14 | Team-shared dictionary | Wispr, Aqua, Willow | 1 | 2 | 2 | Won't do: needs accounts and a server |
 
 ## Sources
 
@@ -353,5 +392,9 @@ Google:
 - [D73] https://techcrunch.com/2026/05/12/google-adds-gemini-powered-dictation-to-gboard-which-could-be-bad-news-for-dictation-startups/ (named press; search-result snippet only, not fetched)
 - [D74] https://github.com/cjpais/Handy (README, read 28 October 2026; licence MIT)
 - [D75] https://github.com/amicalhq/amical (README, read 28 October 2026; licence MIT)
+- [D76] https://github.com/anomalyco/hex (README, read 27 November 2026; licence MIT)
+- [D77] https://github.com/anomalyco/hex/blob/main/ROADMAP.md (read 27 November 2026)
+- [D78] https://www.granola.ai/ (product overview & security pages, checked 27 November 2026)
+- [D79] Granola architecture coverage (Deepgram / AssemblyAI ASR, frontier LLM orchestration, AWS SOC 2 Type II, MCP connector), checked 27 November 2026
 
 Pages that could not be fetched: superwhisper.com/pricing (404), typeless.com/download (404; /downloads works), willowvoice.com/privacy (404), goodsnooze.com (DNS failure).

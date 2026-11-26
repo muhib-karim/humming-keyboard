@@ -637,11 +637,12 @@ pub fn run() {
 
             // Tray / menu bar.
             let open = MenuItem::with_id(app, "open", "Open Humming", true, None::<&str>)?;
+            let copy_last = MenuItem::with_id(app, "copy_last", "Copy last dictation", true, None::<&str>)?;
             let history_item = MenuItem::with_id(app, "history", "History", true, None::<&str>)?;
             let settings_item = MenuItem::with_id(app, "settings", "Settings", true, None::<&str>)?;
             let sep = PredefinedMenuItem::separator(app)?;
             let quit = MenuItem::with_id(app, "quit", "Quit Humming", true, None::<&str>)?;
-            let menu = Menu::with_items(app, &[&open, &history_item, &settings_item, &sep, &quit])?;
+            let menu = Menu::with_items(app, &[&open, &copy_last, &history_item, &settings_item, &sep, &quit])?;
             TrayIconBuilder::with_id("main")
                 .icon(Image::from_bytes(TRAY_IDLE)?)
                 .tooltip("Humming")
@@ -649,6 +650,17 @@ pub fn run() {
                 .show_menu_on_left_click(false)
                 .on_menu_event(|app, event| match event.id.as_ref() {
                     "open" => show_main(app, Some("home")),
+                    "copy_last" => {
+                        let last = app
+                            .state::<AppState>()
+                            .history
+                            .lock()
+                            .ok()
+                            .and_then(|h| h.entries.first().map(|e| e.text.clone()));
+                        if let Some(t) = last {
+                            let _ = insert::copy(&t);
+                        }
+                    }
                     "history" => show_main(app, Some("history")),
                     "settings" => show_main(app, Some("settings")),
                     "quit" => app.exit(0),
