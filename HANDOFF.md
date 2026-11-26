@@ -1,7 +1,7 @@
 # Handoff — Humming Keyboard
 
 Updated: 2026-11-27  
-Branch: `feat/complete-humming-and-homepage` (branched from `main` @ `7fe0803`)
+Branch: `feat/complete-humming-and-homepage` (PR #30: `https://github.com/muhib-karim/humming-keyboard/pull/30`)
 
 ## Current Objective
 
@@ -49,7 +49,12 @@ Complete the Humming v1.8.x pass across bug fixes, competitor teardowns (Wispr F
 - `python3 scripts/assemble_site.py /tmp/humming-site && python3 scripts/check_site.py /tmp/humming-site`: **37 files assembled, 3 pages checked, 0 problems**.
 - Python regex mirror of `VoiceEdit.kt` against `core/testdata/voice_edit_vectors.json` + Unicode targets: **39/39 passed**.
 - Playwright headless Chromium QA (`1440×900`, `768×1024`, `390×844`, dark + light): **0 horizontal overflow**, **0 page errors**, pill nav button hover verified (`999px`, `rgb(176, 48, 80)`), `proofTopGap = 0`.
-- **Unverified locally (pending GitHub Actions CI on PR)**: `gradlew :app:testDebugUnitTest`, `ktlint`, `detekt`, `android-emulator.yml` (`ImeSmokeTest`), `desktop/src-tauri` `cargo test`.
+- **GitHub Actions CI on PR #30 (verified so far)**:
+  - `check (Linux compile + unit tests)` (desktop Rust): **passed**
+  - `quality / gitleaks (full history)`: **passed**
+  - `quality / website check + script tests`: **passed**
+  - `detekt 1.23.8`: **passed** (0 findings outside baseline)
+  - `ktlint`: fixed single blank-line finding (`VoiceEdit.kt:37`, `spacing-between-declarations-with-comments`) and re-pushed; re-verify `quality / ktlint + detekt`, `keyboard`, `android-emulator`, and `ci / gate`.
 
 ## Unresolved Issues
 

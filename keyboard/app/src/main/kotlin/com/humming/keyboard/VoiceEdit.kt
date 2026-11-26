@@ -34,6 +34,7 @@ object VoiceEdit {
     data class Result(val command: Command, val outcome: Outcome?)
 
     private const val MAX_WORDS = 14
+
     // Android's ICU Pattern throws IllegalArgumentException on Pattern.UNICODE_CHARACTER_CLASS
     // (Unicode classes are already default on Android); findLast uses explicit Unicode boundaries.
     private const val F = Pattern.CASE_INSENSITIVE or Pattern.UNICODE_CASE
