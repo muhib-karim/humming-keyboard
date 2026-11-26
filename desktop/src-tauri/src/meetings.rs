@@ -125,6 +125,38 @@ impl MeetingStore {
         self.items.retain(|m| m.id != id);
         self.save();
     }
+
+    /// Cross-meeting search: ranks matching notes and transcript segments across all saved meetings by keyword hits.
+    pub fn search_context(&self, query: &str, max_hits: usize) -> Vec<String> {
+        let terms: Vec<String> = query
+            .to_lowercase()
+            .split(|c: char| !c.is_alphanumeric())
+            .filter(|w| w.len() >= 2)
+            .map(|w| w.to_string())
+            .collect();
+        if terms.is_empty() {
+            return Vec::new();
+        }
+        let mut scored: Vec<(usize, String)> = Vec::new();
+        for m in &self.items {
+            for line in m.notes.lines().map(|l| l.trim()).filter(|l| !l.is_empty()) {
+                let low = line.to_lowercase();
+                let score = terms.iter().filter(|t| low.contains(t.as_str())).count();
+                if score > 0 {
+                    scored.push((score + 1, format!("[{} · Note] {}", m.title, line)));
+                }
+            }
+            for seg in &m.segments {
+                let low = seg.text.to_lowercase();
+                let score = terms.iter().filter(|t| low.contains(t.as_str())).count();
+                if score > 0 {
+                    scored.push((score, format!("[{} · {}] {}", m.title, format_timestamp(seg.elapsed_s), seg.text.trim())));
+                }
+            }
+        }
+        scored.sort_by(|a, b| b.0.cmp(&a.0));
+        scored.into_iter().take(max_hits).map(|(_, s)| s).collect()
+    }
 }
 
 pub fn format_timestamp(elapsed_s: u64) -> String {
@@ -293,6 +325,9 @@ mod tests {
         let md = to_markdown(&reloaded.items[0]);
         assert!(md.contains("## Transcript"));
         assert!(md.contains("[00:15]"));
+        let hits = reloaded.search_context("Android Friday fix", 5);
+        assert!(!hits.is_empty());
+        assert!(hits[0].contains("Sprint Review"));
         let _ = std::fs::remove_dir_all(&dir);
     }
 }

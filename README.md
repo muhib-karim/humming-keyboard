@@ -80,6 +80,26 @@ CI runs them on pull requests, each platform's tests when its code changed:
 - **Private, and checked in code.** No analytics, no ads. A unit test fails the build if any file outside a short list
   uses a network API ([Privacy](#privacy)).
 
+### New in 1.9: Command Mode, Offline Botless Meetings, Local HTTP API, GPU Provider & Android ICU Fix
+
+- **Command Mode & Per-App Tone** (desktop): highlight text in any app, hold `Ctrl+Shift+E` (`Cmd+Shift+E` on Mac),
+  and speak your edit ("make this shorter", "polite email reply", "change Tuesday to Thursday"). Runs via **100% local
+  Ollama**, optional BYOK OpenAI / Anthropic / Gemini (HTTPS enforced for remote hosts), or deterministic offline
+  `VoiceEdit` fallback. Per-app tone rules (`Slack -> casual`, `Mail -> email`, `Code -> technical`) plus CSV
+  dictionary import/export and one-click **"Teach word"** from History.
+- **Offline Botless Meeting Notepad & Ask Across Meetings** (desktop): zero call bots, zero cloud audio. Captures 12s
+  chunks from mic or OS loopback/monitor device into a split-pane workspace (**Your Notes** + **Live Transcript**),
+  synthesizes structured Markdown via local Ollama / BYOK / deterministic offline digest, and searches across every
+  saved meeting with `[Title · MM:SS]` citations.
+- **Re-Paste Shortcut, GPU Accelerator & Local HTTP API** (desktop): global re-paste last dictation shortcut
+  (`Ctrl+Shift+V` / `Cmd+Shift+V`), optional CoreML / DirectML / CUDA provider with automatic CPU fallback, glassmorphic
+  animated floating pill with live elapsed timer, and an opt-in `127.0.0.1` Bearer-auth HTTP API (`/health`,
+  `/v1/transcribe`, `/v1/cleanup`).
+- **Android offline dictation crash fix (#22)**: removed unsupported `Pattern.UNICODE_CHARACTER_CLASS` from
+  `VoiceEdit.kt` (verified on Android 14 emulator via `ImeSmokeTest.voiceEditRunsOnAndroidArt`) and hardened
+  `CrashDialogActivity` clipboard copy for large logs.
+- **Launch poster**: [docs/poster.png](docs/poster.png).
+
 ### New in 1.8: edit by voice, two more speech models, Handy and Amical compared
 
 - **Edit by voice** on Android, iPhone and desktop. Say a whole utterance such as "change Tuesday to Wednesday",
@@ -153,7 +173,8 @@ Gboard and SwiftKey support far more typing languages and install from the store
 | Command Mode & voice edit | **Both**: offline `VoiceEdit` + **Command Mode** on selected text (local Ollama or BYOK) | Command Mode (Pro, desktop) | Speak-to-edit on selection | Custom pipelines / OpenCode rewrite | Post-call AI chat | On selected text |
 | Per-app tone & CSV dictionary | **Yes**: per-app tone rules (offline casual/bullets + AI polish), per-app snippets, **CSV import/export** | Auto-tone, auto-learn & snippets | Tone, dictionary & CSV import | Per-app QuickJS pipelines & vocab | Custom note templates | Custom modes & replacements |
 | Botless meeting notepad | **Yes** (desktop): **100 % offline** chunked transcript + split-pane notes + Markdown synthesis | Wispr Notetaker (cloud) | No | Labs: Meetings (macOS beta) | **Core product** (cloud, no call bot) | File transcription |
-| Local developer API | **Yes** (opt-in `127.0.0.1` Bearer-auth HTTP `/v1/transcribe`, `/v1/cleanup`) | No | No | Local service + TS SDK | MCP (cloud notes) | No |
+| Re-paste & Local HTTP API | **Both**: global re-paste shortcut + opt-in `127.0.0.1` Bearer-auth HTTP API (`/v1/transcribe`, `/v1/cleanup`) | No | No | **Both**: re-paste + local service & TS SDK | Cloud MCP only | No |
+| GPU acceleration | **Yes**: CoreML / DirectML / CUDA toggle + automatic CPU fallback | Cloud GPU | Cloud GPU | **Yes**: Metal / Vulkan | Cloud | Yes (CoreML) |
 | Verified desktop binary size | **8.8 MB** Win `.exe` · **24.9 MB** Mac `.dmg` · **17.5 MB** Linux `.deb` (v1.8.1) | Closed installer | Closed installer | 77.2 MB Win `.exe` · 33.5 MB Mac `.dmg` · 35.7 MB `.deb` (v3.5.0) | 171.4 MB Win `.exe` · 271.2 MB Mac `.zip` (v7.853.5) | Closed installer |
 | Platforms | **Android, iPhone, Windows, macOS, Linux** | Mac, Windows, iOS, Android (no Linux) | macOS, Windows, Linux, iOS, Android | macOS, Windows, Linux (mobile in dev/TestFlight) | macOS, Windows, iOS, Watch | macOS, Windows, iOS, Android |
 | Price & licence | **Free, Apache-2.0**, no word cap | Free 2k words/wk; $12–15/mo | Limited free; $12/mo yr / $30 mo | **Free, MIT** | Freemium / paid tiers | Free local; $8.49/mo |
@@ -353,9 +374,10 @@ CI table above for claims. With 73 clips, gaps under about half a point are nois
 | Floating keyboard | Clipboard history | Voice panel (dark) |
 
 <p>
-<img src="docs/screenshots/ios_dictate.png" width="200" alt="iPhone: clean text, offline badge">
-<img src="docs/screenshots/ios_keyboard.png" width="200" alt="iPhone keyboard">
-<img src="docs/screenshots/desktop_home_dark.png" width="420" alt="Desktop home, dark">
+<img src="docs/screenshots/ios_dictate.png" width="180" alt="iPhone: clean text, offline badge">
+<img src="docs/screenshots/ios_keyboard.png" width="180" alt="iPhone keyboard">
+<img src="docs/screenshots/desktop_home_dark.png" width="380" alt="Desktop home, dark">
+<img src="docs/screenshots/desktop_meetings_dark.png" width="380" alt="Desktop offline botless Meeting Notepad, dark">
 </p>
 
 More: Android, iPhone and desktop captures in [`docs/screenshots/`](docs/screenshots/), the Gboard voice hand-off in

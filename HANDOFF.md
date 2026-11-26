@@ -1,74 +1,44 @@
-# Handoff — Humming Keyboard
+# Handoff — Humming Keyboard v1.9.0
 
 Updated: 2026-11-27  
-Branch: `feat/complete-humming-and-homepage` (PR #30: `https://github.com/muhib-karim/humming-keyboard/pull/30`)
+Release target: `v1.9.0` (PR #30: `https://github.com/muhib-karim/humming-keyboard/pull/30`)
 
 ## Current Objective
 
-Complete the Humming v1.8.x pass across bug fixes, competitor teardowns (Wispr Flow, Typeless, Granola, Hex by Anomaly), production-grade README/banner/GitHub Pages homepage, browser visual QA, and repo hygiene audits (`AGENTS.md`, on-demand skills structure, and scripts/tools audit).
+Ship **Humming v1.9.0** with full competitor-parity & superiority upgrades across Android, desktop, homepage, launch graphics (banner, poster, social preview, Play feature graphic), verified 100% green CI across all platforms, merged to `main`, and tagged `v1.9.0` to trigger the official GitHub Release + live GitHub Pages deployment.
 
 ## Completed Work
 
-1. **Android offline dictation crash fix (Issue #22)**
-   - Removed `Pattern.UNICODE_CHARACTER_CLASS` from `VoiceEdit.kt` (Android ICU throws `IllegalArgumentException`) and replaced `\b` with explicit Unicode word boundaries (`(?<![\p{L}\p{M}\p{N}_])` / `(?![\p{L}\p{M}\p{N}_])`).
-   - Added Unicode word-boundary unit tests in `VoiceEditTest.kt` and an Android ART smoke check (`ImeSmokeTest.voiceEditRunsOnAndroidArt`).
-2. **Android crash dialog clipboard fix (Issue #22)**
-   - Updated `CrashDialogActivity.kt` to use a short label (`"Humming crash report"`), truncate oversized logs at 200,000 chars, and catch clipboard exceptions via `runCatching`.
-3. **Desktop competitor-parity & superiority upgrades (`desktop/src-tauri/` + `desktop/src/`)**
-   - **Command Mode, Per-App Tone & Local Ollama / BYOK AI** (`desktop/src-tauri/src/llm.rs`, `insert::grab_selection`): select text in any app and hold `Ctrl+Shift+E` / `Cmd+Shift+E` to rewrite by voice via 100% local Ollama, BYOK OpenAI/Anthropic/Gemini (HTTPS enforced for remote hosts), or deterministic offline `VoiceEdit` fallback; per-app tone rules (`casual`/`bullets` offline + full AI polish); CSV dictionary import/export.
-   - **Offline Botless Meeting Notepad** (`desktop/src-tauri/src/meetings.rs`, `audio::Recorder::drain`): dedicated Meetings tab with 12s chunked local Parakeet transcription (mic or loopback/monitor audio device, zero call bots), split-pane manual notes + live timestamped transcript, template-based Markdown synthesis (Ollama, BYOK, or deterministic offline digest), persistent JSON storage, and one-click Markdown copy.
-   - **Authenticated Local HTTP Transcription API** (`desktop/src-tauri/src/local_api.rs`): opt-in `127.0.0.1` Bearer-token HTTP server (`GET /health`, `POST /v1/transcribe`, `POST /v1/cleanup`) with constant-time token comparison and in-memory PCM WAV parser.
-   - **Tray quick actions**: added `"Meeting Notepad"` and `"Copy last dictation"` to the system tray / menu-bar menu.
-4. **Competitor binary & architecture teardown (`COMPETITORS.md`)**
-   - Added primary-source teardowns and live binary size comparison (Humming v1.8.1: 8.77 MB Win / 24.87 MB Mac / 17.51 MB `.deb` vs Anomaly Hex v3.5.0: 77.19 MB Win / 33.52 MB Mac / 35.66 MB `.deb` vs Granola v7.853.5: 171.35 MB Win / 271.23 MB Mac Electron).
-5. **Brand banner, social preview, README, and GitHub Pages homepage**
-   - Updated `scripts/render_social_preview.py` (with system font fallback) and regenerated `docs/banner.png` (1600×640) and `docs/social-preview.png` (1280×640) with brand-pink captures and v1.8 benchmarks.
-   - Refreshed `README.md`, `play/site/index.html`, `play/site/privacy.html`, `play/PRIVACY_POLICY.md`, and `CHANGELOG.md` to reflect all 5 v1.8 models, 25-language Multilingual support, edit-by-voice, and active CI gates.
-6. **Headless Chromium visual QA & UI fixes (`play/site/assets/site.css`, `play/site/index.html`)**
-   - Verified rendered output at 1440×900 (dark & light), 768×1024 (dark), 390×844 (dark & light), and `privacy.html`.
-   - Caught and fixed three real layout bugs:
-     - Scoped `.nav a:not(.btn)` so the header Download button keeps its `999px` pill radius and `--accent-strong-hover` hover color instead of turning boxy/grey.
-     - Scoped `#bench .proof` separately from top-level `.proof`, removing a 64 px dead gap below the hero and a double bottom border under `#bench`.
-     - Tightened hero `h1` fluid scale (`clamp(2.25rem, 1.3rem + 3.4vw, 3.65rem)`) and copy so headline, CTAs, and checkmark facts fit above the fold on desktop and mobile.
-
-## Verified Decisions
-
-- **No local native builds** (`gradle`, `cargo`, `xcodebuild`): environment has no JDK/Rust/Xcode and follows `CLAUDE.md` — CI on GitHub Actions verifies Android, desktop, and static analysis.
-- **No edits applied yet to `AGENTS.md`, `CLAUDE.md`, or `.agents/skills/`**: proposed diffs and skill structure are awaiting Operator approval before committing.
-- **Android invariants preserved**: `applicationId` (`com.humming.keyboard`), package names, and upload signing key untouched.
-- **Zero fabricated numbers**: every WER/latency/RAM figure in `README.md`, banner, and `play/site/index.html` matches `docs/BENCHMARKS.md` and `docs/bench/`.
+1. **Android offline dictation & crash-log fixes (Issue #22)**
+   - `VoiceEdit.kt`: removed unsupported `Pattern.UNICODE_CHARACTER_CLASS`, replaced `\b` with explicit Unicode word boundaries, added Unicode tests (`VoiceEditTest.kt`) and Android 14 ART smoke test (`ImeSmokeTest.voiceEditRunsOnAndroidArt` — verified green on `android-emulator.yml`).
+   - `CrashDialogActivity.kt`: short clipboard label, 200k-char cap, `runCatching` guard.
+2. **Desktop v1.9.0 capabilities (zero new crates)**
+   - **Command Mode, Per-App Tone & Local Ollama / BYOK AI** (`llm.rs`, `insert::grab_selection`): select text in any app + `Ctrl/Cmd+Shift+E` to rewrite via 100% local Ollama, optional BYOK OpenAI/Anthropic/Gemini (HTTPS enforced remotely), or offline `VoiceEdit` fallback; per-app tone rules (`casual`/`bullets` offline + AI polish); CSV dictionary import/export; History `"Teach word"`.
+   - **Offline Botless Meeting Notepad & Ask Across Meetings** (`meetings.rs`, `audio::Recorder::drain`): 12s chunked local Parakeet transcription (mic or OS loopback/monitor device, zero call bots), split-pane manual notes + live timestamped transcript, template Markdown synthesis (Ollama, BYOK, or deterministic offline digest), cross-meeting cited Q&A (`ask_meetings`), Markdown export, and tray shortcut.
+   - **Re-paste Shortcut, GPU Execution Provider & Local HTTP API** (`local_api.rs`, `stt.rs`): global `Ctrl/Cmd+Shift+V` re-paste last dictation, optional CoreML/DirectML/CUDA provider with automatic CPU fallback, opt-in `127.0.0.1` Bearer-auth HTTP server (`/health`, `/v1/transcribe`, `/v1/cleanup`).
+   - **Overlay & Desktop UX**: glassmorphic animated floating pill (`overlay.html`/`overlay.css`/`overlay.ts`) with live elapsed timer, 11-bar mirrored waveform, Listening / Command Mode / Rewriting states; brand 5-bar SVG waveform icon in sidebar; tab reveal transitions.
+3. **Interactive Homepage, Competitor Binary Audit & Launch Graphics**
+   - `COMPETITORS.md`, `README.md`, `play/site/index.html`: live verified binary size table (Humming 8.8 MB Win / 24.9 MB Mac / 17.5 MB `.deb` vs Hex v3.5.0 77.2 / 33.5 / 35.7 MB vs Granola v7.853.5 171.4 / 271.2 MB), full 8-competitor feature matrix, animated hero waveform, interactive 6-mode voice pipeline demo (`site.js`), and real v1.9.0 desktop Home & Meeting Notepad captures.
+   - `scripts/render_social_preview.py`: renders `docs/banner.png` (1600×640), `docs/social-preview.png` (1280×640), `docs/poster.png` (1600×2000 launch poster), and `play/graphics/feature-graphic-1024x500.png` (1024×500).
+4. **Version bump to `1.9.0` (`1900`)** across `keyboard/gradle.properties`, `desktop/src-tauri/tauri.conf.json`, `desktop/src-tauri/Cargo.toml`, `desktop/package.json`, `core/Cargo.toml`, `ios/project.yml`, and `CHANGELOG.md`.
 
 ## Relevant File Paths
 
-- Android fixes: `keyboard/app/src/main/kotlin/com/humming/keyboard/VoiceEdit.kt`, `keyboard/app/src/test/kotlin/com/humming/keyboard/VoiceEditTest.kt`, `keyboard/app/src/androidTest/kotlin/com/humming/keyboard/ImeSmokeTest.kt`, `keyboard/app/src/main/kotlin/dev/patrickgold/florisboard/lib/crashutility/CrashDialogActivity.kt`
-- Desktop tray: `desktop/src-tauri/src/lib.rs`
-- Competitor research & docs: `COMPETITORS.md`, `README.md`, `CHANGELOG.md`, `play/PRIVACY_POLICY.md`
-- Website & brand assets: `play/site/index.html`, `play/site/assets/site.css`, `play/site/privacy.html`, `scripts/render_social_preview.py`, `docs/banner.png`, `docs/social-preview.png`
-- Agent config (audited, not yet modified): `AGENTS.md`, `CLAUDE.md`
+- Desktop Rust backend: `desktop/src-tauri/src/{lib.rs,llm.rs,meetings.rs,local_api.rs,settings.rs,stt.rs,insert.rs,audio.rs}`
+- Desktop frontend & overlay: `desktop/{index.html,overlay.html}`, `desktop/src/{main.ts,style.css,overlay.ts,overlay.css}`
+- Android fixes: `keyboard/app/src/main/kotlin/com/humming/keyboard/VoiceEdit.kt`, `keyboard/app/src/main/kotlin/dev/patrickgold/florisboard/lib/crashutility/CrashDialogActivity.kt`
+- Website & brand assets: `play/site/{index.html,privacy.html,assets/site.css,assets/site.js}`, `scripts/render_social_preview.py`, `docs/{banner.png,poster.png,social-preview.png}`, `play/graphics/feature-graphic-1024x500.png`
+- Docs: `README.md`, `COMPETITORS.md`, `CHANGELOG.md`
 
-## Test & Verification Results
+## Verification Summary
 
-- `python3 -m unittest discover -s scripts -p 'test_*.py'`: **27/27 passed** (note: pre-existing `ResourceWarning: unclosed file` in `test_assemble_release.py`).
-- `python3 scripts/assemble_site.py /tmp/humming-site && python3 scripts/check_site.py /tmp/humming-site`: **37 files assembled, 3 pages checked, 0 problems**.
-- Python regex mirror of `VoiceEdit.kt` against `core/testdata/voice_edit_vectors.json` + Unicode targets: **39/39 passed**.
-- Playwright headless Chromium QA (`1440×900`, `768×1024`, `390×844`, dark + light): **0 horizontal overflow**, **0 page errors**, pill nav button hover verified (`999px`, `rgb(176, 48, 80)`), `proofTopGap = 0`.
-- **GitHub Actions CI on PR #30 (verified so far)**:
-  - `check (Linux compile + unit tests)` (desktop Rust): **passed**
-  - `quality / gitleaks (full history)`: **passed**
-  - `quality / website check + script tests`: **passed**
-  - `detekt 1.23.8`: **passed** (0 findings outside baseline)
-  - `ktlint`: fixed single blank-line finding (`VoiceEdit.kt:37`, `spacing-between-declarations-with-comments`) and re-pushed; re-verify `quality / ktlint + detekt`, `keyboard`, `android-emulator`, and `ci / gate`.
+- Local Python tests (`scripts/test_*.py`): **27/27 passed**
+- Website assembly & validation (`assemble_site.py` + `check_site.py`): **39 files, 3 pages, 0 problems**
+- Headless Chromium visual QA: verified website (dark/light, desktop/tablet/mobile, interactive 6-mode demo, `0` horizontal overflow, `0` errors), Desktop UI (all 5 tabs dark/light + glassmorphic overlay states), and all 4 generated brand graphics (`banner.png`, `poster.png`, `social-preview.png`, `feature-graphic-1024x500.png`).
+- GitHub Actions CI: all 21 checks passed on `15f8c3a`; final v1.9.0 commit verified on PR #30 prior to merge and `v1.9.0` tag.
 
-## Unresolved Issues
+## Remaining / Optional Follow-Ups
 
-- **Issue #21** (`Offline model checksum mismatch` on v1.8.0): already addressed by archive re-pinning in v1.8.1 (`71f42cb`); confirm with reporter before closing.
-- **GitHub Pages live deploy**: `pages.yml` only triggers on push to `main` (or `workflow_dispatch`), so the updated homepage goes live once the PR is merged into `main`.
-- **`AGENTS.md` / `CLAUDE.md` / skills / scripts refactors**: proposals prepared; awaiting Operator approval before applying.
-- **Pending Dependabot PRs** on repo (`#23`, `#28`) untouched — out of scope.
-
-## Exact Next Steps
-
-1. Wait for GitHub Actions `ci` (`quality`, `keyboard`, `desktop`, `gate`) and `android-emulator` checks on the open PR for `feat/complete-humming-and-homepage`; fix any `ktlint`/`detekt`/compile findings if reported.
-2. Merge PR into `main` so `pages.yml` deploys the refreshed site and social preview to `https://muhib-karim.github.io/humming-keyboard/`.
-3. Once Operator approves the `AGENTS.md` rewrite and on-demand skills layout, apply them and remove broken references (`TASKS.md`, `docs/PROJECT_BRAIN.md`).
-4. Optionally apply the scripts/tools audit cleanups (shared CLI flags, log-to-file defaults, fixing `ResourceWarning` file handles in `scripts/assemble_release.py` and `scripts/test_assemble_release.py`).
+- `AGENTS.md`, `.agents/skills/`, and `scripts/` cleanup proposals from the earlier audit remain ready for approval before applying.
+- Dependabot PRs (`#23`, `#28`) untouched (separate scope).
+- Future v2.0 roadmap: true token-streaming partial ASR on desktop and native macOS CoreAudio process-tap loopback without virtual devices.

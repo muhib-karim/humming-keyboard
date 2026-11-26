@@ -122,7 +122,7 @@ fn set_status(app: &AppHandle, state: &str, message: impl Into<String>) {
 }
 
 fn engine_key(s: &Settings) -> String {
-    s.model.clone()
+    format!("{}:{}", s.model, s.stt_provider)
 }
 
 /// Downloads one model, reporting progress to the window. Blocking; call it on a worker thread.
@@ -150,7 +150,7 @@ fn load_engine(app: &AppHandle) {
             set_status(&app, "no_model", format!("Download the {} model to start", picked.label));
             return;
         };
-        let key = info.id.to_string();
+        let key = format!("{}:{}", info.id, s.stt_provider);
         if state.engine.lock().map(|g| g.as_ref().map(|e| e.key == key).unwrap_or(false)).unwrap_or(false) {
             set_status(&app, "ready", "");
             return;
@@ -159,7 +159,7 @@ fn load_engine(app: &AppHandle) {
         if let Ok(mut g) = state.engine.lock() {
             *g = None; // free the old model before loading the next one
         }
-        match SherpaEngine::load(&state.models_dir, info) {
+        match SherpaEngine::load_with_provider(&state.models_dir, info, &s.stt_provider) {
             Ok(engine) => {
                 engine.warmup();
                 if let Ok(mut g) = state.engine.lock() {
@@ -226,7 +226,7 @@ fn show_overlay(app: &AppHandle) {
     let _ = w.set_ignore_cursor_events(true);
     if let Ok(Some(m)) = w.primary_monitor() {
         let scale = m.scale_factor();
-        let (ww, wh) = ((240.0 * scale) as i32, (64.0 * scale) as i32);
+        let (ww, wh) = ((280.0 * scale) as i32, (64.0 * scale) as i32);
         let x = m.position().x + (m.size().width as i32 - ww) / 2;
         let y = m.position().y + m.size().height as i32 - wh - (96.0 * scale) as i32;
         let _ = w.set_position(tauri::PhysicalPosition::new(x, y));
@@ -317,7 +317,7 @@ fn stop_dictation(app: &AppHandle) {
     let to_focused_app = state.to_focused_app.load(Ordering::SeqCst);
     let command_mode = state.command_mode.swap(false, Ordering::SeqCst);
     // The model actually loaded (it can be a fallback while the picked one downloads): clean-up rules follow it.
-    let engine = state.engine.lock().ok().and_then(|g| g.as_ref().map(|e| (e.engine.clone(), e.key.clone())));
+    let engine = state.engine.lock().ok().and_then(|g| g.as_ref().map(|e| (e.engine.clone(), e.engine.model_id.to_string())));
     let Some((engine, loaded_model)) = engine else {
         hide_overlay(app);
         set_status(app, "no_model", "Download a speech model first");
@@ -465,13 +465,35 @@ fn on_hotkey(app: &AppHandle, pressed: bool, command_mode: bool) {
     }
 }
 
-fn register_hotkeys(app: &AppHandle, hotkey: &str, command_hotkey: &str) -> Result<(), String> {
+fn repaste_last(app: &AppHandle) {
+    let state = app.state::<AppState>();
+    let s = state.settings.lock().map(|g| g.clone()).unwrap_or_default();
+    let last = state
+        .history
+        .lock()
+        .ok()
+        .and_then(|h| h.entries.first().map(|e| e.text.clone()));
+    if let Some(t) = last {
+        if !t.is_empty() {
+            if let Err(e) = insert::insert(&t, &s.insert_method, s.restore_clipboard, s.paste_delay_ms) {
+                let _ = insert::copy(&t);
+                set_status(app, "error", format!("{e}. Copied last dictation to clipboard."));
+            }
+        }
+    }
+}
+
+fn register_hotkeys(app: &AppHandle, hotkey: &str, command_hotkey: &str, repaste_hotkey: &str) -> Result<(), String> {
     let gs = app.global_shortcut();
     let _ = gs.unregister_all();
     gs.register(hotkey).map_err(|e| format!("cannot use the shortcut \"{hotkey}\": {e}"))?;
     let cmd = command_hotkey.trim();
     if !cmd.is_empty() && cmd != hotkey.trim() {
         gs.register(cmd).map_err(|e| format!("cannot use the Command Mode shortcut \"{cmd}\": {e}"))?;
+    }
+    let rp = repaste_hotkey.trim();
+    if !rp.is_empty() && rp != hotkey.trim() && rp != cmd {
+        gs.register(rp).map_err(|e| format!("cannot use the Re-paste shortcut \"{rp}\": {e}"))?;
     }
     Ok(())
 }
@@ -501,7 +523,12 @@ fn handle_local_api(app: &AppHandle, token: &str, req: local_api::HttpRequest) -
     let state = app.state::<AppState>();
     if req.method == "GET" && req.path == "/health" {
         let st = state.status.lock().map(|g| g.clone()).unwrap_or(Status { state: "error".into(), message: String::new() });
-        let model = state.engine.lock().ok().and_then(|g| g.as_ref().map(|e| e.key.clone()));
+        let (model, provider) = state
+            .engine
+            .lock()
+            .ok()
+            .and_then(|g| g.as_ref().map(|e| (Some(e.engine.model_id.to_string()), Some(e.engine.active_provider.clone()))))
+            .unwrap_or((None, None));
         return local_api::HttpResponse::json(
             200,
             &serde_json::json!({
@@ -509,6 +536,7 @@ fn handle_local_api(app: &AppHandle, token: &str, req: local_api::HttpRequest) -
                 "version": env!("CARGO_PKG_VERSION"),
                 "status": st.state,
                 "model": model,
+                "provider": provider,
             }),
         );
     }
@@ -532,7 +560,7 @@ fn handle_local_api(app: &AppHandle, token: &str, req: local_api::HttpRequest) -
             local_api::HttpResponse::json(200, &serde_json::json!({ "text": polished.trim_end() }))
         }
         "/v1/transcribe" => {
-            let engine = state.engine.lock().ok().and_then(|g| g.as_ref().map(|e| (e.engine.clone(), e.key.clone())));
+            let engine = state.engine.lock().ok().and_then(|g| g.as_ref().map(|e| (e.engine.clone(), e.engine.model_id.to_string())));
             let Some((engine, loaded_model)) = engine else {
                 return local_api::HttpResponse::err(503, "no speech model loaded");
             };
@@ -612,9 +640,9 @@ fn save_settings(app: AppHandle, state: State<'_, AppState>, settings: Settings)
         new.local_api_token = local_api::generate_token();
     }
     let old = state.settings.lock().map(|g| g.clone()).unwrap_or_default();
-    if new.hotkey != old.hotkey || new.command_hotkey != old.command_hotkey {
-        if let Err(e) = register_hotkeys(&app, &new.hotkey, &new.command_hotkey) {
-            let _ = register_hotkeys(&app, &old.hotkey, &old.command_hotkey);
+    if new.hotkey != old.hotkey || new.command_hotkey != old.command_hotkey || new.repaste_hotkey != old.repaste_hotkey {
+        if let Err(e) = register_hotkeys(&app, &new.hotkey, &new.command_hotkey, &new.repaste_hotkey) {
+            let _ = register_hotkeys(&app, &old.hotkey, &old.command_hotkey, &old.repaste_hotkey);
             return Err(e);
         }
     }
@@ -790,7 +818,7 @@ fn flush_meeting_chunk(app: &AppHandle, meeting_id: u64, started_ms: u64, sample
         return;
     }
     let state = app.state::<AppState>();
-    let engine = state.engine.lock().ok().and_then(|g| g.as_ref().map(|e| (e.engine.clone(), e.key.clone())));
+    let engine = state.engine.lock().ok().and_then(|g| g.as_ref().map(|e| (e.engine.clone(), e.engine.model_id.to_string())));
     let Some((engine, loaded_model)) = engine else { return };
     let pcm = stt::to_16k(&samples, rate);
     let vad = humming_core::VadConfig::default();
@@ -970,12 +998,51 @@ fn delete_meeting(state: State<'_, AppState>, id: u64) {
     }
 }
 
+/// Ask across ALL saved meetings (Granola cross-meeting Q&A): works 100% offline with cited keyword matches,
+/// or synthesizes an answer via configured local Ollama / BYOK AI grounded strictly in matching meeting excerpts.
+#[tauri::command]
+async fn ask_meetings(state: State<'_, AppState>, query: String) -> Result<String, String> {
+    let q = query.trim().to_string();
+    if q.is_empty() {
+        return Err("enter a question or search term".into());
+    }
+    let hits = state
+        .meetings
+        .lock()
+        .map(|m| m.search_context(&q, 16))
+        .unwrap_or_default();
+    if hits.is_empty() {
+        return Ok("No matching notes or transcript segments found across your saved meetings.".into());
+    }
+    let s = state.settings.lock().map(|g| g.clone()).unwrap_or_default();
+    let cfg = llm::LlmConfig::from_settings(&s);
+    tauri::async_runtime::spawn_blocking(move || {
+        let joined = hits.join("\n");
+        if cfg.is_configured() {
+            let sys = "Answer the user's question using ONLY the meeting excerpts provided below. Cite the meeting title and timestamp in brackets. If the excerpts do not contain the answer, say so clearly.";
+            let user = format!("Question: {q}\n\nMeeting excerpts:\n{joined}");
+            llm::chat(&cfg, sys, &user).unwrap_or(joined)
+        } else {
+            format!("Matching excerpts (offline search):\n\n{joined}")
+        }
+    })
+    .await
+    .map_err(|e| e.to_string())
+}
+
 #[tauri::command]
 fn app_info(state: State<'_, AppState>) -> serde_json::Value {
+    let active_provider = state
+        .engine
+        .lock()
+        .ok()
+        .and_then(|g| g.as_ref().map(|e| e.engine.active_provider.clone()))
+        .unwrap_or_else(|| "cpu".into());
     serde_json::json!({
         "version": env!("CARGO_PKG_VERSION"),
         "os": std::env::consts::OS,
         "arch": std::env::consts::ARCH,
+        "provider": active_provider,
         "models_dir": state.models_dir.display().to_string(),
         "history_file": state.history.lock().map(|h| h.path().display().to_string()).unwrap_or_default(),
         "meetings_file": state.meetings.lock().map(|m| m.path().display().to_string()).unwrap_or_default(),
@@ -999,12 +1066,20 @@ pub fn run() {
         .plugin(
             tauri_plugin_global_shortcut::Builder::new()
                 .with_handler(|app, shortcut, event| {
-                    let is_cmd = app
+                    let (cmd_hk, rp_hk) = app
                         .try_state::<AppState>()
-                        .and_then(|st| st.settings.lock().ok().map(|g| g.command_hotkey.clone()))
-                        .and_then(|hk| hk.trim().parse::<tauri_plugin_global_shortcut::Shortcut>().ok())
-                        .map(|cs| cs == *shortcut)
-                        .unwrap_or(false);
+                        .and_then(|st| st.settings.lock().ok().map(|g| (g.command_hotkey.clone(), g.repaste_hotkey.clone())))
+                        .unwrap_or_default();
+                    let is_repaste = !rp_hk.trim().is_empty()
+                        && rp_hk.trim().parse::<tauri_plugin_global_shortcut::Shortcut>().ok().as_ref() == Some(shortcut);
+                    if is_repaste {
+                        if event.state() == ShortcutState::Pressed {
+                            repaste_last(app);
+                        }
+                        return;
+                    }
+                    let is_cmd = !cmd_hk.trim().is_empty()
+                        && cmd_hk.trim().parse::<tauri_plugin_global_shortcut::Shortcut>().ok().as_ref() == Some(shortcut);
                     on_hotkey(app, event.state() == ShortcutState::Pressed, is_cmd);
                 })
                 .build(),
@@ -1091,7 +1166,7 @@ pub fn run() {
                 })
                 .build(app)?;
 
-            if let Err(e) = register_hotkeys(&handle, &settings.hotkey, &settings.command_hotkey) {
+            if let Err(e) = register_hotkeys(&handle, &settings.hotkey, &settings.command_hotkey, &settings.repaste_hotkey) {
                 set_status(&handle, "error", e);
             }
             if let Err(e) = sync_local_api(&handle) {
@@ -1145,6 +1220,7 @@ pub fn run() {
             synthesize_meeting,
             export_meeting_markdown,
             delete_meeting,
+            ask_meetings,
             app_info,
             update_status,
             check_for_updates

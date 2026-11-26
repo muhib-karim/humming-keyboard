@@ -8,7 +8,18 @@
   </head>
   <body>
     <nav class="side">
-      <div class="brand"><span class="dot"></span>Humming</div>
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="#fff">
+            <rect x="2" y="9" width="2.6" height="6" rx="1.3"/>
+            <rect x="6.35" y="6" width="2.6" height="12" rx="1.3"/>
+            <rect x="10.7" y="3" width="2.6" height="18" rx="1.3"/>
+            <rect x="15.05" y="6" width="2.6" height="12" rx="1.3"/>
+            <rect x="19.4" y="9" width="2.6" height="6" rx="1.3"/>
+          </svg>
+        </span>
+        Humming
+      </div>
       <button data-tab="home" class="active">Home</button>
       <button data-tab="meetings">Meetings</button>
       <button data-tab="history">History</button>
@@ -95,6 +106,15 @@
               </div>
               <pre id="mtg-summary" class="out mtg-summary"></pre>
             </div>
+            <div class="card">
+              <h2>Ask across all meetings</h2>
+              <p class="muted small">Search decisions, owners, and quotes across every saved meeting (100% offline search, or grounded AI answer when Ollama / BYOK is enabled).</p>
+              <form id="mtg-ask-form" class="row" style="margin-top:8px">
+                <input id="mtg-ask-q" placeholder="e.g. What did we decide about the Android release?" style="flex:1;min-width:200px" />
+                <button class="primary" type="submit" id="mtg-ask-btn">Ask</button>
+              </form>
+              <pre id="mtg-ask-out" class="out mtg-summary" hidden></pre>
+            </div>
           </div>
         </div>
       </section>
@@ -166,6 +186,9 @@
             <label>Command Mode shortcut (select text anywhere, speak an edit instruction; blank = off)
               <input name="command_hotkey" placeholder="CommandOrControl+Shift+E" />
             </label>
+            <label>Re-paste last dictation shortcut (pastes your most recent dictation anywhere; blank = off)
+              <input name="repaste_hotkey" placeholder="CommandOrControl+Shift+V" />
+            </label>
             <label>How the shortcut works
               <select name="mode">
                 <option value="hold">Hold to talk (push-to-talk)</option>
@@ -199,6 +222,15 @@
             <legend>Microphone and app</legend>
             <label>Microphone
               <select name="input_device"></select>
+            </label>
+            <label>Speech accelerator (GPU provider falls back to CPU automatically if unavailable)
+              <select name="stt_provider">
+                <option value="cpu">CPU (default, works everywhere)</option>
+                <option value="auto">Auto GPU (CoreML / DirectML / CUDA with CPU fallback)</option>
+                <option value="coreml">Apple CoreML (macOS)</option>
+                <option value="directml">DirectML GPU (Windows)</option>
+                <option value="cuda">NVIDIA CUDA (Windows / Linux)</option>
+              </select>
             </label>
             <label>Longest dictation in seconds (0 = no limit)<input name="max_seconds" type="number" min="0" max="86400" /></label>
             <label class="check"><input type="checkbox" name="show_overlay" /> Show the listening bar while dictating</label>

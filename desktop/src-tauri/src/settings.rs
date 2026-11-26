@@ -96,6 +96,10 @@ pub struct Settings {
     pub auto_update: bool,
     /// Command Mode shortcut (1.9): select text in any app, hold/press this shortcut, speak an edit instruction.
     pub command_hotkey: String,
+    /// Re-paste last dictation shortcut (1.9): pastes the most recent dictation into the focused app.
+    pub repaste_hotkey: String,
+    /// Speech inference execution provider (1.9): "cpu" | "auto" | "coreml" | "cuda" | "directml" (falls back to cpu).
+    pub stt_provider: String,
     /// Optional AI provider for Command Mode, per-app polish, and meeting synthesis:
     /// "off" | "ollama" (100% local) | "openai" | "anthropic" | "gemini". Off by default.
     pub llm_provider: String,
@@ -146,6 +150,8 @@ impl Default for Settings {
             max_seconds: 0,
             auto_update: true,
             command_hotkey: "CommandOrControl+Shift+E".into(),
+            repaste_hotkey: "CommandOrControl+Shift+V".into(),
+            stt_provider: "cpu".into(),
             llm_provider: "off".into(),
             llm_endpoint: String::new(),
             llm_model: String::new(),
@@ -216,6 +222,9 @@ impl Settings {
         }
         if !matches!(self.llm_provider.as_str(), "off" | "ollama" | "openai" | "anthropic" | "gemini") {
             self.llm_provider = "off".into();
+        }
+        if !matches!(self.stt_provider.as_str(), "cpu" | "auto" | "coreml" | "cuda" | "directml") {
+            self.stt_provider = "cpu".into();
         }
         for r in self.tone_rules.iter_mut() {
             r.apps.retain(|a| !a.trim().is_empty());

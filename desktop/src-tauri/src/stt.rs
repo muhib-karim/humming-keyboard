@@ -20,6 +20,7 @@ pub struct SherpaEngine {
     /// Longest window one decode gets: Moonshine v2 returns nothing for clips over ~10 s in sherpa-onnx 1.13.8.
     max_window_s: usize,
     pub model_id: &'static str,
+    pub active_provider: String,
     pub load_ms: u64,
 }
 
@@ -27,41 +28,78 @@ pub fn threads() -> i32 {
     std::thread::available_parallelism().map(|n| n.get()).unwrap_or(2).clamp(1, 4) as i32
 }
 
+/// Candidate ONNX execution providers in preference order; always ends with "cpu" so loading never regresses.
+pub fn provider_candidates(requested: &str) -> Vec<&'static str> {
+    let mut out = match requested.trim().to_lowercase().as_str() {
+        "coreml" => vec!["coreml"],
+        "cuda" => vec!["cuda"],
+        "directml" => vec!["directml"],
+        "auto" => {
+            if cfg!(target_os = "macos") {
+                vec!["coreml"]
+            } else if cfg!(target_os = "windows") {
+                vec!["directml"]
+            } else {
+                vec!["cuda"]
+            }
+        }
+        _ => vec![],
+    };
+    if !out.contains(&"cpu") {
+        out.push("cpu");
+    }
+    out
+}
+
 impl SherpaEngine {
     pub fn load(models_dir: &Path, m: &'static VoiceModel) -> Result<Self, String> {
+        Self::load_with_provider(models_dir, m, "cpu")
+    }
+
+    pub fn load_with_provider(models_dir: &Path, m: &'static VoiceModel, requested_provider: &str) -> Result<Self, String> {
         let t0 = Instant::now();
         let dir = dir_for(models_dir, m);
         let p = |f: &str| Some(dir.join(f).to_string_lossy().into_owned());
-        let mut mc = OfflineModelConfig {
-            tokens: p("tokens.txt"),
-            num_threads: threads(),
-            provider: Some("cpu".into()),
-            ..Default::default()
+        let build_mc = |prov: &str| {
+            let mut mc = OfflineModelConfig {
+                tokens: p("tokens.txt"),
+                num_threads: threads(),
+                provider: Some(prov.into()),
+                ..Default::default()
+            };
+            match m.kind {
+                Kind::NemoCtc => {
+                    mc.nemo_ctc = OfflineNemoEncDecCtcModelConfig { model: p("model.int8.onnx"), ..Default::default() };
+                }
+                Kind::NemoTransducer => {
+                    mc.transducer = OfflineTransducerModelConfig {
+                        encoder: p("encoder.int8.onnx"),
+                        decoder: p("decoder.int8.onnx"),
+                        joiner: p("joiner.int8.onnx"),
+                    };
+                    mc.model_type = Some("nemo_transducer".into());
+                }
+                Kind::MoonshineV2 => {
+                    mc.moonshine = OfflineMoonshineModelConfig {
+                        encoder: p("encoder_model.ort"),
+                        merged_decoder: p("decoder_model_merged.ort"),
+                        ..Default::default()
+                    };
+                }
+            }
+            mc
         };
-        match m.kind {
-            Kind::NemoCtc => {
-                mc.nemo_ctc = OfflineNemoEncDecCtcModelConfig { model: p("model.int8.onnx"), ..Default::default() };
-            }
-            Kind::NemoTransducer => {
-                mc.transducer = OfflineTransducerModelConfig {
-                    encoder: p("encoder.int8.onnx"),
-                    decoder: p("decoder.int8.onnx"),
-                    joiner: p("joiner.int8.onnx"),
-                };
-                mc.model_type = Some("nemo_transducer".into());
-            }
-            Kind::MoonshineV2 => {
-                mc.moonshine = OfflineMoonshineModelConfig {
-                    encoder: p("encoder_model.ort"),
-                    merged_decoder: p("decoder_model_merged.ort"),
-                    ..Default::default()
-                };
+        let mut loaded = None;
+        for prov in provider_candidates(requested_provider) {
+            let cfg = OfflineRecognizerConfig { model_config: build_mc(prov), ..Default::default() };
+            if let Some(rec) = OfflineRecognizer::create(&cfg) {
+                loaded = Some((rec, prov.to_string()));
+                break;
             }
         }
-        let cfg = OfflineRecognizerConfig { model_config: mc, ..Default::default() };
-        let recognizer = OfflineRecognizer::create(&cfg).ok_or_else(|| "the speech model could not be loaded".to_string())?;
+        let (recognizer, active_provider) = loaded.ok_or_else(|| "the speech model could not be loaded".to_string())?;
         let max_window_s = if m.kind == Kind::MoonshineV2 { MOONSHINE_WINDOW_S } else { MAX_WINDOW_S };
-        Ok(Self { recognizer, max_window_s, model_id: m.id, load_ms: t0.elapsed().as_millis() as u64 })
+        Ok(Self { recognizer, max_window_s, model_id: m.id, active_provider, load_ms: t0.elapsed().as_millis() as u64 })
     }
 
     fn decode(&self, samples: &[f32]) -> String {
@@ -202,5 +240,16 @@ mod tests {
         let r = to_16k(&s, 48_000);
         assert_eq!(r.len(), 16_000);
         assert!((r[100] - 0.5).abs() < 1e-6);
+    }
+
+    #[test]
+    fn provider_candidates_always_fall_back_to_cpu() {
+        assert_eq!(provider_candidates("cpu"), vec!["cpu"]);
+        assert_eq!(provider_candidates("coreml"), vec!["coreml", "cpu"]);
+        assert_eq!(provider_candidates("cuda"), vec!["cuda", "cpu"]);
+        assert_eq!(provider_candidates("directml"), vec!["directml", "cpu"]);
+        let auto = provider_candidates("auto");
+        assert_eq!(auto.last().copied(), Some("cpu"));
+        assert!(auto.len() == 2);
     }
 }

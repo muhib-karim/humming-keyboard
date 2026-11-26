@@ -6,7 +6,7 @@ type ToneRule = { apps: string[]; tone: string; instructions: string };
 type MeetingSegment = { ts_ms: number; elapsed_s: number; text: string };
 type Meeting = { id: number; title: string; started_ms: number; ended_ms: number | null; notes: string; summary: string; template: string; segments: MeetingSegment[] };
 type Settings = {
-  hotkey: string; command_hotkey: string; mode: string; model: string;
+  hotkey: string; command_hotkey: string; repaste_hotkey: string; stt_provider: string; mode: string; model: string;
   clean_mode: boolean; remove_fillers: boolean; self_corrections: boolean; voice_commands: boolean; voice_edit: boolean;
   format_lists: boolean; accuracy_mode: boolean; dictionary: Dict[]; tone_rules: ToneRule[];
   insert_method: string; restore_clipboard: boolean;
@@ -122,11 +122,24 @@ function renderHistory() {
     <li>
       <div class="meta">${new Date(h.ts).toLocaleString()} &middot; ${(h.audio_ms / 1000).toFixed(1)} s audio &middot; ready in ${(h.latency_ms / 1000).toFixed(2)} s${h.inserted ? "" : " &middot; not pasted"}</div>
       <div class="text">${esc(h.text)}</div>
-      <div class="row"><button data-copy="${h.id}">Copy</button><button class="link" data-rm="${h.id}">Delete</button></div>
+      <div class="row"><button data-copy="${h.id}">Copy</button><button data-teach="${h.id}">Teach word</button><button class="link" data-rm="${h.id}">Delete</button></div>
     </li>`).join("") || `<li class="muted">Nothing yet. Hold the shortcut and say something.</li>`;
   document.querySelectorAll<HTMLButtonElement>("[data-copy]").forEach((b) => b.addEventListener("click", async () => {
     const h = history.find((x) => x.id === Number(b.dataset.copy));
     if (h) { await invoke("copy_text", { text: h.text }); b.textContent = "Copied"; setTimeout(() => (b.textContent = "Copy"), 1200); }
+  }));
+  document.querySelectorAll<HTMLButtonElement>("[data-teach]").forEach((b) => b.addEventListener("click", async () => {
+    const h = history.find((x) => x.id === Number(b.dataset.teach));
+    if (!h) return;
+    const spoken = prompt("Misheard word or phrase (optional — leave blank to only enforce spelling/casing):", "") ?? "";
+    const written = prompt("Correct spelling Humming should write:", h.text.split(/\s+/)[0] || "");
+    if (!written || !written.trim()) return;
+    settings = await invoke<Settings>("save_settings", {
+      settings: { ...settings, dictionary: [...settings.dictionary, { spoken: spoken.trim(), written: written.trim(), apps: [] }] },
+    });
+    renderDict();
+    b.textContent = "Learned";
+    setTimeout(() => (b.textContent = "Teach word"), 1500);
   }));
   document.querySelectorAll<HTMLButtonElement>("[data-rm]").forEach((b) => b.addEventListener("click", async () => {
     await invoke("delete_history", { id: Number(b.dataset.rm) });
@@ -332,6 +345,19 @@ $("#mtg-del").addEventListener("click", async () => {
   await invoke("delete_meeting", { id: selectedMeetingId });
   selectedMeetingId = null;
   loadMeetings();
+});
+$("#mtg-ask-form").addEventListener("submit", async (ev) => {
+  ev.preventDefault();
+  const q = $<HTMLInputElement>("#mtg-ask-q").value.trim();
+  if (!q) return;
+  const btn = $<HTMLButtonElement>("#mtg-ask-btn");
+  const out = $("#mtg-ask-out");
+  btn.disabled = true; btn.textContent = "Searching…";
+  out.hidden = false; out.textContent = "Searching across all saved meetings…";
+  try {
+    out.textContent = await invoke<string>("ask_meetings", { query: q });
+  } catch (e) { out.textContent = String(e); }
+  finally { btn.disabled = false; btn.textContent = "Ask"; }
 });
 
 // ---------------- settings ----------------

@@ -90,11 +90,40 @@
     <dl>
       <div><dt>Offline by default</dt><dd>Speech recognition runs on the device: NVIDIA Parakeet &amp; Moonshine on Android and desktop (5 models, up to 25 European languages), Apple's on-device recogniser on iPhone.</dd></div>
       <div><dt>1.77&nbsp;% / 2.72&nbsp;% WER</dt><dd>Best (1.77&nbsp;%), Multilingual (2.24&nbsp;%), Fast default (2.72&nbsp;%) on LibriSpeech test-clean (200 clips). <a href="#bench">All 5 models</a></dd></div>
-      <div><dt>No length limit</dt><dd>An hour of dictation works like ten seconds. No account, no word caps, no telemetry; on desktop no cap is set unless you choose one.</dd></div>
-      <div><dt>Verified &amp; open source</dt><dd>Apache-2.0. SHA-256 pinned models, signed updates, <code>NetworkAuditTest</code>, and committed benchmark scripts &amp; raw output.</dd></div>
+      <div><dt>8.8&nbsp;MB · No limits</dt><dd>Windows installer is 8.8&nbsp;MB (19&times; smaller than Granola, 8.8&times; smaller than Hex). No account, no word caps, no telemetry, no length limit.</dd></div>
+      <div><dt>Verified &amp; open source</dt><dd>Apache-2.0. SHA-256 pinned models, signed updates, <code>NetworkAuditTest</code>, Android 14 emulator CI, and committed raw benchmarks.</dd></div>
     </dl>
   </div>
 </div>
+
+<section id="demo" class="band" aria-labelledby="demo-title">
+  <div class="wrap">
+    <div class="section-head">
+      <h2 id="demo-title">See what Humming does to raw voice</h2>
+      <p>Pick a workflow to inspect how Humming cleans speech, edits text, synthesizes meetings, and types Bangla — offline by default.</p>
+    </div>
+    <div class="demo-tabs" role="tablist" aria-label="Pipeline examples">
+      <button type="button" class="demo-tab active" role="tab" aria-selected="true" data-demo="clean">Clean &amp; Self-Correct</button>
+      <button type="button" class="demo-tab" role="tab" aria-selected="false" data-demo="lists">Spoken Lists</button>
+      <button type="button" class="demo-tab" role="tab" aria-selected="false" data-demo="edit">Edit by Voice</button>
+      <button type="button" class="demo-tab" role="tab" aria-selected="false" data-demo="command">Command Mode</button>
+      <button type="button" class="demo-tab" role="tab" aria-selected="false" data-demo="meetings">Botless Meetings</button>
+      <button type="button" class="demo-tab" role="tab" aria-selected="false" data-demo="bangla">Bangla Phonetic</button>
+    </div>
+    <div class="demo-stage">
+      <div class="demo-box in">
+        <div class="demo-label"><span id="demo-in-label">Raw speech (spoken aloud)</span></div>
+        <div id="demo-in-text" class="demo-text">"um so let's meet at 3, no wait, 4pm and uh bring the printed slides"</div>
+      </div>
+      <div class="demo-arrow" aria-hidden="true">&rarr;</div>
+      <div class="demo-box out">
+        <div class="demo-label"><span id="demo-out-label">Typed into your app</span><span id="demo-badge" class="demo-badge">100% offline · Clean mode</span></div>
+        <div id="demo-out-text" class="demo-text">Let's meet at 4pm and bring the printed slides.</div>
+      </div>
+    </div>
+    <p id="demo-meta" class="demo-meta">Removes fillers and stutters, applies self-corrections, and punctuates on-device across Android, iOS, and desktop.</p>
+  </div>
+</section>
 
 <section id="features" aria-labelledby="features-title">
   <div class="wrap">
@@ -139,17 +168,34 @@
     <article class="feature">
       <div>
         <h3>Your computer, too</h3>
-        <p>Hold <code>Ctrl</code> + <code>Shift</code> + <code>Space</code> (<code>Cmd</code> on a Mac) in any app to dictate, or select text and hold <code>Ctrl</code> + <code>Shift</code> + <code>E</code> for <strong>Command Mode</strong>. The same Parakeet models as Android, downloaded once and checked against a pinned SHA-256 — packaged in an 8.8&nbsp;MB Windows installer (19&times; smaller than Granola, 8.8&times; smaller than Hex).</p>
+        <p>Hold <code>Ctrl</code> + <code>Shift</code> + <code>Space</code> (<code>Cmd</code> on a Mac) in any app to dictate, <code>Ctrl</code> + <code>Shift</code> + <code>E</code> for <strong>Command Mode</strong>, or <code>Ctrl</code> + <code>Shift</code> + <code>V</code> to re-paste your last dictation — packaged in an 8.8&nbsp;MB Windows installer (19&times; smaller than Granola, 8.8&times; smaller than Hex).</p>
         <ul>
-          <li><strong>Command Mode &amp; Per-App Tone:</strong> rewrite selected text by voice or adapt tone per focused app (casual in Slack, formal in Mail) using 100&nbsp;% offline rules, local Ollama, or your own API key.</li>
-          <li><strong>Offline Botless Meeting Notepad:</strong> split-pane notes + live local Parakeet transcript + Markdown synthesis with zero call bots and zero cloud uploads.</li>
-          <li><strong>Local HTTP API &amp; CSV Dictionary:</strong> opt-in <code>127.0.0.1</code> Bearer-authenticated <code>/v1/transcribe</code> &amp; <code>/v1/cleanup</code> endpoints for scripts and agents, plus CSV dictionary import/export and signed self-updates.</li>
+          <li><strong>Command Mode &amp; Per-App Tone:</strong> rewrite selected text by voice or adapt tone per focused app (casual in Slack, formal in Mail, technical in VS Code) using 100&nbsp;% offline rules, local Ollama, or your own API key.</li>
+          <li><strong>GPU Accelerator &amp; Local HTTP API:</strong> optional CoreML / DirectML / CUDA provider with automatic CPU fallback, plus an opt-in <code>127.0.0.1</code> Bearer-authenticated <code>/v1/transcribe</code> &amp; <code>/v1/cleanup</code> API for scripts and agents.</li>
+          <li><strong>CSV Dictionary &amp; Signed Updates:</strong> import/export CSV vocabularies, one-click "Teach word" from History, and Ed25519-signed self-updates.</li>
         </ul>
       </div>
       <div class="feature-media">
         <picture class="shot-wide">
           <source srcset="img/desktop_home.png" media="(prefers-color-scheme: light)">
-          <img src="img/desktop_home_dark.png" width="1100" height="760" alt="Humming desktop app: status, speech model and a Try it box" loading="lazy">
+          <img src="img/desktop_home_dark.png" width="1180" height="800" alt="Humming desktop app: status, speech models, Command Mode shortcut, and Try it box" loading="lazy">
+        </picture>
+      </div>
+    </article>
+
+    <article class="feature flip">
+      <div>
+        <h3>Offline, botless Meeting Notepad</h3>
+        <p>No call bot ever joins your Zoom, Meet, or Teams call — and no meeting audio is uploaded to any cloud. Jot quick bullets while Parakeet transcribes locally in 12-second chunks from your mic or system loopback device.</p>
+        <ul>
+          <li><strong>Human-in-the-loop synthesis:</strong> merge your manual bullets and timestamped transcript into Executive Summary, Action Items, Technical Decisions, or 1-on-1 Markdown via local Ollama, BYOK AI, or a 100&nbsp;% offline action-item digest.</li>
+          <li><strong>Ask across all meetings:</strong> search decisions, quotes, and owners across every saved meeting with <code>[Title · MM:SS]</code> citations, plus one-click Markdown export.</li>
+        </ul>
+      </div>
+      <div class="feature-media">
+        <picture class="shot-wide">
+          <source srcset="img/desktop_meetings.png" media="(prefers-color-scheme: light)">
+          <img src="img/desktop_meetings_dark.png" width="1180" height="800" alt="Humming offline botless Meeting Notepad with split-pane manual notes, live timestamped transcript, and synthesized Markdown" loading="lazy">
         </picture>
       </div>
     </article>
@@ -254,18 +300,20 @@
       <table>
         <caption>Public vendor pages and MIT/Apache repositories, checked through 27 November 2026; full teardown (including Superwhisper, Aqua Voice, Willow, MacWhisper, Handy, Amical, and Granola's botless meeting-notes lane) in <a href="https://github.com/muhib-karim/humming-keyboard/blob/main/COMPETITORS.md#dictation-apps">COMPETITORS.md</a>. Error rates come from different test sets and are not comparable.</caption>
         <thead>
-          <tr><th scope="col"><span class="sr-only">Feature</span></th><th scope="col" class="us">Humming</th><th scope="col">Wispr Flow</th><th scope="col">Typeless</th><th scope="col">Hex (Anomaly)</th><th scope="col">Granola</th><th scope="col">Superwhisper</th></tr>
+          <tr><th scope="col"><span class="sr-only">Feature</span></th><th scope="col" class="us">Humming 1.9</th><th scope="col">Wispr Flow</th><th scope="col">Typeless</th><th scope="col">Hex (Anomaly)</th><th scope="col">Granola</th><th scope="col">Superwhisper</th><th scope="col">Handy / Amical</th></tr>
         </thead>
         <tbody>
-          <tr><th scope="row">Works offline</th><td class="us"><span class="yes">Yes</span>, default, all 5 platforms (English + 25 EU on Android/desktop)</td><td>No, cloud only</td><td>No, cloud only (zero retention)</td><td><span class="yes">Yes</span>, local models (GPU &amp; CPU)</td><td>No, cloud ASR + cloud LLM</td><td>Yes, with local models</td></tr>
-          <tr><th scope="row">Published accuracy</th><td class="us numbers">1.77&nbsp;% Best · 2.72&nbsp;% Fast (LibriSpeech test-clean)</td><td>Charts only; 8.7&nbsp;% measured by Superwhisper</td><td>Not published</td><td>Not published</td><td>Not published</td><td>6.6&nbsp;% WER (own 8-set bench)</td></tr>
-          <tr><th scope="row">Command Mode &amp; voice edit</th><td class="us"><span class="yes">Both</span>: offline VoiceEdit + <strong>Command Mode</strong> on selection (Ollama / BYOK)</td><td>Command Mode (Pro, desktop)</td><td>Speak-to-edit on selection</td><td>Custom pipelines / OpenCode rewrite</td><td>Post-call AI chat</td><td>On selected text</td></tr>
-          <tr><th scope="row">Per-app tone &amp; dictionary</th><td class="us"><span class="yes">Yes</span>: per-app tone rules, snippets &amp; CSV import/export</td><td>Auto-tone, auto-learn &amp; snippets</td><td>Tone, dictionary &amp; CSV import</td><td>Per-app QuickJS pipelines &amp; vocab</td><td>Note templates</td><td>Modes &amp; replacements</td></tr>
-          <tr><th scope="row">Botless meeting notepad</th><td class="us"><span class="yes">Yes</span> (desktop): 100&nbsp;% offline transcript + notes + synthesis</td><td>Wispr Notetaker (cloud)</td><td>No</td><td>Labs: Meetings (macOS beta)</td><td><span class="yes">Core product</span> (cloud, no bot)</td><td>File transcription</td></tr>
-          <tr><th scope="row">Local developer API</th><td class="us"><span class="yes">Yes</span> (opt-in <code>127.0.0.1</code> Bearer HTTP API)</td><td>No</td><td>No</td><td><span class="yes">Yes</span> (local service + TS SDK)</td><td>MCP (cloud notes)</td><td>No</td></tr>
-          <tr><th scope="row">Desktop installer size</th><td class="us numbers"><strong>8.8&nbsp;MB</strong> Win · <strong>24.9&nbsp;MB</strong> Mac · <strong>17.5&nbsp;MB</strong> .deb</td><td>Closed installer</td><td>Closed installer</td><td class="numbers">77.2&nbsp;MB Win · 33.5&nbsp;MB Mac · 35.7&nbsp;MB .deb</td><td class="numbers">171.4&nbsp;MB Win · 271.2&nbsp;MB Mac</td><td>Closed installer</td></tr>
-          <tr><th scope="row">Platforms</th><td class="us"><span class="yes">Android, iPhone, Windows, macOS, Linux</span></td><td>Mac, Windows, iOS, Android (no Linux)</td><td>macOS, Windows, Linux, iOS, Android</td><td>macOS, Windows, Linux (mobile in dev)</td><td>macOS, Windows, iOS, Watch</td><td>macOS, Windows, iOS, Android</td></tr>
-          <tr><th scope="row">Price &amp; open source</th><td class="us"><span class="yes">Free, Apache-2.0</span> (no cap)</td><td>$12–15/mo (2k/wk free), closed</td><td>$12/mo yr ($30 mo), closed</td><td><span class="yes">Free, MIT</span></td><td>Freemium / paid, closed</td><td>$8.49/mo Pro, closed</td></tr>
+          <tr><th scope="row">Works offline</th><td class="us"><span class="yes">Yes</span>, default, all 5 platforms (EN + 25 EU)</td><td>No, cloud only</td><td>No, cloud only (zero retention)</td><td><span class="yes">Yes</span>, local models</td><td>No, cloud ASR + LLM</td><td>Yes, local models</td><td>Yes, desktop local</td></tr>
+          <tr><th scope="row">Published accuracy</th><td class="us numbers"><strong>1.77&nbsp;%</strong> Best · <strong>2.24&nbsp;%</strong> Multi · <strong>2.72&nbsp;%</strong> Fast</td><td>Charts only (8.7&nbsp;% third-party)</td><td>Not published</td><td>Not published</td><td>Not published</td><td>6.6&nbsp;% (own 8-set)</td><td>Not published</td></tr>
+          <tr><th scope="row">Command Mode &amp; voice edit</th><td class="us"><span class="yes">Both</span>: offline VoiceEdit + <strong>Command Mode</strong> (Ollama / BYOK)</td><td>Command Mode (Pro)</td><td>Speak-to-edit on selection</td><td>Pipelines / OpenCode</td><td>Post-call AI chat</td><td>On selected text</td><td>Amical Ollama; Handy none</td></tr>
+          <tr><th scope="row">Per-app tone &amp; CSV dict</th><td class="us"><span class="yes">Yes</span>: per-app tone, snippets, CSV import/export &amp; Teach word</td><td>Auto-tone, auto-learn, snippets</td><td>Tone, dict &amp; CSV import</td><td>QuickJS pipelines &amp; vocab</td><td>Note templates</td><td>Modes &amp; replacements</td><td>Custom prompts</td></tr>
+          <tr><th scope="row">Botless meetings &amp; cross-ask</th><td class="us"><span class="yes">Yes</span>: 100&nbsp;% offline notepad, synthesis &amp; <strong>Ask across meetings</strong></td><td>Wispr Notetaker (cloud)</td><td>No</td><td>Labs: Meetings (macOS beta)</td><td><span class="yes">Core product</span> (cloud, MCP)</td><td>File transcription</td><td>No</td></tr>
+          <tr><th scope="row">Re-paste &amp; Local HTTP API</th><td class="us"><span class="yes">Both</span>: global re-paste shortcut + <code>127.0.0.1</code> Bearer HTTP API</td><td>No</td><td>No</td><td><span class="yes">Both</span>: re-paste + local service/SDK</td><td>Cloud MCP only</td><td>No</td><td>No</td></tr>
+          <tr><th scope="row">GPU acceleration</th><td class="us"><span class="yes">Yes</span>: CoreML / DirectML / CUDA toggle + CPU fallback</td><td>Cloud GPU</td><td>Cloud GPU</td><td><span class="yes">Yes</span>: Metal / Vulkan</td><td>Cloud</td><td>Yes (CoreML)</td><td>GPU Whisper / CPU Parakeet</td></tr>
+          <tr><th scope="row">Full mobile keyboard</th><td class="us"><span class="yes">Yes</span>: Android (FlorisBoard + Bangla phonetic) &amp; iOS</td><td>Voice keyboard (cloud)</td><td>Voice keyboard (cloud)</td><td>Mobile in dev / TestFlight</td><td>iOS note app</td><td>Mobile dictation</td><td>Handy none; Amical beta</td></tr>
+          <tr><th scope="row">Desktop installer size</th><td class="us numbers"><strong>8.8&nbsp;MB</strong> Win · <strong>24.9&nbsp;MB</strong> Mac · <strong>17.5&nbsp;MB</strong> .deb</td><td>Closed installer</td><td>Closed installer</td><td class="numbers">77.2&nbsp;MB Win · 33.5&nbsp;MB Mac · 35.7&nbsp;MB .deb</td><td class="numbers">171.4&nbsp;MB Win · 271.2&nbsp;MB Mac</td><td>Closed installer</td><td>Tauri / Electron</td></tr>
+          <tr><th scope="row">Platforms</th><td class="us"><span class="yes">Android, iOS, Win, macOS, Linux</span></td><td>Mac, Win, iOS, Android</td><td>Mac, Win, Linux, iOS, Android</td><td>Mac, Win, Linux</td><td>Mac, Win, iOS, Watch</td><td>Mac, Win, iOS, Android</td><td>Desktop (Amical no Linux)</td></tr>
+          <tr><th scope="row">Price &amp; licence</th><td class="us"><span class="yes">Free, Apache-2.0</span> (no cap)</td><td>$12–15/mo, closed</td><td>$12–30/mo, closed</td><td><span class="yes">Free, MIT</span></td><td>Freemium / paid, closed</td><td>$8.49/mo Pro, closed</td><td>Free, MIT</td></tr>
         </tbody>
       </table>
     </div>

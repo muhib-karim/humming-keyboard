@@ -20,13 +20,15 @@
 * { box-sizing: border-box; }
 body { margin: 0; display: flex; min-height: 100vh; background: var(--bg); color: var(--fg); }
 nav.side { width: 190px; padding: 18px 12px; border-right: 1px solid var(--line); display: flex; flex-direction: column; gap: 4px; }
-nav.side .brand { font-weight: 700; font-size: 17px; margin: 0 8px 14px; display: flex; align-items: center; gap: 8px; }
-nav.side .brand .dot { width: 12px; height: 12px; border-radius: 50%; background: var(--accent); }
-nav.side button { text-align: left; border: 0; background: none; padding: 8px 10px; border-radius: var(--radius-s); min-height: 32px; color: var(--fg); font: inherit; cursor: pointer; }
+nav.side .brand { font-weight: 750; font-size: 17px; margin: 0 8px 14px; display: flex; align-items: center; gap: 10px; letter-spacing: -0.02em; }
+nav.side .brand-mark { width: 26px; height: 26px; border-radius: 7px; background: linear-gradient(155deg, #eb4c7b, #ca349c); display: grid; place-items: center; box-shadow: 0 4px 12px rgba(229, 72, 107, .32); flex: none; }
+nav.side button { text-align: left; border: 0; background: none; padding: 8px 10px; border-radius: var(--radius-s); min-height: 32px; color: var(--fg); font: inherit; cursor: pointer; transition: background-color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out); }
+nav.side button:hover:not(.active) { background: color-mix(in srgb, var(--fg) 5%, transparent); }
 nav.side button.active { background: var(--card); box-shadow: 0 0 0 1px var(--line), var(--shadow-1); font-weight: 600; }
 nav.side .foot { margin-top: auto; font-size: 11px; color: var(--muted); padding: 0 8px; }
 main { flex: 1; padding: 24px 28px; overflow: auto; max-height: 100vh; }
-.tab { display: none; max-width: 760px; } .tab.active { display: block; }
+.tab { display: none; max-width: 760px; } .tab.active { display: block; animation: tabIn var(--dur-fast) var(--ease-out); }
+@keyframes tabIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 .tab.tab-wide { max-width: 1040px; }
 .row.mtg-head { flex-wrap: nowrap; align-items: flex-start; gap: 12px; }
 .row.mtg-head .pill { flex: none; margin-top: 4px; }

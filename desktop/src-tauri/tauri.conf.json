@@ -1,6 +1,6 @@
 {
   "productName": "Humming",
-  "version": "1.8.1",
+  "version": "1.9.0",
   "identifier": "app.humming.desktop",
   "build": {
     "beforeDevCommand": "npm run dev",
@@ -19,10 +19,10 @@
         "label": "main",
         "title": "Humming",
         "url": "index.html",
-        "width": 900,
-        "height": 660,
-        "minWidth": 720,
-        "minHeight": 520,
+        "width": 1060,
+        "height": 720,
+        "minWidth": 760,
+        "minHeight": 540,
         "center": true,
         "visible": false
       },
@@ -30,7 +30,7 @@
         "label": "overlay",
         "title": "Humming",
         "url": "overlay.html",
-        "width": 240,
+        "width": 280,
         "height": 64,
         "decorations": false,
         "transparent": true,

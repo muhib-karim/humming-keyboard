@@ -1,7 +1,26 @@
 # Changelog
 
-## [Unreleased]
+## [1.9.0] - 2026-11-27
 
+Command Mode, Per-App Tone, Offline Botless Meeting Notepad, Cross-Meeting Q&A, Local HTTP API, GPU provider toggle,
+Re-paste shortcut, glassmorphic overlay, Android ICU regex crash fix, and refreshed homepage/poster. Versions: Android
+1.9.0 (versionCode 1900), desktop and core 1.9.0, iOS 1.9.0 (build 1900).
+
+- **Desktop Command Mode, Per-App Tone & Local Ollama / BYOK AI (`llm.rs`)**: select text in any app and hold
+  `Ctrl+Shift+E` / `Cmd+Shift+E` to rewrite it by voice using 100% local Ollama, optional BYOK OpenAI/Anthropic/Gemini
+  (HTTPS enforced for remote hosts), or deterministic offline `VoiceEdit` fallback; added per-app tone rules (offline
+  casual/bullets + optional AI polish), CSV dictionary import/export, and one-click "Teach word" in History.
+- **Desktop Offline Botless Meeting Notepad & Ask Across Meetings (`meetings.rs`)**: new Meetings tab with continuous
+  12-second chunked Parakeet transcription (mic or system loopback/monitor device, zero call bots), split-pane manual
+  notes + live timestamped transcript, template-based Markdown synthesis (Ollama, BYOK, or deterministic offline
+  action-item digest), cross-meeting cited search/Q&A ("Ask across all meetings"), and one-click Markdown copy.
+- **Desktop Re-paste Shortcut, GPU Execution Provider & Local HTTP API (`local_api.rs`, `stt.rs`)**: global re-paste
+  last dictation shortcut (`Ctrl+Shift+V` / `Cmd+Shift+V`), optional CoreML / DirectML / CUDA provider selector with
+  automatic CPU fallback, and opt-in `127.0.0.1` Bearer-token HTTP API (`GET /health`, `POST /v1/transcribe`,
+  `POST /v1/cleanup`).
+- **Desktop UX & Overlay**: glassmorphic animated floating pill (`overlay.css` / `overlay.ts`) with live elapsed timer,
+  11-bar mirrored waveform, and distinct Listening / Command Mode / Rewriting states; brand SVG waveform icon in
+  sidebar; "Meeting Notepad" and "Copy last dictation" tray actions.
 - **Android offline dictation crash fix (#22)**: removed `Pattern.UNICODE_CHARACTER_CLASS` from `VoiceEdit.kt`
   (unsupported on Android's ICU regex engine, where it threw `IllegalArgumentException` on first offline dictation),
   replaced `\b` with explicit Unicode word boundaries (`[\p{L}\p{M}\p{N}_]`), added Unicode target unit tests in
@@ -9,22 +28,10 @@
 - **Android crash dialog copy fix (#22)**: `CrashDialogActivity` now uses a short clipboard label
   (`"Humming crash report"`), caps oversized clipboard text safely at 200,000 characters, and catches clipboard
   errors instead of crashing when copying large logs.
-- **Desktop Command Mode, Per-App Tone & Local Ollama / BYOK AI (`llm.rs`)**: select text in any app and hold
-  `Ctrl+Shift+E` / `Cmd+Shift+E` to rewrite it by voice using 100% local Ollama, optional BYOK OpenAI/Anthropic/Gemini,
-  or deterministic offline `VoiceEdit` fallback; added per-app tone rules (offline casual/bullets + optional AI polish)
-  and CSV dictionary import/export.
-- **Desktop Offline Botless Meeting Notepad (`meetings.rs`)**: new Meetings tab with continuous 12-second chunked
-  Parakeet transcription (mic or system loopback device, zero call bots), split-pane manual notes + live timestamped
-  transcript, template-based Markdown synthesis (Ollama, BYOK, or deterministic offline action-item digest), and
-  one-click Markdown copy.
-- **Desktop Local HTTP Transcription API (`local_api.rs`)**: opt-in `127.0.0.1` Bearer-token HTTP server exposing
-  `GET /health`, `POST /v1/transcribe` (WAV bytes or JSON `wav_path`), and `POST /v1/cleanup`.
-- **Desktop tray**: added "Meeting Notepad" and "Copy last dictation" to the system tray / menu-bar menu.
-- **Competitor teardown, banner, and homepage**: added primary-source teardowns of **Hex by Anomaly** and **Granola**
-  alongside **Wispr Flow** and **Typeless** in `COMPETITORS.md`; rebuilt `docs/banner.png` and `docs/social-preview.png`
-  with brand-pink captures and font fallback in `scripts/render_social_preview.py`; refreshed `README.md`,
-  `play/site/index.html`, and privacy policy to reflect all five v1.8 speech models, Multilingual 25-language support,
-  edit-by-voice, and active CI gates.
+- **Competitor binary teardown, banner, poster, and interactive homepage**: added primary-source teardowns & verified
+  installer sizes (Humming vs Hex by Anomaly, Granola, Wispr Flow, Typeless) in `COMPETITORS.md`; generated v1.9
+  `docs/banner.png`, `docs/poster.png`, `docs/social-preview.png`, and `play/graphics/feature-graphic-1024x500.png`;
+  added interactive 6-mode pipeline demo and animated sound-wave hero to `play/site/index.html`.
 
 ## [1.8.1] - 2026-11-25
 

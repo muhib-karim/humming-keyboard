@@ -18,7 +18,7 @@ const server = createServer(async (req, res) => {
 const mock = () => {
   const now = Date.now();
   const settings = {
-    hotkey: "CommandOrControl+Shift+Space", command_hotkey: "CommandOrControl+Shift+E", mode: "hold", model: "fast",
+    hotkey: "CommandOrControl+Shift+Space", command_hotkey: "CommandOrControl+Shift+E", repaste_hotkey: "CommandOrControl+Shift+V", stt_provider: "auto", mode: "hold", model: "fast",
     clean_mode: true, remove_fillers: true, self_corrections: true, voice_commands: true, voice_edit: true,
     format_lists: true, accuracy_mode: true,
     dictionary: [{ spoken: "hum ming", written: "Humming", apps: [] }, { spoken: "", written: "Okonkwo", apps: [] }, { spoken: "", written: "GitHub", apps: ["Code"] }],
@@ -69,6 +69,7 @@ const mock = () => {
     active_meeting_id: () => null,
     synthesize_meeting: () => meetings[0],
     export_meeting_markdown: () => meetings[0].summary,
+    ask_meetings: () => "[Q4 Release & Launch Sync · 00:14] Verify the Android 14 emulator smoke test passes.",
     test_llm: () => "This is a quick test of local AI polish.",
     regenerate_api_token: () => settings,
     preview_cleanup: () => "I was thinking we could meet at 4pm.",

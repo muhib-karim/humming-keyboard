@@ -152,11 +152,11 @@ def draw_left_column(canvas, root, font_b, font_r, *, x, wide):
     d.text((x, hy), "Talk, and it types.", font=f_h, fill=(244, 244, 247))
     d.text((x, hy + (64 if wide else 56)), "Your voice stays on device.", font=f_h, fill=(240, 96, 127))
 
-    # Subcopy (verified facts from docs/BENCHMARKS.md and README.md)
+    # Subcopy (verified facts from docs/BENCHMARKS.md, COMPETITORS.md, and README.md)
     sy = hy + (146 if wide else 130)
-    f_s = ImageFont.truetype(font_r, 23 if wide else 21)
-    d.text((x, sy), "NVIDIA Parakeet offline ASR · Edit by voice · Bangla phonetic", font=f_s, fill=(192, 192, 204))
-    d.text((x, sy + 34), "No account · No analytics · No word caps · Apache-2.0", font=f_s, fill=(163, 163, 176))
+    f_s = ImageFont.truetype(font_r, 22 if wide else 20)
+    d.text((x, sy), "Parakeet offline ASR · Command Mode · Botless Meetings · Local API", font=f_s, fill=(196, 196, 208))
+    d.text((x, sy + 34), "8.8 MB Win · No account · No analytics · No word caps · Apache-2.0", font=f_s, fill=(163, 163, 176))
 
     # Platform chips
     cy = sy + 90
@@ -220,14 +220,149 @@ def render_social(root, font_b, font_r):
     return out, canvas.size
 
 
+def render_poster(root, font_b, font_r):
+    """Vertical launch poster (1600x2000) for GitHub README / releases / launch posts."""
+    w, h = 1600, 2000
+    canvas = make_bg(w, h)
+    d = ImageDraw.Draw(canvas)
+
+    # Top header
+    icon = rounded(Image.open(f"{root}/play/graphics/icon-512.png").resize((96, 96), Image.LANCZOS), 24)
+    canvas.alpha_composite(icon, (88, 78))
+    f_brand = ImageFont.truetype(font_b, 64)
+    d.text((206, 90), "Humming", font=f_brand, fill=(244, 244, 247))
+
+    # Version + offline badge
+    f_pill = ImageFont.truetype(font_b, 19)
+    pill_txt = "v1.9  ·  OFFLINE BY DEFAULT  ·  APACHE-2.0"
+    pw = d.textlength(pill_txt, font=f_pill) + 40
+    px, py = w - 88 - pw, 108
+    d.rounded_rectangle((px, py, px + pw, py + 38), 19, fill=(23, 50, 37, 255), outline=(61, 214, 140, 180), width=2)
+    d.ellipse((px + 14, py + 14, px + 24, py + 24), fill=(126, 226, 168))
+    d.text((px + 32, py + 8), pill_txt, font=f_pill, fill=(126, 226, 168))
+
+    # Hero headline
+    f_h1 = ImageFont.truetype(font_b, 78)
+    d.text((88, 224), "Talk, and it types.", font=f_h1, fill=(244, 244, 247))
+    d.text((88, 316), "Your voice stays on device.", font=f_h1, fill=(240, 96, 127))
+    f_sub = ImageFont.truetype(font_r, 27)
+    d.text((88, 422), "Private voice keyboard, Command Mode, botless Meeting Notepad & local HTTP API.", font=f_sub, fill=(186, 186, 200))
+
+    # Platform chips + waveform
+    f_c = ImageFont.truetype(font_b, 20)
+    cx, cy = 88, 482
+    for name in ("Android", "iOS", "Windows", "macOS", "Linux"):
+        cw = d.textlength(name, font=f_c) + 36
+        d.rounded_rectangle((cx, cy, cx + cw, cy + 42), 21, fill=(28, 22, 29, 255), outline=(229, 72, 107, 220), width=2)
+        d.text((cx + 18, cy + 9), name, font=f_c, fill=(244, 244, 247))
+        cx += cw + 12
+    draw_waveform(d, cx + 22, cy + 21, bars=24, step=11)
+
+    # Multi-device real captures showcase
+    mtg = desktop_frame(f"{root}/docs/screenshots/desktop_meetings_dark.png", 860)
+    and_kb = phone_frame(f"{root}/docs/screenshots/emulator_keyboard.png", 610)
+    ios = phone_frame(f"{root}/docs/screenshots/ios_dictate_dark.png", 560)
+    composite_shadowed(canvas, mtg, (88, 586))
+    composite_shadowed(canvas, ios, (1240, 628))
+    composite_shadowed(canvas, and_kb, (978, 570))
+
+    # 4 feature cards (2x2 grid)
+    cards = [
+        ("Command Mode & Per-App Tone", "Select text anywhere, press Ctrl/Cmd+Shift+E, speak your edit. Adapts tone per app (Slack, Mail, Code) via 100% offline rules, local Ollama, or BYOK."),
+        ("Offline Botless Meeting Notepad", "Zero call bots, zero cloud audio. 12s local Parakeet chunks + manual Markdown notes + template synthesis + Ask Across All Meetings."),
+        ("Local HTTP API & GPU Provider", "Opt-in 127.0.0.1 Bearer-auth /v1/transcribe & /v1/cleanup API for scripts & agents. CoreML / DirectML / CUDA toggle with CPU fallback."),
+        ("Full Android Keyboard + Bangla", "Built on FlorisBoard: 6-language prediction, glide typing, Avro-style Bangla phonetic, clipboard history, edit-by-voice across 36 shared vectors."),
+    ]
+    f_ct = ImageFont.truetype(font_b, 26)
+    f_cb = ImageFont.truetype(font_r, 21)
+    card_w, card_h = 696, 196
+    for idx, (title, body) in enumerate(cards):
+        col, row = idx % 2, idx // 2
+        x0 = 88 + col * (card_w + 32)
+        y0 = 1252 + row * (card_h + 26)
+        d.rounded_rectangle((x0, y0, x0 + card_w, y0 + card_h), 20, fill=(23, 23, 30, 245), outline=(62, 62, 76, 220), width=2)
+        d.rounded_rectangle((x0 + 26, y0 + 26, x0 + 34, y0 + 56), 4, fill=(229, 72, 107))
+        d.text((x0 + 48, y0 + 24), title, font=f_ct, fill=(244, 244, 247))
+        # Wrap body text cleanly
+        words, lines, cur = body.split(), [], ""
+        for wd in words:
+            cand = (cur + " " + wd).strip()
+            if d.textlength(cand, font=f_cb) <= card_w - 56:
+                cur = cand
+            else:
+                lines.append(cur)
+                cur = wd
+        if cur:
+            lines.append(cur)
+        for li, line in enumerate(lines[:3]):
+            d.text((x0 + 28, y0 + 74 + li * 32), line, font=f_cb, fill=(176, 176, 190))
+
+    # Bottom verified metrics & binary size bar
+    my = 1714
+    d.rounded_rectangle((88, my, w - 88, my + 178), 22, fill=(26, 20, 27, 250), outline=(229, 72, 107, 170), width=2)
+    metrics = [
+        ("1.77 % WER", "Parakeet 0.6B Best (test-clean)"),
+        ("2.24 % / 25 EU", "Multilingual offline model"),
+        ("8.8 MB Win", "19.5x smaller than Granola"),
+        ("$0 · Apache-2.0", "No account · No word caps"),
+    ]
+    f_mv = ImageFont.truetype(font_b, 33)
+    f_ml = ImageFont.truetype(font_r, 19)
+    mw = (w - 176) // 4
+    for i, (val, lbl) in enumerate(metrics):
+        mx = 88 + i * mw + 24
+        d.text((mx, my + 40), val, font=f_mv, fill=(240, 96, 127) if i % 2 == 0 else (126, 226, 168))
+        d.text((mx, my + 98), lbl, font=f_ml, fill=(186, 186, 200))
+
+    # Footer
+    f_ft = ImageFont.truetype(font_r, 22)
+    d.text((88, 1924), "muhib-karim.github.io/humming-keyboard   ·   github.com/muhib-karim/humming-keyboard", font=f_ft, fill=(154, 154, 168))
+
+    out = f"{root}/docs/poster.png"
+    canvas.convert("RGB").save(out, optimize=True)
+    return out, canvas.size
+
+
+def render_feature_graphic(root, font_b, font_r):
+    """Google Play feature graphic (1024x500) using brand gradient and real Android 14 capture."""
+    w, h = 1024, 500
+    canvas = Image.new("RGBA", (w, h), (15, 15, 19, 255))
+    px = canvas.load()
+    for y in range(h):
+        ty = y / max(h - 1, 1)
+        for x in range(w):
+            tx = x / max(w - 1, 1)
+            t = 0.6 * tx + 0.4 * ty
+            r = int(235 + (202 - 235) * t)
+            g = int(76 + (52 - 76) * t)
+            b = int(123 + (156 - 123) * t)
+            px[x, y] = (r, g, b, 255)
+
+    d = ImageDraw.Draw(canvas)
+    icon = rounded(Image.open(f"{root}/play/graphics/icon-512.png").resize((92, 92), Image.LANCZOS), 22)
+    canvas.alpha_composite(icon, (64, 72))
+    d.text((174, 86), "Humming", font=ImageFont.truetype(font_b, 56), fill=(255, 255, 255))
+    d.text((64, 196), "Offline voice typing.", font=ImageFont.truetype(font_b, 48), fill=(255, 255, 255))
+    d.text((64, 254), "Nothing leaves your phone.", font=ImageFont.truetype(font_b, 38), fill=(255, 232, 240))
+    d.text((64, 330), "NVIDIA Parakeet · Edit by voice · Bangla phonetic", font=ImageFont.truetype(font_r, 22), fill=(255, 240, 246))
+    d.text((64, 368), "Free · No ads · No telemetry · Apache-2.0", font=ImageFont.truetype(font_r, 22), fill=(255, 224, 235))
+
+    and_kb = phone_frame(f"{root}/docs/screenshots/emulator_keyboard.png", 446)
+    composite_shadowed(canvas, and_kb, (746, 28))
+
+    out = f"{root}/play/graphics/feature-graphic-1024x500.png"
+    canvas.convert("RGB").save(out, optimize=True)
+    return out, canvas.size
+
+
 def main():
     default_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    ap = argparse.ArgumentParser(description="Render docs/banner.png and docs/social-preview.png.")
+    ap = argparse.ArgumentParser(description="Render Humming banner, social preview, launch poster, and Play feature graphic.")
     ap.add_argument("root", nargs="?", default=default_root, help="Repository root (default: auto-detected)")
     args = ap.parse_args()
     font_b = pick_font(FONT_BOLD_CANDIDATES)
     font_r = pick_font(FONT_REG_CANDIDATES)
-    for fn in (render_banner, render_social):
+    for fn in (render_banner, render_social, render_poster, render_feature_graphic):
         path, size = fn(args.root, font_b, font_r)
         print(f"wrote {os.path.relpath(path, args.root)} ({size[0]}x{size[1]})")
 
