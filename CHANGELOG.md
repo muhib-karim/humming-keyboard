@@ -9,7 +9,17 @@
 - **Android crash dialog copy fix (#22)**: `CrashDialogActivity` now uses a short clipboard label
   (`"Humming crash report"`), caps oversized clipboard text safely at 200,000 characters, and catches clipboard
   errors instead of crashing when copying large logs.
-- **Desktop tray**: added "Copy last dictation" to the system tray / menu-bar menu for one-click access from any app.
+- **Desktop Command Mode, Per-App Tone & Local Ollama / BYOK AI (`llm.rs`)**: select text in any app and hold
+  `Ctrl+Shift+E` / `Cmd+Shift+E` to rewrite it by voice using 100% local Ollama, optional BYOK OpenAI/Anthropic/Gemini,
+  or deterministic offline `VoiceEdit` fallback; added per-app tone rules (offline casual/bullets + optional AI polish)
+  and CSV dictionary import/export.
+- **Desktop Offline Botless Meeting Notepad (`meetings.rs`)**: new Meetings tab with continuous 12-second chunked
+  Parakeet transcription (mic or system loopback device, zero call bots), split-pane manual notes + live timestamped
+  transcript, template-based Markdown synthesis (Ollama, BYOK, or deterministic offline action-item digest), and
+  one-click Markdown copy.
+- **Desktop Local HTTP Transcription API (`local_api.rs`)**: opt-in `127.0.0.1` Bearer-token HTTP server exposing
+  `GET /health`, `POST /v1/transcribe` (WAV bytes or JSON `wav_path`), and `POST /v1/cleanup`.
+- **Desktop tray**: added "Meeting Notepad" and "Copy last dictation" to the system tray / menu-bar menu.
 - **Competitor teardown, banner, and homepage**: added primary-source teardowns of **Hex by Anomaly** and **Granola**
   alongside **Wispr Flow** and **Typeless** in `COMPETITORS.md`; rebuilt `docs/banner.png` and `docs/social-preview.png`
   with brand-pink captures and font fallback in `scripts/render_social_preview.py`; refreshed `README.md`,

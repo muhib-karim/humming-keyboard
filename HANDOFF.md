@@ -14,10 +14,13 @@ Complete the Humming v1.8.x pass across bug fixes, competitor teardowns (Wispr F
    - Added Unicode word-boundary unit tests in `VoiceEditTest.kt` and an Android ART smoke check (`ImeSmokeTest.voiceEditRunsOnAndroidArt`).
 2. **Android crash dialog clipboard fix (Issue #22)**
    - Updated `CrashDialogActivity.kt` to use a short label (`"Humming crash report"`), truncate oversized logs at 200,000 chars, and catch clipboard exceptions via `runCatching`.
-3. **Desktop tray quick action**
-   - Added `"Copy last dictation"` menu item in `desktop/src-tauri/src/lib.rs` (reads newest `AppState.history` entry, copies via `insert::copy`).
-4. **Competitor teardowns (`COMPETITORS.md`)**
-   - Added primary-source teardowns and matrix rows for **Hex by Anomaly** and **Granola** alongside refreshed **Wispr Flow** and **Typeless** entries, including explicit architectural takeaways and where Humming trails.
+3. **Desktop competitor-parity & superiority upgrades (`desktop/src-tauri/` + `desktop/src/`)**
+   - **Command Mode, Per-App Tone & Local Ollama / BYOK AI** (`desktop/src-tauri/src/llm.rs`, `insert::grab_selection`): select text in any app and hold `Ctrl+Shift+E` / `Cmd+Shift+E` to rewrite by voice via 100% local Ollama, BYOK OpenAI/Anthropic/Gemini (HTTPS enforced for remote hosts), or deterministic offline `VoiceEdit` fallback; per-app tone rules (`casual`/`bullets` offline + full AI polish); CSV dictionary import/export.
+   - **Offline Botless Meeting Notepad** (`desktop/src-tauri/src/meetings.rs`, `audio::Recorder::drain`): dedicated Meetings tab with 12s chunked local Parakeet transcription (mic or loopback/monitor audio device, zero call bots), split-pane manual notes + live timestamped transcript, template-based Markdown synthesis (Ollama, BYOK, or deterministic offline digest), persistent JSON storage, and one-click Markdown copy.
+   - **Authenticated Local HTTP Transcription API** (`desktop/src-tauri/src/local_api.rs`): opt-in `127.0.0.1` Bearer-token HTTP server (`GET /health`, `POST /v1/transcribe`, `POST /v1/cleanup`) with constant-time token comparison and in-memory PCM WAV parser.
+   - **Tray quick actions**: added `"Meeting Notepad"` and `"Copy last dictation"` to the system tray / menu-bar menu.
+4. **Competitor binary & architecture teardown (`COMPETITORS.md`)**
+   - Added primary-source teardowns and live binary size comparison (Humming v1.8.1: 8.77 MB Win / 24.87 MB Mac / 17.51 MB `.deb` vs Anomaly Hex v3.5.0: 77.19 MB Win / 33.52 MB Mac / 35.66 MB `.deb` vs Granola v7.853.5: 171.35 MB Win / 271.23 MB Mac Electron).
 5. **Brand banner, social preview, README, and GitHub Pages homepage**
    - Updated `scripts/render_social_preview.py` (with system font fallback) and regenerated `docs/banner.png` (1600×640) and `docs/social-preview.png` (1280×640) with brand-pink captures and v1.8 benchmarks.
    - Refreshed `README.md`, `play/site/index.html`, `play/site/privacy.html`, `play/PRIVACY_POLICY.md`, and `CHANGELOG.md` to reflect all 5 v1.8 models, 25-language Multilingual support, edit-by-voice, and active CI gates.

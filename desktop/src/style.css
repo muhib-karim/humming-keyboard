@@ -27,6 +27,26 @@ nav.side button.active { background: var(--card); box-shadow: 0 0 0 1px var(--li
 nav.side .foot { margin-top: auto; font-size: 11px; color: var(--muted); padding: 0 8px; }
 main { flex: 1; padding: 24px 28px; overflow: auto; max-height: 100vh; }
 .tab { display: none; max-width: 760px; } .tab.active { display: block; }
+.tab.tab-wide { max-width: 1040px; }
+.row.mtg-head { flex-wrap: nowrap; align-items: flex-start; gap: 12px; }
+.row.mtg-head .pill { flex: none; margin-top: 4px; }
+.mtg-layout { display: grid; grid-template-columns: 210px 1fr; gap: 14px; align-items: start; }
+.mtg-sidebar { margin: 0; padding: 12px; }
+.mtg-list { list-style: none; padding: 0; margin: 8px 0 0; display: grid; gap: 6px; max-height: 520px; overflow-y: auto; }
+.mtg-list button { width: 100%; text-align: left; padding: 8px 10px; border-radius: var(--radius-s); border: 1px solid transparent; background: transparent; display: grid; gap: 2px; }
+.mtg-list button:hover { background: var(--bg); }
+.mtg-list button.active { background: var(--bg); border-color: var(--accent); }
+.mtg-list .mtg-name { font-weight: 600; font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mtg-list .mtg-date { font-size: 11px; color: var(--muted); }
+.mtg-workspace { min-width: 0; }
+.mtg-split { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.mtg-pane { margin: 0; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.mtg-pane textarea { flex: 1; min-height: 220px; resize: vertical; font: 13px/1.5 -apple-system, "Segoe UI", system-ui, sans-serif; }
+.mtg-transcript { min-height: 220px; max-height: 290px; overflow-y: auto; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; font-size: 13px; display: grid; gap: 6px; align-content: start; }
+.mtg-seg { line-height: 1.45; }
+.mtg-seg .ts { font: 600 11px ui-monospace, monospace; color: var(--accent-ink); margin-right: 6px; }
+.mtg-summary { font: 13px/1.55 -apple-system, "Segoe UI", system-ui, sans-serif; max-height: 280px; overflow-y: auto; margin: 10px 0 0; padding: 10px 12px; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; }
+@media (max-width: 820px) { .mtg-layout, .mtg-split { grid-template-columns: 1fr; } }
 h1 { font-size: 22px; margin: 0 0 8px; } h2 { font-size: 15px; margin: 0 0 6px; }
 .lead { color: var(--muted); margin-top: 0; }
 .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius-m); box-shadow: var(--shadow-1); padding: 14px 16px; margin: 14px 0; }

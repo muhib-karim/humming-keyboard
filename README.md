@@ -146,23 +146,27 @@ ranked gap list are in **[COMPETITORS.md](COMPETITORS.md)**. Where Humming trail
 iPhone and with the default model (25 European languages need the Multilingual model, on Android and desktop), and
 Gboard and SwiftKey support far more typing languages and install from the stores.
 
-| Dictation apps | **Humming** | Wispr Flow | Typeless | Hex (Anomaly) | Superwhisper | Apple Dictation |
+| Dictation apps | **Humming** | Wispr Flow | Typeless | Hex (Anomaly) | Granola | Superwhisper |
 |---|---|---|---|---|---|---|
-| Works offline | **Yes**, default, all 5 platforms (English; 25 EU languages with Multilingual on Android & desktop) | No, cloud only | No, cloud only (zero retention) | **Yes**, local models (GPU & CPU) | Yes, local models | On-device in many languages |
-| Published accuracy | **1.77 % Best · 2.24 % Multi · 2.72 % Fast** (LibriSpeech test-clean, raw output committed) | Charts only; 8.7 % measured by Superwhisper | Not published | Not published | 6.6 % WER (own 8-set bench) | Not published |
-| Fillers, lists, "scratch that", replacements | **All four** (per-app on Android & desktop) | All four | Fillers, lists, CSV dictionary | Built-in cleanups & per-app QuickJS pipelines | Fillers, lists, replacements | "Delete" / "undo" on iPhone (US EN) |
-| Edit existing text by voice | **Yes** (1.8), offline: "change X to Y", "delete X", "capitalize X", "undo that" | Command Mode (Pro, desktop) | Speak-to-edit on selection | Custom pipelines / OpenCode rewrite | On selected text | iPhone, US English |
-| Platforms | **Android, iPhone, Windows, macOS, Linux** | Mac, Windows, iOS, Android (no Linux) | macOS, Windows, Linux, iOS, Android | macOS, Windows, Linux (mobile in TestFlight / dev) | macOS, Windows, iOS, Android | iPhone, iPad, Mac |
-| Price | **Free, no word cap** | Free 2,000 words/week; $12–15/month | Limited free; $12/mo yearly / $30 mo | **Free** | Free local; $8.49/month | Free with the OS |
-| Open source | **Apache-2.0** | No | No | **MIT** | No | No |
+| Works offline | **Yes**, default, all 5 platforms (English + 25 EU on Android/desktop) | No, cloud only | No, cloud only (zero retention) | **Yes**, local models (GPU & CPU) | No, cloud ASR + cloud LLM | Yes, local models |
+| Published accuracy | **1.77 % Best · 2.24 % Multi · 2.72 % Fast** (LibriSpeech test-clean, raw output committed) | Charts only; 8.7 % measured by Superwhisper | Not published | Not published | Not published | 6.6 % WER (own 8-set bench) |
+| Command Mode & voice edit | **Both**: offline `VoiceEdit` + **Command Mode** on selected text (local Ollama or BYOK) | Command Mode (Pro, desktop) | Speak-to-edit on selection | Custom pipelines / OpenCode rewrite | Post-call AI chat | On selected text |
+| Per-app tone & CSV dictionary | **Yes**: per-app tone rules (offline casual/bullets + AI polish), per-app snippets, **CSV import/export** | Auto-tone, auto-learn & snippets | Tone, dictionary & CSV import | Per-app QuickJS pipelines & vocab | Custom note templates | Custom modes & replacements |
+| Botless meeting notepad | **Yes** (desktop): **100 % offline** chunked transcript + split-pane notes + Markdown synthesis | Wispr Notetaker (cloud) | No | Labs: Meetings (macOS beta) | **Core product** (cloud, no call bot) | File transcription |
+| Local developer API | **Yes** (opt-in `127.0.0.1` Bearer-auth HTTP `/v1/transcribe`, `/v1/cleanup`) | No | No | Local service + TS SDK | MCP (cloud notes) | No |
+| Verified desktop binary size | **8.8 MB** Win `.exe` · **24.9 MB** Mac `.dmg` · **17.5 MB** Linux `.deb` (v1.8.1) | Closed installer | Closed installer | 77.2 MB Win `.exe` · 33.5 MB Mac `.dmg` · 35.7 MB `.deb` (v3.5.0) | 171.4 MB Win `.exe` · 271.2 MB Mac `.zip` (v7.853.5) | Closed installer |
+| Platforms | **Android, iPhone, Windows, macOS, Linux** | Mac, Windows, iOS, Android (no Linux) | macOS, Windows, Linux, iOS, Android | macOS, Windows, Linux (mobile in dev/TestFlight) | macOS, Windows, iOS, Watch | macOS, Windows, iOS, Android |
+| Price & licence | **Free, Apache-2.0**, no word cap | Free 2k words/wk; $12–15/mo | Limited free; $12/mo yr / $30 mo | **Free, MIT** | Freemium / paid tiers | Free local; $8.49/mo |
 
 Published error rates come from different test sets and are not comparable (Superwhisper 6.6 % on its own 8-set
-benchmark, Aqua 5.55 % with the set not stated, Humming 1.77–2.72 % on LibriSpeech test-clean). Aqua Voice, Willow,
-MacWhisper, Handy, Amical, Google, and **Granola** (botless cloud meeting notepad with human-in-the-loop synthesis and
-MCP, an adjacent lane outside cursor dictation), plus every source and architectural teardown:
-**[COMPETITORS.md#dictation-apps](COMPETITORS.md#dictation-apps)**. Where Humming trails: voice editing is rule-based
-rather than free-form LLM rewriting; no per-app LLM tone; no streaming ASR / GPU acceleration or local SDK yet (Hex's
-strengths); and offline dictation beyond English needs the Multilingual model (Android and desktop).
+benchmark, Aqua 5.55 % with the set not stated, Humming 1.77–2.72 % on LibriSpeech test-clean). Installer sizes above
+were verified directly from GitHub Releases (`muhib-karim/humming-keyboard` v1.8.1, `anomalyco/hex` v3.5.0) and
+Granola's public update feeds (`api.granola.ai`, v7.853.5) on 27 November 2026. Aqua Voice, Willow, MacWhisper, Handy,
+Amical, Apple, Google, plus every source and architectural teardown:
+**[COMPETITORS.md#dictation-apps](COMPETITORS.md#dictation-apps)**. Where Humming still trails: desktop ASR runs on CPU
+after hotkey release rather than GPU streaming (Hex's strength); meeting loopback capture relies on the OS loopback/monitor
+input device rather than a built-in per-app CoreAudio/WASAPI tap; and offline voice beyond English + 25 European languages
+needs Android Online mode.
 
 <details>
 <summary><strong>Against dictation apps: Wispr Flow, Typeless, Gboard Rambler</strong></summary>

@@ -139,11 +139,11 @@
     <article class="feature">
       <div>
         <h3>Your computer, too</h3>
-        <p>Hold <code>Ctrl</code> + <code>Shift</code> + <code>Space</code> (<code>Cmd</code> on a Mac) in any app, talk, let go: the text is pasted where your cursor is. The same Parakeet models as Android, downloaded once and checked against a pinned SHA-256.</p>
+        <p>Hold <code>Ctrl</code> + <code>Shift</code> + <code>Space</code> (<code>Cmd</code> on a Mac) in any app to dictate, or select text and hold <code>Ctrl</code> + <code>Shift</code> + <code>E</code> for <strong>Command Mode</strong>. The same Parakeet models as Android, downloaded once and checked against a pinned SHA-256 — packaged in an 8.8&nbsp;MB Windows installer (19&times; smaller than Granola, 8.8&times; smaller than Hex).</p>
         <ul>
-          <li>Windows, macOS and Linux, from a tray or menu-bar app.</li>
-          <li>Searchable history on the computer, a personal dictionary, spoken lists as bullets.</li>
-          <li>Signed self-updates: the app refuses any file not signed with Humming's update key.</li>
+          <li><strong>Command Mode &amp; Per-App Tone:</strong> rewrite selected text by voice or adapt tone per focused app (casual in Slack, formal in Mail) using 100&nbsp;% offline rules, local Ollama, or your own API key.</li>
+          <li><strong>Offline Botless Meeting Notepad:</strong> split-pane notes + live local Parakeet transcript + Markdown synthesis with zero call bots and zero cloud uploads.</li>
+          <li><strong>Local HTTP API &amp; CSV Dictionary:</strong> opt-in <code>127.0.0.1</code> Bearer-authenticated <code>/v1/transcribe</code> &amp; <code>/v1/cleanup</code> endpoints for scripts and agents, plus CSV dictionary import/export and signed self-updates.</li>
         </ul>
       </div>
       <div class="feature-media">
@@ -254,21 +254,22 @@
       <table>
         <caption>Public vendor pages and MIT/Apache repositories, checked through 27 November 2026; full teardown (including Superwhisper, Aqua Voice, Willow, MacWhisper, Handy, Amical, and Granola's botless meeting-notes lane) in <a href="https://github.com/muhib-karim/humming-keyboard/blob/main/COMPETITORS.md#dictation-apps">COMPETITORS.md</a>. Error rates come from different test sets and are not comparable.</caption>
         <thead>
-          <tr><th scope="col"><span class="sr-only">Feature</span></th><th scope="col" class="us">Humming</th><th scope="col">Wispr Flow</th><th scope="col">Typeless</th><th scope="col">Hex (Anomaly)</th><th scope="col">Superwhisper</th><th scope="col">Apple Dictation</th></tr>
+          <tr><th scope="col"><span class="sr-only">Feature</span></th><th scope="col" class="us">Humming</th><th scope="col">Wispr Flow</th><th scope="col">Typeless</th><th scope="col">Hex (Anomaly)</th><th scope="col">Granola</th><th scope="col">Superwhisper</th></tr>
         </thead>
         <tbody>
-          <tr><th scope="row">Works offline</th><td class="us"><span class="yes">Yes</span>, default, all 5 platforms (English + 25 EU on Android/desktop)</td><td>No, cloud only</td><td>No, cloud only (zero retention)</td><td><span class="yes">Yes</span>, local models (GPU &amp; CPU)</td><td>Yes, with local models</td><td>On-device in many languages</td></tr>
-          <tr><th scope="row">Published accuracy</th><td class="us numbers">1.77&nbsp;% Best · 2.72&nbsp;% Fast (LibriSpeech test-clean)</td><td>Charts only; 8.7&nbsp;% measured by Superwhisper</td><td>Not published</td><td>Not published</td><td>6.6&nbsp;% WER (own 8-set bench)</td><td>Not published</td></tr>
-          <tr><th scope="row">Fillers, lists &amp; "scratch that"</th><td class="us"><span class="yes">All three</span>, with switches</td><td>All three</td><td>Fillers &amp; lists</td><td>Built-in cleanups &amp; custom pipelines</td><td>Fillers &amp; lists (modes)</td><td>Delete / undo on iPhone (US EN)</td></tr>
-          <tr><th scope="row">Replacements &amp; snippets</th><td class="us"><span class="yes">Yes</span>, per-app on Android &amp; desktop</td><td>Yes, auto-learn &amp; snippets</td><td>Dictionary &amp; CSV import</td><td>Yes, vocabulary &amp; per-app QuickJS pipelines</td><td>Yes, hints &amp; replacements</td><td>None documented</td></tr>
-          <tr><th scope="row">Edit existing text by voice</th><td class="us"><span class="yes">Yes</span> (1.8), offline ("change X to Y", "delete X", "capitalize X", "undo that")</td><td>Command Mode (Pro, desktop)</td><td>Speak-to-edit on selection</td><td>Custom pipelines / OpenCode rewrite</td><td>On selected text</td><td>iPhone, US English</td></tr>
-          <tr><th scope="row">Platforms</th><td class="us"><span class="yes">Android, iPhone, Windows, macOS, Linux</span></td><td>Mac, Windows, iOS, Android (no Linux)</td><td>macOS, Windows, Linux, iOS, Android</td><td>macOS, Windows, Linux (mobile in dev/TestFlight)</td><td>macOS, Windows, iOS, Android</td><td>iPhone, iPad, Mac</td></tr>
-          <tr><th scope="row">Price</th><td class="us"><span class="yes">Free, no word cap</span></td><td>Free 2,000 words/wk; Pro $12–15/mo</td><td>Limited free; Pro $12/mo yr / $30 mo</td><td><span class="yes">Free</span></td><td>Free local; Pro $8.49/mo</td><td>Free with OS</td></tr>
-          <tr><th scope="row">Open source</th><td class="us"><span class="yes">Yes, Apache-2.0</span></td><td>No</td><td>No</td><td><span class="yes">Yes, MIT</span></td><td>No</td><td>No</td></tr>
+          <tr><th scope="row">Works offline</th><td class="us"><span class="yes">Yes</span>, default, all 5 platforms (English + 25 EU on Android/desktop)</td><td>No, cloud only</td><td>No, cloud only (zero retention)</td><td><span class="yes">Yes</span>, local models (GPU &amp; CPU)</td><td>No, cloud ASR + cloud LLM</td><td>Yes, with local models</td></tr>
+          <tr><th scope="row">Published accuracy</th><td class="us numbers">1.77&nbsp;% Best · 2.72&nbsp;% Fast (LibriSpeech test-clean)</td><td>Charts only; 8.7&nbsp;% measured by Superwhisper</td><td>Not published</td><td>Not published</td><td>Not published</td><td>6.6&nbsp;% WER (own 8-set bench)</td></tr>
+          <tr><th scope="row">Command Mode &amp; voice edit</th><td class="us"><span class="yes">Both</span>: offline VoiceEdit + <strong>Command Mode</strong> on selection (Ollama / BYOK)</td><td>Command Mode (Pro, desktop)</td><td>Speak-to-edit on selection</td><td>Custom pipelines / OpenCode rewrite</td><td>Post-call AI chat</td><td>On selected text</td></tr>
+          <tr><th scope="row">Per-app tone &amp; dictionary</th><td class="us"><span class="yes">Yes</span>: per-app tone rules, snippets &amp; CSV import/export</td><td>Auto-tone, auto-learn &amp; snippets</td><td>Tone, dictionary &amp; CSV import</td><td>Per-app QuickJS pipelines &amp; vocab</td><td>Note templates</td><td>Modes &amp; replacements</td></tr>
+          <tr><th scope="row">Botless meeting notepad</th><td class="us"><span class="yes">Yes</span> (desktop): 100&nbsp;% offline transcript + notes + synthesis</td><td>Wispr Notetaker (cloud)</td><td>No</td><td>Labs: Meetings (macOS beta)</td><td><span class="yes">Core product</span> (cloud, no bot)</td><td>File transcription</td></tr>
+          <tr><th scope="row">Local developer API</th><td class="us"><span class="yes">Yes</span> (opt-in <code>127.0.0.1</code> Bearer HTTP API)</td><td>No</td><td>No</td><td><span class="yes">Yes</span> (local service + TS SDK)</td><td>MCP (cloud notes)</td><td>No</td></tr>
+          <tr><th scope="row">Desktop installer size</th><td class="us numbers"><strong>8.8&nbsp;MB</strong> Win · <strong>24.9&nbsp;MB</strong> Mac · <strong>17.5&nbsp;MB</strong> .deb</td><td>Closed installer</td><td>Closed installer</td><td class="numbers">77.2&nbsp;MB Win · 33.5&nbsp;MB Mac · 35.7&nbsp;MB .deb</td><td class="numbers">171.4&nbsp;MB Win · 271.2&nbsp;MB Mac</td><td>Closed installer</td></tr>
+          <tr><th scope="row">Platforms</th><td class="us"><span class="yes">Android, iPhone, Windows, macOS, Linux</span></td><td>Mac, Windows, iOS, Android (no Linux)</td><td>macOS, Windows, Linux, iOS, Android</td><td>macOS, Windows, Linux (mobile in dev)</td><td>macOS, Windows, iOS, Watch</td><td>macOS, Windows, iOS, Android</td></tr>
+          <tr><th scope="row">Price &amp; open source</th><td class="us"><span class="yes">Free, Apache-2.0</span> (no cap)</td><td>$12–15/mo (2k/wk free), closed</td><td>$12/mo yr ($30 mo), closed</td><td><span class="yes">Free, MIT</span></td><td>Freemium / paid, closed</td><td>$8.49/mo Pro, closed</td></tr>
         </tbody>
       </table>
     </div>
-    <p class="small muted mt-4">Where Humming trails: voice editing is rule-based rather than free-form LLM rewriting; no per-app LLM tone; no streaming ASR / GPU backend or local SDK yet (Hex's strengths); and no cloud meeting-synthesis notepad (Granola's and Wispr Notetaker's lane). Full matrix: <a href="https://github.com/muhib-karim/humming-keyboard/blob/main/COMPETITORS.md#dictation-apps">COMPETITORS.md</a>.</p>
+    <p class="small muted mt-4">Where Humming still trails: desktop ASR decodes on CPU after hotkey release rather than GPU streaming (Hex's strength); meeting loopback uses your OS loopback/monitor audio device rather than a built-in per-app tap; and offline voice beyond English + 25 EU languages uses Android's Online mode. Full teardown &amp; binary audit: <a href="https://github.com/muhib-karim/humming-keyboard/blob/main/COMPETITORS.md#dictation-apps">COMPETITORS.md</a>.</p>
   </div>
 </section>
 
