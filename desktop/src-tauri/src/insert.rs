@@ -61,6 +61,42 @@ pub fn insert(text: &str, method: &str, restore_clipboard: bool, paste_delay_ms:
     Ok(())
 }
 
+fn copy_chord(e: &mut Enigo) -> Result<(), String> {
+    #[cfg(target_os = "macos")]
+    let (modifier, c) = (Key::Meta, Key::Unicode('c'));
+    #[cfg(target_os = "windows")]
+    let (modifier, c) = (Key::Control, Key::Other(0x43)); // VK_C: layout independent
+    #[cfg(not(any(target_os = "macos", target_os = "windows")))]
+    let (modifier, c) = (Key::Control, Key::Unicode('c'));
+    e.key(modifier, Direction::Press).map_err(|x| x.to_string())?;
+    let r = e.key(c, Direction::Click).map_err(|x| x.to_string());
+    e.key(modifier, Direction::Release).map_err(|x| x.to_string())?;
+    r
+}
+
+/// Command Mode: reads currently selected text in the focused app via Cmd/Ctrl+C, restoring the user's clipboard.
+pub fn grab_selection(restore_clipboard: bool) -> Option<String> {
+    let mut cb = arboard::Clipboard::new().ok()?;
+    let previous = cb.get_text().ok();
+    let sentinel = "__HUMMING_SEL_SENTINEL__";
+    let _ = cb.set_text(sentinel.to_string());
+    let mut e = enigo().ok()?;
+    if copy_chord(&mut e).is_err() {
+        if let Some(p) = previous {
+            let _ = cb.set_text(p);
+        }
+        return None;
+    }
+    sleep(Duration::from_millis(90));
+    let copied = cb.get_text().ok().filter(|t| t != sentinel && !t.trim().is_empty());
+    if restore_clipboard {
+        if let Some(p) = previous {
+            let _ = cb.set_text(p);
+        }
+    }
+    copied
+}
+
 pub fn copy(text: &str) -> Result<(), String> {
     let mut cb = arboard::Clipboard::new().map_err(|e| format!("clipboard unavailable: {e}"))?;
     cb.set_text(text.to_string()).map_err(|e| format!("clipboard write failed: {e}"))

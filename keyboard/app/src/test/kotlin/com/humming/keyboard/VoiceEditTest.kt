@@ -85,4 +85,12 @@ class VoiceEditTest {
         assertNotNull(VoiceEdit.voiceCommand("day one", "change day to night"))
         assertNotNull(VoiceEdit.voiceCommand("the day one", "change day to night", truncated = true))
     }
+
+    @Test fun unicodeTargetsMatchWholeWordsOnJvmAndAndroid() {
+        val replaced = VoiceEdit.voiceCommand("the café is open", "change café to bistro")!!.outcome!!
+        assertEquals("the bistro is open", replaced.text)
+        assertNull(VoiceEdit.voiceCommand("caféé is open", "change café to bistro"))
+        val deleted = VoiceEdit.voiceCommand("meet Émile today", "delete Émile")!!.outcome!!
+        assertEquals("meet today", deleted.text)
+    }
 }

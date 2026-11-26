@@ -18,12 +18,29 @@ const server = createServer(async (req, res) => {
 const mock = () => {
   const now = Date.now();
   const settings = {
-    hotkey: "CommandOrControl+Shift+Space", mode: "hold", model: "fast", clean_mode: true, remove_fillers: true,
-    self_corrections: true, voice_commands: true, format_lists: true, accuracy_mode: true,
-    dictionary: [{ spoken: "hum ming", written: "Humming" }, { spoken: "", written: "Okonkwo" }, { spoken: "", written: "GitHub" }],
-    insert_method: "paste", restore_clipboard: true, paste_delay_ms: 150, trailing_space: true, input_device: "",
+    hotkey: "CommandOrControl+Shift+Space", command_hotkey: "CommandOrControl+Shift+E", repaste_hotkey: "CommandOrControl+Shift+V", stt_provider: "auto", mode: "hold", model: "fast",
+    clean_mode: true, remove_fillers: true, self_corrections: true, voice_commands: true, voice_edit: true,
+    format_lists: true, accuracy_mode: true,
+    dictionary: [{ spoken: "hum ming", written: "Humming", apps: [] }, { spoken: "", written: "Okonkwo", apps: [] }, { spoken: "", written: "GitHub", apps: ["Code"] }],
+    tone_rules: [{ apps: ["Slack", "Discord"], tone: "casual", instructions: "" }, { apps: ["Mail", "Outlook"], tone: "email", instructions: "Keep sign-offs concise" }],
+    insert_method: "paste", restore_clipboard: true, paste_delay_ms: 150, trailing_space: true, input_device: "", meeting_device: "",
     show_overlay: true, launch_at_login: false, history_enabled: true, history_limit: 500, max_seconds: 0, auto_update: true,
+    llm_provider: "ollama", llm_endpoint: "", llm_model: "llama3.2:3b", llm_api_key: "", llm_polish_dictation: false,
+    local_api_enabled: true, local_api_port: 17831, local_api_token: "demo-token", schema: 2,
   };
+  const meetings = [
+    {
+      id: 1, title: "Q4 Release & Launch Sync", started_ms: now - 1800e3, ended_ms: now - 300e3,
+      notes: "- Confirm Android ICU regex fix landed\n- Ship offline Meeting Notepad & Command Mode\n- Verify GitHub Pages deploy",
+      template: "summary",
+      summary: "# Q4 Release & Launch Sync\n\n## Executive Summary\nTeam aligned on shipping v1.9 with offline Command Mode, botless Meeting Notepad, per-app tone rules, and the local HTTP API.\n\n## Action Items\n- [00:14] Verify Android 14 emulator smoke test passes on CI.\n- [00:38] Publish updated GitHub Pages homepage with binary size comparison.",
+      segments: [
+        { ts_ms: now - 1786e3, elapsed_s: 14, text: "We need to verify the Android 14 emulator smoke test passes before cutting the tag." },
+        { ts_ms: now - 1762e3, elapsed_s: 38, text: "I will publish the updated homepage with the live binary size comparison against Granola and Hex." },
+        { ts_ms: now - 1730e3, elapsed_s: 70, text: "Everything runs locally on Parakeet so zero meeting audio ever leaves the laptop." },
+      ],
+    },
+  ];
   const history = [
     ["Please send the quarterly report to the whole team by Friday afternoon.", 4.8, 0.21],
     ["Meet at 4pm on Thursday in the small room, and bring the printed slides.", 5.6, 0.24],
@@ -46,8 +63,15 @@ const mock = () => {
       { id: "fast", label: "Fast", blurb: "Parakeet 110M. Instant and very accurate. Recommended.", download_bytes: 104337827, disk_bytes: 126e6, ram_mb: 500, wer_pct: 3.7, downloaded: true, active: true },
       { id: "best", label: "Best", blurb: "Parakeet 0.6B. The most accurate; wants 8 GB of RAM or more.", download_bytes: 482440461, disk_bytes: 640e6, ram_mb: 1300, wer_pct: 2.6, downloaded: false, active: false },
     ],
-    list_input_devices: () => ["Built-in Microphone", "USB Headset"],
+    list_input_devices: () => ["Built-in Microphone", "USB Headset", "PipeWire System Monitor (Loopback)"],
     get_history: () => history,
+    list_meetings: () => meetings,
+    active_meeting_id: () => null,
+    synthesize_meeting: () => meetings[0],
+    export_meeting_markdown: () => meetings[0].summary,
+    ask_meetings: () => "[Q4 Release & Launch Sync · 00:14] Verify the Android 14 emulator smoke test passes.",
+    test_llm: () => "This is a quick test of local AI polish.",
+    regenerate_api_token: () => settings,
     preview_cleanup: () => "I was thinking we could meet at 4pm.",
     test_start: () => { status = { state: "recording", message: "Listening. Click again to stop." }; emit("status", status); },
     test_stop: () => {

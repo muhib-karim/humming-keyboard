@@ -8,8 +8,20 @@
   </head>
   <body>
     <nav class="side">
-      <div class="brand"><span class="dot"></span>Humming</div>
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="#fff">
+            <rect x="2" y="9" width="2.6" height="6" rx="1.3"/>
+            <rect x="6.35" y="6" width="2.6" height="12" rx="1.3"/>
+            <rect x="10.7" y="3" width="2.6" height="18" rx="1.3"/>
+            <rect x="15.05" y="6" width="2.6" height="12" rx="1.3"/>
+            <rect x="19.4" y="9" width="2.6" height="6" rx="1.3"/>
+          </svg>
+        </span>
+        Humming
+      </div>
       <button data-tab="home" class="active">Home</button>
+      <button data-tab="meetings">Meetings</button>
       <button data-tab="history">History</button>
       <button data-tab="dictionary">Dictionary</button>
       <button data-tab="settings">Settings</button>
@@ -18,8 +30,8 @@
     <main>
       <section id="tab-home" class="tab active">
         <h1>Talk, and it types.</h1>
-        <p class="lead">Hold <kbd id="hk-hint">Ctrl+Shift+Space</kbd> in any app, speak, let go. Humming transcribes on this
-          computer and pastes clean text where your cursor is.</p>
+        <p class="lead">Hold <kbd id="hk-hint">Ctrl+Shift+Space</kbd> in any app to dictate, or select text and hold
+          <kbd id="cmd-hk-hint">Ctrl+Shift+E</kbd> for Command Mode. Offline by default on this computer.</p>
         <div class="card status-card">
           <span id="status-pill" class="pill">starting</span>
           <span id="status-msg"></span>
@@ -38,6 +50,73 @@
           <details><summary>What the model heard</summary><div id="try-raw" class="out raw"></div></details>
         </div>
         <div class="card tips" id="tips"></div>
+      </section>
+
+      <section id="tab-meetings" class="tab tab-wide">
+        <div class="row between mtg-head">
+          <div>
+            <h1>Meeting Notepad</h1>
+            <p class="lead">Offline, botless meeting capture. Jot bullets while Humming transcribes locally, then synthesize into structured Markdown.</p>
+          </div>
+          <span id="mtg-pill" class="pill ready">offline &middot; no bot</span>
+        </div>
+        <div class="card row between">
+          <div class="row" style="flex:1">
+            <input id="mtg-title" placeholder="Meeting title (e.g. Q4 Product Sync)" style="flex:1;min-width:180px" />
+            <select id="mtg-device" title="Audio input (mic or loopback/monitor device)"></select>
+          </div>
+          <button id="mtg-toggle" class="primary">Start meeting</button>
+        </div>
+        <div class="mtg-layout">
+          <aside class="card mtg-sidebar">
+            <h2>Saved meetings</h2>
+            <ul id="mtg-list" class="mtg-list"></ul>
+          </aside>
+          <div class="mtg-workspace">
+            <div class="mtg-split">
+              <div class="card mtg-pane">
+                <div class="row between">
+                  <h2>Your Notes</h2>
+                  <span id="mtg-save-state" class="muted small"></span>
+                </div>
+                <textarea id="mtg-notes" rows="10" placeholder="- Key points you want emphasized&#10;- Decisions and owners&#10;- Follow-up questions"></textarea>
+              </div>
+              <div class="card mtg-pane">
+                <div class="row between">
+                  <h2>Live Transcript</h2>
+                  <span id="mtg-seg-count" class="muted small">0 segments</span>
+                </div>
+                <div id="mtg-transcript" class="mtg-transcript"></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="row between">
+                <h2>Synthesized Notes</h2>
+                <div class="row">
+                  <select id="mtg-template">
+                    <option value="summary">Executive Summary</option>
+                    <option value="actions">Action Items &amp; Owners</option>
+                    <option value="decisions">Technical Decisions</option>
+                    <option value="followup">1-on-1 Follow-up</option>
+                  </select>
+                  <button id="mtg-synth" class="primary">Synthesize</button>
+                  <button id="mtg-export">Copy Markdown</button>
+                  <button id="mtg-del" class="link danger">Delete</button>
+                </div>
+              </div>
+              <pre id="mtg-summary" class="out mtg-summary"></pre>
+            </div>
+            <div class="card">
+              <h2>Ask across all meetings</h2>
+              <p class="muted small">Search decisions, owners, and quotes across every saved meeting (100% offline search, or grounded AI answer when Ollama / BYOK is enabled).</p>
+              <form id="mtg-ask-form" class="row" style="margin-top:8px">
+                <input id="mtg-ask-q" placeholder="e.g. What did we decide about the Android release?" style="flex:1;min-width:200px" />
+                <button class="primary" type="submit" id="mtg-ask-btn">Ask</button>
+              </form>
+              <pre id="mtg-ask-out" class="out mtg-summary" hidden></pre>
+            </div>
+          </div>
+        </div>
       </section>
 
       <section id="tab-history" class="tab">
@@ -63,7 +142,30 @@
           <input id="dict-apps" placeholder="Only in apps (optional), e.g. Slack, Code" title="Comma-separated app names. Empty = every app." />
           <button class="primary" type="submit">Add</button>
         </form>
+        <div class="row" style="margin-top:8px">
+          <button type="button" id="dict-import-btn">Import CSV</button>
+          <button type="button" id="dict-export-btn">Export CSV</button>
+          <input id="dict-csv-file" type="file" accept=".csv,text/csv" hidden />
+          <span id="dict-csv-msg" class="muted small"></span>
+        </div>
         <ul id="dict-list" class="list"></ul>
+        <div class="card">
+          <h2>Per-app tone &amp; style</h2>
+          <p class="muted small">Automatically adapt dictation tone per focused app (casual in Slack, formal in Mail, code in VS Code). Casual &amp; bullets work 100% offline; all tones also steer optional local Ollama or BYOK AI polish.</p>
+          <form id="tone-form" class="row" style="margin-top:8px">
+            <input id="tone-apps" placeholder="Apps (blank = all), e.g. Slack, Discord" />
+            <select id="tone-style">
+              <option value="casual">Casual</option>
+              <option value="formal">Formal</option>
+              <option value="email">Email</option>
+              <option value="bullets">Bullets</option>
+              <option value="code">Technical / Code</option>
+            </select>
+            <input id="tone-inst" placeholder="Extra instruction (optional)" style="flex:1;min-width:140px" />
+            <button class="primary" type="submit">Add rule</button>
+          </form>
+          <ul id="tone-list" class="list"></ul>
+        </div>
         <div class="card">
           <h2>Test the cleanup</h2>
           <textarea id="clean-in" rows="3">um so the meeting is at 3, no wait, 4pm. first, eggs, second, milk, third, bread</textarea>
@@ -81,6 +183,12 @@
               <input name="hotkey" placeholder="CommandOrControl+Shift+Space" />
             </label>
             <button type="button" id="hk-record">Record a shortcut</button>
+            <label>Command Mode shortcut (select text anywhere, speak an edit instruction; blank = off)
+              <input name="command_hotkey" placeholder="CommandOrControl+Shift+E" />
+            </label>
+            <label>Re-paste last dictation shortcut (pastes your most recent dictation anywhere; blank = off)
+              <input name="repaste_hotkey" placeholder="CommandOrControl+Shift+V" />
+            </label>
             <label>How the shortcut works
               <select name="mode">
                 <option value="hold">Hold to talk (push-to-talk)</option>
@@ -115,11 +223,58 @@
             <label>Microphone
               <select name="input_device"></select>
             </label>
+            <label>Speech accelerator (GPU provider falls back to CPU automatically if unavailable)
+              <select name="stt_provider">
+                <option value="cpu">CPU (default, works everywhere)</option>
+                <option value="auto">Auto GPU (CoreML / DirectML / CUDA with CPU fallback)</option>
+                <option value="coreml">Apple CoreML (macOS)</option>
+                <option value="directml">DirectML GPU (Windows)</option>
+                <option value="cuda">NVIDIA CUDA (Windows / Linux)</option>
+              </select>
+            </label>
             <label>Longest dictation in seconds (0 = no limit)<input name="max_seconds" type="number" min="0" max="86400" /></label>
             <label class="check"><input type="checkbox" name="show_overlay" /> Show the listening bar while dictating</label>
             <label class="check"><input type="checkbox" name="launch_at_login" /> Start Humming when I log in</label>
             <label class="check"><input type="checkbox" name="history_enabled" /> Keep a history on this computer</label>
             <label>History size<input name="history_limit" type="number" min="10" max="5000" /></label>
+          </fieldset>
+          <fieldset>
+            <legend>AI Polish, Command Mode &amp; Meeting Synthesis (Optional)</legend>
+            <p class="muted small">Off by default. Pick <b>Ollama (Local)</b> to run 100% offline on this computer with zero API key, or bring your own key (text only, audio never leaves the device).</p>
+            <label>Provider
+              <select name="llm_provider">
+                <option value="off">Off (100% deterministic offline rules)</option>
+                <option value="ollama">Ollama (Local, 100% offline)</option>
+                <option value="openai">OpenAI / OpenAI-compatible (Groq, LM Studio, llama.cpp)</option>
+                <option value="anthropic">Anthropic Claude</option>
+                <option value="gemini">Google Gemini</option>
+              </select>
+            </label>
+            <label>Model (blank = provider default: llama3.2:3b, gpt-4o-mini, claude-haiku, gemini-2.5-flash)
+              <input name="llm_model" placeholder="llama3.2:3b" />
+            </label>
+            <label>Endpoint URL (optional; plain http:// allowed only for localhost / 127.0.0.1)
+              <input name="llm_endpoint" placeholder="http://127.0.0.1:11434/api/chat" />
+            </label>
+            <label>API key (not needed for local Ollama)
+              <input name="llm_api_key" type="password" autocomplete="off" placeholder="sk-... (stored locally)" />
+            </label>
+            <label class="check"><input type="checkbox" name="llm_polish_dictation" /> Also polish regular dictations with AI (Command Mode &amp; Meetings use it automatically when enabled)</label>
+            <div class="row">
+              <button type="button" id="llm-test">Test AI connection</button>
+              <span id="llm-msg" class="muted small"></span>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Local HTTP API (Developer &amp; Agent Integration)</legend>
+            <p class="muted small">Exposes <code>GET /health</code>, <code>POST /v1/transcribe</code> (WAV bytes or JSON <code>wav_path</code>), and <code>POST /v1/cleanup</code> on <code>127.0.0.1</code> with Bearer token auth.</p>
+            <label class="check"><input type="checkbox" name="local_api_enabled" /> Enable local HTTP transcription API on 127.0.0.1</label>
+            <label>Port (1024-65535)<input name="local_api_port" type="number" min="1024" max="65535" /></label>
+            <div class="row">
+              <input id="api-token-view" readonly placeholder="(auto-generated when enabled)" style="flex:1;font-family:ui-monospace,monospace;font-size:12px" />
+              <button type="button" id="api-copy-curl">Copy curl</button>
+              <button type="button" id="api-regen">Regenerate</button>
+            </div>
           </fieldset>
           <fieldset id="updates">
             <legend>Updates</legend>

@@ -30,6 +30,27 @@ impl VocabEntry {
 }
 use std::path::Path;
 
+/// Per-app tone & style rule: applies offline tone rules (and optional LLM polish instructions) per focused app.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
+#[serde(default)]
+pub struct ToneRule {
+    pub apps: Vec<String>,
+    /// "default" | "casual" | "formal" | "email" | "bullets" | "code"
+    pub tone: String,
+    pub instructions: String,
+}
+
+impl ToneRule {
+    pub fn applies_to(&self, app: Option<&str>) -> bool {
+        let wanted: Vec<String> = self.apps.iter().map(|a| a.trim().to_lowercase()).filter(|a| !a.is_empty()).collect();
+        if wanted.is_empty() {
+            return true;
+        }
+        let Some(app) = app.map(|a| a.to_lowercase()) else { return false };
+        wanted.iter().any(|w| app.contains(w.as_str()) || w.contains(app.as_str()))
+    }
+}
+
 /// Current settings file format (see `Settings::schema`).
 pub const SCHEMA: u32 = 2;
 
@@ -73,6 +94,28 @@ pub struct Settings {
     /// Self-update (1.6, default on): download and install a new version on its own and relaunch (never mid-dictation).
     /// Off = Humming still checks and shows "Update available", and installs only when asked.
     pub auto_update: bool,
+    /// Command Mode shortcut (1.9): select text in any app, hold/press this shortcut, speak an edit instruction.
+    pub command_hotkey: String,
+    /// Re-paste last dictation shortcut (1.9): pastes the most recent dictation into the focused app.
+    pub repaste_hotkey: String,
+    /// Speech inference execution provider (1.9): "cpu" | "auto" | "coreml" | "cuda" | "directml" (falls back to cpu).
+    pub stt_provider: String,
+    /// Optional AI provider for Command Mode, per-app polish, and meeting synthesis:
+    /// "off" | "ollama" (100% local) | "openai" | "anthropic" | "gemini". Off by default.
+    pub llm_provider: String,
+    pub llm_endpoint: String,
+    pub llm_model: String,
+    pub llm_api_key: String,
+    /// Apply configured AI provider to normal dictations (off by default; Command Mode & Meeting synthesis still use it).
+    pub llm_polish_dictation: bool,
+    /// Per-app tone rules (1.9): casual in Slack, formal in Mail, code in VS Code, etc.
+    pub tone_rules: Vec<ToneRule>,
+    /// Optional audio input device for Meeting Mode (e.g. PipeWire monitor / BlackHole / Stereo Mix); empty = default mic.
+    pub meeting_device: String,
+    /// Authenticated local HTTP API on 127.0.0.1 (1.9, off by default).
+    pub local_api_enabled: bool,
+    pub local_api_port: u16,
+    pub local_api_token: String,
     /// Settings file format. Files written before 1.6.3 have none (0); the one-time migrations in `sanitized` run only
     /// for those, so a value the user picks later (for example a 300 s cap) is kept.
     #[serde(default)]
@@ -106,6 +149,19 @@ impl Default for Settings {
             // 0 = no length limit: record until the shortcut is released (or pressed again in toggle mode).
             max_seconds: 0,
             auto_update: true,
+            command_hotkey: "CommandOrControl+Shift+E".into(),
+            repaste_hotkey: "CommandOrControl+Shift+V".into(),
+            stt_provider: "cpu".into(),
+            llm_provider: "off".into(),
+            llm_endpoint: String::new(),
+            llm_model: String::new(),
+            llm_api_key: String::new(),
+            llm_polish_dictation: false,
+            tone_rules: Vec::new(),
+            meeting_device: String::new(),
+            local_api_enabled: false,
+            local_api_port: 17831,
+            local_api_token: String::new(),
             schema: SCHEMA,
         }
     }
@@ -163,6 +219,21 @@ impl Settings {
         self.dictionary.retain(|e| !e.written.trim().is_empty());
         for e in self.dictionary.iter_mut() {
             e.apps.retain(|a| !a.trim().is_empty());
+        }
+        if !matches!(self.llm_provider.as_str(), "off" | "ollama" | "openai" | "anthropic" | "gemini") {
+            self.llm_provider = "off".into();
+        }
+        if !matches!(self.stt_provider.as_str(), "cpu" | "auto" | "coreml" | "cuda" | "directml") {
+            self.stt_provider = "cpu".into();
+        }
+        for r in self.tone_rules.iter_mut() {
+            r.apps.retain(|a| !a.trim().is_empty());
+            if r.tone.trim().is_empty() {
+                r.tone = "default".into();
+            }
+        }
+        if self.local_api_port < 1024 {
+            self.local_api_port = 17831;
         }
         self
     }

@@ -115,8 +115,8 @@ class CrashDialogActivity : ComponentActivity() {
 
         copyToClipboard.setOnClickListener {
             val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE)
-            val toastMessage: String = if (clipboardManager != null && clipboardManager is ClipboardManager) {
-                clipboardManager.setPrimaryClip(ClipData.newPlainText(errorReport, errorReport))
+            val copied = copyReport(clipboardManager)
+            val toastMessage: String = if (copied) {
                 resources.getString(R.string.crash_dialog__copy_to_clipboard_success)
             } else {
                 resources.getString(R.string.crash_dialog__copy_to_clipboard_failure)
@@ -149,5 +149,22 @@ class CrashDialogActivity : ComponentActivity() {
         this.appendLine(details)
         this.appendLine("```")
         this.appendLine("</details>")
+    }
+
+    private fun copyReport(clipboardManager: Any?): Boolean {
+        if (clipboardManager !is ClipboardManager) return false
+        val full = errorReport.toString()
+        val text = if (full.length > MAX_CLIPBOARD_CHARS) {
+            full.take(MAX_CLIPBOARD_CHARS) + "\n...[truncated]"
+        } else {
+            full
+        }
+        return runCatching {
+            clipboardManager.setPrimaryClip(ClipData.newPlainText("Humming crash report", text))
+        }.isSuccess
+    }
+
+    companion object {
+        private const val MAX_CLIPBOARD_CHARS = 200_000
     }
 }

@@ -14,6 +14,7 @@ import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiObject2
 import androidx.test.uiautomator.Until
 import dev.patrickgold.florisboard.R
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -92,6 +93,13 @@ class ImeSmokeTest {
         )
         shot("05_typed")
         assertTrue("the field shows the typed word", typed)
+    }
+
+    @Test
+    fun voiceEditRunsOnAndroidArt() {
+        val r = VoiceEdit.voiceCommand("Let's meet on Tuesday", "change Tuesday to Wednesday")
+        assertNotNull("VoiceEdit works on Android ART without unsupported regex flags", r?.outcome)
+        assertEquals("Let's meet on Wednesday", r!!.outcome!!.text)
     }
 
     private fun homePreviewField(): UiObject2? {

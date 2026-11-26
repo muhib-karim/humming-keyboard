@@ -206,6 +206,14 @@ impl Recorder {
         let samples = std::mem::take(&mut *session.buf.lock().ok()?);
         Some((samples, session.rate, session.started.elapsed().as_millis() as u64))
     }
+
+    /// Drains accumulated 16 kHz mono samples without stopping the stream (used by live Meeting Mode).
+    pub fn drain(&self) -> Option<(Vec<f32>, u32, u64)> {
+        let guard = self.session.lock().ok()?;
+        let session = guard.as_ref()?;
+        let samples = std::mem::take(&mut *session.buf.lock().ok()?);
+        Some((samples, session.rate, session.started.elapsed().as_millis() as u64))
+    }
 }
 
 #[cfg(test)]

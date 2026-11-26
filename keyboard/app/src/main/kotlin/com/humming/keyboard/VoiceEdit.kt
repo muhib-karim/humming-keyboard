@@ -34,7 +34,11 @@ object VoiceEdit {
     data class Result(val command: Command, val outcome: Outcome?)
 
     private const val MAX_WORDS = 14
-    private const val F = Pattern.CASE_INSENSITIVE or Pattern.UNICODE_CASE or Pattern.UNICODE_CHARACTER_CLASS
+
+    // Android's ICU Pattern throws IllegalArgumentException on Pattern.UNICODE_CHARACTER_CLASS
+    // (Unicode classes are already default on Android); findLast uses explicit Unicode boundaries.
+    private const val F = Pattern.CASE_INSENSITIVE or Pattern.UNICODE_CASE
+    private const val WORD = "[\\p{L}\\p{M}\\p{N}_]"
     private val LEAD = Pattern.compile("^(?:(?:um+|uh+|okay|ok|so|please|hey humming|humming)[,\\s]+)+", F)
     private val TRAIL = Pattern.compile("(?:[,\\s]+please)?[\\s.!?,]*$", F)
     private val RE_REPLACE = Pattern.compile(
@@ -88,16 +92,18 @@ object VoiceEdit {
 
     /** Last whole-word, case-insensitive occurrence of [target] in [text] as [start, end). */
     private fun findLast(text: String, target: String): Pair<Int, Int>? {
-        val re = Pattern.compile("(?:^|\\b|\\s)" + Pattern.quote(target) + "(?:\\b|$)", F)
+        val re = Pattern.compile("(?<!$WORD)" + Pattern.quote(target) + "(?!$WORD)", F)
         val m = re.matcher(text)
         var last: Pair<Int, Int>? = null
         var pos = 0
         while (pos <= text.length) {
             if (!m.find(pos)) break
-            val s = m.group()
-            val lead = s.length - s.trimStart().length
-            last = Pair(m.start() + lead, m.end())
-            pos = if (m.end() > m.start()) m.start() + Character.charCount(text.codePointAt(m.start())) else m.end() + 1
+            last = Pair(m.start(), m.end())
+            pos = if (m.end() > m.start()) {
+                m.start() + Character.charCount(text.codePointAt(m.start()))
+            } else {
+                m.end() + 1
+            }
         }
         return last
     }

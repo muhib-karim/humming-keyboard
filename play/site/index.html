@@ -59,8 +59,8 @@
         <rect x="120" y="5" width="4" height="18" rx="2"/><rect x="130" y="9" width="4" height="10" rx="2"/><rect x="140" y="3" width="4" height="22" rx="2"/>
         <rect x="150" y="10" width="4" height="8" rx="2"/><rect x="160" y="12" width="4" height="4" rx="2"/>
       </svg>
-      <h1 id="hero-title">Talk, and it types. <em>Offline by default: your voice stays on your device.</em></h1>
-      <p class="lead">Humming is a full keyboard with voice typing that runs on your phone or computer, not in someone else's cloud. Dictate for as long as you like, in airplane mode, with the screen off. Free, open source, no account.</p>
+      <h1 id="hero-title">Talk, and it types. <em>Your voice stays on your device.</em></h1>
+      <p class="lead">Offline by default: Humming is a full keyboard with voice typing that runs on your phone or computer, not in someone else's cloud. Dictate for as long as you like, in airplane mode, with the screen off. Free, open source, no account.</p>
       <div class="cta">
         <a class="btn btn-primary" href="#download">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0-5-5m5 5 5-5M4 21h16"/></svg>
@@ -88,13 +88,42 @@
 <div class="proof">
   <div class="wrap">
     <dl>
-      <div><dt>Offline by default</dt><dd>Speech recognition runs on the device: NVIDIA Parakeet on Android and desktop, Apple's on-device recogniser on iPhone.</dd></div>
-      <div><dt>2.78&nbsp;% word error rate</dt><dd>Fast model, LibriSpeech test-clean, first 200 clips (±0.5 points), measured in CI. <a href="#bench">Method</a></dd></div>
-      <div><dt>No length limit</dt><dd>An hour of dictation works like ten seconds. On desktop no cap is set unless you choose one.</dd></div>
-      <div><dt>Open source</dt><dd>Apache-2.0. The benchmark script and its raw output are in the repository.</dd></div>
+      <div><dt>Offline by default</dt><dd>Speech recognition runs on the device: NVIDIA Parakeet &amp; Moonshine on Android and desktop (5 models, up to 25 European languages), Apple's on-device recogniser on iPhone.</dd></div>
+      <div><dt>1.77&nbsp;% / 2.72&nbsp;% WER</dt><dd>Best (1.77&nbsp;%), Multilingual (2.24&nbsp;%), Fast default (2.72&nbsp;%) on LibriSpeech test-clean (200 clips). <a href="#bench">All 5 models</a></dd></div>
+      <div><dt>8.8&nbsp;MB · No limits</dt><dd>Windows installer is 8.8&nbsp;MB (19&times; smaller than Granola, 8.8&times; smaller than Hex). No account, no word caps, no telemetry, no length limit.</dd></div>
+      <div><dt>Verified &amp; open source</dt><dd>Apache-2.0. SHA-256 pinned models, signed updates, <code>NetworkAuditTest</code>, Android 14 emulator CI, and committed raw benchmarks.</dd></div>
     </dl>
   </div>
 </div>
+
+<section id="demo" class="band" aria-labelledby="demo-title">
+  <div class="wrap">
+    <div class="section-head">
+      <h2 id="demo-title">See what Humming does to raw voice</h2>
+      <p>Pick a workflow to inspect how Humming cleans speech, edits text, synthesizes meetings, and types Bangla — offline by default.</p>
+    </div>
+    <div class="demo-tabs" role="tablist" aria-label="Pipeline examples">
+      <button type="button" class="demo-tab active" role="tab" aria-selected="true" data-demo="clean">Clean &amp; Self-Correct</button>
+      <button type="button" class="demo-tab" role="tab" aria-selected="false" data-demo="lists">Spoken Lists</button>
+      <button type="button" class="demo-tab" role="tab" aria-selected="false" data-demo="edit">Edit by Voice</button>
+      <button type="button" class="demo-tab" role="tab" aria-selected="false" data-demo="command">Command Mode</button>
+      <button type="button" class="demo-tab" role="tab" aria-selected="false" data-demo="meetings">Botless Meetings</button>
+      <button type="button" class="demo-tab" role="tab" aria-selected="false" data-demo="bangla">Bangla Phonetic</button>
+    </div>
+    <div class="demo-stage">
+      <div class="demo-box in">
+        <div class="demo-label"><span id="demo-in-label">Raw speech (spoken aloud)</span></div>
+        <div id="demo-in-text" class="demo-text">"um so let's meet at 3, no wait, 4pm and uh bring the printed slides"</div>
+      </div>
+      <div class="demo-arrow" aria-hidden="true">&rarr;</div>
+      <div class="demo-box out">
+        <div class="demo-label"><span id="demo-out-label">Typed into your app</span><span id="demo-badge" class="demo-badge">100% offline · Clean mode</span></div>
+        <div id="demo-out-text" class="demo-text">Let's meet at 4pm and bring the printed slides.</div>
+      </div>
+    </div>
+    <p id="demo-meta" class="demo-meta">Removes fillers and stutters, applies self-corrections, and punctuates on-device across Android, iOS, and desktop.</p>
+  </div>
+</section>
 
 <section id="features" aria-labelledby="features-title">
   <div class="wrap">
@@ -139,17 +168,34 @@
     <article class="feature">
       <div>
         <h3>Your computer, too</h3>
-        <p>Hold <code>Ctrl</code> + <code>Shift</code> + <code>Space</code> (<code>Cmd</code> on a Mac) in any app, talk, let go: the text is pasted where your cursor is. The same Parakeet models as Android, downloaded once and checked against a pinned SHA-256.</p>
+        <p>Hold <code>Ctrl</code> + <code>Shift</code> + <code>Space</code> (<code>Cmd</code> on a Mac) in any app to dictate, <code>Ctrl</code> + <code>Shift</code> + <code>E</code> for <strong>Command Mode</strong>, or <code>Ctrl</code> + <code>Shift</code> + <code>V</code> to re-paste your last dictation — packaged in an 8.8&nbsp;MB Windows installer (19&times; smaller than Granola, 8.8&times; smaller than Hex).</p>
         <ul>
-          <li>Windows, macOS and Linux, from a tray or menu-bar app.</li>
-          <li>Searchable history on the computer, a personal dictionary, spoken lists as bullets.</li>
-          <li>Signed self-updates: the app refuses any file not signed with Humming's update key.</li>
+          <li><strong>Command Mode &amp; Per-App Tone:</strong> rewrite selected text by voice or adapt tone per focused app (casual in Slack, formal in Mail, technical in VS Code) using 100&nbsp;% offline rules, local Ollama, or your own API key.</li>
+          <li><strong>GPU Accelerator &amp; Local HTTP API:</strong> optional CoreML / DirectML / CUDA provider with automatic CPU fallback, plus an opt-in <code>127.0.0.1</code> Bearer-authenticated <code>/v1/transcribe</code> &amp; <code>/v1/cleanup</code> API for scripts and agents.</li>
+          <li><strong>CSV Dictionary &amp; Signed Updates:</strong> import/export CSV vocabularies, one-click "Teach word" from History, and Ed25519-signed self-updates.</li>
         </ul>
       </div>
       <div class="feature-media">
         <picture class="shot-wide">
           <source srcset="img/desktop_home.png" media="(prefers-color-scheme: light)">
-          <img src="img/desktop_home_dark.png" width="1100" height="760" alt="Humming desktop app: status, speech model and a Try it box" loading="lazy">
+          <img src="img/desktop_home_dark.png" width="1180" height="800" alt="Humming desktop app: status, speech models, Command Mode shortcut, and Try it box" loading="lazy">
+        </picture>
+      </div>
+    </article>
+
+    <article class="feature flip">
+      <div>
+        <h3>Offline, botless Meeting Notepad</h3>
+        <p>No call bot ever joins your Zoom, Meet, or Teams call — and no meeting audio is uploaded to any cloud. Jot quick bullets while Parakeet transcribes locally in 12-second chunks from your mic or system loopback device.</p>
+        <ul>
+          <li><strong>Human-in-the-loop synthesis:</strong> merge your manual bullets and timestamped transcript into Executive Summary, Action Items, Technical Decisions, or 1-on-1 Markdown via local Ollama, BYOK AI, or a 100&nbsp;% offline action-item digest.</li>
+          <li><strong>Ask across all meetings:</strong> search decisions, quotes, and owners across every saved meeting with <code>[Title · MM:SS]</code> citations, plus one-click Markdown export.</li>
+        </ul>
+      </div>
+      <div class="feature-media">
+        <picture class="shot-wide">
+          <source srcset="img/desktop_meetings.png" media="(prefers-color-scheme: light)">
+          <img src="img/desktop_meetings_dark.png" width="1180" height="800" alt="Humming offline botless Meeting Notepad with split-pane manual notes, live timestamped transcript, and synthesized Markdown" loading="lazy">
         </picture>
       </div>
     </article>
@@ -171,20 +217,18 @@
 
     <article class="feature">
       <div>
-        <h3>New in 1.7</h3>
-        <p>Gaps closed after a teardown of Gboard, SwiftKey, the Bangla keyboards and the dictation apps.</p>
+        <h3>What ships in 1.8</h3>
+        <p>Built from teardowns of Gboard, SwiftKey, Bangla keyboards, and leading dictation apps (Wispr Flow, Typeless, Hex, Superwhisper).</p>
         <ul>
-          <li><strong>Bangla phonetic typing.</strong> Add Bengali with a QWERTY layout and type the way Avro users do: <span lang="bn-Latn">ami bangla likhi</span> becomes <span lang="bn">আমি বাংলা লিখি</span>, one word at a time, with the Latin word one tap away.</li>
-          <li><strong>Dictation that fits the sentence.</strong> Dictate into the middle of a line and Humming lowercases the first word, skips the stray space after a bracket and drops the final period when your sentence carries on.</li>
-          <li><strong>Dictation like the dictation apps.</strong> Say "bullet point" for a list item, "scratch that" to drop the last sentence, and write "spoken -&gt; written" in custom words to turn a phrase into anything. Filler removal now has its own switch. On Android, desktop and iPhone.</li>
-          <li><strong>Edit by voice (new in 1.8).</strong> Say "change Tuesday to Wednesday", "delete the word really" or "undo that" and Humming edits what you already wrote instead of typing the words. Offline, on Android, iPhone and desktop.</li>
-          <li><strong>Two more speech models (new in 1.8).</strong> Multilingual types 25 European languages on Android and desktop; Balanced on desktop uses less memory than Fast, at slightly lower accuracy. Every model is measured side by side in the benchmarks.</li>
-          <li><strong>More spoken punctuation.</strong> Colon, semicolon, quotes, brackets, ellipsis and "delete last word", the same on Android, desktop and iPhone.</li>
+          <li><strong>Edit by voice, offline.</strong> Say "change Tuesday to Wednesday", "delete the word really", "capitalize monday" or "undo that" and Humming edits what you already wrote instead of typing the words. Shared rule set verified by 36 cross-platform vectors on Android, iPhone and desktop.</li>
+          <li><strong>Five offline speech models.</strong> Multilingual (Parakeet 0.6B v3) transcribes 25 European languages on Android and desktop; Balanced (Moonshine base) lowers desktop RAM; Fast (Parakeet 110M), Best (Parakeet 0.6B v2) and Lite (Moonshine tiny) cover every machine.</li>
+          <li><strong>Bangla phonetic typing.</strong> Add Bengali with a QWERTY layout and type the Avro way: <span lang="bn-Latn">ami bangla likhi</span> becomes <span lang="bn">আমি বাংলা লিখি</span>, with the Latin word one tap away.</li>
+          <li><strong>Smart lists, replacements &amp; cursor joining.</strong> Say "bullet point" or "first, ... second, ..." for lists, "scratch that" to drop a sentence, and <code>spoken -&gt; written</code> per-app snippets. Mid-sentence dictation matches surrounding case and punctuation.</li>
         </ul>
-        <p class="small">These shipped in 1.7.0 and 1.8.0 and are covered by unit tests that run in CI. 1.7.1 added no features: it adds the emulator test, more unit tests and the quality gates shown under <a href="#bench">Measured</a>.</p>
+        <p class="small">Covered by unit tests, static analysis (ktlint, detekt, CodeQL, gitleaks), and an Android 14 emulator smoke test on every pull request. See <a href="#bench">Measured</a>.</p>
       </div>
       <div class="feature-media">
-        <figure class="phone"><img src="img/android_keyboard_dark.png" width="432" height="960" alt="The Humming keyboard in its dark theme with the suggestion strip" loading="lazy"></figure>
+        <figure class="phone"><img src="img/emulator_keyboard.png" width="540" height="1200" alt="The Humming keyboard open on Android 14 with the pink mic button and suggestion strip" loading="lazy"></figure>
       </div>
     </article>
   </div>
@@ -233,8 +277,8 @@
           <tr><th scope="col"><span class="sr-only">Feature</span></th><th scope="col" class="us">Humming</th><th scope="col">Gboard</th><th scope="col">Microsoft SwiftKey</th><th scope="col">Ridmik (Bangla)</th></tr>
         </thead>
         <tbody>
-          <tr><th scope="row">Offline voice typing</th><td class="us"><span class="yes">Yes</span>, the default, every platform (English)</td><td>Pixel 6 or later, 6 languages</td><td>Not in the stable app; an on-device English mode is reported in a beta</td><td>No, uses Google's speech service online</td></tr>
-          <tr><th scope="row">Published accuracy</th><td class="us numbers">WER 2.78&nbsp;% (Fast), 1.68&nbsp;% (Best)</td><td>Not published</td><td>Not published</td><td>Not published</td></tr>
+          <tr><th scope="row">Offline voice typing</th><td class="us"><span class="yes">Yes</span>, the default, every platform (English; 25 EU languages with Multilingual on Android &amp; desktop)</td><td>Pixel 6 or later, 6 languages</td><td>Not in the stable app; an on-device English mode is reported in a beta</td><td>No, uses Google's speech service online</td></tr>
+          <tr><th scope="row">Published accuracy</th><td class="us numbers">WER 1.77&nbsp;% (Best), 2.24&nbsp;% (Multi), 2.72&nbsp;% (Fast)</td><td>Not published</td><td>Not published</td><td>Not published</td></tr>
           <tr><th scope="row">Telemetry</th><td class="us"><span class="yes">None</span></td><td>Usage statistics; federated learning on by default</td><td>Typing data opt-in; voice clips with opt-out</td><td>Play label: may collect personal info and device IDs</td></tr>
           <tr><th scope="row">Voice time or word limits</th><td class="us"><span class="yes">None</span></td><td>Rambler: "usage limits", no numbers</td><td>None documented</td><td>None documented</td></tr>
           <tr><th scope="row">Bangla phonetic typing</th><td class="us">Yes, Avro-style (1.7)</td><td>Own transliteration layout</td><td>Android only, own scheme</td><td><span class="yes">Yes</span>, Avro-style</td></tr>
@@ -246,34 +290,34 @@
         </tbody>
       </table>
     </div>
-    <p class="small muted mt-4">Where Humming trails: offline voice is English only, and Gboard and SwiftKey support hundreds of typing languages and install from the app stores.</p>
+    <p class="small muted mt-4">Where Humming trails: offline voice on iPhone and the default model is English (25 European languages need the Multilingual model on Android &amp; desktop), and Gboard and SwiftKey support hundreds of typing languages and install from the app stores.</p>
 
     <div class="section-head section-next">
       <h2 id="compare-dictation-title">Humming vs dictation apps</h2>
-      <p>The dictation apps clean up what you say. So does Humming, on the device, on five platforms, for free.</p>
+      <p>Cloud dictation apps charge monthly subscriptions; desktop-only local tools skip mobile keyboards. Humming runs offline across all five platforms for free.</p>
     </div>
     <div class="table-wrap" role="region" aria-labelledby="compare-dictation-title" tabindex="0">
       <table>
-        <caption>Vendors' own pages, checked 17 October 2026; sources in <a href="https://github.com/muhib-karim/humming-keyboard/blob/main/COMPETITORS.md#dictation-apps">COMPETITORS.md</a>. Error rates come from different test sets and are not comparable with each other.</caption>
+        <caption>Public vendor pages and MIT/Apache repositories, checked through 27 November 2026; full teardown (including Superwhisper, Aqua Voice, Willow, MacWhisper, Handy, Amical, and Granola's botless meeting-notes lane) in <a href="https://github.com/muhib-karim/humming-keyboard/blob/main/COMPETITORS.md#dictation-apps">COMPETITORS.md</a>. Error rates come from different test sets and are not comparable.</caption>
         <thead>
-          <tr><th scope="col"><span class="sr-only">Feature</span></th><th scope="col" class="us">Humming</th><th scope="col">Wispr Flow</th><th scope="col">Superwhisper</th><th scope="col">Aqua Voice</th><th scope="col">Apple Dictation</th></tr>
+          <tr><th scope="col"><span class="sr-only">Feature</span></th><th scope="col" class="us">Humming 1.9</th><th scope="col">Wispr Flow</th><th scope="col">Typeless</th><th scope="col">Hex (Anomaly)</th><th scope="col">Granola</th><th scope="col">Superwhisper</th><th scope="col">Handy / Amical</th></tr>
         </thead>
         <tbody>
-          <tr><th scope="row">Works offline</th><td class="us"><span class="yes">Yes</span>, the default, every platform (English)</td><td>No, cloud only</td><td>Yes, with local models</td><td>No, cloud only</td><td>On the device in many languages</td></tr>
-          <tr><th scope="row">Published accuracy</th><td class="us numbers">WER 2.78&nbsp;% (Fast), LibriSpeech test-clean</td><td>Charts only; 8.7&nbsp;% measured by Superwhisper</td><td>6.6&nbsp;% WER, its own 8-set benchmark</td><td>5.55&nbsp;% WER, test set not stated</td><td>Not published</td></tr>
-          <tr><th scope="row">Filler words removed</th><td class="us"><span class="yes">Yes</span>, with a switch</td><td>Yes, three levels</td><td>Yes (Message mode)</td><td>Not documented</td><td>Not documented</td></tr>
-          <tr><th scope="row">Lists by voice</th><td class="us"><span class="yes">Yes</span>, "bullet point" and "first, second"</td><td>Yes</td><td>Yes (Note mode)</td><td>Through custom instructions</td><td>Not documented</td></tr>
-          <tr><th scope="row">"Scratch that"</th><td class="us"><span class="yes">Yes</span>, every platform</td><td>Yes (Backtrack)</td><td>Not documented</td><td>Not documented</td><td>"Delete" and "undo" on iPhone, US English</td></tr>
-          <tr><th scope="row">Spoken → written replacements</th><td class="us"><span class="yes">Yes</span>, every platform</td><td>Yes, and snippets</td><td>Yes</td><td>Yes</td><td>None documented for dictation</td></tr>
-          <tr><th scope="row">Edit existing text by voice</th><td class="us">No</td><td>Command Mode (Pro, desktop)</td><td>On selected text</td><td>Edit Mode</td><td>iPhone, US English</td></tr>
-          <tr><th scope="row">Platforms</th><td class="us"><span class="yes">Android, iPhone, Windows, macOS, Linux</span></td><td>Mac, Windows, iOS, Android</td><td>macOS, Windows, iOS, Android</td><td>macOS, Windows, iOS, Android</td><td>iPhone, iPad, Mac</td></tr>
-          <tr><th scope="row">Bangla dictation</th><td class="us">No (Bangla typing only)</td><td>Unverified</td><td>Not named</td><td>Yes, online</td><td>Not listed</td></tr>
-          <tr><th scope="row">Price</th><td class="us"><span class="yes">Free, no word cap</span></td><td>Free 2,000 words a week; Pro $15 a month</td><td>Free with local models; Pro $8.49 a month</td><td>Free 1,000 words; Pro $10 a month</td><td>Free with the OS</td></tr>
-          <tr><th scope="row">Open source</th><td class="us"><span class="yes">Yes, Apache-2.0</span></td><td>No</td><td>No</td><td>No</td><td>No</td></tr>
+          <tr><th scope="row">Works offline</th><td class="us"><span class="yes">Yes</span>, default, all 5 platforms (EN + 25 EU)</td><td>No, cloud only</td><td>No, cloud only (zero retention)</td><td><span class="yes">Yes</span>, local models</td><td>No, cloud ASR + LLM</td><td>Yes, local models</td><td>Yes, desktop local</td></tr>
+          <tr><th scope="row">Published accuracy</th><td class="us numbers"><strong>1.77&nbsp;%</strong> Best · <strong>2.24&nbsp;%</strong> Multi · <strong>2.72&nbsp;%</strong> Fast</td><td>Charts only (8.7&nbsp;% third-party)</td><td>Not published</td><td>Not published</td><td>Not published</td><td>6.6&nbsp;% (own 8-set)</td><td>Not published</td></tr>
+          <tr><th scope="row">Command Mode &amp; voice edit</th><td class="us"><span class="yes">Both</span>: offline VoiceEdit + <strong>Command Mode</strong> (Ollama / BYOK)</td><td>Command Mode (Pro)</td><td>Speak-to-edit on selection</td><td>Pipelines / OpenCode</td><td>Post-call AI chat</td><td>On selected text</td><td>Amical Ollama; Handy none</td></tr>
+          <tr><th scope="row">Per-app tone &amp; CSV dict</th><td class="us"><span class="yes">Yes</span>: per-app tone, snippets, CSV import/export &amp; Teach word</td><td>Auto-tone, auto-learn, snippets</td><td>Tone, dict &amp; CSV import</td><td>QuickJS pipelines &amp; vocab</td><td>Note templates</td><td>Modes &amp; replacements</td><td>Custom prompts</td></tr>
+          <tr><th scope="row">Botless meetings &amp; cross-ask</th><td class="us"><span class="yes">Yes</span>: 100&nbsp;% offline notepad, synthesis &amp; <strong>Ask across meetings</strong></td><td>Wispr Notetaker (cloud)</td><td>No</td><td>Labs: Meetings (macOS beta)</td><td><span class="yes">Core product</span> (cloud, MCP)</td><td>File transcription</td><td>No</td></tr>
+          <tr><th scope="row">Re-paste &amp; Local HTTP API</th><td class="us"><span class="yes">Both</span>: global re-paste shortcut + <code>127.0.0.1</code> Bearer HTTP API</td><td>No</td><td>No</td><td><span class="yes">Both</span>: re-paste + local service/SDK</td><td>Cloud MCP only</td><td>No</td><td>No</td></tr>
+          <tr><th scope="row">GPU acceleration</th><td class="us"><span class="yes">Yes</span>: CoreML / DirectML / CUDA toggle + CPU fallback</td><td>Cloud GPU</td><td>Cloud GPU</td><td><span class="yes">Yes</span>: Metal / Vulkan</td><td>Cloud</td><td>Yes (CoreML)</td><td>GPU Whisper / CPU Parakeet</td></tr>
+          <tr><th scope="row">Full mobile keyboard</th><td class="us"><span class="yes">Yes</span>: Android (FlorisBoard + Bangla phonetic) &amp; iOS</td><td>Voice keyboard (cloud)</td><td>Voice keyboard (cloud)</td><td>Mobile in dev / TestFlight</td><td>iOS note app</td><td>Mobile dictation</td><td>Handy none; Amical beta</td></tr>
+          <tr><th scope="row">Desktop installer size</th><td class="us numbers"><strong>8.8&nbsp;MB</strong> Win · <strong>24.9&nbsp;MB</strong> Mac · <strong>17.5&nbsp;MB</strong> .deb</td><td>Closed installer</td><td>Closed installer</td><td class="numbers">77.2&nbsp;MB Win · 33.5&nbsp;MB Mac · 35.7&nbsp;MB .deb</td><td class="numbers">171.4&nbsp;MB Win · 271.2&nbsp;MB Mac</td><td>Closed installer</td><td>Tauri / Electron</td></tr>
+          <tr><th scope="row">Platforms</th><td class="us"><span class="yes">Android, iOS, Win, macOS, Linux</span></td><td>Mac, Win, iOS, Android</td><td>Mac, Win, Linux, iOS, Android</td><td>Mac, Win, Linux</td><td>Mac, Win, iOS, Watch</td><td>Mac, Win, iOS, Android</td><td>Desktop (Amical no Linux)</td></tr>
+          <tr><th scope="row">Price &amp; licence</th><td class="us"><span class="yes">Free, Apache-2.0</span> (no cap)</td><td>$12–15/mo, closed</td><td>$12–30/mo, closed</td><td><span class="yes">Free, MIT</span></td><td>Freemium / paid, closed</td><td>$8.49/mo Pro, closed</td><td>Free, MIT</td></tr>
         </tbody>
       </table>
     </div>
-    <p class="small muted mt-4">Where Humming trails: no voice editing of text already in the field, no per-app tone, and offline dictation is English only. Typeless, Willow, MacWhisper and Google are in <a href="https://github.com/muhib-karim/humming-keyboard/blob/main/COMPETITORS.md#dictation-apps">COMPETITORS.md</a>.</p>
+    <p class="small muted mt-4">Where Humming still trails: desktop ASR decodes on CPU after hotkey release rather than GPU streaming (Hex's strength); meeting loopback uses your OS loopback/monitor audio device rather than a built-in per-app tap; and offline voice beyond English + 25 EU languages uses Android's Online mode. Full teardown &amp; binary audit: <a href="https://github.com/muhib-karim/humming-keyboard/blob/main/COMPETITORS.md#dictation-apps">COMPETITORS.md</a>.</p>
   </div>
 </section>
 
@@ -281,15 +325,18 @@
   <div class="wrap">
     <div class="section-head">
       <h2 id="bench-title">Measured, with the script in the repo</h2>
-      <p>LibriSpeech, the standard read-English benchmark, with the exact models and decoder settings the apps ship. Lower is better.</p>
+      <p>All five offline models measured side by side on LibriSpeech test-clean (first 200 clips) with the exact sherpa-onnx 1.13.8 runtime the apps ship. Lower is better.</p>
     </div>
     <div class="table-wrap" role="region" aria-labelledby="bench-title" tabindex="0">
       <table class="numbers">
-        <caption>CI run 37204875974 on 4 October 2026, 2-thread x86-64 desktop CPU. First 200 test-clean and 100 test-other clips, so treat the WER as ±0.5 points. Phone speed has not been benchmarked. Raw output: <a href="https://github.com/muhib-karim/humming-keyboard/tree/main/docs/bench">docs/bench</a>.</caption>
-        <thead><tr><th scope="col">Model</th><th scope="col">WER test-clean</th><th scope="col">WER test-other</th><th scope="col">Median time to text</th><th scope="col">Download</th></tr></thead>
+        <caption>Measured 28 October 2026 on CPU (2 threads, Linux x64, mean clip 9.1&nbsp;s; Best &amp; Multilingual archives re-pinned 10 Nov 2026). Real-time factor = decode time / audio time. Phone speed is not measured here. Full report &amp; raw JSONL: <a href="https://github.com/muhib-karim/humming-keyboard/blob/main/docs/BENCHMARKS.md">docs/BENCHMARKS.md</a>.</caption>
+        <thead><tr><th scope="col">Model</th><th scope="col">Platforms</th><th scope="col">WER</th><th scope="col">RTF</th><th scope="col">Median latency</th><th scope="col">Peak RSS</th><th scope="col">Download</th></tr></thead>
         <tbody>
-          <tr><th scope="row">Fast (default), Parakeet TDT-CTC 110M</th><td>2.78&nbsp;%</td><td>4.20&nbsp;%</td><td>312&nbsp;ms</td><td>104&nbsp;MB</td></tr>
-          <tr><th scope="row">Best, Parakeet TDT 0.6B v2</th><td>1.68&nbsp;%</td><td>3.12&nbsp;%</td><td>1314&nbsp;ms</td><td>482&nbsp;MB</td></tr>
+          <tr><th scope="row">Best — Parakeet TDT 0.6B v2</th><td>Android, Desktop</td><td><strong>1.77&nbsp;%</strong></td><td>0.0949</td><td>671&nbsp;ms</td><td>1,266&nbsp;MB</td><td>482&nbsp;MB</td></tr>
+          <tr><th scope="row">Multilingual — Parakeet TDT 0.6B v3 (25 EU)</th><td>Android, Desktop</td><td><strong>2.24&nbsp;%</strong></td><td>0.0956</td><td>695&nbsp;ms</td><td>1,129&nbsp;MB</td><td>487&nbsp;MB</td></tr>
+          <tr><th scope="row">Fast (default) — Parakeet TDT-CTC 110M</th><td>Android, Desktop</td><td><strong>2.72&nbsp;%</strong></td><td>0.0299</td><td>217&nbsp;ms</td><td>478&nbsp;MB</td><td>104&nbsp;MB</td></tr>
+          <tr><th scope="row">Balanced — Moonshine v2 base</th><td>Desktop</td><td><strong>3.11&nbsp;%</strong></td><td>0.0376</td><td>300&nbsp;ms</td><td>379&nbsp;MB</td><td>111&nbsp;MB</td></tr>
+          <tr><th scope="row">Lite — Moonshine v2 tiny</th><td>Desktop</td><td><strong>4.51&nbsp;%</strong></td><td>0.0206</td><td>157&nbsp;ms</td><td>174&nbsp;MB</td><td>30&nbsp;MB</td></tr>
         </tbody>
       </table>
     </div>
@@ -375,7 +422,7 @@ apksigner verify --print-certs Humming-*.apk
       </details>
       <details>
         <summary>Which languages can I dictate in?</summary>
-        <div><p>Offline voice typing is English today, on every platform. On Android, the optional Online mode uses your phone's own speech service and its languages, but then audio leaves the phone. Typing works in many layouts, with prediction in English, German, Spanish, French, Italian and Portuguese, and Bangla phonetic typing from 1.7.</p></div>
+        <div><p>The default Fast model is offline English on every platform. On Android (6 GB RAM or more) and desktop, the optional Multilingual model (NVIDIA Parakeet 0.6B v3) transcribes 25 European languages offline with automatic language detection. On Android, opt-in Online mode uses your phone's own speech service and its languages, sending audio there. Typing works in many layouts, with prediction in six languages and Avro-style Bangla phonetic typing.</p></div>
       </details>
       <details>
         <summary>How do I type Bangla phonetically?</summary>
