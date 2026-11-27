@@ -60,7 +60,8 @@ class AssembleReleaseTest(unittest.TestCase):
                               capture_output=True, text=True, env=env)
 
     def release_env(self):
-        lines = open(os.path.join(os.path.dirname(self.out), "release.env")).read().split()
+        with open(os.path.join(os.path.dirname(self.out), "release.env"), encoding="utf-8") as fh:
+            lines = fh.read().split()
         return dict(l.split("=", 1) for l in lines)
 
     def test_rc_tag_accepted_and_marked_prerelease(self):
@@ -79,9 +80,11 @@ class AssembleReleaseTest(unittest.TestCase):
         # A pre-release is never mirrored, so it carries no update feeds pointing at mirror files that won't exist.
         self.assertNotIn("latest.json", names)
         self.assertNotIn("android.json", names)
-        sums = open(os.path.join(self.out, "SHA256SUMS.txt")).read()
+        with open(os.path.join(self.out, "SHA256SUMS.txt"), encoding="utf-8") as fh:
+            sums = fh.read()
         self.assertEqual(len(sums.strip().splitlines()), len(names) - 1)
-        notes = open(os.path.join(os.path.dirname(self.out), "NOTES.md")).read()
+        with open(os.path.join(os.path.dirname(self.out), "NOTES.md"), encoding="utf-8") as fh:
+            notes = fh.read()
         self.assertIn("Bangla phonetic typing", notes)
         self.assertIn("release candidate", notes.lower())
         self.assertIn("| Android |", notes)
@@ -92,10 +95,12 @@ class AssembleReleaseTest(unittest.TestCase):
         self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
         self.assertEqual(self.release_env()["PRERELEASE"], "false")
         self.assertIn("Humming-1.7.0.apk", os.listdir(self.out))
-        android = json.load(open(os.path.join(self.out, "android.json")))
+        with open(os.path.join(self.out, "android.json"), encoding="utf-8") as fh:
+            android = json.load(fh)
         self.assertEqual(android["versionCode"], 1700)
         self.assertEqual(android["apk"], "Humming-1.7.0.apk")
-        latest = json.load(open(os.path.join(self.out, "latest.json")))
+        with open(os.path.join(self.out, "latest.json"), encoding="utf-8") as fh:
+            latest = json.load(fh)
         self.assertTrue(latest["platforms"]["windows-x86_64"]["url"].endswith("Humming_1.7.0_x64-setup.exe"))
 
     def test_version_mismatch_fails(self):
@@ -119,7 +124,8 @@ class AssembleReleaseTest(unittest.TestCase):
         r = self.run_script("1.7.0-rc1", "--allow-missing", "ios")
         self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
         self.assertFalse(any(n.endswith(".ipa") for n in os.listdir(self.out)))
-        notes = open(os.path.join(os.path.dirname(self.out), "NOTES.md")).read()
+        with open(os.path.join(os.path.dirname(self.out), "NOTES.md"), encoding="utf-8") as fh:
+            notes = fh.read()
         self.assertIn("Not in this release: iOS", notes)
 
     def test_missing_updater_signature_fails(self):

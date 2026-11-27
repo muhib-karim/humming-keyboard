@@ -28,6 +28,64 @@ pub fn input_devices() -> Vec<String> {
     }
 }
 
+/// Candidate loopback / system-audio sources for botless Meeting Mode.
+/// On Windows, WASAPI transparently captures any output device as loopback via `default_output_config()` +
+/// `build_input_stream()`. On macOS/Linux, exposes virtual/monitor input devices (PipeWire monitor, BlackHole, etc.).
+pub fn loopback_devices() -> Vec<String> {
+    #[cfg(target_os = "windows")]
+    {
+        let mut out = vec!["System Audio (Default Output)".to_string()];
+        let host = cpal::default_host();
+        if let Ok(devs) = host.output_devices() {
+            for d in devs {
+                if let Ok(name) = d.name() {
+                    out.push(format!("[System] {name}"));
+                }
+            }
+        }
+        out
+    }
+    #[cfg(target_os = "macos")]
+    {
+        input_devices()
+            .into_iter()
+            .filter(|n| {
+                let l = n.to_lowercase();
+                ["blackhole", "loopback", "soundflower", "virtual", "monitor", "aggregate"]
+                    .iter()
+                    .any(|k| l.contains(k))
+            })
+            .collect()
+    }
+    #[cfg(all(unix, not(target_os = "macos")))]
+    {
+        input_devices()
+            .into_iter()
+            .filter(|n| {
+                let l = n.to_lowercase();
+                l.contains("monitor") || l.contains("loopback")
+            })
+            .collect()
+    }
+}
+
+/// Quiet-speech / Whisper Mode auto-gain: boosts faint speech (RMS >= 1e-4) toward ~-22 dBFS, clamped to [-0.95, 0.95].
+pub fn apply_whisper_gain(samples: &[f32]) -> Vec<f32> {
+    if samples.is_empty() {
+        return Vec::new();
+    }
+    let mean_sq = samples.iter().map(|&s| s * s).sum::<f32>() / samples.len() as f32;
+    let rms = mean_sq.sqrt();
+    if rms < 1e-4 {
+        return samples.to_vec();
+    }
+    let gain = (0.08 / rms).clamp(1.0, 4.5);
+    if gain <= 1.05 {
+        return samples.to_vec();
+    }
+    samples.iter().map(|&s| (s * gain).clamp(-0.95, 0.95)).collect()
+}
+
 /// Most 16 kHz samples kept for one dictation. 0 = no limit (the default): record until the user stops.
 fn sample_cap(max_seconds: u32) -> usize {
     if max_seconds == 0 { usize::MAX } else { crate::stt::SAMPLE_RATE as usize * max_seconds as usize }
@@ -85,6 +143,26 @@ impl Recorder {
         max_seconds: u32,
         level: impl Fn(f32) + Send + 'static,
     ) -> Result<(), String> {
+        self.start_internal(device_name, false, max_seconds, level)
+    }
+
+    /// Opens a system-audio loopback stream (WASAPI output loopback on Windows; monitor/virtual input on Unix).
+    pub fn start_loopback(
+        &self,
+        device_name: &str,
+        max_seconds: u32,
+        level: impl Fn(f32) + Send + 'static,
+    ) -> Result<(), String> {
+        self.start_internal(device_name, true, max_seconds, level)
+    }
+
+    fn start_internal(
+        &self,
+        device_name: &str,
+        loopback: bool,
+        max_seconds: u32,
+        level: impl Fn(f32) + Send + 'static,
+    ) -> Result<(), String> {
         let mut guard = self.session.lock().map_err(|_| "recorder lock poisoned".to_string())?;
         if guard.is_some() {
             return Ok(());
@@ -98,24 +176,49 @@ impl Recorder {
             .name("humming-mic".into())
             .spawn(move || {
                 let host = cpal::default_host();
-                let device = if device_name.is_empty() {
-                    host.default_input_device()
-                } else {
-                    host.input_devices()
-                        .ok()
-                        .and_then(|mut it| it.find(|d| d.name().map(|n| n == device_name).unwrap_or(false)))
-                        .or_else(|| host.default_input_device())
-                };
-                let Some(device) = device else {
-                    let _ = ready_tx.send(Err("no microphone found".into()));
-                    return;
-                };
-                let config = match device.default_input_config() {
-                    Ok(c) => c,
-                    Err(e) => {
-                        let _ = ready_tx.send(Err(format!("the microphone cannot be opened: {e}")));
+                let clean = device_name.strip_prefix("[System] ").unwrap_or(&device_name).trim();
+                let (device, config) = if cfg!(target_os = "windows") && loopback {
+                    let dev = if clean.is_empty() || clean == "System Audio (Default Output)" {
+                        host.default_output_device()
+                    } else {
+                        host.output_devices()
+                            .ok()
+                            .and_then(|mut it| it.find(|d| d.name().map(|n| n == clean).unwrap_or(false)))
+                            .or_else(|| host.default_output_device())
+                    };
+                    let Some(device) = dev else {
+                        let _ = ready_tx.send(Err("no system audio output device found".into()));
                         return;
-                    }
+                    };
+                    let config = match device.default_output_config() {
+                        Ok(c) => c,
+                        Err(e) => {
+                            let _ = ready_tx.send(Err(format!("the system audio device cannot be opened: {e}")));
+                            return;
+                        }
+                    };
+                    (device, config)
+                } else {
+                    let dev = if clean.is_empty() {
+                        host.default_input_device()
+                    } else {
+                        host.input_devices()
+                            .ok()
+                            .and_then(|mut it| it.find(|d| d.name().map(|n| n == clean).unwrap_or(false)))
+                            .or_else(|| host.default_input_device())
+                    };
+                    let Some(device) = dev else {
+                        let _ = ready_tx.send(Err("no microphone found".into()));
+                        return;
+                    };
+                    let config = match device.default_input_config() {
+                        Ok(c) => c,
+                        Err(e) => {
+                            let _ = ready_tx.send(Err(format!("the microphone cannot be opened: {e}")));
+                            return;
+                        }
+                    };
+                    (device, config)
                 };
                 let rate = config.sample_rate().0;
                 let channels = config.channels() as usize;
@@ -214,11 +317,20 @@ impl Recorder {
         let samples = std::mem::take(&mut *session.buf.lock().ok()?);
         Some((samples, session.rate, session.started.elapsed().as_millis() as u64))
     }
+
+    /// Non-destructively reads up to the last `max_samples` 16 kHz mono samples (used by live overlay preview).
+    pub fn snapshot_tail(&self, max_samples: usize) -> Option<(Vec<f32>, u32, u64)> {
+        let guard = self.session.lock().ok()?;
+        let session = guard.as_ref()?;
+        let buf = session.buf.lock().ok()?;
+        let start = buf.len().saturating_sub(max_samples);
+        Some((buf[start..].to_vec(), session.rate, session.started.elapsed().as_millis() as u64))
+    }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::{sample_cap, Down16};
+    use super::{apply_whisper_gain, sample_cap, Down16};
 
     #[test]
     fn no_cap_by_default_and_seconds_to_samples_otherwise() {
@@ -241,5 +353,16 @@ mod tests {
         let mut out = Vec::new();
         d.push(&vec![0.0f32; 44_100], &mut out, usize::MAX);
         assert!((out.len() as i64 - 16_000).abs() <= 1, "got {}", out.len());
+    }
+
+    #[test]
+    fn whisper_gain_boosts_faint_speech_and_keeps_silence_or_normal_speech() {
+        assert_eq!(apply_whisper_gain(&[0.0; 100]), vec![0.0; 100]);
+        let quiet = vec![0.01f32, -0.01f32, 0.01f32, -0.01f32];
+        let boosted = apply_whisper_gain(&quiet);
+        assert!((boosted[0] - 0.045).abs() < 1e-4, "got {:?}", boosted);
+        assert!(boosted.iter().all(|s| s.abs() <= 0.95));
+        let normal = vec![0.3f32, -0.3f32, 0.3f32, -0.3f32];
+        assert_eq!(apply_whisper_gain(&normal), normal);
     }
 }

@@ -155,8 +155,8 @@ def draw_left_column(canvas, root, font_b, font_r, *, x, wide):
     # Subcopy (verified facts from docs/BENCHMARKS.md, COMPETITORS.md, and README.md)
     sy = hy + (146 if wide else 130)
     f_s = ImageFont.truetype(font_r, 22 if wide else 20)
-    d.text((x, sy), "Parakeet offline ASR · Command Mode · Botless Meetings · Local API", font=f_s, fill=(196, 196, 208))
-    d.text((x, sy + 34), "8.8 MB Win · No account · No analytics · No word caps · Apache-2.0", font=f_s, fill=(163, 163, 176))
+    d.text((x, sy), "Parakeet offline ASR · Command Mode · Dual-Track Meetings · MCP", font=f_s, fill=(196, 196, 208))
+    d.text((x, sy + 34), "8.9 MB Win · No account · No telemetry · No word caps · Apache-2.0", font=f_s, fill=(163, 163, 176))
 
     # Platform chips
     cy = sy + 90
@@ -234,7 +234,7 @@ def render_poster(root, font_b, font_r):
 
     # Version + offline badge
     f_pill = ImageFont.truetype(font_b, 19)
-    pill_txt = "v1.9  ·  OFFLINE BY DEFAULT  ·  APACHE-2.0"
+    pill_txt = "v2.0  ·  OFFLINE BY DEFAULT  ·  APACHE-2.0"
     pw = d.textlength(pill_txt, font=f_pill) + 40
     px, py = w - 88 - pw, 108
     d.rounded_rectangle((px, py, px + pw, py + 38), 19, fill=(23, 50, 37, 255), outline=(61, 214, 140, 180), width=2)
@@ -246,7 +246,7 @@ def render_poster(root, font_b, font_r):
     d.text((88, 224), "Talk, and it types.", font=f_h1, fill=(244, 244, 247))
     d.text((88, 316), "Your voice stays on device.", font=f_h1, fill=(240, 96, 127))
     f_sub = ImageFont.truetype(font_r, 27)
-    d.text((88, 422), "Private voice keyboard, Command Mode, botless Meeting Notepad & local HTTP API.", font=f_sub, fill=(186, 186, 200))
+    d.text((88, 422), "Private voice keyboard, Command Mode, dual-track Meeting Notepad & built-in MCP.", font=f_sub, fill=(186, 186, 200))
 
     # Platform chips + waveform
     f_c = ImageFont.truetype(font_b, 20)
@@ -268,10 +268,10 @@ def render_poster(root, font_b, font_r):
 
     # 4 feature cards (2x2 grid)
     cards = [
-        ("Command Mode & Per-App Tone", "Select text anywhere, press Ctrl/Cmd+Shift+E, speak your edit. Adapts tone per app (Slack, Mail, Code) via 100% offline rules, local Ollama, or BYOK."),
-        ("Offline Botless Meeting Notepad", "Zero call bots, zero cloud audio. 12s local Parakeet chunks + manual Markdown notes + template synthesis + Ask Across All Meetings."),
-        ("Local HTTP API & GPU Provider", "Opt-in 127.0.0.1 Bearer-auth /v1/transcribe & /v1/cleanup API for scripts & agents. CoreML / DirectML / CUDA toggle with CPU fallback."),
-        ("Full Android Keyboard + Bangla", "Built on FlorisBoard: 6-language prediction, glide typing, Avro-style Bangla phonetic, clipboard history, edit-by-voice across 36 shared vectors."),
+        ("Dual-Track Botless Meetings", "Zero call bots, zero cloud audio. Captures mic [You] + system audio [Remote] (WASAPI loopback / monitor) + split-pane Markdown + Ask Meetings."),
+        ("Built-in Local MCP & HTTP API", "127.0.0.1 Bearer-auth JSON-RPC 2.0 MCP server (/mcp for Claude & Cursor) + /v1/transcribe, /v1/cleanup, /v1/meetings, and /v1/history."),
+        ("Command Mode, Live Draft & Whisper", "Ctrl/Cmd+Shift+E rewrites selection via local Ollama, BYOK, or VoiceEdit. Live overlay draft words, Whisper Mode (-54 dB), and per-app tone."),
+        ("Full Android Keyboard + Bangla", "Built on FlorisBoard: 6-language prediction, glide typing, Avro-style Bangla phonetic, clipboard history, and 36-vector VoiceEdit."),
     ]
     f_ct = ImageFont.truetype(font_b, 26)
     f_cb = ImageFont.truetype(font_r, 21)
@@ -294,8 +294,8 @@ def render_poster(root, font_b, font_r):
                 cur = wd
         if cur:
             lines.append(cur)
-        for li, line in enumerate(lines[:3]):
-            d.text((x0 + 28, y0 + 74 + li * 32), line, font=f_cb, fill=(176, 176, 190))
+        for li, line in enumerate(lines[:4]):
+            d.text((x0 + 28, y0 + 72 + li * 30), line, font=f_cb, fill=(176, 176, 190))
 
     # Bottom verified metrics & binary size bar
     my = 1714
@@ -303,7 +303,7 @@ def render_poster(root, font_b, font_r):
     metrics = [
         ("1.77 % WER", "Parakeet 0.6B Best (test-clean)"),
         ("2.24 % / 25 EU", "Multilingual offline model"),
-        ("8.8 MB Win", "19.5x smaller than Granola"),
+        ("8.9 MB Win", "19x smaller than Granola"),
         ("$0 · Apache-2.0", "No account · No word caps"),
     ]
     f_mv = ImageFont.truetype(font_b, 33)

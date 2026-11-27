@@ -110,8 +110,14 @@ pub struct Settings {
     pub llm_polish_dictation: bool,
     /// Per-app tone rules (1.9): casual in Slack, formal in Mail, code in VS Code, etc.
     pub tone_rules: Vec<ToneRule>,
-    /// Optional audio input device for Meeting Mode (e.g. PipeWire monitor / BlackHole / Stereo Mix); empty = default mic.
+    /// Optional audio input device for Meeting Mode (mic); empty = default mic.
     pub meeting_device: String,
+    /// Optional system-audio / loopback device for dual-track Meeting Mode (2.0): empty = mic only.
+    pub meeting_system_device: String,
+    /// Whisper / quiet-speech mode (2.0): lowers VAD threshold (-54 dB) and boosts faint mic audio before decode.
+    pub whisper_mode: bool,
+    /// Show live rolling partial transcript words inside the floating overlay while dictating (2.0).
+    pub live_preview: bool,
     /// Authenticated local HTTP API on 127.0.0.1 (1.9, off by default).
     pub local_api_enabled: bool,
     pub local_api_port: u16,
@@ -159,6 +165,9 @@ impl Default for Settings {
             llm_polish_dictation: false,
             tone_rules: Vec::new(),
             meeting_device: String::new(),
+            meeting_system_device: String::new(),
+            whisper_mode: false,
+            live_preview: true,
             local_api_enabled: false,
             local_api_port: 17831,
             local_api_token: String::new(),
@@ -333,5 +342,13 @@ mod tests {
         assert!(e.applies_to(Some("slack.exe")));
         assert!(!e.applies_to(Some("Outlook")));
         assert!(!e.applies_to(None));
+    }
+
+    #[test]
+    fn v19_json_gets_v2_defaults() {
+        let s: Settings = serde_json::from_str(r#"{"model":"fast","schema":2}"#).unwrap().sanitized();
+        assert!(!s.whisper_mode);
+        assert!(s.live_preview);
+        assert!(s.meeting_system_device.is_empty());
     }
 }

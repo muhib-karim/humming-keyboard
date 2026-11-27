@@ -8,6 +8,7 @@ mod history;
 mod insert;
 mod llm;
 mod local_api;
+mod mcp;
 mod meetings;
 mod models;
 mod settings;
@@ -42,6 +43,7 @@ struct LoadedEngine {
 struct ActiveMeeting {
     id: u64,
     started_ms: u64,
+    has_system: bool,
     stop: Arc<AtomicBool>,
 }
 
@@ -53,6 +55,7 @@ pub struct AppState {
     meetings: Mutex<meetings::MeetingStore>,
     active_meeting: Mutex<Option<ActiveMeeting>>,
     meeting_recorder: audio::Recorder,
+    meeting_system_recorder: audio::Recorder,
     recorder: audio::Recorder,
     engine: Mutex<Option<LoadedEngine>>,
     status: Mutex<Status>,
@@ -63,8 +66,10 @@ pub struct AppState {
     /// True when the active recording was started via Command Mode (rewrite highlighted text in focused app).
     command_mode: AtomicBool,
     command_selection: Arc<Mutex<Option<String>>>,
-    /// Name of the app that had focus when the current dictation started (per-app dictionary & tone).
+    /// Name and window title of the app that had focus when dictation started (per-app dictionary, tone & AI context).
     focused_app: Arc<Mutex<Option<String>>>,
+    focused_title: Arc<Mutex<Option<String>>>,
+    preview_stop: Mutex<Option<Arc<AtomicBool>>>,
     /// Humming's own last insertion, the only text a voice edit may touch (1.8).
     last_insert: Mutex<voice_edit::LastInsert>,
     local_api: Mutex<Option<local_api::ServerHandle>>,
@@ -226,7 +231,7 @@ fn show_overlay(app: &AppHandle) {
     let _ = w.set_ignore_cursor_events(true);
     if let Ok(Some(m)) = w.primary_monitor() {
         let scale = m.scale_factor();
-        let (ww, wh) = ((280.0 * scale) as i32, (64.0 * scale) as i32);
+        let (ww, wh) = ((360.0 * scale) as i32, (88.0 * scale) as i32);
         let x = m.position().x + (m.size().width as i32 - ww) / 2;
         let y = m.position().y + m.size().height as i32 - wh - (96.0 * scale) as i32;
         let _ = w.set_position(tauri::PhysicalPosition::new(x, y));
@@ -270,20 +275,33 @@ fn start_dictation(app: &AppHandle, to_focused_app: bool, command_mode: bool) ->
     let s = state.settings.lock().map(|g| g.clone()).unwrap_or_default();
     state.to_focused_app.store(to_focused_app, Ordering::SeqCst);
     state.command_mode.store(command_mode, Ordering::SeqCst);
+    if let Ok(mut g) = state.preview_stop.lock() {
+        if let Some(prev) = g.take() {
+            prev.store(true, Ordering::SeqCst);
+        }
+    }
     if let Ok(mut g) = state.command_selection.lock() {
         *g = None;
     }
     if let Ok(mut g) = state.focused_app.lock() {
         *g = None;
     }
+    if let Ok(mut g) = state.focused_title.lock() {
+        *g = None;
+    }
     if to_focused_app {
         let slot = state.focused_app.clone();
+        let title_slot = state.focused_title.clone();
         let sel_slot = state.command_selection.clone();
         let restore_cb = s.restore_clipboard;
         std::thread::spawn(move || {
             let name = focus::focused_app();
             if let Ok(mut g) = slot.lock() {
                 *g = name;
+            }
+            let title = focus::focused_window_title();
+            if let Ok(mut g) = title_slot.lock() {
+                *g = title;
             }
             if command_mode {
                 let sel = insert::grab_selection(restore_cb);
@@ -303,9 +321,64 @@ fn start_dictation(app: &AppHandle, to_focused_app: bool, command_mode: bool) ->
             set_status(app, "error", e.clone());
             e
         })?;
+    let _ = app.emit("partial-transcript", "");
     set_status(app, "recording", if command_mode { "Command Mode: speak instruction" } else { "Listening" });
     if s.show_overlay && to_focused_app {
         show_overlay(app);
+    }
+    if s.live_preview && s.show_overlay && to_focused_app && !command_mode {
+        let stop_flag = Arc::new(AtomicBool::new(false));
+        if let Ok(mut g) = state.preview_stop.lock() {
+            *g = Some(stop_flag.clone());
+        }
+        let prev_app = app.clone();
+        let whisper_on = s.whisper_mode;
+        let _ = std::thread::Builder::new()
+            .name("humming-live-preview".into())
+            .spawn(move || {
+                let mut last_emitted = String::new();
+                while !stop_flag.load(Ordering::SeqCst) {
+                    for _ in 0..14 {
+                        if stop_flag.load(Ordering::SeqCst) {
+                            return;
+                        }
+                        std::thread::sleep(std::time::Duration::from_millis(100));
+                    }
+                    let st = prev_app.state::<AppState>();
+                    if st.busy.load(Ordering::SeqCst) || !st.recorder.is_recording() {
+                        continue;
+                    }
+                    let Some((samples, rate, _)) = st.recorder.snapshot_tail(16_000 * 12) else { continue };
+                    if samples.len() < rate as usize {
+                        continue;
+                    }
+                    let engine = st.engine.lock().ok().and_then(|g| g.as_ref().map(|e| (e.engine.clone(), e.engine.model_id.to_string())));
+                    let Some((engine, loaded_model)) = engine else { continue };
+                    let mut pcm = stt::to_16k(&samples, rate);
+                    let vad = if whisper_on {
+                        pcm = audio::apply_whisper_gain(&pcm);
+                        humming_core::VadConfig { threshold_db: -54.0, min_speech_ms: 90, ..humming_core::VadConfig::default() }
+                    } else {
+                        humming_core::VadConfig::default()
+                    };
+                    if humming_core::vad::speech_ranges(&pcm, stt::SAMPLE_RATE, &vad).is_empty() {
+                        continue;
+                    }
+                    let Some(raw) = engine.try_transcribe(&pcm) else { continue };
+                    if raw.trim().is_empty() {
+                        continue;
+                    }
+                    let mut snap_s = st.settings.lock().map(|g| g.clone()).unwrap_or_default();
+                    snap_s.model = loaded_model;
+                    snap_s.trailing_space = false;
+                    let focused = st.focused_app.lock().ok().and_then(|g| g.clone());
+                    let cleaned = finalize_text_for(&raw, &snap_s, focused.as_deref()).trim().to_string();
+                    if !cleaned.is_empty() && cleaned != last_emitted {
+                        last_emitted = cleaned.clone();
+                        let _ = prev_app.emit("partial-transcript", cleaned);
+                    }
+                }
+            });
     }
     Ok(())
 }
@@ -313,6 +386,12 @@ fn start_dictation(app: &AppHandle, to_focused_app: bool, command_mode: bool) ->
 fn stop_dictation(app: &AppHandle) {
     let state = app.state::<AppState>();
     let released = Instant::now();
+    if let Ok(mut g) = state.preview_stop.lock() {
+        if let Some(prev) = g.take() {
+            prev.store(true, Ordering::SeqCst);
+        }
+    }
+    let _ = app.emit("partial-transcript", "");
     let Some((samples, rate, wall_ms)) = state.recorder.stop() else { return };
     let to_focused_app = state.to_focused_app.load(Ordering::SeqCst);
     let command_mode = state.command_mode.swap(false, Ordering::SeqCst);
@@ -336,20 +415,26 @@ fn stop_dictation(app: &AppHandle) {
         let state = app.state::<AppState>();
         let mut s = state.settings.lock().map(|g| g.clone()).unwrap_or_default();
         s.model = loaded_model;
-        let pcm = stt::to_16k(&samples, rate);
+        let mut pcm = stt::to_16k(&samples, rate);
         let audio_ms = pcm.len() as u64 * 1000 / stt::SAMPLE_RATE as u64;
         // All silence (an accidental press, a muted mic): insert nothing rather than let the model guess.
-        let vad = humming_core::VadConfig::default();
+        let vad = if s.whisper_mode {
+            pcm = audio::apply_whisper_gain(&pcm);
+            humming_core::VadConfig { threshold_db: -54.0, min_speech_ms: 90, ..humming_core::VadConfig::default() }
+        } else {
+            humming_core::VadConfig::default()
+        };
         let has_speech = !humming_core::vad::speech_ranges(&pcm, stt::SAMPLE_RATE, &vad).is_empty();
         let raw = if has_speech { engine.transcribe(&pcm) } else { String::new() };
         hide_overlay(&app);
         let focused = state.focused_app.lock().ok().and_then(|g| g.clone());
+        let title = state.focused_title.lock().ok().and_then(|g| g.clone());
         let mut error = None;
         let mut inserted = false;
 
         let text = if command_mode && to_focused_app {
             let selection = state.command_selection.lock().ok().and_then(|mut g| g.take()).unwrap_or_default();
-            match llm::rewrite_selection(&selection, &raw, &s, focused.as_deref()) {
+            match llm::rewrite_selection_with_context(&selection, &raw, &s, focused.as_deref(), title.as_deref()) {
                 Ok(rewritten) => {
                     match insert::insert(&rewritten, &s.insert_method, s.restore_clipboard, s.paste_delay_ms) {
                         Ok(()) => inserted = true,
@@ -370,7 +455,7 @@ fn stop_dictation(app: &AppHandle) {
             }
         } else {
             let base_text = finalize_text_for(&raw, &s, focused.as_deref());
-            let mut polished = llm::polish_dictation(&base_text, &s, focused.as_deref());
+            let mut polished = llm::polish_dictation_with_context(&base_text, &s, focused.as_deref(), title.as_deref());
             if s.trailing_space && !polished.is_empty() && !polished.ends_with('\n') && !polished.ends_with(' ') {
                 polished.push(' ');
             }
@@ -537,18 +622,90 @@ fn handle_local_api(app: &AppHandle, token: &str, req: local_api::HttpRequest) -
                 "status": st.state,
                 "model": model,
                 "provider": provider,
+                "mcp": "/mcp",
             }),
         );
-    }
-    if req.method != "POST" {
-        return local_api::HttpResponse::err(405, "method not allowed");
     }
     if !local_api::authorized(&req, token) {
         return local_api::HttpResponse::err(401, "missing or invalid Bearer token");
     }
     let s = state.settings.lock().map(|g| g.clone()).unwrap_or_default();
-    match req.path.as_str() {
-        "/v1/cleanup" => {
+    match (req.method.as_str(), req.path.as_str()) {
+        ("GET", "/v1/meetings") => {
+            let items = state.meetings.lock().map(|m| m.items.clone()).unwrap_or_default();
+            local_api::HttpResponse::json(200, &serde_json::json!({ "meetings": items }))
+        }
+        ("GET", "/v1/history") => {
+            let entries = state.history.lock().map(|h| h.entries.clone()).unwrap_or_default();
+            local_api::HttpResponse::json(200, &serde_json::json!({ "entries": entries }))
+        }
+        ("POST", "/mcp") => {
+            let (status, payload) = mcp::dispatch(&req.body, |name, args| match name {
+                "humming_list_meetings" => {
+                    let limit = args["limit"].as_u64().unwrap_or(20).clamp(1, 100) as usize;
+                    let items = state.meetings.lock().map(|m| m.items.clone()).unwrap_or_default();
+                    let rows: Vec<serde_json::Value> = items
+                        .into_iter()
+                        .take(limit)
+                        .map(|m| {
+                            serde_json::json!({
+                                "id": m.id,
+                                "title": m.title,
+                                "started_ms": m.started_ms,
+                                "ended_ms": m.ended_ms,
+                                "segments": m.segments.len(),
+                                "has_summary": !m.summary.trim().is_empty(),
+                            })
+                        })
+                        .collect();
+                    serde_json::to_string_pretty(&rows).map_err(|e| e.to_string())
+                }
+                "humming_get_meeting" => {
+                    let Some(id) = args["id"].as_u64() else {
+                        return Err("missing integer id".into());
+                    };
+                    let found = state.meetings.lock().ok().and_then(|m| m.get(id));
+                    match found {
+                        Some(m) => Ok(meetings::to_markdown(&m)),
+                        None => Err(format!("meeting {id} not found")),
+                    }
+                }
+                "humming_search_meetings" => {
+                    let Some(q) = args["query"].as_str() else {
+                        return Err("missing query string".into());
+                    };
+                    let max_hits = args["max_hits"].as_u64().unwrap_or(12).clamp(1, 50) as usize;
+                    let hits = state.meetings.lock().map(|m| m.search_context(q, max_hits)).unwrap_or_default();
+                    if hits.is_empty() {
+                        Ok("No matching notes or transcript segments found.".into())
+                    } else {
+                        Ok(hits.join("\n"))
+                    }
+                }
+                "humming_list_history" => {
+                    let limit = args["limit"].as_u64().unwrap_or(20).clamp(1, 100) as usize;
+                    let q = args["query"].as_str().map(|s| s.trim().to_lowercase()).filter(|s| !s.is_empty());
+                    let entries = state.history.lock().map(|h| h.entries.clone()).unwrap_or_default();
+                    let rows: Vec<Entry> = entries
+                        .into_iter()
+                        .filter(|e| q.as_ref().map(|pat| e.text.to_lowercase().contains(pat)).unwrap_or(true))
+                        .take(limit)
+                        .collect();
+                    serde_json::to_string_pretty(&rows).map_err(|e| e.to_string())
+                }
+                "humming_cleanup_text" => {
+                    let Some(raw) = args["text"].as_str() else {
+                        return Err("missing text string".into());
+                    };
+                    let app_name = args["app"].as_str();
+                    let cleaned = finalize_text_for(raw, &s, app_name);
+                    Ok(llm::polish_dictation(&cleaned, &s, app_name).trim_end().to_string())
+                }
+                other => Err(format!("unknown tool: {other}")),
+            });
+            local_api::HttpResponse::json(status, &payload)
+        }
+        ("POST", "/v1/cleanup") => {
             let body: serde_json::Value = match serde_json::from_slice(&req.body) {
                 Ok(v) => v,
                 Err(e) => return local_api::HttpResponse::err(400, format!("invalid JSON: {e}")),
@@ -559,7 +716,7 @@ fn handle_local_api(app: &AppHandle, token: &str, req: local_api::HttpRequest) -
             let polished = llm::polish_dictation(&cleaned, &s, app_name);
             local_api::HttpResponse::json(200, &serde_json::json!({ "text": polished.trim_end() }))
         }
-        "/v1/transcribe" => {
+        ("POST", "/v1/transcribe") => {
             let engine = state.engine.lock().ok().and_then(|g| g.as_ref().map(|e| (e.engine.clone(), e.engine.model_id.to_string())));
             let Some((engine, loaded_model)) = engine else {
                 return local_api::HttpResponse::err(503, "no speech model loaded");
@@ -616,7 +773,8 @@ fn handle_local_api(app: &AppHandle, token: &str, req: local_api::HttpRequest) -
                 }),
             )
         }
-        _ => local_api::HttpResponse::err(404, "not found"),
+        ("GET" | "POST", _) => local_api::HttpResponse::err(404, "not found"),
+        _ => local_api::HttpResponse::err(405, "method not allowed"),
     }
 }
 
@@ -742,6 +900,23 @@ fn list_input_devices() -> Vec<String> {
 }
 
 #[tauri::command]
+fn list_loopback_devices() -> Vec<String> {
+    audio::loopback_devices()
+}
+
+#[tauri::command]
+fn get_usage_stats(state: State<'_, AppState>) -> history::UsageStats {
+    state.history.lock().map(|h| h.stats()).unwrap_or(history::UsageStats {
+        total_dictations: 0,
+        total_words: 0,
+        total_audio_ms: 0,
+        avg_wpm: 0,
+        time_saved_secs: 0,
+        median_latency_ms: 0,
+    })
+}
+
+#[tauri::command]
 fn get_history(state: State<'_, AppState>) -> Vec<Entry> {
     state.history.lock().map(|h| h.entries.clone()).unwrap_or_default()
 }
@@ -811,9 +986,9 @@ fn regenerate_api_token(app: AppHandle, state: State<'_, AppState>) -> Result<Se
     Ok(s)
 }
 
-// ---------------- offline botless meeting mode (1.9) ----------------
+// ---------------- offline botless meeting mode (1.9 / 2.0 dual-track) ----------------
 
-fn flush_meeting_chunk(app: &AppHandle, meeting_id: u64, started_ms: u64, samples: Vec<f32>, rate: u32) {
+fn flush_meeting_chunk(app: &AppHandle, meeting_id: u64, started_ms: u64, speaker: &str, samples: Vec<f32>, rate: u32) {
     if samples.len() < (rate as usize / 2) {
         return;
     }
@@ -840,6 +1015,7 @@ fn flush_meeting_chunk(app: &AppHandle, meeting_id: u64, started_ms: u64, sample
     let seg = meetings::MeetingSegment {
         ts_ms: now,
         elapsed_s: now.saturating_sub(started_ms) / 1000,
+        speaker: speaker.to_string(),
         text,
     };
     let updated = state.meetings.lock().ok().and_then(|mut s| s.append_segment(meeting_id, seg));
@@ -859,7 +1035,13 @@ fn active_meeting_id(state: State<'_, AppState>) -> Option<u64> {
 }
 
 #[tauri::command]
-fn start_meeting(app: AppHandle, state: State<'_, AppState>, title: String, device: Option<String>) -> Result<meetings::Meeting, String> {
+fn start_meeting(
+    app: AppHandle,
+    state: State<'_, AppState>,
+    title: String,
+    device: Option<String>,
+    system_device: Option<String>,
+) -> Result<meetings::Meeting, String> {
     if state.active_meeting.lock().map(|g| g.is_some()).unwrap_or(false) {
         return Err("a meeting is already recording".into());
     }
@@ -871,6 +1053,10 @@ fn start_meeting(app: AppHandle, state: State<'_, AppState>, title: String, devi
         .filter(|d| !d.trim().is_empty())
         .or_else(|| (!s.meeting_device.trim().is_empty()).then(|| s.meeting_device.clone()))
         .unwrap_or_else(|| s.input_device.clone());
+    let sys_dev = system_device
+        .filter(|d| !d.trim().is_empty() && d.trim() != "off")
+        .or_else(|| (!s.meeting_system_device.trim().is_empty() && s.meeting_system_device.trim() != "off").then(|| s.meeting_system_device.clone()));
+    let has_sys = sys_dev.is_some();
     let started_ms = now_ms();
     let level_app = app.clone();
     state
@@ -878,6 +1064,12 @@ fn start_meeting(app: AppHandle, state: State<'_, AppState>, title: String, devi
         .start(&dev, 0, move |rms| {
             let _ = level_app.emit("meeting-level", rms);
         })?;
+    if let Some(ref sys) = sys_dev {
+        if let Err(e) = state.meeting_system_recorder.start_loopback(sys, 0, |_| {}) {
+            let _ = state.meeting_recorder.stop();
+            return Err(format!("Could not open system audio device \"{sys}\": {e}"));
+        }
+    }
     let meeting = state
         .meetings
         .lock()
@@ -885,10 +1077,11 @@ fn start_meeting(app: AppHandle, state: State<'_, AppState>, title: String, devi
         .create(title, started_ms);
     let stop_flag = Arc::new(AtomicBool::new(false));
     if let Ok(mut g) = state.active_meeting.lock() {
-        *g = Some(ActiveMeeting { id: meeting.id, started_ms, stop: stop_flag.clone() });
+        *g = Some(ActiveMeeting { id: meeting.id, started_ms, has_system: has_sys, stop: stop_flag.clone() });
     }
     let bg_app = app.clone();
     let mid = meeting.id;
+    let mic_speaker = if has_sys { "You" } else { "" };
     std::thread::Builder::new()
         .name("humming-meeting-worker".into())
         .spawn(move || {
@@ -901,7 +1094,13 @@ fn start_meeting(app: AppHandle, state: State<'_, AppState>, title: String, devi
                 }
                 let drained = bg_app.state::<AppState>().meeting_recorder.drain();
                 if let Some((samples, rate, _)) = drained {
-                    flush_meeting_chunk(&bg_app, mid, started_ms, samples, rate);
+                    flush_meeting_chunk(&bg_app, mid, started_ms, mic_speaker, samples, rate);
+                }
+                if has_sys {
+                    let drained_sys = bg_app.state::<AppState>().meeting_system_recorder.drain();
+                    if let Some((samples, rate, _)) = drained_sys {
+                        flush_meeting_chunk(&bg_app, mid, started_ms, "Remote", samples, rate);
+                    }
                 }
             }
         })
@@ -915,11 +1114,20 @@ async fn stop_meeting(app: AppHandle) -> Result<Option<meetings::Meeting>, Strin
     let active = app.state::<AppState>().active_meeting.lock().ok().and_then(|mut g| g.take());
     let Some(active) = active else { return Ok(None) };
     active.stop.store(true, Ordering::SeqCst);
-    let tail = app.state::<AppState>().meeting_recorder.stop();
+    let tail_mic = app.state::<AppState>().meeting_recorder.stop();
+    let tail_sys = if active.has_system {
+        app.state::<AppState>().meeting_system_recorder.stop()
+    } else {
+        None
+    };
+    let mic_speaker = if active.has_system { "You" } else { "" };
     let app_bg = app.clone();
     tauri::async_runtime::spawn_blocking(move || {
-        if let Some((samples, rate, _)) = tail {
-            flush_meeting_chunk(&app_bg, active.id, active.started_ms, samples, rate);
+        if let Some((samples, rate, _)) = tail_mic {
+            flush_meeting_chunk(&app_bg, active.id, active.started_ms, mic_speaker, samples, rate);
+        }
+        if let Some((samples, rate, _)) = tail_sys {
+            flush_meeting_chunk(&app_bg, active.id, active.started_ms, "Remote", samples, rate);
         }
         let updated = app_bg
             .state::<AppState>()
@@ -1113,6 +1321,7 @@ pub fn run() {
                 meetings: Mutex::new(meetings),
                 active_meeting: Mutex::new(None),
                 meeting_recorder: audio::Recorder::default(),
+                meeting_system_recorder: audio::Recorder::default(),
                 recorder: audio::Recorder::default(),
                 engine: Mutex::new(None),
                 status: Mutex::new(Status { state: "loading".into(), message: String::new() }),
@@ -1122,6 +1331,8 @@ pub fn run() {
                 command_mode: AtomicBool::new(false),
                 command_selection: Arc::new(Mutex::new(None)),
                 focused_app: Arc::new(Mutex::new(None)),
+                focused_title: Arc::new(Mutex::new(None)),
+                preview_stop: Mutex::new(None),
                 last_insert: Mutex::new(voice_edit::LastInsert::default()),
                 local_api: Mutex::new(None),
             });
@@ -1203,6 +1414,8 @@ pub fn run() {
             download_model,
             delete_model,
             list_input_devices,
+            list_loopback_devices,
+            get_usage_stats,
             get_history,
             delete_history,
             clear_history,

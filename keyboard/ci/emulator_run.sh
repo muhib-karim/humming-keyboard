@@ -19,15 +19,23 @@ LAUNCHER=$BENCH_PKG/dev.patrickgold.florisboard.SettingsLauncherAlias
 COLD_RUNS=10
 
 adb wait-for-device
-adb shell getprop ro.build.fingerprint | tee "$OUT/device.txt"
-adb install -r -g "$(ls $APKS/debug/*.apk | head -1)"
-adb install -r -g "$(ls $APKS/androidTest/debug/*.apk | head -1)"
-adb install -r -g "$(ls $APKS/benchmark/*.apk | head -1)"
+adb shell getprop ro.build.fingerprint > "$OUT/device.txt"
+echo "device: $(cat "$OUT/device.txt")"
+adb install -r -g "$(ls $APKS/debug/*.apk | head -1)" > /dev/null
+adb install -r -g "$(ls $APKS/androidTest/debug/*.apk | head -1)" > /dev/null
+adb install -r -g "$(ls $APKS/benchmark/*.apk | head -1)" > /dev/null
 
 instrument() { # name, am instrument arguments...
   local name=$1; shift
-  adb shell am instrument -w -r "$@" "$RUNNER" | tee "$OUT/$name.txt"
-  grep -q '^OK (' "$OUT/$name.txt" && ! grep -q 'FAILURES!!!' "$OUT/$name.txt"
+  adb shell am instrument -w -r "$@" "$RUNNER" > "$OUT/$name.txt" 2>&1 || true
+  if grep -q '^OK (' "$OUT/$name.txt" && ! grep -q 'FAILURES!!!' "$OUT/$name.txt"; then
+    echo "$name: OK ($(grep '^OK (' "$OUT/$name.txt" | head -1))"
+    return 0
+  else
+    echo "$name: FAILED (log: $OUT/$name.txt)"
+    tail -n 30 "$OUT/$name.txt" || true
+    return 1
+  fi
 }
 private_file() { # path inside the debug app's files dir, destination (exec-out mixes in the device's stderr, so check first)
   if [ "$(adb shell "run-as $PKG test -s files/$1 && echo present" | tr -d '\r')" = present ]; then
@@ -40,7 +48,7 @@ instrument model_load -e humming.modelBench true -e class com.humming.keyboard.M
 private_file ci/model_load.json "$OUT/model_load.json"
 instrument smoke -e class com.humming.keyboard.ImeSmokeTest || status=1
 private_file ci/failure_hierarchy.xml "$OUT/failure_hierarchy.xml"
-adb pull /data/local/tmp/humming "$OUT/screens" || status=1
+adb pull /data/local/tmp/humming "$OUT/screens" > /dev/null || status=1
 
 adb shell am start -W -n "$LAUNCHER" > /dev/null
 sleep 5
@@ -48,9 +56,10 @@ sleep 5
 for i in $(seq 1 "$COLD_RUNS"); do
   adb shell am force-stop "$BENCH_PKG"
   sleep 2
-  adb shell am start -W -n "$LAUNCHER" | tee -a "$OUT/cold_start.txt"
+  adb shell am start -W -n "$LAUNCHER" >> "$OUT/cold_start.txt"
   sleep 3
 done
+echo "cold_start: recorded $COLD_RUNS runs in $OUT/cold_start.txt"
 adb shell am force-stop "$BENCH_PKG"
 adb logcat -d -s HUMMING:V > "$OUT/logcat-humming.txt" || true
 exit $status

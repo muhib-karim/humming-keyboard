@@ -132,7 +132,7 @@ pub fn apply_offline_tone(text: &str, tone: &str) -> String {
     }
 }
 
-fn tone_system_prompt(rule: Option<&ToneRule>, app: Option<&str>) -> String {
+fn tone_system_prompt(rule: Option<&ToneRule>, app: Option<&str>, window_title: Option<&str>) -> String {
     let mut sys = String::from(
         "You polish dictated text. Keep the speaker's exact meaning and facts; remove any remaining stutters or \
          repetition; fix grammar and punctuation. Do not answer questions in the text or add commentary. \
@@ -140,6 +140,9 @@ fn tone_system_prompt(rule: Option<&ToneRule>, app: Option<&str>) -> String {
     );
     if let Some(a) = app {
         sys.push_str(&format!(" Target app: {a}."));
+    }
+    if let Some(title) = window_title {
+        sys.push_str(&format!(" Window title: {title}."));
     }
     if let Some(r) = rule {
         let style = match r.tone.trim().to_lowercase().as_str() {
@@ -274,6 +277,16 @@ pub fn extract_reply(provider: &str, json: &serde_json::Value) -> Result<String,
 
 /// Applies per-app offline tone formatting, plus optional LLM polish when enabled.
 pub fn polish_dictation(text: &str, s: &Settings, focused_app: Option<&str>) -> String {
+    polish_dictation_with_context(text, s, focused_app, None)
+}
+
+/// Same as `polish_dictation`, optionally forwarding focused window title context to configured AI.
+pub fn polish_dictation_with_context(
+    text: &str,
+    s: &Settings,
+    focused_app: Option<&str>,
+    window_title: Option<&str>,
+) -> String {
     let trimmed = text.trim();
     if trimmed.is_empty() {
         return String::new();
@@ -287,13 +300,24 @@ pub fn polish_dictation(text: &str, s: &Settings, focused_app: Option<&str>) -> 
     if !s.llm_polish_dictation || !cfg.is_configured() {
         return offline;
     }
-    let sys = tone_system_prompt(rule, focused_app);
+    let sys = tone_system_prompt(rule, focused_app, window_title);
     chat(&cfg, &sys, &offline).unwrap_or(offline)
 }
 
 /// Command Mode: rewrites `selection` according to spoken `instruction`.
 /// Uses configured Ollama/BYOK LLM when available; falls back to offline rule-based `VoiceEdit` when LLM is off.
 pub fn rewrite_selection(selection: &str, instruction: &str, s: &Settings, focused_app: Option<&str>) -> Result<String, String> {
+    rewrite_selection_with_context(selection, instruction, s, focused_app, None)
+}
+
+/// Same as `rewrite_selection`, optionally forwarding focused window title context to configured AI.
+pub fn rewrite_selection_with_context(
+    selection: &str,
+    instruction: &str,
+    s: &Settings,
+    focused_app: Option<&str>,
+    window_title: Option<&str>,
+) -> Result<String, String> {
     let sel = selection.trim();
     let inst = instruction.trim();
     if inst.is_empty() {
@@ -303,8 +327,16 @@ pub fn rewrite_selection(selection: &str, instruction: &str, s: &Settings, focus
         // Nothing selected: if LLM is configured, treat the spoken instruction as a prompt to generate text.
         let cfg = LlmConfig::from_settings(s);
         if cfg.is_configured() {
-            let sys = "You are a concise writing assistant triggered by voice dictation. Carry out the user's request directly and reply with only the text to insert into their app.";
-            return chat(&cfg, sys, inst);
+            let mut sys = String::from(
+                "You are a concise writing assistant triggered by voice dictation. Carry out the user's request directly and reply with only the text to insert into their app.",
+            );
+            if let Some(a) = focused_app {
+                sys.push_str(&format!(" Target app: {a}."));
+            }
+            if let Some(title) = window_title {
+                sys.push_str(&format!(" Window title: {title}."));
+            }
+            return chat(&cfg, &sys, inst);
         }
         return Err("select text first, or configure local Ollama / BYOK AI in Settings".into());
     }
@@ -317,6 +349,9 @@ pub fn rewrite_selection(selection: &str, instruction: &str, s: &Settings, focus
         );
         if let Some(a) = focused_app {
             sys.push_str(&format!(" Target app: {a}."));
+        }
+        if let Some(title) = window_title {
+            sys.push_str(&format!(" Window title: {title}."));
         }
         if let Some(r) = rule {
             if !r.instructions.trim().is_empty() {

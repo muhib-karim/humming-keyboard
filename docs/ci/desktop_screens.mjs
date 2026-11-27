@@ -23,21 +23,21 @@ const mock = () => {
     format_lists: true, accuracy_mode: true,
     dictionary: [{ spoken: "hum ming", written: "Humming", apps: [] }, { spoken: "", written: "Okonkwo", apps: [] }, { spoken: "", written: "GitHub", apps: ["Code"] }],
     tone_rules: [{ apps: ["Slack", "Discord"], tone: "casual", instructions: "" }, { apps: ["Mail", "Outlook"], tone: "email", instructions: "Keep sign-offs concise" }],
-    insert_method: "paste", restore_clipboard: true, paste_delay_ms: 150, trailing_space: true, input_device: "", meeting_device: "",
-    show_overlay: true, launch_at_login: false, history_enabled: true, history_limit: 500, max_seconds: 0, auto_update: true,
+    insert_method: "paste", restore_clipboard: true, paste_delay_ms: 150, trailing_space: true, input_device: "", meeting_device: "", meeting_system_device: "PipeWire System Monitor (Loopback)",
+    whisper_mode: false, live_preview: true, show_overlay: true, launch_at_login: false, history_enabled: true, history_limit: 500, max_seconds: 0, auto_update: true,
     llm_provider: "ollama", llm_endpoint: "", llm_model: "llama3.2:3b", llm_api_key: "", llm_polish_dictation: false,
     local_api_enabled: true, local_api_port: 17831, local_api_token: "demo-token", schema: 2,
   };
   const meetings = [
     {
       id: 1, title: "Q4 Release & Launch Sync", started_ms: now - 1800e3, ended_ms: now - 300e3,
-      notes: "- Confirm Android ICU regex fix landed\n- Ship offline Meeting Notepad & Command Mode\n- Verify GitHub Pages deploy",
+      notes: "- Confirm Android ICU regex fix landed\n- Ship dual-track Meeting Notepad & built-in MCP\n- Verify GitHub Pages deploy",
       template: "summary",
-      summary: "# Q4 Release & Launch Sync\n\n## Executive Summary\nTeam aligned on shipping v1.9 with offline Command Mode, botless Meeting Notepad, per-app tone rules, and the local HTTP API.\n\n## Action Items\n- [00:14] Verify Android 14 emulator smoke test passes on CI.\n- [00:38] Publish updated GitHub Pages homepage with binary size comparison.",
+      summary: "# Q4 Release & Launch Sync\n\n## Executive Summary\nTeam aligned on shipping v2.0 with offline Command Mode, dual-track botless Meeting Notepad, built-in local MCP server, Whisper Mode, and live overlay draft preview.\n\n## Action Items\n- [00:14 · You] Verify Android 14 emulator smoke test passes on CI.\n- [00:38 · Remote] Publish updated GitHub Pages homepage with verified installer sizes.",
       segments: [
-        { ts_ms: now - 1786e3, elapsed_s: 14, text: "We need to verify the Android 14 emulator smoke test passes before cutting the tag." },
-        { ts_ms: now - 1762e3, elapsed_s: 38, text: "I will publish the updated homepage with the live binary size comparison against Granola and Hex." },
-        { ts_ms: now - 1730e3, elapsed_s: 70, text: "Everything runs locally on Parakeet so zero meeting audio ever leaves the laptop." },
+        { ts_ms: now - 1786e3, elapsed_s: 14, speaker: "You", text: "We need to verify the Android 14 emulator smoke test passes before cutting the tag." },
+        { ts_ms: now - 1762e3, elapsed_s: 38, speaker: "Remote", text: "I will publish the updated homepage with the live binary size comparison against Granola and Hex." },
+        { ts_ms: now - 1730e3, elapsed_s: 70, speaker: "You", text: "Everything runs locally on Parakeet and MCP queries stay on loopback 127.0.0.1." },
       ],
     },
   ];
@@ -56,14 +56,16 @@ const mock = () => {
     get_settings: () => settings,
     save_settings: (a) => Object.assign(settings, a.settings),
     get_status: () => status,
-    update_status: () => ({ state: "up_to_date", current: "1.6.0", latest: null, notes: null, message: "Humming is up to date", done: 0, total: 0, last_checked: 1790000000, can_install: true }),
-    check_for_updates: () => ({ state: "up_to_date", current: "1.6.0", latest: null, notes: null, message: "Humming is up to date", done: 0, total: 0, last_checked: 1790000000, can_install: true }),
-    app_info: () => ({ version: "1.6.0", os: "linux", arch: "x86_64", models_dir: "~/.local/share/humming/models", history_file: "~/.local/share/humming/history.jsonl" }),
+    update_status: () => ({ state: "up_to_date", current: "2.0.0", latest: null, notes: null, message: "Humming is up to date", done: 0, total: 0, last_checked: 1790000000, can_install: true }),
+    check_for_updates: () => ({ state: "up_to_date", current: "2.0.0", latest: null, notes: null, message: "Humming is up to date", done: 0, total: 0, last_checked: 1790000000, can_install: true }),
+    app_info: () => ({ version: "2.0.0", os: "linux", arch: "x86_64", provider: "auto", models_dir: "~/.local/share/humming/models", history_file: "~/.local/share/humming/history.json" }),
+    get_usage_stats: () => ({ total_dictations: 142, total_words: 8420, total_audio_ms: 3560000, avg_wpm: 142, time_saved_secs: 9070, median_latency_ms: 215 }),
     list_models: () => [
-      { id: "fast", label: "Fast", blurb: "Parakeet 110M. Instant and very accurate. Recommended.", download_bytes: 104337827, disk_bytes: 126e6, ram_mb: 500, wer_pct: 3.7, downloaded: true, active: true },
-      { id: "best", label: "Best", blurb: "Parakeet 0.6B. The most accurate; wants 8 GB of RAM or more.", download_bytes: 482440461, disk_bytes: 640e6, ram_mb: 1300, wer_pct: 2.6, downloaded: false, active: false },
+      { id: "fast", label: "Fast", blurb: "Parakeet 110M. Instant and very accurate. Recommended.", download_bytes: 104337827, disk_bytes: 126e6, ram_mb: 500, wer_pct: 2.7, downloaded: true, active: true },
+      { id: "best", label: "Best", blurb: "Parakeet 0.6B. The most accurate; wants 8 GB of RAM or more.", download_bytes: 482440461, disk_bytes: 640e6, ram_mb: 1300, wer_pct: 1.8, downloaded: false, active: false },
     ],
     list_input_devices: () => ["Built-in Microphone", "USB Headset", "PipeWire System Monitor (Loopback)"],
+    list_loopback_devices: () => ["PipeWire System Monitor (Loopback)"],
     get_history: () => history,
     list_meetings: () => meetings,
     active_meeting_id: () => null,
@@ -109,6 +111,8 @@ const shoot = async (scheme, tab, file, extra) => {
 };
 await shoot("light", null, "desktop_home");
 await shoot("dark", null, "desktop_home_dark");
+await shoot("light", "meetings", "desktop_meetings");
+await shoot("dark", "meetings", "desktop_meetings_dark");
 await shoot("light", "history", "desktop_history");
 await shoot("light", "dictionary", "desktop_dictionary", async (p) => {
   await p.fill("#clean-in", "Um, so, I was, like, thinking we could meet at 3, no, 4pm").catch(() => {});
