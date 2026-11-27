@@ -346,7 +346,7 @@ mod tests {
 
     #[test]
     fn v19_json_gets_v2_defaults() {
-        let s: Settings = serde_json::from_str(r#"{"model":"fast","schema":2}"#).unwrap().sanitized();
+        let s: Settings = serde_json::from_str::<Settings>(r#"{"model":"fast","schema":2}"#).unwrap().sanitized();
         assert!(!s.whisper_mode);
         assert!(s.live_preview);
         assert!(s.meeting_system_device.is_empty());
