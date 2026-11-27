@@ -58,12 +58,21 @@ def find(art, name):
 
 
 def notes_for(*versions):
-    text = open(os.path.join(ROOT, "CHANGELOG.md"), encoding="utf-8").read()
+    with open(os.path.join(ROOT, "CHANGELOG.md"), encoding="utf-8") as fh:
+        text = fh.read()
     for version in versions:
         m = re.search(r"^## \[?v?%s\]?(?![\w.-]).*?$(.*?)(?=^## |\Z)" % re.escape(version), text, re.M | re.S)
         if m:
             return m.group(1).strip()
     return "Humming %s" % versions[0]
+
+
+def sha256_file(path):
+    h = hashlib.sha256()
+    with open(path, "rb") as fh:
+        for chunk in iter(lambda: fh.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
 
 
 def main():
@@ -81,10 +90,12 @@ def main():
     if unknown:
         die("--allow-missing: unknown platform(s) %s (known: %s)" % (", ".join(sorted(unknown)), ", ".join(PLATFORM_NAMES)))
 
-    conf = json.load(open(os.path.join(ROOT, "desktop/src-tauri/tauri.conf.json")))
+    with open(os.path.join(ROOT, "desktop/src-tauri/tauri.conf.json"), encoding="utf-8") as fh:
+        conf = json.load(fh)
     if conf["version"] != base:
         die("tag %s but tauri.conf.json says %s (the tag's X.Y.Z must equal it)" % (version, conf["version"]))
-    props = open(os.path.join(ROOT, "keyboard/gradle.properties")).read()
+    with open(os.path.join(ROOT, "keyboard/gradle.properties"), encoding="utf-8") as fh:
+        props = fh.read()
     vname = re.search(r"^projectVersionName=(.+)$", props, re.M).group(1).strip()
     vcode = int(re.search(r"^projectVersionCode=(\d+)$", props, re.M).group(1))
     if vname.split("-")[0] != base:
@@ -133,7 +144,8 @@ def main():
         if not needs_sig or key not in names:
             continue
         f = os.path.join(a.out, names[key])
-        sigs[key] = open(f + ".sig").read().strip()
+        with open(f + ".sig", encoding="utf-8") as fh:
+            sigs[key] = fh.read().strip()
         if DRY_RUN:
             continue
         # Every signature must verify against the public key the app ships with.
@@ -143,7 +155,7 @@ def main():
             die("updater signature of %s does not verify against tauri.conf.json's public key" % names[key])
 
     notes = notes_for(version, base)
-    sha = lambda f: hashlib.sha256(open(os.path.join(a.out, f), "rb").read()).hexdigest()
+    sha = lambda f: sha256_file(os.path.join(a.out, f))
     entry = lambda key: {"signature": sigs[key], "url": FEED + names[key]}
     platforms = {}
     if "app" in names:
@@ -159,12 +171,14 @@ def main():
         latest = {"version": version, "notes": notes,
                   "pub_date": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
                   "platforms": platforms}
-        json.dump(latest, open(os.path.join(a.out, "latest.json"), "w"), indent=2)
+        with open(os.path.join(a.out, "latest.json"), "w", encoding="utf-8") as fh:
+            json.dump(latest, fh, indent=2)
     if "apk" in names and not prerelease:
-        json.dump({"versionCode": vcode, "versionName": version, "apk": names["apk"], "sha256": sha(names["apk"]),
-                   "notes": notes[:2000]}, open(os.path.join(a.out, "android.json"), "w"), indent=2)
+        with open(os.path.join(a.out, "android.json"), "w", encoding="utf-8") as fh:
+            json.dump({"versionCode": vcode, "versionName": version, "apk": names["apk"], "sha256": sha(names["apk"]),
+                       "notes": notes[:2000]}, fh, indent=2)
     files = sorted(f for f in os.listdir(a.out) if f != "SHA256SUMS.txt")
-    with open(os.path.join(a.out, "SHA256SUMS.txt"), "w") as fh:
+    with open(os.path.join(a.out, "SHA256SUMS.txt"), "w", encoding="utf-8") as fh:
         for f in files:
             fh.write("%s  %s\n" % (sha(f), f))
 
@@ -191,11 +205,12 @@ def main():
                  "the Android APK reads `android.json` and checks `SHA256SUMS.txt` and the signing certificate. Both feeds "
                  "of the latest final release are mirrored to " + FEED + "\n")
     env = "VERSION=%s\nBASE_VERSION=%s\nPRERELEASE=%s\n" % (version, base, "true" if prerelease else "false")
-    open(os.path.join(parent, "release.env"), "w").write(env)
+    with open(os.path.join(parent, "release.env"), "w", encoding="utf-8") as fh:
+        fh.write(env)
     if os.environ.get("GITHUB_OUTPUT"):
-        with open(os.environ["GITHUB_OUTPUT"], "a") as fh:
+        with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as fh:
             fh.write(env)
-    print(open(os.path.join(a.out, "SHA256SUMS.txt")).read())
+    print("wrote SHA256SUMS.txt (%d files)" % len(files))
 
 
 if __name__ == "__main__":

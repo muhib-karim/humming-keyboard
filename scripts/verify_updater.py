@@ -22,7 +22,8 @@ def _b64text(s):
 def load_pubkey(config_path):
     from nacl.signing import VerifyKey
 
-    cfg = json.load(open(config_path))
+    with open(config_path, encoding="utf-8") as fh:
+        cfg = json.load(fh)
     pub_b64 = cfg["plugins"]["updater"]["pubkey"]
     lines = _b64text(pub_b64).splitlines()
     raw = base64.b64decode(lines[1])
@@ -72,9 +73,14 @@ def main():
     print("public key id:", keyid[::-1].hex().upper())
     ok = True
     if a.file:
-        print(a.file, "->", verify(open(a.file, "rb").read(), open(a.sig).read(), keyid, vk))
+        with open(a.file, "rb") as ff, open(a.sig, encoding="utf-8") as sf:
+            print(a.file, "->", verify(ff.read(), sf.read(), keyid, vk))
     if a.latest:
-        raw = fetch(a.latest) if a.latest.startswith("http") else open(a.latest, "rb").read()
+        if a.latest.startswith("http"):
+            raw = fetch(a.latest)
+        else:
+            with open(a.latest, "rb") as lf:
+                raw = lf.read()
         latest = json.loads(raw)
         want = cfg["version"]
         print("latest.json version", latest["version"], "| app config version", want)
@@ -87,7 +93,8 @@ def main():
                 try:
                     if a.local_dir:
                         import os
-                        data = open(os.path.join(a.local_dir, e["url"].rsplit("/", 1)[1]), "rb").read()
+                        with open(os.path.join(a.local_dir, e["url"].rsplit("/", 1)[1]), "rb") as df:
+                            data = df.read()
                     else:
                         data = fetch(bundle_url(e["url"], a.base_url))
                     tc = verify(data, e["signature"], keyid, vk)

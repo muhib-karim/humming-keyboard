@@ -66,6 +66,22 @@ kbd { font: 600 12px ui-monospace, monospace; padding: 2px 6px; border: 1px soli
 .pill.ready { background: var(--pill-ok); color: var(--ok); } .pill.recording { background: var(--pill-rec); color: var(--pill-rec-ink); }
 .pill.transcribing, .pill.loading { background: var(--pill-busy); color: var(--pill-busy-ink); } .pill.error, .pill.no_model { background: var(--pill-warn); color: var(--warn); }
 .status-card { display: flex; gap: 10px; align-items: center; }
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 14px 0; }
+.stat-tile { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius-m); box-shadow: var(--shadow-1); padding: 11px 14px; }
+.stat-val { font-size: 20px; font-weight: 750; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; color: var(--fg); }
+.stat-lbl { font-size: 11.5px; color: var(--muted); margin-top: 2px; }
+@media (max-width: 640px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+.spk { display: inline-block; font-size: 10.5px; font-weight: 700; padding: 1px 6px; border-radius: var(--radius-pill); margin-right: 6px; vertical-align: 1px; }
+.spk.you { background: var(--pill-rec); color: var(--pill-rec-ink); }
+.spk.remote { background: var(--pill-busy); color: var(--pill-busy-ink); }
+.mtg-meter { height: 4px; background: var(--line); border-radius: 999px; margin-top: 10px; overflow: hidden; }
+#mtg-meter-fill { height: 100%; width: 0; background: linear-gradient(90deg, #eb4c7b, #ca349c); transition: width 90ms linear; }
+.mtg-controls { display: grid; gap: 10px; }
+.mtg-devices { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.mtg-dev-field { display: grid; gap: 4px; min-width: 0; }
+.mtg-dev-field span { font-size: 11.5px; color: var(--muted); }
+.mtg-dev-field select { width: 100%; min-width: 0; text-overflow: ellipsis; }
+@media (max-width: 720px) { .mtg-devices { grid-template-columns: 1fr; } }
 .model { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-top: 1px solid var(--line); }
 .model:first-child { border-top: 0; }
 .progress { height: 6px; background: var(--line); border-radius: 3px; margin-top: 6px; width: 260px; overflow: hidden; }

@@ -50,6 +50,44 @@ pub fn focused_app() -> Option<String> {
     (!class.is_empty()).then(|| class.to_string())
 }
 
+/// Normalizes and caps a window title before sending it as optional AI context.
+pub fn clean_window_title(raw: &str) -> Option<String> {
+    let collapsed = raw.split_whitespace().collect::<Vec<_>>().join(" ");
+    let trimmed = collapsed.trim();
+    if trimmed.is_empty() {
+        return None;
+    }
+    Some(trimmed.chars().take(120).collect())
+}
+
+#[cfg(target_os = "windows")]
+pub fn focused_window_title() -> Option<String> {
+    use windows_sys::Win32::UI::WindowsAndMessaging::{GetForegroundWindow, GetWindowTextW};
+    unsafe {
+        let hwnd = GetForegroundWindow();
+        if hwnd.is_null() {
+            return None;
+        }
+        let mut buf = [0u16; 512];
+        let len = GetWindowTextW(hwnd, buf.as_mut_ptr(), buf.len() as i32);
+        if len <= 0 {
+            return None;
+        }
+        clean_window_title(&String::from_utf16_lossy(&buf[..len as usize]))
+    }
+}
+
+#[cfg(target_os = "macos")]
+pub fn focused_window_title() -> Option<String> {
+    None
+}
+
+#[cfg(all(unix, not(target_os = "macos")))]
+pub fn focused_window_title() -> Option<String> {
+    let title = run("xdotool", &["getactivewindow", "getwindowname"])?;
+    clean_window_title(&title)
+}
+
 #[cfg(unix)]
 fn run(cmd: &str, args: &[&str]) -> Option<String> {
     let out = std::process::Command::new(cmd).args(args).output().ok()?;
@@ -71,5 +109,13 @@ mod tests {
     fn parses_lsappinfo_output() {
         assert_eq!(parse_lsappinfo_name("\"LSDisplayName\"=\"Slack\"\n").as_deref(), Some("Slack"));
         assert_eq!(parse_lsappinfo_name("").as_deref(), None);
+    }
+
+    #[test]
+    fn cleans_and_caps_window_title() {
+        assert_eq!(clean_window_title("  PR #31   - Visual Studio Code  ").as_deref(), Some("PR #31 - Visual Studio Code"));
+        assert_eq!(clean_window_title("   \n\t "), None);
+        let long = "a".repeat(200);
+        assert_eq!(clean_window_title(&long).unwrap().chars().count(), 120);
     }
 }

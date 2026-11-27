@@ -3,6 +3,7 @@ import { listen } from "@tauri-apps/api/event";
 const bars = document.getElementById("bars")!;
 const label = document.getElementById("label")!;
 const timer = document.getElementById("timer")!;
+const preview = document.getElementById("preview")!;
 const N = 11;
 const MID = (N - 1) / 2;
 for (let i = 0; i < N; i++) bars.appendChild(document.createElement("i"));
@@ -13,6 +14,16 @@ let startedAt = Date.now();
 
 listen<number>("level", (e) => {
   level = Math.min(1, Math.sqrt(e.payload * 8));
+});
+listen<string>("partial-transcript", (e) => {
+  const clean = (e.payload || "").trim();
+  if (!clean) {
+    preview.hidden = true;
+    preview.textContent = "";
+    return;
+  }
+  preview.textContent = clean.length > 56 ? "…" + clean.slice(-55).trimStart() : clean;
+  preview.hidden = false;
 });
 listen<{ state: string; message?: string }>("status", (e) => {
   const st = e.payload.state;
@@ -27,6 +38,8 @@ listen<{ state: string; message?: string }>("status", (e) => {
     label.textContent = isCmd ? "Rewriting" : "Transcribing";
   } else {
     label.textContent = "Listening";
+    preview.hidden = true;
+    preview.textContent = "";
   }
 });
 

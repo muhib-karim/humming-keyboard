@@ -70,12 +70,28 @@
       meta: "Works with 100% offline local Ollama (zero API key) or your own OpenAI, Anthropic, or Gemini key — audio never leaves your machine."
     },
     meetings: {
-      inLabel: "Your bullets + offline transcript",
-      inText: "Notes: \"- confirm Android fix\\n- tag v1.9.0\"\nTranscript [00:14]: \"We need to verify the emulator smoke test before Friday.\"",
-      outLabel: "Synthesized Markdown notes",
-      badge: "100% offline · Zero call bot",
-      outText: "## Action Items\n- [00:14] Verify Android 14 emulator smoke test before Friday.\n- Confirm Android fix and tag v1.9.0.",
-      meta: "Botless Meeting Notepad records locally, transcribes in 12s Parakeet chunks, synthesizes via Ollama or offline digest, and supports Ask Across Meetings."
+      inLabel: "Dual-track mic + system audio + notes",
+      inText: "Notes: \"- confirm WASAPI loopback\"\n[00:14 · You]: \"Does WASAPI capture remote speakers without a bot?\"\n[00:26 · Remote]: \"Yes, send the release notes by Friday.\"",
+      outLabel: "Synthesized Markdown + speaker citations",
+      badge: "100% offline · Dual-track · No call bot",
+      outText: "## Action Items\n- [00:26 · Remote] Send the release notes by Friday.\n- [00:14 · You] Confirm WASAPI loopback capture & tag v2.0.",
+      meta: "Records your mic [You] and system output [Remote] simultaneously on Windows WASAPI or Unix/Mac monitor/BlackHole, with Ask Across Meetings."
+    },
+    mcp: {
+      inLabel: "Claude Desktop / Cursor -> POST /mcp",
+      inText: "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/call\",\"params\":{\"name\":\"humming_search_meetings\",\"arguments\":{\"query\":\"WASAPI Friday\"}}}",
+      outLabel: "Loopback MCP JSON-RPC 2.0 response",
+      badge: "127.0.0.1 Bearer Auth · Built-in MCP",
+      outText: "[v2.0 Sync · 00:26 · Remote] Yes, send the release notes by Friday.",
+      meta: "Zero cloud MCP relay: exposes 5 local MCP tools plus /v1/transcribe, /v1/cleanup, /v1/meetings, and /v1/history on 127.0.0.1."
+    },
+    whisper: {
+      inLabel: "Soft voice (-50 dB late-night room)",
+      inText: "[faint mic RMS 0.01 -> Whisper Mode auto-gain +4.5x + -54 dB VAD + 1.4s live overlay draft]",
+      outLabel: "Crisp punctuation without shouting",
+      badge: "100% offline · Whisper Mode + Live Draft",
+      outText: "Push the release branch after lunch and close the open issues.",
+      meta: "Whisper Mode rescues quiet dictation without clipping normal speech, while Live Draft previews words inside the frosted overlay pill."
     },
     bangla: {
       inLabel: "QWERTY phonetic typing",
@@ -89,7 +105,7 @@
 
   var tabs = document.querySelectorAll(".demo-tab");
   if (tabs.length) {
-    function showDemo(key) {
+    function showDemo(key, animate) {
       var d = DEMOS[key];
       if (!d) return;
       tabs.forEach(function (t) {
@@ -104,10 +120,39 @@
       setTxt("demo-badge", d.badge);
       setTxt("demo-out-text", d.outText);
       setTxt("demo-meta", d.meta);
+      var outEl = document.getElementById("demo-out-text");
+      if (animate && outEl) {
+        outEl.classList.remove("swap");
+        void outEl.offsetWidth;
+        outEl.classList.add("swap");
+      }
     }
     tabs.forEach(function (t) {
-      t.addEventListener("click", function () { showDemo(t.getAttribute("data-demo")); });
+      t.addEventListener("click", function () { showDemo(t.getAttribute("data-demo"), true); });
     });
-    showDemo("clean");
+    showDemo("clean", false);
+  }
+
+  // Progressive scroll reveal for bento cards (skipped under prefers-reduced-motion).
+  var reveals = document.querySelectorAll("[data-reveal]");
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reveals.length && !reduce && "IntersectionObserver" in window) {
+    document.documentElement.classList.add("js-anim");
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-revealed");
+          io.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: "0px 0px -24px 0px", threshold: 0.05 });
+    reveals.forEach(function (el) {
+      var r = el.getBoundingClientRect();
+      if (r.top < window.innerHeight * 1.1) {
+        el.classList.add("is-revealed");
+      } else {
+        io.observe(el);
+      }
+    });
   }
 })();

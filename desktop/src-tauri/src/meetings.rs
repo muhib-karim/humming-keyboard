@@ -5,10 +5,12 @@
 use serde::{Deserialize, Serialize};
 use std::path::{Path, PathBuf};
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq)]
+#[serde(default)]
 pub struct MeetingSegment {
     pub ts_ms: u64,
     pub elapsed_s: u64,
+    pub speaker: String,
     pub text: String,
 }
 
@@ -150,7 +152,7 @@ impl MeetingStore {
                 let low = seg.text.to_lowercase();
                 let score = terms.iter().filter(|t| low.contains(t.as_str())).count();
                 if score > 0 {
-                    scored.push((score, format!("[{} · {}] {}", m.title, format_timestamp(seg.elapsed_s), seg.text.trim())));
+                    scored.push((score, format!("[{} · {}] {}", m.title, format_seg_tag(seg), seg.text.trim())));
                 }
             }
         }
@@ -170,11 +172,21 @@ pub fn format_timestamp(elapsed_s: u64) -> String {
     }
 }
 
+pub fn format_seg_tag(seg: &MeetingSegment) -> String {
+    let ts = format_timestamp(seg.elapsed_s);
+    let spk = seg.speaker.trim();
+    if spk.is_empty() {
+        ts
+    } else {
+        format!("{ts} · {spk}")
+    }
+}
+
 pub fn transcript_text(meeting: &Meeting) -> String {
     meeting
         .segments
         .iter()
-        .map(|s| format!("[{}] {}", format_timestamp(s.elapsed_s), s.text.trim()))
+        .map(|s| format!("[{}] {}", format_seg_tag(s), s.text.trim()))
         .collect::<Vec<_>>()
         .join("\n")
 }
@@ -215,7 +227,7 @@ fn extract_actions(meeting: &Meeting) -> Vec<String> {
             }
             let lower = s.to_lowercase();
             if ACTION_CUES.iter().any(|c| lower.contains(c)) {
-                out.push(format!("- [{}] {}", format_timestamp(seg.elapsed_s), s));
+                out.push(format!("- [{}] {}", format_seg_tag(seg), s));
             }
         }
     }
@@ -249,7 +261,7 @@ pub fn offline_digest(meeting: &Meeting, template: &str) -> String {
         md.push_str("_(No transcript segments recorded yet.)_\n");
     } else {
         for seg in &meeting.segments {
-            md.push_str(&format!("- **[{}]** {}\n", format_timestamp(seg.elapsed_s), seg.text.trim()));
+            md.push_str(&format!("- **[{}]** {}\n", format_seg_tag(seg), seg.text.trim()));
         }
     }
     md
@@ -308,26 +320,36 @@ mod tests {
         let m = store.create("Sprint Review".into(), 1_700_000_000_000);
         store.append_segment(
             m.id,
-            MeetingSegment { ts_ms: 1_700_000_015_000, elapsed_s: 15, text: "We need to ship the Android fix by Friday.".into() },
+            MeetingSegment {
+                ts_ms: 1_700_000_015_000,
+                elapsed_s: 15,
+                speaker: "Remote".into(),
+                text: "We need to ship the Android fix by Friday.".into(),
+            },
         );
         store.update_notes(m.id, None, "- check CI gate\n- verify banner".into());
         let digest = offline_digest(&store.get(m.id).unwrap(), "summary");
         assert!(digest.contains("## Your Notes"));
         assert!(digest.contains("check CI gate"));
         assert!(digest.contains("## Action Items"));
-        assert!(digest.contains("[00:15] We need to ship the Android fix by Friday"));
+        assert!(digest.contains("[00:15 · Remote] We need to ship the Android fix by Friday"));
         store.set_summary(m.id, "summary".into(), digest);
 
         let reloaded = MeetingStore::load(path);
         assert_eq!(reloaded.items.len(), 1);
         assert_eq!(reloaded.items[0].title, "Sprint Review");
         assert_eq!(reloaded.items[0].segments.len(), 1);
+        assert_eq!(reloaded.items[0].segments[0].speaker, "Remote");
         let md = to_markdown(&reloaded.items[0]);
         assert!(md.contains("## Transcript"));
-        assert!(md.contains("[00:15]"));
+        assert!(md.contains("[00:15 · Remote]"));
         let hits = reloaded.search_context("Android Friday fix", 5);
         assert!(!hits.is_empty());
         assert!(hits[0].contains("Sprint Review"));
+        assert_eq!(
+            format_seg_tag(&MeetingSegment { ts_ms: 0, elapsed_s: 5, speaker: String::new(), text: String::new() }),
+            "00:05"
+        );
         let _ = std::fs::remove_dir_all(&dir);
     }
 }

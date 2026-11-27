@@ -156,7 +156,7 @@ mixed sets.
 
 | App | Fillers removed | Lists | Voice commands | Personal dictionary / replacements / snippets | Languages, Bangla |
 |---|---|---|---|---|---|
-| **Humming 1.8** | **Yes**, switch, on by default ✅ | **Yes**: "bullet point", "first, ... second, ..." ✅ | "new line", "new paragraph", spoken punctuation, "scratch that" / "delete that" ✅, "delete last word", self-corrections ("3, no, 4pm"); **edit by voice** on text already in the field: "change X to Y", "delete X", "capitalize X", "undo that" ✅ (1.8) | Custom words (casing, recogniser hints on iPhone) and **"spoken -> written" replacements** ✅, per app on Android and desktop | Offline dictation: English. Bangla: phonetic **typing** (Android); Android's opt-in Online mode uses the phone's speech service, Bangla there unverified |
+| **Humming 2.0** | **Yes**, switch, on by default ✅ | **Yes**: "bullet point", "first, ... second, ..." ✅ | "new line", "new paragraph", spoken punctuation, "scratch that" / "delete that" ✅, "delete last word", self-corrections ("3, no, 4pm"); **edit by voice** on text already in the field ("change X to Y", "delete X", "capitalize X", "undo that" ✅); desktop **Command Mode** on selection (window context, Ollama / BYOK / offline fallback) & **Whisper Mode** (`-54 dB` auto-gain) ✅ | Custom words, **"spoken -> written" replacements** ✅, per-app dictionary & **tone presets**, CSV import/export, `"Teach word"`, local usage stats, dual-track `[You]`/`[Remote]` botless **Meeting Notepad**, **built-in MCP server** (`/mcp`) & HTTP API (`127.0.0.1`) | Offline dictation: English + 25 EU (`Parakeet v3`). Bangla: phonetic **typing** (Android); Android's opt-in Online mode uses the phone's speech service |
 | Wispr Flow | Yes, three levels [D9] | Yes ("one… two…") [D6] | New line / paragraph, Backtrack ("scratch that") [D6]; Command Mode on selected text, Pro, desktop [D5] | Dictionary with auto-learn, misspelling fixes, snippets on every plan [D10][D11] | "100+"; Bengali unverified [D7] |
 | Typeless | Yes [D19] | Yes [D19] | Speak-to-edit on selected text [D24]; "new line" / "scratch that" not documented | Dictionary, auto-add, CSV import; replacements not documented [D25] | "100+"; no list, Bengali unverified [D19] |
 | Superwhisper | Yes, Message mode [D34] | Yes, Note mode [D34] | Commands on selected text (Super mode) [D34]; "new line" / "scratch that" not documented | Vocabulary hints and **replacements**, e.g. "my work email" → address [D32] | "100+"; Bengali not named, expected via Whisper models [D33][D42] |
@@ -175,27 +175,28 @@ offline-by-default apps across **all five platforms today** — a full Android k
 Windows, macOS and Linux desktop apps (Hex by Anomaly, Handy and Amical are strong MIT desktop peers, but Handy is
 desktop-only, Amical has no Linux build, and Hex's mobile apps are still in TestFlight / Android dev; Typeless has a
 Linux app, but it is cloud-only). Humming publishes reproducible WER, latency and RAM benchmarks with raw output
-committed. With 1.7–1.8 it ships the shared core of the dictation apps — filler removal with a switch, lists,
-"scratch that", per-app spoken → written replacements, and offline edit-by-voice across Android, iPhone and desktop
-tested by the same 36 vectors on every platform. On desktop, Humming also ships **Command Mode** (`Ctrl+Shift+E` /
-`Cmd+Shift+E` to rewrite any highlighted text via local Ollama, optional BYOK LLM, or offline `VoiceEdit` fallback),
-**per-app tone rules** (offline casual/bullets + optional AI polish), **CSV dictionary import/export**, an **offline
-botless Meeting Notepad** (12s chunked local Parakeet transcript + manual notes + Markdown synthesis), and an opt-in
-**authenticated local HTTP API** (`127.0.0.1`).
-**Where it still trails:** desktop ASR decodes on CPU after hotkey release rather than GPU streaming (Hex ships
-Parakeet Unified/Nemotron streaming, custom GGUF models, Vulkan/Metal GPU, and QuickJS per-app output pipelines);
-meeting loopback relies on the OS loopback/monitor input device rather than a built-in per-app CoreAudio/WASAPI tap;
-offline clean-up and commands are English only (the Multilingual model transcribes 25 European languages offline, and
-Bengali voice is still online-only).
+committed. With 1.7–2.0 it ships the shared core of the dictation apps plus the workflows of Granola and Hex — filler
+removal with a switch, lists, "scratch that", per-app spoken → written replacements, offline edit-by-voice across 36
+shared vectors, **Command Mode** (`Ctrl/Cmd+Shift+E` with focused window-title context via local Ollama, BYOK, or
+offline `VoiceEdit` fallback), **per-app tone presets**, **CSV dictionary import/export**, **Whisper Mode** (`-54 dB`
+VAD + auto-gain), **live overlay draft previews**, **local usage stats**, a **dual-track offline botless Meeting
+Notepad** (`[You]` mic + `[Remote]` native Windows WASAPI loopback or Unix/Mac monitor + Ask Across Meetings), global
+**Re-paste shortcut** (`Ctrl/Cmd+Shift+V`), **GPU execution provider toggle** (`CoreML`/`DirectML`/`CUDA`), and an
+opt-in **authenticated local HTTP API & built-in MCP JSON-RPC 2.0 server** (`/mcp` on `127.0.0.1`).
+**Where it still trails:** desktop ASR decodes the final utterance on hotkey release (while previewing rolling 1.4 s
+drafts in the overlay) rather than token-by-token live paste into target apps (Hex ships streaming Parakeet
+Unified/Nemotron + QuickJS `hex.config.ts`); macOS meeting capture relies on a virtual loopback device
+(BlackHole/Loopback) whereas Windows uses native WASAPI loopback and Linux uses PipeWire monitor out of the box; and
+offline voice beyond English + 25 European languages uses Android's Online mode.
 
 ### Verified release binary sizes (27 November 2026)
 
-Checked directly against GitHub Releases (`muhib-karim/humming-keyboard` v1.8.1, `anomalyco/hex` v3.5.0) and Granola's
+Checked directly against GitHub Releases (`muhib-karim/humming-keyboard` v1.9.0, `anomalyco/hex` v3.5.0) and Granola's
 public `electron-builder` update feeds (`api.granola.ai/v1/check-for-update/latest-mac.yml` & `latest.yml`, v7.853.5):
 
 | Product | Windows x64 installer | macOS installer | Linux x64 `.deb` | Packaging |
 |---|---:|---:|---:|---|
-| **Humming** (v1.8.1) | **8.77 MB** (`.exe`) / 12.51 MB (`.msi`) | **24.87 MB** (universal `.dmg`) | **17.51 MB** | Tauri v2 + Rust (system webview) |
+| **Humming** (v1.9.0) | **8.93 MB** (`.exe`) / 12.75 MB (`.msi`) | **25.23 MB** (universal `.dmg`) | **17.67 MB** | Tauri v2 + Rust (system webview) |
 | **Hex by Anomaly** (v3.5.0) | 77.19 MB (`.exe`) | 33.52 MB (arm64 `.dmg`) | 35.66 MB | Rust + Rune native UI |
 | **Granola** (v7.853.5) | 171.35 MB (`.exe`) | 271.23 MB (universal `.zip`) | Not shipped | Electron (`electron-builder`) |
 | **Wispr Flow / Typeless** | Closed download | Closed download | Closed / none | Electron / native hybrid (closed) |
@@ -244,11 +245,11 @@ Swift `ListFormatTests`, `TextCleanupTests`).
 | D6 | Per-app tone and style | Wispr, Typeless, Superwhisper, Aqua, Willow, MacWhisper | 3 | 2 | 6 | ✅ Desktop per-app `tone_rules` (`casual`/`bullets` 100% offline; full tone + custom instructions with local Ollama or BYOK LLM); Android BYOK `LlmCleanup` |
 | D7 | Dictionary that learns from your corrections | Wispr (desktop), Typeless | 3 | 2 | 6 | Partial: CSV import/export + per-app dictionary shipped on desktop; automatic edit learning open |
 | D8 | Offline dictation in Bangla and more languages | Aqua (cloud, Bengali listed), Superwhisper / MacWhisper via Whisper (untested) | 5 | 1 | 5 | Open (keyboard gap 7) |
-| D9 | Whisper / quiet-speech mode | Typeless | 2 | 2 | 4 | Open |
-| D10 | Re-paste / copy last dictation quick action | Hex (Anomaly) | 4 | 5 | 20 | ✅ Desktop tray "Copy last dictation" shipped; global re-paste shortcut open |
-| D11 | Streaming local ASR + GPU acceleration (Metal / Vulkan) | Hex (Anomaly), Superwhisper | 4 | 2 | 8 | Open: needs sherpa-onnx online recogniser path and device benchmarks (`docs/BENCHMARKS.md`) |
-| D12 | Local authenticated HTTP API / CLI pipe for developer tools | Hex (Anomaly), Handy | 3 | 3 | 9 | ✅ Desktop opt-in `127.0.0.1` Bearer-auth HTTP server (`local_api.rs`: `/health`, `/v1/transcribe`, `/v1/cleanup`) |
-| D13 | Opt-in local meeting transcript notepad (botless system audio + mic) | Granola (cloud), Hex Labs (macOS), Wispr Notetaker (cloud) | 3 | 1 | 3 | ✅ Desktop **Meeting Notepad** (`meetings.rs`): 100% offline 12s chunked Parakeet transcript (mic or loopback/monitor input, zero call bots) + manual notes + template Markdown synthesis |
+| D9 | Whisper / quiet-speech mode | Typeless | 2 | 2 | 4 | ✅ Desktop **Whisper Mode** (`whisper_mode`: `-54 dB` VAD + `apply_whisper_gain` in `audio.rs`) |
+| D10 | Re-paste / copy last dictation quick action | Hex (Anomaly) | 4 | 5 | 20 | ✅ Desktop tray "Copy last dictation" + global shortcut `Ctrl/Cmd+Shift+V` (`repaste_last` in `lib.rs`) |
+| D11 | Streaming local ASR + GPU acceleration (Metal / Vulkan) | Hex (Anomaly), Superwhisper | 4 | 2 | 8 | Partial: GPU provider toggle (`CoreML`/`DirectML`/`CUDA` + CPU fallback) & 1.4 s live overlay draft preview shipped; token-by-token live paste into target apps open |
+| D12 | Local authenticated HTTP API & MCP server for developer tools | Hex (Anomaly), Granola (cloud MCP), Handy | 3 | 3 | 9 | ✅ Desktop opt-in `127.0.0.1` Bearer-auth HTTP server (`local_api.rs`: `/health`, `/v1/transcribe`, `/v1/cleanup`, `/v1/meetings`, `/v1/history`) + built-in **MCP JSON-RPC 2.0** (`mcp.rs` on `POST /mcp`) |
+| D13 | Opt-in dual-track local meeting transcript notepad (botless system audio + mic) | Granola (cloud), Hex Labs (macOS), Wispr Notetaker (cloud) | 3 | 1 | 3 | ✅ Desktop dual-track **Meeting Notepad** (`meetings.rs`, `audio.rs`): 100% offline 12 s chunked Parakeet transcript (`[You]` mic + `[Remote]` Windows WASAPI loopback / Unix/Mac monitor) + manual notes + template Markdown synthesis + Ask Across Meetings |
 | D14 | Team-shared dictionary | Wispr, Aqua, Willow | 1 | 2 | 2 | Won't do: needs accounts and a server |
 
 ## Sources

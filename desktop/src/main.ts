@@ -3,14 +3,16 @@ import { listen } from "@tauri-apps/api/event";
 
 type Dict = { spoken: string; written: string; apps?: string[] };
 type ToneRule = { apps: string[]; tone: string; instructions: string };
-type MeetingSegment = { ts_ms: number; elapsed_s: number; text: string };
+type MeetingSegment = { ts_ms: number; elapsed_s: number; speaker?: string; text: string };
 type Meeting = { id: number; title: string; started_ms: number; ended_ms: number | null; notes: string; summary: string; template: string; segments: MeetingSegment[] };
+type UsageStats = { total_dictations: number; total_words: number; total_audio_ms: number; avg_wpm: number; time_saved_secs: number; median_latency_ms: number };
 type Settings = {
   hotkey: string; command_hotkey: string; repaste_hotkey: string; stt_provider: string; mode: string; model: string;
   clean_mode: boolean; remove_fillers: boolean; self_corrections: boolean; voice_commands: boolean; voice_edit: boolean;
   format_lists: boolean; accuracy_mode: boolean; dictionary: Dict[]; tone_rules: ToneRule[];
   insert_method: string; restore_clipboard: boolean;
-  paste_delay_ms: number; trailing_space: boolean; input_device: string; meeting_device: string; show_overlay: boolean;
+  paste_delay_ms: number; trailing_space: boolean; input_device: string; meeting_device: string; meeting_system_device: string;
+  whisper_mode: boolean; live_preview: boolean; show_overlay: boolean;
   launch_at_login: boolean; history_enabled: boolean; history_limit: number; max_seconds: number;
   quick_start?: boolean; auto_update: boolean;
   llm_provider: string; llm_endpoint: string; llm_model: string; llm_api_key: string; llm_polish_dictation: boolean;
@@ -43,6 +45,27 @@ function prettyHotkey(h: string): string {
     .replace(/\+/g, " + ");
 }
 function mb(n: number): string { return `${(n / 1e6).toFixed(0)} MB`; }
+function fmtSaved(sec: number): string {
+  if (sec < 60) return `${sec}s`;
+  if (sec < 3600) return `${(sec / 60).toFixed(1)}m`;
+  return `${(sec / 3600).toFixed(1)}h`;
+}
+function downloadText(filename: string, text: string, mime: string) {
+  const blob = new Blob([text], { type: mime });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+async function loadStats() {
+  const st = await invoke<UsageStats>("get_usage_stats");
+  if (!st) return;
+  $("#stat-words").textContent = st.total_words.toLocaleString();
+  $("#stat-wpm").textContent = String(st.avg_wpm);
+  $("#stat-saved").textContent = fmtSaved(st.time_saved_secs);
+  $("#stat-lat").textContent = st.median_latency_ms > 0 ? `${st.median_latency_ms} ms` : "—";
+}
 
 // ---------------- navigation ----------------
 function show(tab: string) {
@@ -147,8 +170,14 @@ function renderHistory() {
   }));
 }
 $("#hist-search").addEventListener("input", renderHistory);
+$("#hist-export").addEventListener("click", () => {
+  const q = $<HTMLInputElement>("#hist-search").value.trim().toLowerCase();
+  const rows = q ? history.filter((h) => h.text.toLowerCase().includes(q)) : history;
+  const md = ["# Humming Dictation History", "", ...rows.map((h) => `- **${new Date(h.ts).toLocaleString()}** (${(h.audio_ms / 1000).toFixed(1)}s): ${h.text}`)].join("\n");
+  downloadText("humming-history.md", md, "text/markdown;charset=utf-8");
+});
 $("#hist-clear").addEventListener("click", async () => {
-  if (confirm("Delete the whole history?")) { await invoke("clear_history"); loadHistory(); }
+  if (confirm("Delete the whole history?")) { await invoke("clear_history"); loadHistory(); loadStats(); }
 });
 
 // ---------------- dictionary ----------------
@@ -201,15 +230,24 @@ $("#tone-form").addEventListener("submit", async (ev) => {
   $<HTMLInputElement>("#tone-inst").value = "";
   renderTones();
 });
+$("#tone-presets").addEventListener("click", async () => {
+  const starter: ToneRule[] = [
+    { apps: ["Slack", "Discord"], tone: "casual", instructions: "" },
+    { apps: ["Mail", "Outlook"], tone: "email", instructions: "Keep sign-offs concise" },
+    { apps: ["Code", "Terminal"], tone: "code", instructions: "" },
+  ];
+  const existing = settings.tone_rules ?? [];
+  const key = (r: ToneRule) => `${r.apps.join(",").toLowerCase()}:${r.tone}`;
+  const seen = new Set(existing.map(key));
+  const added = starter.filter((r) => !seen.has(key(r)));
+  if (!added.length) return;
+  settings = await invoke<Settings>("save_settings", { settings: { ...settings, tone_rules: [...existing, ...added] } });
+  renderTones();
+});
 $("#dict-export-btn").addEventListener("click", () => {
   const rows = [["spoken", "written", "apps"], ...settings.dictionary.map((d) => [d.spoken || "", d.written, (d.apps || []).join(";")])];
   const csv = rows.map((r) => r.map((c) => `"${c.replace(/"/g, '""')}"`).join(",")).join("\n");
-  const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "humming-dictionary.csv";
-  a.click();
-  URL.revokeObjectURL(a.href);
+  downloadText("humming-dictionary.csv", csv, "text/csv;charset=utf-8");
 });
 $("#dict-import-btn").addEventListener("click", () => $<HTMLInputElement>("#dict-csv-file").click());
 $<HTMLInputElement>("#dict-csv-file").addEventListener("change", async (ev) => {
@@ -256,6 +294,8 @@ function renderMeetings() {
   const pill = $("#mtg-pill");
   pill.textContent = rec ? "recording offline · no bot" : "offline · no bot";
   pill.className = `pill ${rec ? "recording" : "ready"}`;
+  const meter = document.querySelector<HTMLElement>("#mtg-meter");
+  if (meter) meter.hidden = !rec;
   const toggle = $<HTMLButtonElement>("#mtg-toggle");
   toggle.textContent = rec ? "Stop meeting" : "Start meeting";
   $("#mtg-list").innerHTML = meetings.map((m) => `
@@ -274,7 +314,7 @@ function renderMeetings() {
   if (!cur) {
     notesEl.value = "";
     notesEl.disabled = true;
-    txEl.innerHTML = `<div class="muted small">Start a meeting to record and transcribe locally. Choose a mic or system loopback device (PipeWire monitor / BlackHole / Stereo Mix) above.</div>`;
+    txEl.innerHTML = `<div class="muted small">Start a meeting to record and transcribe locally. Choose your mic and optional system audio loopback (WASAPI on Windows; monitor/BlackHole on Linux/Mac) above.</div>`;
     $("#mtg-seg-count").textContent = "0 segments";
     sumEl.textContent = "";
     return;
@@ -283,8 +323,11 @@ function renderMeetings() {
   if (document.activeElement !== notesEl) notesEl.value = cur.notes;
   $<HTMLSelectElement>("#mtg-template").value = cur.template || "summary";
   $("#mtg-seg-count").textContent = `${cur.segments.length} segment${cur.segments.length === 1 ? "" : "s"}`;
-  txEl.innerHTML = cur.segments.map((s) => `<div class="mtg-seg"><span class="ts">[${fmtElapsed(s.elapsed_s)}]</span>${esc(s.text)}</div>`).join("")
-    || `<div class="muted small">Listening… transcript chunks land here automatically every 12 seconds.</div>`;
+  txEl.innerHTML = cur.segments.map((s) => {
+    const spk = s.speaker?.trim();
+    const badge = spk ? `<span class="spk ${spk.toLowerCase() === "you" ? "you" : "remote"}">${esc(spk)}</span>` : "";
+    return `<div class="mtg-seg"><span class="ts">[${fmtElapsed(s.elapsed_s)}]</span>${badge}${esc(s.text)}</div>`;
+  }).join("") || `<div class="muted small">Listening… transcript chunks land here automatically every 12 seconds.</div>`;
   sumEl.textContent = cur.summary || "Click Synthesize to merge your notes and transcript into structured Markdown (uses local Ollama / BYOK AI if configured, or deterministic offline digest).";
 }
 let notesTimer: number | null = null;
@@ -311,7 +354,8 @@ $("#mtg-toggle").addEventListener("click", async () => {
     } else {
       const title = $<HTMLInputElement>("#mtg-title").value.trim();
       const device = $<HTMLSelectElement>("#mtg-device").value || null;
-      const m = await invoke<Meeting>("start_meeting", { title, device });
+      const systemDevice = document.querySelector<HTMLSelectElement>("#mtg-sys-device")?.value || null;
+      const m = await invoke<Meeting>("start_meeting", { title, device, systemDevice });
       recordingMeetingId = m.id;
       selectedMeetingId = m.id;
       meetings = [m, ...meetings.filter((x) => x.id !== m.id)];
@@ -339,6 +383,13 @@ $("#mtg-export").addEventListener("click", async () => {
   const btn = $<HTMLButtonElement>("#mtg-export");
   btn.textContent = "Copied Markdown";
   setTimeout(() => (btn.textContent = "Copy Markdown"), 1500);
+});
+$("#mtg-download").addEventListener("click", async () => {
+  if (selectedMeetingId == null) return;
+  const cur = meetings.find((m) => m.id === selectedMeetingId);
+  const md = await invoke<string>("export_meeting_markdown", { id: selectedMeetingId });
+  const slug = (cur?.title || "meeting").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "meeting";
+  downloadText(`${slug}.md`, md, "text/markdown;charset=utf-8");
 });
 $("#mtg-del").addEventListener("click", async () => {
   if (selectedMeetingId == null || !confirm("Delete this meeting?")) return;
@@ -379,13 +430,22 @@ function fillSettings() {
   renderTones();
 }
 async function loadDevices() {
-  const devices = await invoke<string[]>("list_input_devices");
+  const [devices, loopbacks] = await Promise.all([
+    invoke<string[]>("list_input_devices"),
+    invoke<string[]>("list_loopback_devices").catch(() => [] as string[]),
+  ]);
   const opts = `<option value="">System default</option>` + devices.map((d) => `<option>${esc(d)}</option>`).join("");
   const sel = form.elements.namedItem("input_device") as HTMLSelectElement;
   sel.innerHTML = opts;
   sel.value = settings.input_device;
   const mtgSel = document.querySelector<HTMLSelectElement>("#mtg-device");
   if (mtgSel) { mtgSel.innerHTML = opts; mtgSel.value = settings.meeting_device || ""; }
+  const sysSel = document.querySelector<HTMLSelectElement>("#mtg-sys-device");
+  if (sysSel) {
+    const allSys = Array.from(new Set([...(loopbacks || []), ...devices]));
+    sysSel.innerHTML = `<option value="">System audio: Off (mic only)</option>` + allSys.map((d) => `<option>${esc(d)}</option>`).join("");
+    sysSel.value = settings.meeting_system_device || "";
+  }
 }
 form.addEventListener("submit", async (ev) => {
   ev.preventDefault();
@@ -469,6 +529,22 @@ $("#llm-test").addEventListener("click", async () => {
     $("#llm-msg").textContent = `OK: "${out}"`;
   } catch (e) { $("#llm-msg").textContent = String(e); }
 });
+$("#api-copy-mcp").addEventListener("click", async () => {
+  const port = settings.local_api_port || 17831;
+  const tok = settings.local_api_token || "<token>";
+  const cfg = JSON.stringify({
+    mcpServers: {
+      humming: {
+        url: `http://127.0.0.1:${port}/mcp`,
+        headers: { Authorization: `Bearer ${tok}` },
+      },
+    },
+  }, null, 2);
+  await invoke("copy_text", { text: cfg });
+  const btn = $<HTMLButtonElement>("#api-copy-mcp");
+  btn.textContent = "Copied MCP";
+  setTimeout(() => (btn.textContent = "Copy MCP config"), 1400);
+});
 $("#api-copy-curl").addEventListener("click", async () => {
   const port = settings.local_api_port || 17831;
   const tok = settings.local_api_token || "<token>";
@@ -487,10 +563,13 @@ async function boot() {
   settings = await invoke<Settings>("get_settings");
   fillSettings();
   renderTips();
-  const info = await invoke<{ version: string; os: string; arch: string; models_dir: string; history_file: string }>("app_info");
+  const info = await invoke<{ version: string; os: string; arch: string; provider: string; models_dir: string; history_file: string }>("app_info");
   $("#version").textContent = `v${info.version} · ${info.os} ${info.arch}`;
   $("#paths").textContent = `Models: ${info.models_dir} · History: ${info.history_file}`;
+  const pbadge = document.querySelector("#provider-badge");
+  if (pbadge && info.provider) pbadge.textContent = info.provider.toUpperCase();
   renderStatus(await invoke<Status>("get_status"));
+  loadStats();
   await loadModels();
   loadDevices();
 
@@ -498,6 +577,10 @@ async function boot() {
   await listen<UpdateStatus>("update-status", (e) => renderUpdate(e.payload));
   renderUpdate(await invoke<UpdateStatus>("update_status"));
   await listen<string>("navigate", (e) => show(e.payload));
+  await listen<number>("meeting-level", (e) => {
+    const fill = document.querySelector<HTMLElement>("#mtg-meter-fill");
+    if (fill) fill.style.width = `${Math.min(100, Math.round(Math.sqrt(e.payload * 8) * 100))}%`;
+  });
   await listen<{ id: string; done: number; total: number }>("model-progress", (e) => {
     const bar = document.querySelector<HTMLElement>(`#prog-${e.payload.id}`);
     if (bar) { bar.hidden = false; (bar.firstElementChild as HTMLElement).style.width = `${(100 * e.payload.done) / e.payload.total}%`; }
@@ -515,6 +598,7 @@ async function boot() {
       $("#try-out").textContent = e.payload.entry.text || "(heard nothing)";
       $("#try-raw").textContent = e.payload.entry.raw;
     }
+    loadStats();
     if (document.querySelector("#tab-history.active")) loadHistory();
   });
 }

@@ -196,6 +196,7 @@ pub fn read_request(stream: &mut TcpStream) -> Result<HttpRequest, String> {
 fn write_response(stream: &mut TcpStream, resp: HttpResponse) {
     let reason = match resp.status {
         200 => "OK",
+        202 => "Accepted",
         400 => "Bad Request",
         401 => "Unauthorized",
         404 => "Not Found",

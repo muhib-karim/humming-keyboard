@@ -17,6 +17,7 @@ pub const MOONSHINE_WINDOW_S: usize = 8;
 
 pub struct SherpaEngine {
     recognizer: OfflineRecognizer,
+    decode_lock: std::sync::Mutex<()>,
     /// Longest window one decode gets: Moonshine v2 returns nothing for clips over ~10 s in sherpa-onnx 1.13.8.
     max_window_s: usize,
     pub model_id: &'static str,
@@ -99,7 +100,14 @@ impl SherpaEngine {
         }
         let (recognizer, active_provider) = loaded.ok_or_else(|| "the speech model could not be loaded".to_string())?;
         let max_window_s = if m.kind == Kind::MoonshineV2 { MOONSHINE_WINDOW_S } else { MAX_WINDOW_S };
-        Ok(Self { recognizer, max_window_s, model_id: m.id, active_provider, load_ms: t0.elapsed().as_millis() as u64 })
+        Ok(Self {
+            recognizer,
+            decode_lock: std::sync::Mutex::new(()),
+            max_window_s,
+            model_id: m.id,
+            active_provider,
+            load_ms: t0.elapsed().as_millis() as u64,
+        })
     }
 
     fn decode(&self, samples: &[f32]) -> String {
@@ -112,14 +120,25 @@ impl SherpaEngine {
         s.get_result().map(|r| r.text.trim().to_string()).unwrap_or_default()
     }
 
-    /// 16 kHz mono in, raw text out. Long audio is split into windows at quiet points so memory stays flat.
-    pub fn transcribe(&self, samples: &[f32]) -> String {
+    fn transcribe_unlocked(&self, samples: &[f32]) -> String {
         split_points_max(samples, SAMPLE_RATE as usize, self.max_window_s)
             .windows(2)
             .map(|w| self.decode(&samples[w[0]..w[1]]))
             .filter(|t| !t.is_empty())
             .collect::<Vec<_>>()
             .join(" ")
+    }
+
+    /// 16 kHz mono in, raw text out. Long audio is split into windows at quiet points so memory stays flat.
+    pub fn transcribe(&self, samples: &[f32]) -> String {
+        let _guard = self.decode_lock.lock().ok();
+        self.transcribe_unlocked(samples)
+    }
+
+    /// Non-blocking decode for live partial draft previews; skips when another decode is in flight.
+    pub fn try_transcribe(&self, samples: &[f32]) -> Option<String> {
+        let _guard = self.decode_lock.try_lock().ok()?;
+        Some(self.transcribe_unlocked(samples))
     }
 
     pub fn warmup(&self) {

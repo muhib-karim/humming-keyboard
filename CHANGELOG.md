@@ -1,5 +1,34 @@
 # Changelog
 
+## [2.0.0] - 2026-11-27
+
+Dual-track botless Meeting Notepad (Windows WASAPI output loopback + Unix/Mac monitor), built-in local MCP JSON-RPC 2.0
+server, live rolling overlay draft preview, Whisper Mode (`-54 dB` VAD + auto-gain), local productivity stats, focused
+window-title AI context, interactive 8-mode homepage, v2.0 launch graphics, and streamlined agent/script tooling.
+Versions: Android 2.0.0 (versionCode 2000), desktop and core 2.0.0, iOS 2.0.0 (build 2000).
+
+- **Dual-track botless Meeting Notepad (`audio.rs`, `meetings.rs`, `lib.rs`)**: capture your microphone (`[You]`) and
+  system audio (`[Remote]`) simultaneously — using native Windows WASAPI output loopback (`cpal` output config via
+  `build_input_stream`) or PipeWire/BlackHole monitor inputs on Linux/macOS — with a live recording audio meter,
+  speaker-tagged transcript/digests/Ask citations, and one-click `.md` file download.
+- **Built-in Local MCP Server & Expanded HTTP API (`mcp.rs`, `local_api.rs`)**: opt-in `127.0.0.1` Bearer-authenticated
+  server adds `POST /mcp` (JSON-RPC 2.0 exposing `humming_list_meetings`, `humming_get_meeting`,
+  `humming_search_meetings`, `humming_list_history`, and `humming_cleanup_text`), `GET /v1/meetings`, and
+  `GET /v1/history`, plus a one-click `Copy MCP config` button in Settings for Claude Desktop and Cursor.
+- **Live Overlay Draft Words & Whisper Mode (`audio.rs`, `stt.rs`, `overlay.ts`)**: optional non-blocking 1.4-second
+  rolling partial transcript preview inside the expanded `360x88` frosted overlay pill, serialized via `SherpaEngine`
+  `decode_lock` / `try_transcribe`; Whisper Mode lowers VAD to `-54 dB` and applies automatic gain boost (`apply_whisper_gain`)
+  for quiet speech without clipping normal dictation.
+- **Local Productivity Stats & Window-Title Context (`history.rs`, `focus.rs`, `llm.rs`)**: Home tab displays live
+  on-device `Words dictated`, `Avg WPM`, `Time saved`, and `Median speed`, plus active inference accelerator badge;
+  Command Mode and AI polish optionally forward normalized active window titles to local Ollama / BYOK models; History
+  adds Markdown export and Dictionary adds starter per-app tone presets.
+- **Repo Hygiene, Skills & Script Polish (`AGENTS.md`, `.agents/skills/`, `scripts/`, `quality.yml`)**: consolidated
+  agent rules into `AGENTS.md` + 5 on-demand workflow skills, fixed unclosed file handles (`ResourceWarning`) across
+  release/site Python scripts, unified script discovery in `quality.yml`, and reduced verbose CI log spam.
+- **Website & Launch Graphics (`play/site/`, `docs/poster.png`, `docs/banner.png`)**: updated `play/site/` with the
+  v2.0 bento architecture grid, 8-mode interactive pipeline demo, and regenerated brand graphics & desktop screenshots.
+
 ## [1.9.0] - 2026-11-27
 
 Command Mode, Per-App Tone, Offline Botless Meeting Notepad, Cross-Meeting Q&A, Local HTTP API, GPU provider toggle,

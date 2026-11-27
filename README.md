@@ -75,10 +75,27 @@ CI runs them on pull requests, each platform's tests when its code changed:
   replacements, spoken punctuation and voice commands on all platforms.
 - **A full keyboard on Android.** Prediction in six languages with an on-device neural model for English, glide typing,
   emoji search, stickers, clipboard history, themes, one-handed, floating and split layouts. Built on FlorisBoard.
-- **Measured accuracy.** 2.78 % (Fast) and 1.68 % (Best) word error rate on LibriSpeech test-clean, with the script
-  and raw output in this repository ([Benchmarks](#benchmarks)).
+- **Measured accuracy.** 1.77 % (Best), 2.24 % (Multilingual, 25 EU languages) and 2.72 % (Fast, default) word error
+  rate on LibriSpeech test-clean (200 clips), with the script and raw output in this repository ([Benchmarks](#benchmarks)).
 - **Private, and checked in code.** No analytics, no ads. A unit test fails the build if any file outside a short list
   uses a network API ([Privacy](#privacy)).
+
+### New in 2.0: Dual-Track Botless Meetings, Built-in Local MCP, Live Drafts & Whisper Mode
+
+- **Dual-track botless Meeting Notepad (`audio.rs`, `meetings.rs`)**: capture your mic (`[You]`) and system audio
+  (`[Remote]`) simultaneously — via native Windows WASAPI output loopback or Unix/macOS monitor/BlackHole inputs — with
+  a live audio meter, `[Title · MM:SS · Speaker]` Ask citations, and one-click `.md` download. Zero call bots, zero cloud audio.
+- **Built-in Local MCP Server (`mcp.rs`, `local_api.rs`)**: opt-in `127.0.0.1` Bearer-auth server adds JSON-RPC 2.0
+  `POST /mcp` (`humming_list_meetings`, `humming_get_meeting`, `humming_search_meetings`, `humming_list_history`,
+  `humming_cleanup_text`), `GET /v1/meetings`, and `GET /v1/history`, plus one-click `Copy MCP config` for Claude/Cursor.
+- **Live Overlay Drafts & Whisper Mode (`stt.rs`, `overlay.ts`)**: watch rolling 1.4 s non-blocking draft words inside
+  the `360x88` frosted overlay pill, and toggle Whisper Mode (`-54 dB` VAD + auto-gain) for soft late-night voice.
+- **Local Productivity Stats & Window Context (`history.rs`, `focus.rs`, `llm.rs`)**: Home shows on-device Words
+  Dictated, Avg WPM, Time Saved, and Median Latency alongside the active accelerator badge (`CPU`/`CoreML`/`DirectML`/`CUDA`);
+  Command Mode and AI polish optionally forward the active window title to local Ollama / BYOK; Dictionary includes
+  starter per-app tone presets; History supports `.md` export.
+- **Repo hygiene & v2.0 Launch Poster**: consolidated `AGENTS.md` + 5 `.agents/skills/`, zero-warning script checks, and
+  updated [docs/poster.png](docs/poster.png) + interactive 8-mode homepage.
 
 ### New in 1.9: Command Mode, Offline Botless Meetings, Local HTTP API, GPU Provider & Android ICU Fix
 
@@ -154,7 +171,7 @@ From the teardowns of [keyboards](COMPETITORS.md#gap-list-ranked) and [dictation
 | | **Humming** | Gboard | Microsoft SwiftKey | Ridmik (Bangla) |
 |---|---|---|---|---|
 | Offline voice typing | **Yes**, default, every platform (English; 25 European languages with the Multilingual model on Android and desktop) | Pixel 6 or later, 6 languages | Not in the stable app; an on-device English mode is reported in a beta | No, uses Google's speech service |
-| Published accuracy | **WER 2.78 % / 1.68 %** | Not published | Not published | Not published |
+| Published accuracy | **WER 1.77 % (Best) · 2.24 % (Multi) · 2.72 % (Fast)** | Not published | Not published | Not published |
 | Telemetry | **None** | Usage statistics; federated learning on by default | Typing data opt-in; voice clips opt-out | Play label: may collect personal info and IDs |
 | Voice limits | **None** | Rambler: "usage limits", no numbers | None documented | None documented |
 | Desktop app | **Windows, macOS, Linux** | No | No | No |
@@ -166,28 +183,30 @@ ranked gap list are in **[COMPETITORS.md](COMPETITORS.md)**. Where Humming trail
 iPhone and with the default model (25 European languages need the Multilingual model, on Android and desktop), and
 Gboard and SwiftKey support far more typing languages and install from the stores.
 
-| Dictation apps | **Humming** | Wispr Flow | Typeless | Hex (Anomaly) | Granola | Superwhisper |
+| Dictation apps | **Humming 2.0** | Wispr Flow | Typeless | Hex (Anomaly) | Granola | Superwhisper |
 |---|---|---|---|---|---|---|
 | Works offline | **Yes**, default, all 5 platforms (English + 25 EU on Android/desktop) | No, cloud only | No, cloud only (zero retention) | **Yes**, local models (GPU & CPU) | No, cloud ASR + cloud LLM | Yes, local models |
 | Published accuracy | **1.77 % Best · 2.24 % Multi · 2.72 % Fast** (LibriSpeech test-clean, raw output committed) | Charts only; 8.7 % measured by Superwhisper | Not published | Not published | Not published | 6.6 % WER (own 8-set bench) |
-| Command Mode & voice edit | **Both**: offline `VoiceEdit` + **Command Mode** on selected text (local Ollama or BYOK) | Command Mode (Pro, desktop) | Speak-to-edit on selection | Custom pipelines / OpenCode rewrite | Post-call AI chat | On selected text |
-| Per-app tone & CSV dictionary | **Yes**: per-app tone rules (offline casual/bullets + AI polish), per-app snippets, **CSV import/export** | Auto-tone, auto-learn & snippets | Tone, dictionary & CSV import | Per-app QuickJS pipelines & vocab | Custom note templates | Custom modes & replacements |
-| Botless meeting notepad | **Yes** (desktop): **100 % offline** chunked transcript + split-pane notes + Markdown synthesis | Wispr Notetaker (cloud) | No | Labs: Meetings (macOS beta) | **Core product** (cloud, no call bot) | File transcription |
-| Re-paste & Local HTTP API | **Both**: global re-paste shortcut + opt-in `127.0.0.1` Bearer-auth HTTP API (`/v1/transcribe`, `/v1/cleanup`) | No | No | **Both**: re-paste + local service & TS SDK | Cloud MCP only | No |
+| Command Mode & voice edit | **Both**: offline `VoiceEdit` + **Command Mode** (window context, local Ollama or BYOK) | Command Mode (Pro, desktop) | Speak-to-edit on selection | Custom pipelines / OpenCode rewrite | Post-call AI chat | On selected text |
+| Live draft & Whisper mode | **Both**: rolling overlay words + **Whisper Mode** (`-54 dB` auto-gain) | Cloud live draft | Whisper mode | Live streaming (desktop) | Live call transcript | Pro live stream |
+| Per-app tone & CSV dictionary | **Yes**: per-app tone presets (offline casual/bullets + AI polish), snippets, **CSV import/export** | Auto-tone, auto-learn & snippets | Tone, dictionary & CSV import | Per-app QuickJS pipelines & vocab | Custom note templates | Custom modes & replacements |
+| Dual-track botless meetings | **Yes** (desktop): **100 % offline** `[You]` + `[Remote]` (WASAPI / monitor), Ask Across Meetings | Wispr Notetaker (cloud) | No | Labs: Meetings (macOS beta) | **Core product** (cloud, no call bot) | File transcription |
+| Local API & built-in MCP | **Both**: `127.0.0.1` Bearer HTTP API + **MCP JSON-RPC 2.0 (`/mcp`)** | No | No | HTTP service + TS SDK (no MCP) | Cloud MCP only | No |
 | GPU acceleration | **Yes**: CoreML / DirectML / CUDA toggle + automatic CPU fallback | Cloud GPU | Cloud GPU | **Yes**: Metal / Vulkan | Cloud | Yes (CoreML) |
-| Verified desktop binary size | **8.8 MB** Win `.exe` · **24.9 MB** Mac `.dmg` · **17.5 MB** Linux `.deb` (v1.8.1) | Closed installer | Closed installer | 77.2 MB Win `.exe` · 33.5 MB Mac `.dmg` · 35.7 MB `.deb` (v3.5.0) | 171.4 MB Win `.exe` · 271.2 MB Mac `.zip` (v7.853.5) | Closed installer |
+| Verified desktop binary size | **8.9 MB** Win `.exe` · **25.2 MB** Mac `.dmg` · **17.7 MB** Linux `.deb` (v1.9.0) | Closed installer | Closed installer | 77.2 MB Win `.exe` · 33.5 MB Mac `.dmg` · 35.7 MB `.deb` (v3.5.0) | 171.4 MB Win `.exe` · 271.2 MB Mac `.zip` (v7.853.5) | Closed installer |
 | Platforms | **Android, iPhone, Windows, macOS, Linux** | Mac, Windows, iOS, Android (no Linux) | macOS, Windows, Linux, iOS, Android | macOS, Windows, Linux (mobile in dev/TestFlight) | macOS, Windows, iOS, Watch | macOS, Windows, iOS, Android |
 | Price & licence | **Free, Apache-2.0**, no word cap | Free 2k words/wk; $12–15/mo | Limited free; $12/mo yr / $30 mo | **Free, MIT** | Freemium / paid tiers | Free local; $8.49/mo |
 
 Published error rates come from different test sets and are not comparable (Superwhisper 6.6 % on its own 8-set
 benchmark, Aqua 5.55 % with the set not stated, Humming 1.77–2.72 % on LibriSpeech test-clean). Installer sizes above
-were verified directly from GitHub Releases (`muhib-karim/humming-keyboard` v1.8.1, `anomalyco/hex` v3.5.0) and
+were verified directly from GitHub Releases (`muhib-karim/humming-keyboard` v1.9.0, `anomalyco/hex` v3.5.0) and
 Granola's public update feeds (`api.granola.ai`, v7.853.5) on 27 November 2026. Aqua Voice, Willow, MacWhisper, Handy,
 Amical, Apple, Google, plus every source and architectural teardown:
-**[COMPETITORS.md#dictation-apps](COMPETITORS.md#dictation-apps)**. Where Humming still trails: desktop ASR runs on CPU
-after hotkey release rather than GPU streaming (Hex's strength); meeting loopback capture relies on the OS loopback/monitor
-input device rather than a built-in per-app CoreAudio/WASAPI tap; and offline voice beyond English + 25 European languages
-needs Android Online mode.
+**[COMPETITORS.md#dictation-apps](COMPETITORS.md#dictation-apps)**. Where Humming still trails: desktop ASR decodes the
+final utterance on hotkey release (while previewing rolling drafts every ~1.4 s in the overlay) rather than
+token-by-token live paste into target apps (Hex's strength); macOS remote meeting audio requires a virtual loopback
+device (BlackHole / Loopback) whereas Windows uses native WASAPI loopback and Linux uses PipeWire monitor out of the box;
+and offline voice beyond English + 25 European languages needs Android Online mode.
 
 <details>
 <summary><strong>Against dictation apps: Wispr Flow, Typeless, Gboard Rambler</strong></summary>
@@ -377,7 +396,8 @@ CI table above for claims. With 73 clips, gaps under about half a point are nois
 <img src="docs/screenshots/ios_dictate.png" width="180" alt="iPhone: clean text, offline badge">
 <img src="docs/screenshots/ios_keyboard.png" width="180" alt="iPhone keyboard">
 <img src="docs/screenshots/desktop_home_dark.png" width="380" alt="Desktop home, dark">
-<img src="docs/screenshots/desktop_meetings_dark.png" width="380" alt="Desktop offline botless Meeting Notepad, dark">
+<img src="docs/screenshots/desktop_meetings_dark.png" width="380" alt="Desktop offline dual-track Meeting Notepad, dark">
+<img src="docs/screenshots/desktop_settings_dark.png" width="380" alt="Desktop settings, AI polish, local HTTP API &amp; MCP server, dark">
 </p>
 
 More: Android, iPhone and desktop captures in [`docs/screenshots/`](docs/screenshots/), the Gboard voice hand-off in

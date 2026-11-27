@@ -65,7 +65,10 @@ jobs:
           echo "$GITLEAKS_SHA256  gl.tgz" | sha256sum -c -
           tar xzf gl.tgz gitleaks
       - name: Scan every commit
-        run: '"$RUNNER_TEMP/gitleaks" git --no-banner --redact --verbose .'
+        run: |
+          mkdir -p build/static
+          "$RUNNER_TEMP/gitleaks" git --no-banner --redact --report-path build/static/gitleaks.json --report-format json .
+          echo "gitleaks: 0 findings (report: build/static/gitleaks.json)"
 
   site-and-scripts:
     name: website check + script tests
@@ -78,4 +81,4 @@ jobs:
           python3 scripts/assemble_site.py _site
           python3 scripts/check_site.py _site
       - name: Script tests
-        run: python3 -m unittest -v scripts/test_assemble_release.py scripts/test_coverage_summary.py scripts/test_emulator_metrics.py scripts/test_verify_updater.py
+        run: python3 -W error::ResourceWarning -m unittest discover -s scripts -p 'test_*.py' -v

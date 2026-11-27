@@ -35,6 +35,13 @@
         <div class="card status-card">
           <span id="status-pill" class="pill">starting</span>
           <span id="status-msg"></span>
+          <span id="provider-badge" class="pill" style="margin-left:auto">CPU</span>
+        </div>
+        <div class="stats-grid" aria-label="Productivity stats">
+          <div class="stat-tile"><div class="stat-val" id="stat-words">0</div><div class="stat-lbl">Words dictated</div></div>
+          <div class="stat-tile"><div class="stat-val" id="stat-wpm">0</div><div class="stat-lbl">Avg WPM</div></div>
+          <div class="stat-tile"><div class="stat-val" id="stat-saved">0m</div><div class="stat-lbl">Time saved</div></div>
+          <div class="stat-tile"><div class="stat-val" id="stat-lat">&mdash;</div><div class="stat-lbl">Median speed</div></div>
         </div>
         <div class="card" id="model-card">
           <h2>Speech model</h2>
@@ -60,12 +67,16 @@
           </div>
           <span id="mtg-pill" class="pill ready">offline &middot; no bot</span>
         </div>
-        <div class="card row between">
-          <div class="row" style="flex:1">
-            <input id="mtg-title" placeholder="Meeting title (e.g. Q4 Product Sync)" style="flex:1;min-width:180px" />
-            <select id="mtg-device" title="Audio input (mic or loopback/monitor device)"></select>
+        <div class="card mtg-controls">
+          <div class="row between">
+            <input id="mtg-title" placeholder="Meeting title (e.g. Q4 Product Sync)" style="flex:1;min-width:200px" />
+            <button id="mtg-toggle" class="primary">Start meeting</button>
           </div>
-          <button id="mtg-toggle" class="primary">Start meeting</button>
+          <div class="mtg-devices">
+            <label class="mtg-dev-field"><span>Your mic</span><select id="mtg-device" title="Your microphone"></select></label>
+            <label class="mtg-dev-field"><span>Remote / system audio</span><select id="mtg-sys-device" title="System audio / remote speakers (dual-track)"></select></label>
+          </div>
+          <div id="mtg-meter" class="mtg-meter" hidden><div id="mtg-meter-fill"></div></div>
         </div>
         <div class="mtg-layout">
           <aside class="card mtg-sidebar">
@@ -101,6 +112,7 @@
                   </select>
                   <button id="mtg-synth" class="primary">Synthesize</button>
                   <button id="mtg-export">Copy Markdown</button>
+                  <button id="mtg-download">Download .md</button>
                   <button id="mtg-del" class="link danger">Delete</button>
                 </div>
               </div>
@@ -124,6 +136,7 @@
           <h1>History</h1>
           <div class="row">
             <input id="hist-search" type="search" placeholder="Search" />
+            <button id="hist-export">Export .md</button>
             <button id="hist-clear" class="danger">Clear all</button>
           </div>
         </div>
@@ -163,6 +176,7 @@
             </select>
             <input id="tone-inst" placeholder="Extra instruction (optional)" style="flex:1;min-width:140px" />
             <button class="primary" type="submit">Add rule</button>
+            <button type="button" id="tone-presets">Load starter presets</button>
           </form>
           <ul id="tone-list" class="list"></ul>
         </div>
@@ -233,6 +247,8 @@
               </select>
             </label>
             <label>Longest dictation in seconds (0 = no limit)<input name="max_seconds" type="number" min="0" max="86400" /></label>
+            <label class="check"><input type="checkbox" name="whisper_mode" /> Whisper / quiet-speech mode (-54 dB VAD + auto-gain for soft voice)</label>
+            <label class="check"><input type="checkbox" name="live_preview" /> Show live rolling draft words in the floating overlay while talking</label>
             <label class="check"><input type="checkbox" name="show_overlay" /> Show the listening bar while dictating</label>
             <label class="check"><input type="checkbox" name="launch_at_login" /> Start Humming when I log in</label>
             <label class="check"><input type="checkbox" name="history_enabled" /> Keep a history on this computer</label>
@@ -266,12 +282,13 @@
             </div>
           </fieldset>
           <fieldset>
-            <legend>Local HTTP API (Developer &amp; Agent Integration)</legend>
-            <p class="muted small">Exposes <code>GET /health</code>, <code>POST /v1/transcribe</code> (WAV bytes or JSON <code>wav_path</code>), and <code>POST /v1/cleanup</code> on <code>127.0.0.1</code> with Bearer token auth.</p>
-            <label class="check"><input type="checkbox" name="local_api_enabled" /> Enable local HTTP transcription API on 127.0.0.1</label>
+            <legend>Local HTTP API &amp; MCP Server (Claude / Cursor / Agents)</legend>
+            <p class="muted small">Exposes <code>GET /health</code>, <code>POST /v1/transcribe</code>, <code>POST /v1/cleanup</code>, <code>GET /v1/meetings</code>, <code>GET /v1/history</code>, and built-in MCP JSON-RPC 2.0 on <code>POST /mcp</code> (<code>127.0.0.1</code> with Bearer token auth).</p>
+            <label class="check"><input type="checkbox" name="local_api_enabled" /> Enable local HTTP &amp; MCP server on 127.0.0.1</label>
             <label>Port (1024-65535)<input name="local_api_port" type="number" min="1024" max="65535" /></label>
             <div class="row">
               <input id="api-token-view" readonly placeholder="(auto-generated when enabled)" style="flex:1;font-family:ui-monospace,monospace;font-size:12px" />
+              <button type="button" id="api-copy-mcp">Copy MCP config</button>
               <button type="button" id="api-copy-curl">Copy curl</button>
               <button type="button" id="api-regen">Regenerate</button>
             </div>

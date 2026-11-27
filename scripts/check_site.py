@@ -6,7 +6,11 @@
 
 Links under updates/ are skipped: pages.yml adds that mirror after this check. Exits non-zero on any problem.
 """
-import html.parser, os, sys, urllib.parse
+import argparse
+import html.parser
+import os
+import sys
+import urllib.parse
 
 VOID = {"area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "source", "track", "wbr"}
 OPTIONAL_END = {"p", "li", "dt", "dd", "tr", "td", "th", "thead", "tbody", "option"}
@@ -56,15 +60,16 @@ class Page(html.parser.HTMLParser):
         self.stack.pop()
 
 
-def main():
-    site = os.path.abspath(sys.argv[1])
+def check_dir(site_dir):
+    site = os.path.abspath(site_dir)
     pages, problems = {}, []
     for dirpath, _, files in os.walk(site):
         for f in files:
             if f.endswith(".html"):
                 path = os.path.join(dirpath, f)
                 p = Page()
-                p.feed(open(path, encoding="utf-8").read())
+                with open(path, encoding="utf-8") as fh:
+                    p.feed(fh.read())
                 p.close()
                 rest = [t for t, _ in p.stack if t not in OPTIONAL_END]
                 if rest:
@@ -97,9 +102,17 @@ def main():
                 tp = pages.get(target)
                 if tp is not None and u.fragment not in tp.ids:
                     problems.append("%s: anchor #%s missing in %s" % (rel, u.fragment, os.path.relpath(target, site)))
+    return len(pages), problems
+
+
+def main():
+    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    ap.add_argument("site", help="Directory containing the assembled site")
+    args = ap.parse_args()
+    page_count, problems = check_dir(args.site)
     for p in problems:
         print("::error::" + p)
-    print("checked %d pages, %d problems" % (len(pages), len(problems)))
+    print("checked %d pages, %d problems" % (page_count, len(problems)))
     sys.exit(1 if problems else 0)
 
 
